@@ -1,0 +1,45 @@
+// Bootstrap, compiled from its Sass source. This folder is a "config": the
+// same three files (main.scss, _custom.scss, tokens.css) make up every saved
+// config in configs/ and every issue reproduction in issues/.
+//
+// Out of the box nothing is configured: the output is Bootstrap's default CSS.
+// Customize at compile time by swapping the `@use` below for the `with (...)`
+// version. Only list what you change; Bootstrap merges it over its defaults.
+// See https://getbootstrap.com/docs/6.0/customize/sass/
+
+@use "bootstrap/scss/bootstrap";
+
+// @use "bootstrap/scss/bootstrap" with (
+//   // Options (scss/_config.scss)
+//   $enable-shadows: false,
+//   $enable-gradients: false,
+//   $color-mode-type: "data",
+//
+//   // Global tokens, output on :root (scss/_root.scss)
+//   $root-tokens: (
+//     --border-radius: .25rem,
+//   ),
+//
+//   // Theme colors (scss/_theme.scss). Pass a whole sub-map per theme.
+//   $theme-colors: (
+//     "brand": (
+//       "base": var(--indigo-500),
+//       "fg": light-dark(var(--indigo-600), var(--indigo-400)),
+//       "fg-emphasis": light-dark(var(--indigo-800), var(--indigo-300)),
+//       "bg": var(--indigo-500),
+//       "bg-subtle": light-dark(var(--indigo-100), var(--indigo-900)),
+//       "bg-muted": light-dark(var(--indigo-200), var(--indigo-800)),
+//       "border": light-dark(var(--indigo-300), var(--indigo-600)),
+//       "focus-ring": light-dark(color-mix(in oklch, var(--indigo-500) 50%, var(--bg-body)), color-mix(in oklch, var(--indigo-500) 75%, var(--bg-body))),
+//       "contrast": var(--white)
+//     )
+//   ),
+//
+//   // Component tokens, output on the component class (e.g. scss/_alert.scss)
+//   $alert-tokens: (
+//     --alert-padding-x: 2rem,
+//   ),
+// );
+
+// Your own Sass, with access to Bootstrap's mixins and functions.
+@use "custom";

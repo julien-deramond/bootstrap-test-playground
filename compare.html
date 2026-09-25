@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Compare</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/src/styles/main.scss">
+    <style>
+      body { display: flex; flex-direction: column; height: 100vh; margin: 0; }
+      .compare-panes { display: grid; flex: 1; grid-template-columns: 1fr 1fr; gap: 1px; min-height: 0; background: var(--bs-border-color); }
+      .compare-pane { display: flex; flex-direction: column; min-height: 0; background: var(--bs-bg-body); }
+      .compare-pane iframe { flex: 1; inline-size: 100%; border: 0; }
+      .compare-side { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; padding: .5rem; border-block-end: 1px solid var(--bs-border-color); }
+      .compare-side select, .compare-bar select { inline-size: auto; }
+      @media (width < 768px) { .compare-panes { grid-template-columns: 1fr; } }
+    </style>
+    <script type="module" src="/src/js/compare.js"></script>
+  </head>
+  <body>
+    <header class="compare-bar d-flex flex-wrap gap-3 align-items-center p-2 border-bottom">
+      <a href="/" class="fw-bold">Playground</a>
+      <label class="d-flex gap-2 align-items-center">Page <select class="form-control form-control-sm" id="compare-page"></select></label>
+      <span class="d-flex gap-2 align-items-center" role="group" aria-label="Presets">
+        Presets
+        <button type="button" class="btn-outline theme-secondary btn-sm" data-preset="theme">Light / Dark</button>
+        <button type="button" class="btn-outline theme-secondary btn-sm" data-preset="dir">LTR / RTL</button>
+        <button type="button" class="btn-outline theme-secondary btn-sm" data-preset="config">Working / Default</button>
+      </span>
+      <label class="d-flex gap-2 align-items-center"><input type="checkbox" class="check" id="compare-sync" checked> Sync scroll</label>
+      <a id="compare-open" href="#" class="ms-auto">Open page</a>
+    </header>
+    <main class="compare-panes">
+      <section class="compare-pane" data-side="a" aria-label="Left">
+        <div class="compare-side"></div>
+        <iframe title="Left"></iframe>
+      </section>
+      <section class="compare-pane" data-side="b" aria-label="Right">
+        <div class="compare-side"></div>
+        <iframe title="Right"></iframe>
+      </section>
+    </main>
+  </body>
+</html>

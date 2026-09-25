@@ -1,0 +1,149 @@
+/*
+ * Example frames for the kitchen sink pages, ported from Bootstrap's docs
+ * (site/src/scss/_component-examples.scss and _placeholder-img.scss) so the
+ * examples render as they do in the docs. Kept in the `custom` layer so
+ * utilities still apply.
+ */
+
+@layer custom {
+  .bd-kitchen-sink-section {
+    margin-block-end: 3rem;
+  }
+
+  .bd-kitchen-sink-nav summary {
+    cursor: pointer;
+    margin-block-end: 1rem;
+  }
+
+  .bd-example {
+    --bd-example-padding: 1.5rem;
+
+    position: relative;
+    display: flow-root;
+    padding: var(--bd-example-padding);
+    background-color: var(--bs-bg-body);
+    border: 1px solid var(--bs-border-subtle);
+    border-radius: var(--bs-radius-5);
+
+    > .tab-content {
+      min-height: 120px;
+      padding: var(--bs-spacer);
+      background-color: var(--bs-bg-1);
+      border-radius: var(--bs-radius-5);
+    }
+
+    > .menu.position-static {
+      max-width: fit-content;
+    }
+
+    > nav:last-child .breadcrumb {
+      margin-bottom: 0;
+    }
+
+    > svg + svg,
+    > img + img {
+      margin-inline-start: .5rem;
+    }
+
+    > .list-group {
+      max-width: 400px;
+    }
+
+    > [class*="list-group-horizontal"] {
+      max-width: 100%;
+    }
+
+    .fixed-top,
+    .sticky-top {
+      position: static !important;
+      margin: calc(-1 * var(--bd-example-padding)) calc(-1 * var(--bd-example-padding)) var(--bd-example-padding);
+    }
+
+    .fixed-bottom,
+    .sticky-bottom {
+      position: static !important;
+      margin: var(--bd-example-padding) calc(-1 * var(--bd-example-padding)) calc(-1 * var(--bd-example-padding));
+    }
+
+    .pagination {
+      margin-bottom: 0;
+    }
+  }
+
+  .bd-example-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: .5rem;
+    justify-content: start;
+  }
+
+  @media (width < 1024px) {
+    .bd-example-buttons {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .bd-example-drawer .drawer {
+    position: static;
+    display: flex;
+    height: 400px;
+    margin: var(--bs-drawer-inset);
+    visibility: visible;
+    transform: translate(0);
+  }
+
+  .tooltip-demo a {
+    white-space: nowrap;
+  }
+
+  .custom-tooltip {
+    --bs-tooltip-bg: var(--bs-accent-bg);
+    --bs-tooltip-color: var(--bs-white);
+  }
+
+  .custom-popover {
+    --bs-popover-max-width: 200px;
+    --bs-popover-border-color: var(--bs-accent-bg);
+    --bs-popover-header-bg: var(--bs-accent-bg);
+    --bs-popover-header-color: var(--bs-white);
+    --bs-popover-body-padding-x: 1rem;
+    --bs-popover-body-padding-y: .5rem;
+  }
+
+  .scrollspy-example {
+    height: 200px;
+    margin-top: .5rem;
+    overflow: auto;
+  }
+
+  .scrollspy-example-2 {
+    height: 350px;
+    overflow: auto;
+  }
+
+  .simple-list-example-scrollspy .active {
+    background-color: color-mix(in srgb, var(--bs-accent-base) 15%, transparent);
+  }
+
+  .bd-example-placeholder-cards::after {
+    display: none;
+  }
+
+  .bd-example-placeholder-cards .card {
+    width: 18rem;
+  }
+
+  .bd-example-toasts {
+    min-height: 300px;
+  }
+
+  .bd-placeholder-img {
+    font-size: 1.125rem;
+    user-select: none;
+    text-anchor: middle;
+  }
+
+  .bd-placeholder-img-lg {
+    font-size: 2.5rem;
+  }
+}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>__TITLE__: Issue reproduction</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5">
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue __TITLE__</h1>
+        <p class="fs-lg fg-2">
+          __LINK__
+        </p>
+      </header>
+
+      <section class="mb-5">
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>…</li>
+        </ol>
+        <p><strong>Expected:</strong> …</p>
+        <p><strong>Actual:</strong> …</p>
+      </section>
+
+      <section>
+        <h2 class="h5">Reproduction</h2>
+        <!-- Paste the markup under test here. -->
+        <button type="button" class="btn-solid theme-primary">Button</button>
+      </section>
+    </main>
+
+    <script type="module">
+      // Reproduction-specific JavaScript. Bootstrap is available as `window.bootstrap`.
+    </script>
+  </body>
+</html>

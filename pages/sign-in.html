@@ -1,0 +1,41 @@
+<!doctype html>
+<!-- Adapted from Bootstrap's "sign-in" example (site/src/assets/examples/sign-in/). -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Forms: sign-in</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <link rel="stylesheet" href="/pages/sign-in.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body class="d-flex align-items-center py-4 bg-1">
+    <main class="form-signin w-100 m-auto">
+      <form>
+        <img class="mb-4" src="/favicon.svg" alt="Bootstrap" width="72" height="57">
+        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+
+        <div class="form-floating">
+          <label for="floatingInput">Email address</label>
+          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+        </div>
+        <div class="form-floating">
+          <label for="floatingPassword">Password</label>
+          <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+        </div>
+
+        <div class="form-field text-start my-3">
+          <input type="checkbox" value="remember-me" id="checkDefault" class="check">
+          <label for="checkDefault">
+            Remember me
+          </label>
+        </div>
+        <button class="btn-solid theme-primary w-100 py-2" type="submit">Sign in</button>
+        <p class="mt-5 mb-3 fg-2">&copy; 2017–2026</p>
+      </form>
+    </main>
+  </body>
+</html>

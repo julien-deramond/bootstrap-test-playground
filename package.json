@@ -1,0 +1,34 @@
+{
+  "name": "bootstrap-test-playground",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A Vite multi-page playground to test and reproduce issues with Bootstrap v6 (v6-dev branch).",
+  "license": "MIT",
+  "author": "Julien Déramond",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "new-issue": "node scripts/new-issue.mjs",
+    "save-config": "node scripts/save-config.mjs",
+    "use-config": "node scripts/use-config.mjs",
+    "sync-kitchen-sink": "node scripts/sync-kitchen-sink.mjs",
+    "update-bootstrap": "npm install bootstrap@github:twbs/bootstrap#v6-dev"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "dependencies": {
+    "@floating-ui/dom": "^1.8.0",
+    "bootstrap": "github:twbs/bootstrap#v6-dev",
+    "vanilla-calendar-pro": "^3.4.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.6.1",
+    "postcss-prefix-custom-properties": "^0.1.0",
+    "sass-embedded": "^1.105.0",
+    "vite": "^8.3.1"
+  }
+}
