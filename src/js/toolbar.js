@@ -7,6 +7,10 @@
 // Keyboard shortcuts (Alt+Shift, Option+Shift on macOS):
 //   T  cycle color mode (auto, light, dark)
 //   D  toggle direction (LTR, RTL)
+// Ctrl+K (⌘K on macOS) opens the page switcher, see palette.js.
+
+import { mountPalette, paletteShortcut } from './palette.js'
+import { siblings } from './page-index.js'
 
 const HUES = ['default', 'indigo', 'violet', 'purple', 'pink', 'red', 'orange', 'amber', 'lime', 'green', 'teal', 'cyan', 'brown', 'gray']
 const COLOR_MODES = ['auto', 'light', 'dark']
@@ -55,7 +59,13 @@ const styles = `
   .origin { font-size: 11px; }
   .origin a { text-decoration: underline; text-underline-offset: 2px; }
   .toggle { padding: 3px 6px; border-radius: 6px; }
-  .toggle:hover, .reset:hover { background: rgb(255 255 255 / .1); }
+  .toggle:hover, .reset:hover, .search:hover { background: rgb(255 255 255 / .1); }
+  .search { display: inline-flex; gap: 6px; align-items: center; border: 1px solid rgb(255 255 255 / .18); border-radius: 6px; }
+  .search kbd { font: inherit; font-size: 10px; opacity: .6; }
+  .pager { display: inline-flex; gap: 2px; }
+  .pager a { display: inline-grid; place-items: center; min-inline-size: 20px; padding: 2px 4px; border-radius: 6px; }
+  .pager a:hover { text-decoration: none; background: rgb(255 255 255 / .1); }
+  .pager [aria-disabled] { opacity: .3; pointer-events: none; }
 `
 
 const escapeHtml = value => String(value).replace(/[&<>"]/g, char => `&#${char.charCodeAt(0)};`)
@@ -111,6 +121,15 @@ export function mountToolbar({ source, configs, swappable }) {
   ]
 
   const compareUrl = `/compare.html?page=${encodeURIComponent(location.pathname)}`
+  const palette = mountPalette()
+
+  // Previous and next pages in the same folder, to flip through a group.
+  const { group, previous, next } = siblings(location.pathname)
+  const pagerLink = (page, label, arrow) => page ?
+    `<a href="${escapeHtml(page.url)}" title="${label}: ${escapeHtml(page.title)}" aria-label="${label}: ${escapeHtml(page.title)}">${arrow}</a>` :
+    `<a aria-disabled="true" aria-label="${label}">${arrow}</a>`
+  const pagerHtml = group ? `
+      <span class="pager" role="group" aria-label="${escapeHtml(group.label)}">${pagerLink(previous, 'Previous', '&#x2039;')}${pagerLink(next, 'Next', '&#x203A;')}</span>` : ''
 
   // Pages adapted from elsewhere credit their source with
   // <meta name="playground-source" content="Label" data-url="…" data-license="…">.
@@ -122,7 +141,8 @@ export function mountToolbar({ source, configs, swappable }) {
   shadow.innerHTML = `
     <style>${styles}</style>
     <div class="bar" role="toolbar" aria-label="Playground settings">
-      <a href="/" title="All pages">Playground</a>
+      <a href="/" title="All pages">Playground</a>${pagerHtml}
+      <button type="button" class="search" title="Go to another page">Search <kbd>${paletteShortcut}</kbd></button>
       ${segmented('colorMode', 'Color mode (Alt+Shift+T)', [['auto', 'Auto'], ['light', 'Light'], ['dark', 'Dark']])}
       ${segmented('dir', 'Direction (Alt+Shift+D)', [['ltr', 'LTR'], ['rtl', 'RTL']])}
       <select data-pref="primary" aria-label="Primary color" title="Remaps the --bs-primary-* tokens at runtime">
@@ -173,6 +193,8 @@ export function mountToolbar({ source, configs, swappable }) {
       render(prefs.save({ [button.dataset.pref]: button.value }))
     } else if (button.classList.contains('reset')) {
       render(prefs.reset())
+    } else if (button.classList.contains('search')) {
+      palette.open()
     } else if (button === toggle) {
       setCollapsed(!bar.hasAttribute('data-collapsed'))
     }

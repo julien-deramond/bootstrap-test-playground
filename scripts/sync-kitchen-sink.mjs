@@ -239,6 +239,8 @@ ${allPages.filter(page => page.section === dir).map(page => `          <a href="
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Kitchen sink: ${escapeHtml(title)}</title>
+    <meta name="description" content="${escapeHtml(description)}">
+    <meta name="playground-tags" content="${section}">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <script src="/playground-prefs.js"></script>
     <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">

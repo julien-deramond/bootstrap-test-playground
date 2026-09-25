@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-Open <http://localhost:5173>. The home page lists every page.
+Open <http://localhost:5173>. The home page lists every page, with search and filters (see [Finding pages](#finding-pages)).
 
 | Script | What it does |
 | --- | --- |
@@ -75,7 +75,7 @@ Then:
 ## Pages
 
 ```text
-index.html               Home: lists every page
+index.html               Home: every page, with search and filters
 pages/                   Starter screens (dashboard, checkout and sign-in forms, product and pricing marketing)
 screens/                 Real app screens ported from shadcn/ui (dashboard, tasks, authentication, playground, cards, login and signup blocks)
 kitchen-sink/            One page per component or form doc, with all of its docs examples (generated)
@@ -84,11 +84,29 @@ issues/<name>/           Issue reproductions (index.html + the three config file
 src/styles/              Working copy of the styles (see Customizing)
 configs/<name>/          Saved configs; configs/default/ is Bootstrap's defaults
 src/js/main.js           Shared entry: Bootstrap JS, demo wiring, config switcher, toolbar
+src/js/page-index.js     Page list and search, shared by the home page and the page switcher
 public/                  Favicon and the early preferences script
 scripts/                 new-issue, save-config, use-config, sync-kitchen-sink, issue template
 ```
 
-Every `.html` file under `pages/`, `kitchen-sink/` and `issues/` is picked up automatically. There's no list to maintain.
+Every `.html` file under `pages/`, `screens/`, `kitchen-sink/` and `issues/` is picked up automatically. There's no list to maintain.
+
+### Finding pages
+
+- **Home page**: search by title, description, tag, source or example heading, then narrow down by group and tag. Press <kbd>/</kbd> to focus the search, <kbd>Enter</kbd> to open the first result and the arrow keys to move through them. Filters live in the URL (`/?q=menu&tag=forms`), so a filtered list can be shared. Switch between the grid and a denser list, and find recently viewed pages at the top.
+- **Page switcher**: press <kbd>Ctrl</kbd>+<kbd>K</kbd> (<kbd>⌘</kbd>+<kbd>K</kbd> on macOS) on any page, or use *Search* in the toolbar. A search that matches an example heading jumps straight to it, like `tool place` for the tooltip *Placement* example.
+- **Previous and next**: the toolbar's <kbd>‹</kbd> <kbd>›</kbd> flip through the pages of the current group.
+
+Each page describes itself in its `<head>`, and the index picks it up:
+
+```html
+<title>Screens: Tasks</title>                             <!-- group prefixes like "Screens:" are dropped -->
+<meta name="description" content="One line about the page.">
+<meta name="playground-tags" content="table, forms, menu">
+<meta name="playground-source" content="…" data-url="…">  <!-- see Real screens -->
+```
+
+Without a description, the header's lead paragraph (`.fs-lg`) is used. Every `<h2 id="…">` becomes a searchable example heading. Kitchen sink pages are tagged `components` or `forms`. Give new pages a description and a few tags, reusing existing tags where they fit, so they stay easy to find.
 
 ### Starter screens
 
@@ -134,6 +152,8 @@ Each page has a small floating toolbar. It renders in a shadow root, so it doesn
 | Direction | LTR or RTL, through `dir` on `<html>` | <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> toggles | `?dir=rtl` |
 | Primary | Remaps the `--bs-primary-*` tokens to another hue at runtime | | `?primary=teal` |
 | Styles | Swaps the working copy for a saved config | | `?config=<name>` |
+| ‹ › | Previous and next page in the same group | | |
+| Search | Opens the page switcher | <kbd>Ctrl</kbd>+<kbd>K</kbd> (<kbd>⌘</kbd>+<kbd>K</kbd>) | |
 | Compare | Opens the current page in the compare view | | |
 | Reset | Back to Bootstrap's defaults | | |
 

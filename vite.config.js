@@ -8,11 +8,16 @@ const root = path.dirname(fileURLToPath(import.meta.url))
 
 // Folders scanned for pages. Every `.html` file inside becomes a Vite entry.
 const PAGE_GROUPS = [
-  { dir: 'pages', label: 'Starter screens' },
-  { dir: 'screens', label: 'Real screens' },
-  { dir: 'kitchen-sink', label: 'Kitchen sink' },
-  { dir: 'issues', label: 'Issue reproductions' }
+  { dir: 'pages', label: 'Starter screens', description: 'Bootstrap’s own examples, adapted to v6.' },
+  { dir: 'screens', label: 'Real screens', description: 'Application screens ported from shadcn/ui and rebuilt with v6 components.' },
+  // Tagged with their docs section (components, forms), from the file name.
+  { dir: 'kitchen-sink', label: 'Kitchen sink', description: 'Every live example from the docs, one page per component or form control.', tags: file => [path.basename(file).split('-')[0]] },
+  { dir: 'issues', label: 'Issue reproductions', description: 'Isolated reproductions. Each one compiles its own copy of Bootstrap.' }
 ]
+
+// Group names that page titles repeat, like "Kitchen sink: Button".
+const TITLE_PREFIX = /^(?:kitchen sink|screens):\s*/i
+const TITLE_SUFFIX = /:\s*issue reproduction$/i
 
 function findHtmlFiles(dir) {
   if (!fs.existsSync(dir)) {
@@ -25,24 +30,46 @@ function findHtmlFiles(dir) {
     .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }))
 }
 
-function readTitle(file) {
-  const match = fs.readFileSync(file, 'utf8').match(/<title>([^<]*)<\/title>/i)
-  return match ? match[1].trim() : path.basename(file, '.html')
-}
+const decodeEntities = value => value
+  .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
+  .replace(/&(amp|lt|gt|quot|#39|apos);/g, (_, name) => ({ amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'", apos: "'" })[name])
 
-function readSource(file) {
-  const tag = fs.readFileSync(file, 'utf8').match(/<meta name="playground-source"[^>]*>/i)?.[0]
-  const attribute = name => tag?.match(new RegExp(`${name}="([^"]*)"`))?.[1]
-  return tag ? { label: attribute('content'), url: attribute('data-url') } : undefined
+const plainText = html => decodeEntities(html.replace(/<[^>]*>/g, '')).replace(/\s+/g, ' ').trim()
+
+// Metadata shown and searched on the home page and in the page switcher:
+// - <title>, without the group prefix
+// - <meta name="description">, or the header's lead paragraph (`.fs-lg`)
+// - <meta name="playground-tags" content="forms, auth">
+// - <meta name="playground-source">, see the toolbar
+// - every <h2 id="…">, so a search can jump straight to an example
+function readPage(file) {
+  const html = fs.readFileSync(file, 'utf8')
+  const head = html.match(/<head[\s\S]*?<\/head>/i)?.[0] ?? ''
+  const meta = name => head.match(new RegExp(`<meta name="${name}"[^>]*>`, 'i'))?.[0]
+  const attribute = (tag, name) => tag?.match(new RegExp(`${name}="([^"]*)"`))?.[1]
+
+  const title = plainText(head.match(/<title>([^<]*)<\/title>/i)?.[1] ?? '') || path.basename(file, '.html')
+  const lead = html.match(/<p class="[^"]*\bfs-lg\b[^"]*">([\s\S]*?)<\/p>/i)?.[1]
+  const sourceTag = meta('playground-source')
+
+  return {
+    title: title.replace(TITLE_PREFIX, '').replace(TITLE_SUFFIX, ''),
+    description: decodeEntities(attribute(meta('description'), 'content') ?? '') || (lead ? plainText(lead) : ''),
+    tags: [...new Set((attribute(meta('playground-tags'), 'content') ?? '').split(',').map(tag => tag.trim().toLowerCase()).filter(Boolean))],
+    source: sourceTag ? { label: decodeEntities(attribute(sourceTag, 'content')), url: attribute(sourceTag, 'data-url') } : undefined,
+    sections: [...html.matchAll(/<h2[^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/gi)].map(([, id, heading]) => ({ id, title: plainText(heading) }))
+  }
 }
 
 function collectPages() {
-  return PAGE_GROUPS.map(({ dir, label }) => ({
+  return PAGE_GROUPS.map(({ dir, label, description, tags }) => ({
     label,
     dir,
+    description,
     pages: findHtmlFiles(path.join(root, dir)).map(file => {
       const url = '/' + path.relative(root, file).split(path.sep).join('/')
-      return { url: url.replace(/index\.html$/, ''), title: readTitle(file), source: readSource(file) }
+      const page = readPage(file)
+      return { url: url.replace(/index\.html$/, ''), ...page, tags: [...new Set([...page.tags, ...(tags?.(file) ?? [])])] }
     })
   }))
 }
@@ -96,6 +123,15 @@ function playgroundData() {
     resolveId: source => (source in modules ? '\0' + source : null),
     load: id => (id.startsWith('\0') ? modules[id.slice(1)]?.() ?? null : null),
     configureServer(server) {
+      const invalidate = () => {
+        for (const id of Object.keys(modules)) {
+          const mod = server.moduleGraph.getModuleById('\0' + id)
+          if (mod) {
+            server.moduleGraph.invalidateModule(mod)
+          }
+        }
+      }
+
       // Reload when pages or configs are added, renamed or removed.
       const refresh = file => {
         const relative = path.relative(root, file)
@@ -103,13 +139,7 @@ function playgroundData() {
           return
         }
 
-        for (const id of Object.keys(modules)) {
-          const mod = server.moduleGraph.getModuleById('\0' + id)
-          if (mod) {
-            server.moduleGraph.invalidateModule(mod)
-          }
-        }
-
+        invalidate()
         server.ws.send({ type: 'full-reload' })
       }
 
@@ -119,6 +149,10 @@ function playgroundData() {
       server.watcher.on('change', file => {
         if (file.endsWith('README.md') && path.relative(root, file).startsWith('configs')) {
           refresh(file)
+        } else if (file.endsWith('.html')) {
+          // A page's title, description or tags may have changed. The next
+          // load picks them up; the edited page reloads on its own.
+          invalidate()
         }
       })
     }
@@ -161,7 +195,8 @@ export default defineConfig(({ mode }) => {
       devSourcemap: true
     },
     server: {
-      port: 5173,
+      // PORT lets tools that manage dev servers pick a free port.
+      port: Number(process.env.PORT) || 5173,
       fs: {
         allow: [root, ...(bootstrap.dir ? [bootstrap.dir] : [])]
       }

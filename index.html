@@ -8,19 +8,78 @@
     <script src="/playground-prefs.js"></script>
     <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
     <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <link rel="stylesheet" href="/src/home.css">
     <script type="module" src="/src/js/main.js"></script>
     <script type="module" src="/src/js/home.js"></script>
   </head>
   <body>
-    <main class="container py-5">
-      <header class="mb-5">
-        <h1>Bootstrap playground</h1>
-        <p class="fs-lg fg-2">Starter screens, the full kitchen sink and issue reproductions for Bootstrap v6 (<code>v6-dev</code>).</p>
-        <p class="fg-3">Bootstrap source: <code id="bootstrap-source"></code></p>
-        <p class="mb-0"><a href="/compare.html">Compare a page side by side</a> (light and dark, LTR and RTL, or two configs)</p>
-      </header>
+    <!-- Icons: Lucide (ISC License), https://lucide.dev -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></symbol>
+      <symbol id="icon-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
+      <symbol id="icon-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></symbol>
+      <symbol id="icon-columns" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></symbol>
+      <symbol id="icon-corner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></symbol>
+      <symbol id="icon-git" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="3" x2="9" y1="12" y2="12"/><line x1="15" x2="21" y1="12" y2="12"/></symbol>
+    </svg>
 
-      <div id="page-groups" class="vstack gap-5"></div>
+    <header class="home-hero">
+      <div class="container">
+        <div class="home-hero-top">
+          <a class="home-brand" href="/">
+            <img src="/favicon.svg" alt="" width="32" height="32">
+            <span>Bootstrap playground</span>
+          </a>
+          <nav class="home-links" aria-label="Tools">
+            <a href="/compare.html">
+              <svg width="16" height="16" aria-hidden="true"><use href="#icon-columns"/></svg>
+              Compare
+            </a>
+            <a href="https://github.com/twbs/bootstrap/tree/v6-dev" rel="noopener">
+              <svg width="16" height="16" aria-hidden="true"><use href="#icon-git"/></svg>
+              v6-dev
+            </a>
+          </nav>
+        </div>
+        <h1 class="home-title">Test Bootstrap v6 on real pages</h1>
+        <p class="home-lead">Starter screens, real app screens, every docs example and issue reproductions, all compiled from <code>v6-dev</code> source.</p>
+        <p class="home-source"><span class="home-source-dot" aria-hidden="true"></span> <code id="bootstrap-source"></code></p>
+      </div>
+    </header>
+
+    <div class="home-filters" id="filters">
+      <div class="container">
+        <div class="home-search-row">
+          <label class="form-control form-adorn home-search">
+            <span class="form-adorn-icon" aria-hidden="true">
+              <svg width="16" height="16"><use href="#icon-search"/></svg>
+            </span>
+            <input type="search" class="form-ghost" id="page-search" placeholder="Search pages, components, examples, tags…" autocomplete="off" spellcheck="false" aria-describedby="result-count" aria-controls="results">
+            <span class="form-adorn-text"><kbd>/</kbd></span>
+          </label>
+          <div class="btn-group home-view" role="group" aria-label="Layout">
+            <button type="button" class="btn-outline theme-secondary btn-icon" data-view="grid" aria-pressed="true" title="Grid">
+              <svg width="16" height="16" aria-hidden="true"><use href="#icon-grid"/></svg>
+              <span class="visually-hidden">Grid</span>
+            </button>
+            <button type="button" class="btn-outline theme-secondary btn-icon" data-view="list" aria-pressed="false" title="List">
+              <svg width="16" height="16" aria-hidden="true"><use href="#icon-list"/></svg>
+              <span class="visually-hidden">List</span>
+            </button>
+          </div>
+        </div>
+        <div class="home-chips" id="group-filters" role="group" aria-label="Filter by group"></div>
+        <div class="home-chips home-tags" id="tag-filters" role="group" aria-label="Filter by tag"></div>
+      </div>
+    </div>
+
+    <main class="container home-main">
+      <p class="visually-hidden" id="result-count" aria-live="polite"></p>
+      <div id="results"></div>
     </main>
+
+    <footer class="container home-footer">
+      <p>Press <kbd>/</kbd> to search here, or <kbd id="palette-key">Ctrl K</kbd> on any page to jump to another one.</p>
+    </footer>
   </body>
 </html>
