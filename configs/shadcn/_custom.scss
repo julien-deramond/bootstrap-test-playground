@@ -16,6 +16,12 @@
     border-color: light-dark(oklch(70.8% 0 0), oklch(55.6% 0 0));
   }
 
+  // Checkbox: rounded-[4px]. Bootstrap ignores --check-border-radius and
+  // hard-codes 33% (julien-deramond/bootstrap-test-playground#4).
+  .check {
+    border-radius: var(--check-border-radius);
+  }
+
   // Default and outline buttons carry shadow-xs
   .btn-solid,
   .btn-outline {
