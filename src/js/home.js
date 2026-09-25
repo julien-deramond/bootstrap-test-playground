@@ -72,7 +72,7 @@ function card(result, { showGroup }) {
       <div class="page-card-head">
         <h3 class="page-card-title"><a class="page-card-link" href="${escapeHtml(resultUrl({ page }))}">${highlight(page.title, state.q)}</a></h3>
         ${showGroup ? `<span class="page-card-group">${escapeHtml(page.groupLabel)}</span>` : ''}
-        <a class="page-card-action" href="/compare.html?page=${encodeURIComponent(page.url)}" title="Compare ${title} side by side" aria-label="Compare ${title} side by side">
+        <a class="page-card-action" href="${import.meta.env.BASE_URL}compare.html?page=${encodeURIComponent(page.url)}" title="Compare ${title} side by side" aria-label="Compare ${title} side by side">
           <svg width="16" height="16" aria-hidden="true"><use href="#icon-columns"/></svg>
         </a>
       </div>

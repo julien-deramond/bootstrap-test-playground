@@ -120,7 +120,7 @@ export function mountToolbar({ source, configs, swappable }) {
     ...configs.map(({ name, description }) => [name, `Styles: ${name}`, description || `configs/${name}/`])
   ]
 
-  const compareUrl = `/compare.html?page=${encodeURIComponent(location.pathname)}`
+  const compareUrl = `${import.meta.env.BASE_URL}compare.html?page=${encodeURIComponent(location.pathname)}`
   const palette = mountPalette()
 
   // Previous and next pages in the same folder, to flip through a group.
@@ -141,7 +141,7 @@ export function mountToolbar({ source, configs, swappable }) {
   shadow.innerHTML = `
     <style>${styles}</style>
     <div class="bar" role="toolbar" aria-label="Playground settings">
-      <a href="/" title="All pages">Playground</a>${pagerHtml}
+      <a href="${import.meta.env.BASE_URL}" title="All pages">Playground</a>${pagerHtml}
       <button type="button" class="search" title="Go to another page">Search <kbd>${paletteShortcut}</kbd></button>
       ${segmented('colorMode', 'Color mode (Alt+Shift+T)', [['auto', 'Auto'], ['light', 'Light'], ['dark', 'Dark']])}
       ${segmented('dir', 'Direction (Alt+Shift+D)', [['ltr', 'LTR'], ['rtl', 'RTL']])}

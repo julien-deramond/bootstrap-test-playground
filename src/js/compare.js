@@ -24,13 +24,13 @@ const sides = { a: new URLSearchParams(state.get('a') ?? 'theme=light'), b: new 
 // Only same-origin paths: `page` ends up in a link's href and the iframes' src.
 const toPath = value => {
   const url = new URL(value, location.origin)
-  return url.origin === location.origin && url.protocol === location.protocol ? url.pathname : '/'
+  return url.origin === location.origin && url.protocol === location.protocol ? url.pathname : import.meta.env.BASE_URL
 }
 
-let page = toPath(state.get('page') ?? '/pages/dashboard.html')
+let page = toPath(state.get('page') ?? `${import.meta.env.BASE_URL}pages/dashboard.html`)
 
 const pageSelect = document.getElementById('compare-page')
-pageSelect.innerHTML = [{ label: 'Home', pages: [{ url: '/', title: 'Home' }] }, ...groups].map(group => `
+pageSelect.innerHTML = [{ label: 'Home', pages: [{ url: import.meta.env.BASE_URL, title: 'Home' }] }, ...groups].map(group => `
   <optgroup label="${escapeHtml(group.label)}">
     ${group.pages.map(({ url, title }) => `<option value="${escapeHtml(url)}">${escapeHtml(title)}</option>`).join('')}
   </optgroup>`).join('')

@@ -61,17 +61,55 @@ function readPage(file) {
   }
 }
 
-function collectPages() {
+function collectPages(base) {
   return PAGE_GROUPS.map(({ dir, label, description, tags }) => ({
     label,
     dir,
     description,
     pages: findHtmlFiles(path.join(root, dir)).map(file => {
-      const url = '/' + path.relative(root, file).split(path.sep).join('/')
+      const url = base + path.relative(root, file).split(path.sep).join('/')
       const page = readPage(file)
       return { url: url.replace(/index\.html$/, ''), ...page, tags: [...new Set([...page.tags, ...(tags?.(file) ?? [])])] }
     })
   }))
+}
+
+// Pages link to each other with root-relative URLs (`href="/pages/…"`). Vite
+// prefixes the assets it processes with `base`, but not links, so builds
+// served from a subfolder (GitHub Pages) prefix the remaining ones here.
+function prefixRootUrls(base) {
+  return {
+    name: 'prefix-root-urls',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler: html => html.replace(/\b(href|src|action)="\/(?!\/)([^"]*)"/g, (match, attribute, url) =>
+        ('/' + url).startsWith(base) ? match : `${attribute}="${base}${url}"`)
+    }
+  }
+}
+
+// Vite replaces `<link data-playground-styles="main" href="/src/styles/main.scss">`
+// with a bare link to the compiled asset, which breaks config switching in
+// builds. This puts the attribute back on the matching compiled link.
+function keepStyleMarkers() {
+  return {
+    name: 'keep-style-markers',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html, { filename }) {
+        const source = fs.readFileSync(filename, 'utf8')
+        for (const [link] of source.matchAll(/<link\b[^>]*\bdata-playground-styles="[^"]*"[^>]*>/g)) {
+          const key = link.match(/data-playground-styles="([^"]*)"/)[1]
+          const name = path.parse(link.match(/href="([^"]*)"/)[1]).name
+          html = html.replace(new RegExp(`<link rel="stylesheet"(?=[^>]*href="[^"]*/assets/${name}-[\\w-]+\\.css")`), `$& data-playground-styles="${key}"`)
+        }
+
+        return html
+      }
+    }
+  }
 }
 
 // Where Bootstrap comes from: the `v6-dev` branch installed from GitHub in
@@ -103,9 +141,9 @@ function bootstrapSource(env) {
 // - `virtual:playground-pages`: every page, for the home and compare pages
 // - `virtual:playground-configs`: every saved config in configs/, with the URLs
 //   of its compiled `main.scss` and `tokens.css` (hashed assets in builds)
-function playgroundData() {
+function playgroundData(base) {
   const modules = {
-    'virtual:playground-pages': () => `export default ${JSON.stringify(collectPages())}`,
+    'virtual:playground-pages': () => `export default ${JSON.stringify(collectPages(base))}`,
     'virtual:playground-configs': () => {
       const configs = listConfigs()
       const imports = configs.map(({ name }, index) => [
@@ -162,6 +200,8 @@ function playgroundData() {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, root, '')
   const bootstrap = bootstrapSource(env)
+  // BASE_PATH serves a build from a subfolder, like `/repo-name/` on GitHub Pages.
+  const base = env.BASE_PATH || '/'
 
   // Same floors as Bootstrap's `.browserslistrc`. Lower targets make Lightning
   // CSS rewrite `light-dark()` during minification, which breaks `data-bs-theme`.
@@ -177,6 +217,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     appType: 'mpa',
+    base,
     define: {
       __BOOTSTRAP_SOURCE__: JSON.stringify(bootstrap.label)
     },
@@ -206,6 +247,6 @@ export default defineConfig(({ mode }) => {
       cssTarget,
       rolldownOptions: { input }
     },
-    plugins: [playgroundData()]
+    plugins: [playgroundData(base), keepStyleMarkers(), ...(base === '/' ? [] : [prefixRootUrls(base)])]
   }
 })
