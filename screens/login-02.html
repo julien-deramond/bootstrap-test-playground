@@ -1,0 +1,72 @@
+<!doctype html>
+<!-- Adapted from shadcn/ui's "login-02" block (apps/v4/registry/new-york-v4/blocks/login-02/), MIT License. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Screens: login-02</title>
+    <meta name="playground-source" content="shadcn/ui block “login-02”" data-url="https://github.com/shadcn-ui/ui/tree/98a1fe67b439324ddc857f47fbdce056600a4329/apps/v4/registry/new-york-v4/blocks/login-02" data-license="MIT">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <link rel="stylesheet" href="/screens/auth.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <symbol id="gallery-vertical-end" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2h10"/><path d="M5 6h14"/><rect width="18" height="12" x="3" y="10" rx="2"/></symbol>
+      <symbol id="image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></symbol>
+      <symbol id="github" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+    </svg>
+    <div class="d-grid min-vh-100 lg:grid-cols-2">
+      <div class="d-flex flex-column gap-5 p-7 md:p-11">
+        <div class="d-flex justify-content-center md:justify-content-start">
+          <a href="#" class="d-flex align-items-center gap-3 fw-medium fg-body text-decoration-none">
+            <span class="avatar avatar-xs theme-primary rounded-4"><svg class="bi" aria-hidden="true"><use href="#gallery-vertical-end"/></svg></span>
+            Acme Inc.
+          </a>
+        </div>
+        <div class="d-flex flex-grow-1 align-items-center justify-content-center">
+          <div class="w-100 auth-max-xs">
+            <form class="d-flex flex-column gap-8">
+              <div class="d-flex flex-column align-items-center gap-1 text-center">
+                <h1 class="fs-xl fw-bold mb-0">Login to your account</h1>
+                <p class="fs-sm fg-2 text-balance mb-0">Enter your email below to login to your account</p>
+              </div>
+              <div class="form-field">
+                <label for="email" class="form-label">Email</label>
+                <input id="email" type="email" class="form-control" placeholder="m@example.com" required>
+              </div>
+              <div class="form-field">
+                <div class="d-flex align-items-center">
+                  <label for="password" class="form-label mb-0">Password</label>
+                  <a href="#" class="ms-auto ps-3 fs-sm text-nowrap">Forgot your password?</a>
+                </div>
+                <input id="password" type="password" class="form-control" required>
+              </div>
+              <div class="d-grid gap-4">
+                <button type="submit" class="btn-solid theme-primary">Login</button>
+              </div>
+              <div class="d-flex align-items-center gap-3 fs-sm fg-2">
+                <hr class="flex-grow-1 m-0">
+                <span>Or continue with</span>
+                <hr class="flex-grow-1 m-0">
+              </div>
+              <div class="d-grid gap-4">
+                <button type="button" class="btn-outline theme-secondary">
+                  <svg class="bi" aria-hidden="true"><use href="#github"/></svg>
+                  Login with GitHub
+                </button>
+                <p class="form-text text-center mb-0">Don&apos;t have an account? <a href="#">Sign up</a></p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="d-none lg:d-flex bg-2 fg-4 auth-placeholder align-items-center justify-content-center" role="img" aria-label="Image">
+        <svg class="bi bi-lg" aria-hidden="true"><use href="#image"/></svg>
+      </div>
+    </div>
+  </body>
+</html>

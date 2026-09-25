@@ -1,0 +1,847 @@
+<!doctype html>
+<!-- Adapted from shadcn/ui's "tasks" example (apps/v4/app/(app)/examples/tasks/), MIT License. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Screens: tasks</title>
+    <meta name="playground-source" content="shadcn/ui example “tasks”" data-url="https://github.com/shadcn-ui/ui/tree/98a1fe67b439324ddc857f47fbdce056600a4329/apps/v4/app/(app)/examples/tasks" data-license="MIT">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <link rel="stylesheet" href="/screens/tasks.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <!-- Icons: Lucide (ISC License), https://lucide.dev -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <symbol id="circle-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></symbol>
+      <symbol id="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+      <symbol id="settings-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></symbol>
+      <symbol id="chevrons-up-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></symbol>
+      <symbol id="arrow-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></symbol>
+      <symbol id="arrow-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></symbol>
+      <symbol id="arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+      <symbol id="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></symbol>
+      <symbol id="ellipsis" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></symbol>
+      <symbol id="circle-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+      <symbol id="circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></symbol>
+      <symbol id="timer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></symbol>
+      <symbol id="circle-check-big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></symbol>
+      <symbol id="circle-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 2 20 20"/><path d="M8.35 2.69A10 10 0 0 1 21.3 15.65"/><path d="M19.08 19.08A10 10 0 1 1 4.92 4.92"/></symbol>
+      <symbol id="chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></symbol>
+      <symbol id="chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol>
+      <symbol id="chevrons-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></symbol>
+      <symbol id="chevrons-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 17 5-5-5-5"/><path d="m13 17 5-5-5-5"/></symbol>
+      <symbol id="check" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4 5 8-8"/></symbol>
+    </svg>
+
+    <main class="d-flex flex-column gap-9 p-5 md:p-9">
+      <div class="d-flex align-items-center justify-content-between gap-2">
+        <div class="d-flex flex-column gap-1">
+          <h2 class="fs-xl fw-semibold mb-0">Welcome back!</h2>
+          <p class="fg-3 mb-0">Here&#39;s a list of your tasks for this month.</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <button type="button" class="btn-text theme-secondary btn-icon btn-sm rounded-circle p-0" data-bs-toggle="menu" data-bs-placement="bottom-end" aria-expanded="false">
+            <span class="avatar avatar-sm" role="img" aria-label="@shadcn">SC</span>
+          </button>
+          <div class="menu" style="--bs-menu-min-width: 14rem;">
+            <div class="menu-text d-flex flex-column gap-1">
+              <span class="fw-medium fg-body lh-1">shadcn</span>
+              <span class="fs-xs fg-3 lh-1">m@example.com</span>
+            </div>
+            <hr class="menu-divider">
+            <button class="menu-item" type="button">Profile <span class="ms-auto fs-xs fg-3">⇧⌘P</span></button>
+            <button class="menu-item" type="button">Billing <span class="ms-auto fs-xs fg-3">⌘B</span></button>
+            <button class="menu-item" type="button">Settings <span class="ms-auto fs-xs fg-3">⌘S</span></button>
+            <button class="menu-item" type="button">New Team</button>
+            <hr class="menu-divider">
+            <button class="menu-item" type="button">Log out <span class="ms-auto fs-xs fg-3">⇧⌘Q</span></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex flex-column gap-5">
+        <!-- Toolbar -->
+        <div class="d-flex align-items-center justify-content-between gap-2">
+          <div class="d-flex flex-fill flex-wrap align-items-center gap-2">
+            <input type="text" class="form-control form-control-sm tasks-filter" placeholder="Filter tasks..." aria-label="Filter tasks">
+            <button type="button" class="btn-outline theme-secondary btn-sm btn-dashed" data-bs-toggle="menu" data-bs-auto-close="outside" aria-expanded="false">
+              <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#circle-plus"/></svg>
+              Status
+            </button>
+            <div class="menu" style="--bs-menu-min-width: 200px;">
+              <div class="p-1">
+                <input type="search" class="form-control form-control-sm" placeholder="Status" aria-label="Status">
+              </div>
+              <hr class="menu-divider">
+                <label class="menu-item" for="filter-status-backlog">
+                  <input type="checkbox" class="check check-sm" id="filter-status-backlog">
+                  <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#circle-help"/></svg>
+                  <span>Backlog</span>
+                  <span class="ms-auto font-monospace fs-xs fg-3">15</span>
+                </label>
+                <label class="menu-item" for="filter-status-todo">
+                  <input type="checkbox" class="check check-sm" id="filter-status-todo">
+                  <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#circle"/></svg>
+                  <span>Todo</span>
+                  <span class="ms-auto font-monospace fs-xs fg-3">15</span>
+                </label>
+                <label class="menu-item" for="filter-status-in-progress">
+                  <input type="checkbox" class="check check-sm" id="filter-status-in-progress">
+                  <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#timer"/></svg>
+                  <span>In Progress</span>
+                  <span class="ms-auto font-monospace fs-xs fg-3">10</span>
+                </label>
+                <label class="menu-item" for="filter-status-done">
+                  <input type="checkbox" class="check check-sm" id="filter-status-done">
+                  <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#circle-check-big"/></svg>
+                  <span>Done</span>
+                  <span class="ms-auto font-monospace fs-xs fg-3">15</span>
+                </label>
+                <label class="menu-item" for="filter-status-canceled">
+                  <input type="checkbox" class="check check-sm" id="filter-status-canceled">
+                  <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#circle-off"/></svg>
+                  <span>Canceled</span>
+                  <span class="ms-auto font-monospace fs-xs fg-3">9</span>
+                </label>
+            </div>
+            <button type="button" class="btn-outline theme-secondary btn-sm btn-dashed" data-bs-toggle="menu" data-bs-auto-close="outside" aria-expanded="false">
+              <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#circle-plus"/></svg>
+              Priority
+                <span class="vr mx-1"></span>
+                <span class="badge badge-subtle theme-secondary rounded-2 fw-normal lg:d-none">2</span>
+                <span class="d-none lg:d-flex gap-1">
+                  <span class="badge badge-subtle theme-secondary rounded-2 fw-normal">Medium</span>
+                  <span class="badge badge-subtle theme-secondary rounded-2 fw-normal">High</span>
+                </span>
+            </button>
+            <div class="menu" style="--bs-menu-min-width: 200px;">
+              <div class="p-1">
+                <input type="search" class="form-control form-control-sm" placeholder="Priority" aria-label="Priority">
+              </div>
+              <hr class="menu-divider">
+                <label class="menu-item" for="filter-priority-low">
+                  <input type="checkbox" class="check check-sm" id="filter-priority-low">
+                  <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-down"/></svg>
+                  <span>Low</span>
+                  <span class="ms-auto font-monospace fs-xs fg-3">36</span>
+                </label>
+                <label class="menu-item" for="filter-priority-medium">
+                  <input type="checkbox" class="check check-sm" id="filter-priority-medium" checked>
+                  <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-right"/></svg>
+                  <span>Medium</span>
+                  <span class="ms-auto font-monospace fs-xs fg-3">33</span>
+                </label>
+                <label class="menu-item" for="filter-priority-high">
+                  <input type="checkbox" class="check check-sm" id="filter-priority-high" checked>
+                  <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-up"/></svg>
+                  <span>High</span>
+                  <span class="ms-auto font-monospace fs-xs fg-3">31</span>
+                </label>
+                <hr class="menu-divider">
+                <button class="menu-item justify-content-center" type="button">Clear filters</button>
+            </div>
+            <button type="button" class="btn-text theme-secondary btn-sm">
+              Reset
+              <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#x"/></svg>
+            </button>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <button type="button" class="btn-outline theme-secondary btn-sm d-none lg:d-inline-flex" data-bs-toggle="menu" data-bs-placement="bottom-end" aria-expanded="false">
+              <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#settings-2"/></svg>
+              View
+            </button>
+            <div class="menu" style="--bs-menu-min-width: 150px;">
+              <h6 class="menu-header">Toggle columns</h6>
+              <hr class="menu-divider">
+              <button class="menu-item selected text-capitalize" type="button" role="menuitemcheckbox" aria-checked="true">
+                title
+                <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+              </button>
+              <button class="menu-item selected text-capitalize" type="button" role="menuitemcheckbox" aria-checked="true">
+                status
+                <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+              </button>
+              <button class="menu-item selected text-capitalize" type="button" role="menuitemcheckbox" aria-checked="true">
+                priority
+                <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+              </button>
+            </div>
+            <button type="button" class="btn-solid theme-primary btn-sm">Add Task</button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="border rounded overflow-x-auto">
+          <table class="table tasks-table align-middle mb-0">
+            <thead>
+              <tr>
+                <th scope="col"><input type="checkbox" class="check check-sm d-block" id="select-all" aria-label="Select all"></th>
+                <th scope="col" class="fw-medium">Task</th>
+                <th scope="col">
+                  <button type="button" class="btn-text theme-secondary btn-sm fw-medium" data-bs-toggle="menu" data-bs-strategy="fixed" aria-expanded="false">
+                        Title
+                        <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#chevrons-up-down"/></svg>
+                      </button>
+                      <div class="menu">
+                        <button class="menu-item" type="button"><svg class="bi menu-item-icon fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-up"/></svg> Asc</button>
+                        <button class="menu-item" type="button"><svg class="bi menu-item-icon fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-down"/></svg> Desc</button>
+                        <hr class="menu-divider">
+                        <button class="menu-item" type="button"><svg class="bi menu-item-icon fg-3" width="16" height="16" aria-hidden="true"><use href="#eye-off"/></svg> Hide</button>
+                      </div>
+                </th>
+                <th scope="col">
+                  <button type="button" class="btn-text theme-secondary btn-sm fw-medium" data-bs-toggle="menu" data-bs-strategy="fixed" aria-expanded="false">
+                        Status
+                        <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#chevrons-up-down"/></svg>
+                      </button>
+                      <div class="menu">
+                        <button class="menu-item" type="button"><svg class="bi menu-item-icon fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-up"/></svg> Asc</button>
+                        <button class="menu-item" type="button"><svg class="bi menu-item-icon fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-down"/></svg> Desc</button>
+                        <hr class="menu-divider">
+                        <button class="menu-item" type="button"><svg class="bi menu-item-icon fg-3" width="16" height="16" aria-hidden="true"><use href="#eye-off"/></svg> Hide</button>
+                      </div>
+                </th>
+                <th scope="col">
+                  <button type="button" class="btn-text theme-secondary btn-sm fw-medium" data-bs-toggle="menu" data-bs-strategy="fixed" aria-expanded="false">
+                        Priority
+                        <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#chevrons-up-down"/></svg>
+                      </button>
+                      <div class="menu">
+                        <button class="menu-item" type="button"><svg class="bi menu-item-icon fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-up"/></svg> Asc</button>
+                        <button class="menu-item" type="button"><svg class="bi menu-item-icon fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-down"/></svg> Desc</button>
+                        <hr class="menu-divider">
+                        <button class="menu-item" type="button"><svg class="bi menu-item-icon fg-3" width="16" height="16" aria-hidden="true"><use href="#eye-off"/></svg> Hide</button>
+                      </div>
+                </th>
+                <th scope="col"><span class="visually-hidden">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr>
+                  <td><input type="checkbox" class="check check-sm d-block" aria-label="Select row"></td>
+                  <td class="text-nowrap">TASK-8782</td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge badge-outline theme-secondary fw-medium">Documentation</span>
+                      <span class="tasks-title text-truncate fw-medium">You can&#39;t compress the program without quantifying the open-source SSD pixel!</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2 text-nowrap">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#timer"/></svg>
+                      <span>In Progress</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-right"/></svg>
+                      <span>Medium</span>
+                    </div>
+                  </td>
+                  <td>
+                    <button type="button" class="btn-text theme-secondary btn-sm btn-icon" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false">
+                      <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#ellipsis"/></svg>
+                      <span class="visually-hidden">Open menu</span>
+                    </button>
+                    <div class="menu">
+                      <button class="menu-item" type="button">Edit</button>
+                      <button class="menu-item" type="button">Make a copy</button>
+                      <button class="menu-item" type="button">Favorite</button>
+                      <hr class="menu-divider">
+                      <div class="submenu">
+                        <button class="menu-item" type="button">Labels</button>
+                        <div class="menu">
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Bug
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Feature
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item selected" type="button" role="menuitemradio" aria-checked="true">
+                          Documentation
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        </div>
+                      </div>
+                      <hr class="menu-divider">
+                      <button class="menu-item theme-danger" type="button">
+                        Delete
+                        <span class="ms-auto fs-xs">⌘⌫</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="table-active">
+                  <td><input type="checkbox" class="check check-sm d-block" aria-label="Select row" checked></td>
+                  <td class="text-nowrap">TASK-7878</td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge badge-outline theme-secondary fw-medium">Documentation</span>
+                      <span class="tasks-title text-truncate fw-medium">Try to calculate the EXE feed, maybe it will index the multi-byte pixel!</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2 text-nowrap">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#circle-help"/></svg>
+                      <span>Backlog</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-right"/></svg>
+                      <span>Medium</span>
+                    </div>
+                  </td>
+                  <td>
+                    <button type="button" class="btn-text theme-secondary btn-sm btn-icon" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false">
+                      <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#ellipsis"/></svg>
+                      <span class="visually-hidden">Open menu</span>
+                    </button>
+                    <div class="menu">
+                      <button class="menu-item" type="button">Edit</button>
+                      <button class="menu-item" type="button">Make a copy</button>
+                      <button class="menu-item" type="button">Favorite</button>
+                      <hr class="menu-divider">
+                      <div class="submenu">
+                        <button class="menu-item" type="button">Labels</button>
+                        <div class="menu">
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Bug
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Feature
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item selected" type="button" role="menuitemradio" aria-checked="true">
+                          Documentation
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        </div>
+                      </div>
+                      <hr class="menu-divider">
+                      <button class="menu-item theme-danger" type="button">
+                        Delete
+                        <span class="ms-auto fs-xs">⌘⌫</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="table-active">
+                  <td><input type="checkbox" class="check check-sm d-block" aria-label="Select row" checked></td>
+                  <td class="text-nowrap">TASK-7839</td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge badge-outline theme-secondary fw-medium">Bug</span>
+                      <span class="tasks-title text-truncate fw-medium">We need to bypass the neural TCP card!</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2 text-nowrap">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#circle"/></svg>
+                      <span>Todo</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-up"/></svg>
+                      <span>High</span>
+                    </div>
+                  </td>
+                  <td>
+                    <button type="button" class="btn-text theme-secondary btn-sm btn-icon" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false">
+                      <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#ellipsis"/></svg>
+                      <span class="visually-hidden">Open menu</span>
+                    </button>
+                    <div class="menu">
+                      <button class="menu-item" type="button">Edit</button>
+                      <button class="menu-item" type="button">Make a copy</button>
+                      <button class="menu-item" type="button">Favorite</button>
+                      <hr class="menu-divider">
+                      <div class="submenu">
+                        <button class="menu-item" type="button">Labels</button>
+                        <div class="menu">
+                        <button class="menu-item selected" type="button" role="menuitemradio" aria-checked="true">
+                          Bug
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Feature
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Documentation
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        </div>
+                      </div>
+                      <hr class="menu-divider">
+                      <button class="menu-item theme-danger" type="button">
+                        Delete
+                        <span class="ms-auto fs-xs">⌘⌫</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="check check-sm d-block" aria-label="Select row"></td>
+                  <td class="text-nowrap">TASK-5562</td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge badge-outline theme-secondary fw-medium">Feature</span>
+                      <span class="tasks-title text-truncate fw-medium">The SAS interface is down, bypass the open-source pixel so we can back up the PNG bandwidth!</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2 text-nowrap">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#circle-help"/></svg>
+                      <span>Backlog</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-right"/></svg>
+                      <span>Medium</span>
+                    </div>
+                  </td>
+                  <td>
+                    <button type="button" class="btn-text theme-secondary btn-sm btn-icon" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false">
+                      <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#ellipsis"/></svg>
+                      <span class="visually-hidden">Open menu</span>
+                    </button>
+                    <div class="menu">
+                      <button class="menu-item" type="button">Edit</button>
+                      <button class="menu-item" type="button">Make a copy</button>
+                      <button class="menu-item" type="button">Favorite</button>
+                      <hr class="menu-divider">
+                      <div class="submenu">
+                        <button class="menu-item" type="button">Labels</button>
+                        <div class="menu">
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Bug
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item selected" type="button" role="menuitemradio" aria-checked="true">
+                          Feature
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Documentation
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        </div>
+                      </div>
+                      <hr class="menu-divider">
+                      <button class="menu-item theme-danger" type="button">
+                        Delete
+                        <span class="ms-auto fs-xs">⌘⌫</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="check check-sm d-block" aria-label="Select row"></td>
+                  <td class="text-nowrap">TASK-8686</td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge badge-outline theme-secondary fw-medium">Feature</span>
+                      <span class="tasks-title text-truncate fw-medium">I&#39;ll parse the wireless SSL protocol, that should driver the API panel!</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2 text-nowrap">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#circle-off"/></svg>
+                      <span>Canceled</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-right"/></svg>
+                      <span>Medium</span>
+                    </div>
+                  </td>
+                  <td>
+                    <button type="button" class="btn-text theme-secondary btn-sm btn-icon" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false">
+                      <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#ellipsis"/></svg>
+                      <span class="visually-hidden">Open menu</span>
+                    </button>
+                    <div class="menu">
+                      <button class="menu-item" type="button">Edit</button>
+                      <button class="menu-item" type="button">Make a copy</button>
+                      <button class="menu-item" type="button">Favorite</button>
+                      <hr class="menu-divider">
+                      <div class="submenu">
+                        <button class="menu-item" type="button">Labels</button>
+                        <div class="menu">
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Bug
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item selected" type="button" role="menuitemradio" aria-checked="true">
+                          Feature
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Documentation
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        </div>
+                      </div>
+                      <hr class="menu-divider">
+                      <button class="menu-item theme-danger" type="button">
+                        Delete
+                        <span class="ms-auto fs-xs">⌘⌫</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="check check-sm d-block" aria-label="Select row"></td>
+                  <td class="text-nowrap">TASK-1280</td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge badge-outline theme-secondary fw-medium">Bug</span>
+                      <span class="tasks-title text-truncate fw-medium">Use the digital TLS panel, then you can transmit the haptic system!</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2 text-nowrap">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#circle-check-big"/></svg>
+                      <span>Done</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-up"/></svg>
+                      <span>High</span>
+                    </div>
+                  </td>
+                  <td>
+                    <button type="button" class="btn-text theme-secondary btn-sm btn-icon" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false">
+                      <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#ellipsis"/></svg>
+                      <span class="visually-hidden">Open menu</span>
+                    </button>
+                    <div class="menu">
+                      <button class="menu-item" type="button">Edit</button>
+                      <button class="menu-item" type="button">Make a copy</button>
+                      <button class="menu-item" type="button">Favorite</button>
+                      <hr class="menu-divider">
+                      <div class="submenu">
+                        <button class="menu-item" type="button">Labels</button>
+                        <div class="menu">
+                        <button class="menu-item selected" type="button" role="menuitemradio" aria-checked="true">
+                          Bug
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Feature
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Documentation
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        </div>
+                      </div>
+                      <hr class="menu-divider">
+                      <button class="menu-item theme-danger" type="button">
+                        Delete
+                        <span class="ms-auto fs-xs">⌘⌫</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="check check-sm d-block" aria-label="Select row"></td>
+                  <td class="text-nowrap">TASK-7262</td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge badge-outline theme-secondary fw-medium">Feature</span>
+                      <span class="tasks-title text-truncate fw-medium">The UTF8 application is down, parse the neural bandwidth so we can back up the PNG firewall!</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2 text-nowrap">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#circle-check-big"/></svg>
+                      <span>Done</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-up"/></svg>
+                      <span>High</span>
+                    </div>
+                  </td>
+                  <td>
+                    <button type="button" class="btn-text theme-secondary btn-sm btn-icon" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false">
+                      <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#ellipsis"/></svg>
+                      <span class="visually-hidden">Open menu</span>
+                    </button>
+                    <div class="menu">
+                      <button class="menu-item" type="button">Edit</button>
+                      <button class="menu-item" type="button">Make a copy</button>
+                      <button class="menu-item" type="button">Favorite</button>
+                      <hr class="menu-divider">
+                      <div class="submenu">
+                        <button class="menu-item" type="button">Labels</button>
+                        <div class="menu">
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Bug
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item selected" type="button" role="menuitemradio" aria-checked="true">
+                          Feature
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Documentation
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        </div>
+                      </div>
+                      <hr class="menu-divider">
+                      <button class="menu-item theme-danger" type="button">
+                        Delete
+                        <span class="ms-auto fs-xs">⌘⌫</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="check check-sm d-block" aria-label="Select row"></td>
+                  <td class="text-nowrap">TASK-1138</td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge badge-outline theme-secondary fw-medium">Feature</span>
+                      <span class="tasks-title text-truncate fw-medium">Generating the driver won&#39;t do anything, we need to quantify the 1080p SMTP bandwidth!</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2 text-nowrap">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#timer"/></svg>
+                      <span>In Progress</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-right"/></svg>
+                      <span>Medium</span>
+                    </div>
+                  </td>
+                  <td>
+                    <button type="button" class="btn-text theme-secondary btn-sm btn-icon" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false">
+                      <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#ellipsis"/></svg>
+                      <span class="visually-hidden">Open menu</span>
+                    </button>
+                    <div class="menu">
+                      <button class="menu-item" type="button">Edit</button>
+                      <button class="menu-item" type="button">Make a copy</button>
+                      <button class="menu-item" type="button">Favorite</button>
+                      <hr class="menu-divider">
+                      <div class="submenu">
+                        <button class="menu-item" type="button">Labels</button>
+                        <div class="menu">
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Bug
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item selected" type="button" role="menuitemradio" aria-checked="true">
+                          Feature
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Documentation
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        </div>
+                      </div>
+                      <hr class="menu-divider">
+                      <button class="menu-item theme-danger" type="button">
+                        Delete
+                        <span class="ms-auto fs-xs">⌘⌫</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="check check-sm d-block" aria-label="Select row"></td>
+                  <td class="text-nowrap">TASK-5160</td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge badge-outline theme-secondary fw-medium">Documentation</span>
+                      <span class="tasks-title text-truncate fw-medium">Calculating the bus won&#39;t do anything, we need to navigate the back-end JSON protocol!</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2 text-nowrap">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#timer"/></svg>
+                      <span>In Progress</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-up"/></svg>
+                      <span>High</span>
+                    </div>
+                  </td>
+                  <td>
+                    <button type="button" class="btn-text theme-secondary btn-sm btn-icon" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false">
+                      <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#ellipsis"/></svg>
+                      <span class="visually-hidden">Open menu</span>
+                    </button>
+                    <div class="menu">
+                      <button class="menu-item" type="button">Edit</button>
+                      <button class="menu-item" type="button">Make a copy</button>
+                      <button class="menu-item" type="button">Favorite</button>
+                      <hr class="menu-divider">
+                      <div class="submenu">
+                        <button class="menu-item" type="button">Labels</button>
+                        <div class="menu">
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Bug
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Feature
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item selected" type="button" role="menuitemradio" aria-checked="true">
+                          Documentation
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        </div>
+                      </div>
+                      <hr class="menu-divider">
+                      <button class="menu-item theme-danger" type="button">
+                        Delete
+                        <span class="ms-auto fs-xs">⌘⌫</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="check check-sm d-block" aria-label="Select row"></td>
+                  <td class="text-nowrap">TASK-5618</td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="badge badge-outline theme-secondary fw-medium">Documentation</span>
+                      <span class="tasks-title text-truncate fw-medium">Generating the driver won&#39;t do anything, we need to index the online SSL application!</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2 text-nowrap">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#circle-check-big"/></svg>
+                      <span>Done</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <svg class="bi fg-3" width="16" height="16" aria-hidden="true"><use href="#arrow-right"/></svg>
+                      <span>Medium</span>
+                    </div>
+                  </td>
+                  <td>
+                    <button type="button" class="btn-text theme-secondary btn-sm btn-icon" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false">
+                      <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#ellipsis"/></svg>
+                      <span class="visually-hidden">Open menu</span>
+                    </button>
+                    <div class="menu">
+                      <button class="menu-item" type="button">Edit</button>
+                      <button class="menu-item" type="button">Make a copy</button>
+                      <button class="menu-item" type="button">Favorite</button>
+                      <hr class="menu-divider">
+                      <div class="submenu">
+                        <button class="menu-item" type="button">Labels</button>
+                        <div class="menu">
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Bug
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item" type="button" role="menuitemradio" aria-checked="false">
+                          Feature
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        <button class="menu-item selected" type="button" role="menuitemradio" aria-checked="true">
+                          Documentation
+                          <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                        </button>
+                        </div>
+                      </div>
+                      <hr class="menu-divider">
+                      <button class="menu-item theme-danger" type="button">
+                        Delete
+                        <span class="ms-auto fs-xs">⌘⌫</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 px-2">
+          <div class="flex-fill fs-sm fg-3 text-nowrap" id="selection-count">2 of 64 row(s) selected.</div>
+          <div class="d-flex align-items-center gap-6 lg:gap-9">
+            <div class="d-flex align-items-center gap-2">
+              <label for="rows-per-page" class="fs-sm fw-medium text-nowrap">Rows per page</label>
+              <select class="form-control form-control-sm w-auto" id="rows-per-page">
+                <option selected>10</option>
+                <option>20</option>
+                <option>25</option>
+                <option>30</option>
+                <option>40</option>
+                <option>50</option>
+              </select>
+            </div>
+            <div class="fs-sm fw-medium text-nowrap">Page 1 of 7</div>
+            <div class="d-flex align-items-center gap-2">
+              <button type="button" class="btn-outline theme-secondary btn-sm btn-icon d-none lg:d-inline-flex" disabled>
+                <span class="visually-hidden">Go to first page</span>
+                <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#chevrons-left"/></svg>
+              </button>
+              <button type="button" class="btn-outline theme-secondary btn-sm btn-icon" disabled>
+                <span class="visually-hidden">Go to previous page</span>
+                <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#chevron-left"/></svg>
+              </button>
+              <button type="button" class="btn-outline theme-secondary btn-sm btn-icon">
+                <span class="visually-hidden">Go to next page</span>
+                <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#chevron-right"/></svg>
+              </button>
+              <button type="button" class="btn-outline theme-secondary btn-sm btn-icon d-none lg:d-inline-flex">
+                <span class="visually-hidden">Go to last page</span>
+                <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#chevrons-right"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module">
+      // Row selection: highlight selected rows, keep the "select all" box and the count in sync.
+      const selectAll = document.querySelector('#select-all')
+      const boxes = [...document.querySelectorAll('tbody .check')]
+      const count = document.querySelector('#selection-count')
+      const sync = () => {
+        const n = boxes.filter(box => box.checked).length
+        for (const box of boxes) box.closest('tr').classList.toggle('table-active', box.checked)
+        selectAll.checked = n === boxes.length
+        selectAll.indeterminate = n > 0 && n < boxes.length
+        count.textContent = count.textContent.replace(/^\d+/, n)
+      }
+      selectAll.addEventListener('change', () => {
+        for (const box of boxes) box.checked = selectAll.checked
+        sync()
+      })
+      for (const box of boxes) box.addEventListener('change', sync)
+      sync()
+    </script>
+  </body>
+</html>

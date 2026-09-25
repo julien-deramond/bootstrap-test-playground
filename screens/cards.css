@@ -1,0 +1,47 @@
+/*
+ * Glue for the cards showcase. Everything else comes from Bootstrap
+ * components and utilities.
+ */
+
+/* Icon sizing for the inline SVG sprite: Bootstrap has no icon class. */
+.bi {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+}
+
+/*
+ * Masonry grid. Tailwind's `md:max-w-3xl`, `xl:max-w-[1600px]`,
+ * `2xl:max-w-[1900px]`: `.max-w-*` only has 100%. `.grid-cols-*` stops at 4
+ * and skips 5, so the fifth column (`min-[1900px]:grid-cols-5`) is added here.
+ */
+@media (min-width: 768px) {
+  .cards-grid { max-width: 48rem; }
+}
+
+@media (min-width: 1024px) {
+  .cards-grid { max-width: none; }
+}
+
+@media (min-width: 1280px) {
+  .cards-grid { max-width: 1600px; }
+}
+
+@media (min-width: 1536px) {
+  .cards-grid {
+    grid-template-columns: repeat(5, 1fr);
+    max-width: 1900px;
+  }
+}
+
+/* Fixed chart and widget sizes: no fixed-length width/height utilities. */
+.cards-bars { height: 140px; }
+.cards-bars-lg { height: 200px; }
+.cards-spark { width: 6rem; height: 2rem; }
+.cards-area { aspect-ratio: 1 / .35; }
+.cards-qr { width: 10rem; height: 10rem; }
+.cards-chat { height: 35rem; }
+
+/* Tailwind `tabular-nums`: no font-variant utility. */
+.cards-tabular { font-variant-numeric: tabular-nums; }

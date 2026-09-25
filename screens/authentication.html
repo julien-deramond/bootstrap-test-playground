@@ -1,0 +1,85 @@
+<!doctype html>
+<!-- Adapted from shadcn/ui's "authentication" example (apps/v4/app/(app)/examples/authentication/), MIT License. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Screens: authentication</title>
+    <meta name="playground-source" content="shadcn/ui example “authentication”" data-url="https://github.com/shadcn-ui/ui/tree/98a1fe67b439324ddc857f47fbdce056600a4329/apps/v4/app/(app)/examples/authentication" data-license="MIT">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <link rel="stylesheet" href="/screens/auth.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <symbol id="command" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></symbol>
+      <symbol id="github" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+    </svg>
+    <div class="position-relative d-grid min-vh-100 lg:grid-cols-2">
+      <a href="#" class="btn-text theme-secondary position-absolute top-0 end-0 mt-5 me-5 md:mt-9 md:me-9">Login</a>
+      <div class="d-none lg:d-flex flex-column p-11 bg-subtle-primary fg-emphasis-primary">
+        <div class="d-flex align-items-center fs-lg fw-medium">
+          <svg class="bi bi-lg me-3" aria-hidden="true"><use href="#command"/></svg>
+          Acme Inc
+        </div>
+        <figure class="blockquote mt-auto mb-0">
+          <blockquote class="text-balance">
+            <p>&ldquo;This library has saved me countless hours of work and helped me deliver stunning designs to my clients faster than ever before.&rdquo;</p>
+          </blockquote>
+          <figcaption class="blockquote-footer fg-emphasis-primary">Sofia Davis</figcaption>
+        </figure>
+      </div>
+      <div class="d-flex align-items-center justify-content-center px-7 py-12 lg:p-9">
+        <div class="mx-auto d-flex w-100 auth-max-350 flex-column justify-content-center gap-7">
+          <div class="d-flex flex-column gap-3 text-center">
+            <h1 class="fs-xl fw-semibold mb-0">Create an account</h1>
+            <p class="fs-sm fg-2 mb-0">Enter your email below to create your account</p>
+          </div>
+          <div class="d-grid gap-7">
+            <form id="user-auth-form" class="d-flex flex-column gap-8">
+              <div class="form-field">
+                <label for="email" class="visually-hidden">Email</label>
+                <input id="email" type="email" class="form-control" placeholder="name@example.com" autocapitalize="none" autocomplete="email" autocorrect="off">
+              </div>
+              <button type="submit" class="btn-solid theme-primary">
+                <span class="spinner-border d-none" aria-hidden="true"></span>
+                Sign In with Email
+              </button>
+            </form>
+            <div class="d-flex align-items-center gap-3 fs-sm fg-2">
+              <hr class="flex-grow-1 m-0">
+              <span>Or continue with</span>
+              <hr class="flex-grow-1 m-0">
+            </div>
+            <button type="button" class="btn-outline theme-secondary" data-auth-loading>
+              <svg class="bi" aria-hidden="true"><use href="#github"/></svg>
+              <span class="spinner-border d-none" aria-hidden="true"></span>
+              GitHub
+            </button>
+          </div>
+          <p class="fs-sm fg-2 text-center px-7 mb-0">By clicking continue, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+        </div>
+      </div>
+    </div>
+    <script type="module">
+      // Mirrors UserAuthForm: submitting disables the controls and shows spinners for 3 seconds.
+      const form = document.getElementById('user-auth-form')
+      const controls = [...form.querySelectorAll('input, button'), document.querySelector('[data-auth-loading]')]
+      form.addEventListener('submit', event => {
+        event.preventDefault()
+        const toggle = loading => {
+          for (const el of controls) {
+            el.disabled = loading
+            el.querySelector('.spinner-border')?.classList.toggle('d-none', !loading)
+            el.querySelector('.bi')?.classList.toggle('d-none', loading)
+          }
+        }
+        toggle(true)
+        setTimeout(() => toggle(false), 3000)
+      })
+    </script>
+  </body>
+</html>

@@ -77,6 +77,7 @@ Then:
 ```text
 index.html               Home: lists every page
 pages/                   Starter screens (dashboard, checkout and sign-in forms, product and pricing marketing)
+screens/                 Real app screens ported from shadcn/ui (dashboard, tasks, authentication, playground, cards, login and signup blocks)
 kitchen-sink/            One page per component or form doc, with all of its docs examples (generated)
 compare.html             Side-by-side comparison of any page
 issues/<name>/           Issue reproductions (index.html + the three config files)
@@ -91,7 +92,15 @@ Every `.html` file under `pages/`, `kitchen-sink/` and `issues/` is picked up au
 
 ### Starter screens
 
-Adapted from Bootstrap's own examples (`site/src/assets/examples/`). They load the shared styles, so they show the working copy, or whichever config you pick in the toolbar.
+Adapted from Bootstrap's own examples (`site/src/assets/examples/`). Like the real screens, each one credits its source with a `playground-source` meta tag (see below). They load the shared styles, so they show the working copy, or whichever config you pick in the toolbar.
+
+### Real screens
+
+Modern application screens ported from [shadcn/ui](https://github.com/shadcn-ui/ui) (MIT): its examples (`apps/v4/app/(app)/examples/`), the cards showcase from its home page, and its login and signup blocks. Each one is rebuilt with Bootstrap v6 components and utilities, and the little custom CSS they need sticks to Bootstrap's tokens. That way they follow the color mode, the direction, the *Primary* hue and the configs. Charts are inline SVG, so there's no chart library.
+
+They're meant as realistic test beds: the places where a screen needs custom CSS point to what Bootstrap is missing.
+
+Each screen credits its source with a `<meta name="playground-source" content="…" data-url="…" data-license="…">` tag in its `<head>`. The toolbar then shows "Adapted from …" with a permalink to the shadcn/ui commit it was ported from, even when collapsed, and the home page lists it next to the page. Any other page adapted from elsewhere can use the same tag.
 
 ### Kitchen sink
 
@@ -140,4 +149,4 @@ Potential Bootstrap bugs found here are tracked as issues in this repository. Ea
 
 ## License
 
-[MIT](LICENSE). The starter screens and kitchen sink examples are adapted from [Bootstrap](https://github.com/twbs/bootstrap), which is also MIT-licensed.
+[MIT](LICENSE). The starter screens and kitchen sink examples are adapted from [Bootstrap](https://github.com/twbs/bootstrap), which is also MIT-licensed. The real screens are adapted from [shadcn/ui](https://github.com/shadcn-ui/ui), MIT-licensed, see [`screens/LICENSE-shadcn-ui.md`](screens/LICENSE-shadcn-ui.md).

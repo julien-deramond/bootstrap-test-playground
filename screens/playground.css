@@ -1,0 +1,40 @@
+/* Header keeps the original's 4rem height from md up */
+@media (min-width: 768px) {
+  .playground-header { min-height: 4rem; }
+}
+
+/* Preset combobox: grows on small screens, capped like md:max-w-[200px] lg:max-w-[300px] */
+.playground-preset { flex: 1 1 auto; min-width: 0; }
+@media (min-width: 768px) { .playground-preset { max-width: 200px; } }
+@media (min-width: 1024px) { .playground-preset { max-width: 300px; } }
+.playground-preset-menu { --bs-menu-min-width: 300px; }
+
+/* Share "popover" width */
+.playground-share-menu { width: min(520px, calc(100vw - 2rem)); }
+
+/* Model menu: long descriptions must wrap (menu items are nowrap) */
+.playground-model-menu { width: 20rem; --bs-menu-max-height: 400px; }
+.playground-model-menu .menu-item { white-space: normal; }
+.playground-model-menu .menu-item-content { min-width: 0; }
+
+/* Two-column layout: editor + 200px settings column (md:grid-cols-[1fr_200px]) */
+.playground-grid { display: grid; gap: 1.5rem; align-items: stretch; }
+@media (min-width: 768px) {
+  .playground-grid { grid-template-columns: minmax(0, 1fr) 200px; }
+}
+
+/* Slider value readout */
+.playground-range-value { min-width: 3rem; text-align: end; }
+
+/* Editor minimum heights from the original */
+.playground-textarea-lg { min-height: 400px; }
+.playground-textarea-insert, .playground-output-insert { min-height: 300px; }
+.playground-output-edit { min-height: 400px; }
+@media (min-width: 768px) {
+  .playground-textarea-lg { min-height: 700px; }
+}
+@media (min-width: 1024px) {
+  .playground-textarea-insert, .playground-output-insert { min-height: 700px; }
+  .playground-textarea-edit { min-height: 580px; }
+  .playground-output-edit { min-height: 700px; }
+}

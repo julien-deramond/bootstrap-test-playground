@@ -1,0 +1,59 @@
+<!doctype html>
+<!-- Adapted from shadcn/ui's "signup-01" block (apps/v4/registry/new-york-v4/blocks/signup-01/), MIT License. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Screens: signup-01</title>
+    <meta name="playground-source" content="shadcn/ui block “signup-01”" data-url="https://github.com/shadcn-ui/ui/tree/98a1fe67b439324ddc857f47fbdce056600a4329/apps/v4/registry/new-york-v4/blocks/signup-01" data-license="MIT">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <link rel="stylesheet" href="/screens/auth.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+
+    </svg>
+    <main class="d-flex min-vh-100 w-100 flex-column align-items-center justify-content-center gap-7 p-7 md:p-11">
+      <div class="w-100 auth-max-sm">
+        <div class="card">
+          <div class="card-body gap-7">
+            <div class="d-flex flex-column gap-2">
+              <h1 class="card-title fs-md fw-semibold lh-1 mb-0">Create an account</h1>
+              <p class="fs-sm fg-2 mb-0">Enter your information below to create your account</p>
+            </div>
+            <form class="d-flex flex-column gap-8">
+              <div class="form-field">
+                <label for="name" class="form-label">Full Name</label>
+                <input id="name" type="text" class="form-control" placeholder="John Doe" required>
+              </div>
+              <div class="form-field">
+                <label for="email" class="form-label">Email</label>
+                <input id="email" type="email" class="form-control" placeholder="m@example.com" aria-describedby="email-help" required>
+                <div class="form-text" id="email-help">We&apos;ll use this to contact you. We will not share your email with anyone else.</div>
+              </div>
+              <div class="form-field">
+                <label for="password" class="form-label">Password</label>
+                <input id="password" type="password" class="form-control" aria-describedby="password-help" required>
+                <div class="form-text" id="password-help">Must be at least 8 characters long.</div>
+              </div>
+              <div class="form-field">
+                <label for="confirm-password" class="form-label">Confirm Password</label>
+                <input id="confirm-password" type="password" class="form-control" aria-describedby="confirm-password-help" required>
+                <div class="form-text" id="confirm-password-help">Please confirm your password.</div>
+              </div>
+              <div class="d-grid gap-4">
+                <button type="submit" class="btn-solid theme-primary">Create Account</button>
+                <button type="button" class="btn-outline theme-secondary">Sign up with Google</button>
+                <p class="form-text text-center mb-0 px-7">Already have an account? <a href="#">Sign in</a></p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

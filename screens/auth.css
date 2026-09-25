@@ -1,0 +1,32 @@
+/*
+ * Shared glue for the authentication, login-0x and signup-0x screens.
+ * Everything else comes from Bootstrap components and utilities.
+ */
+
+/* Icon sizing for the inline SVG sprite: Bootstrap has no icon class. */
+.bi {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+}
+
+.bi-lg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* Tailwind `max-w-xs`, `max-w-sm`, `sm:w-[350px]` and `md:max-w-4xl`: `.max-w-*` only has 100%. */
+.auth-max-xs { max-width: 20rem; }
+.auth-max-sm { max-width: 24rem; }
+.auth-max-350 { max-width: 350px; }
+
+@media (min-width: 768px) {
+  .auth-max-4xl { max-width: 56rem; }
+}
+
+/* Stand-in for shadcn's /placeholder.svg: a dotted token-colored panel. */
+.auth-placeholder {
+  background-image: radial-gradient(var(--bs-border-color) 1px, transparent 1px);
+  background-size: 1rem 1rem;
+}

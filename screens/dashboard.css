@@ -1,0 +1,50 @@
+/* Page glue for screens/dashboard.html. Everything else comes from Bootstrap. */
+
+@layer custom {
+  /* Inset sidebar layout: fixed-width sidebar and a raised "inset" panel from md up
+     (width, radius and shadow utilities aren't responsive) */
+  @media (width >= 768px) {
+    .app-sidebar {
+      width: 18rem;
+    }
+
+    .app-inset {
+      border-radius: var(--bs-radius-7);
+      box-shadow: var(--bs-box-shadow-sm);
+    }
+  }
+
+  /* The sidebar sits on `bg-1`, the same color as the nav's default hover background */
+  .app-sidebar .nav {
+    --bs-nav-link-hover-bg: var(--bs-bg-3);
+    --bs-nav-link-active-bg: var(--bs-bg-3);
+  }
+
+  /* shadcn's `showOnHover` sidebar menu action */
+  @media (hover: hover) and (width >= 768px) {
+    .app-sidebar .nav-item:not(:hover, :focus-within, .show) > .sidebar-action {
+      opacity: 0;
+    }
+  }
+
+  /* `bg-gradient-to-t from-primary/5 to-card` on the section cards */
+  .section-card {
+    background-image: linear-gradient(to top, color-mix(in oklch, var(--bs-primary-bg) 5%, var(--bs-bg-body)), var(--bs-bg-body));
+  }
+
+  /* Table header on `bg-muted` */
+  .data-table > thead {
+    --bs-table-bg: var(--bs-bg-1);
+  }
+
+  /* The table sits in a bordered wrapper: drop the last row's bottom border */
+  .data-table > tbody > tr:last-child > * {
+    border-block-end-width: 0;
+  }
+
+  /* `border border-dashed` placeholders: no border-style utility in v6, and `.border`
+     (utilities layer) would override a border-style set here */
+  .border-dashed {
+    border: var(--bs-border-width) dashed var(--bs-border-color);
+  }
+}

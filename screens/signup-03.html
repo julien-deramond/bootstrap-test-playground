@@ -1,0 +1,65 @@
+<!doctype html>
+<!-- Adapted from shadcn/ui's "signup-03" block (apps/v4/registry/new-york-v4/blocks/signup-03/), MIT License. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Screens: signup-03</title>
+    <meta name="playground-source" content="shadcn/ui block “signup-03”" data-url="https://github.com/shadcn-ui/ui/tree/98a1fe67b439324ddc857f47fbdce056600a4329/apps/v4/registry/new-york-v4/blocks/signup-03" data-license="MIT">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <link rel="stylesheet" href="/screens/auth.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <symbol id="gallery-vertical-end" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2h10"/><path d="M5 6h14"/><rect width="18" height="12" x="3" y="10" rx="2"/></symbol>
+    </svg>
+    <main class="d-flex min-vh-100 flex-column align-items-center justify-content-center p-7 md:p-11 bg-1">
+      <div class="d-flex w-100 auth-max-sm flex-column gap-7">
+        <a href="#" class="d-flex align-items-center gap-3 fw-medium fg-body text-decoration-none align-self-center">
+          <span class="avatar avatar-xs theme-primary rounded-4"><svg class="bi" aria-hidden="true"><use href="#gallery-vertical-end"/></svg></span>
+          Acme Inc.
+        </a>
+        <div class="card">
+          <div class="card-body gap-7">
+            <div class="d-flex flex-column gap-2 text-center">
+              <h1 class="card-title fs-lg fw-semibold lh-1 mb-0">Create your account</h1>
+              <p class="fs-sm fg-2 mb-0">Enter your email below to create your account</p>
+            </div>
+            <form class="d-flex flex-column gap-8">
+              <div class="form-field">
+                <label for="name" class="form-label">Full Name</label>
+                <input id="name" type="text" class="form-control" placeholder="John Doe" required>
+              </div>
+              <div class="form-field">
+                <label for="email" class="form-label">Email</label>
+                <input id="email" type="email" class="form-control" placeholder="m@example.com" required>
+              </div>
+              <div class="form-field">
+                <div class="d-grid grid-cols-2 gap-5">
+                  <div class="form-field">
+                    <label for="password" class="form-label">Password</label>
+                    <input id="password" type="password" class="form-control" aria-describedby="password-help" required>
+                  </div>
+                  <div class="form-field">
+                    <label for="confirm-password" class="form-label">Confirm Password</label>
+                    <input id="confirm-password" type="password" class="form-control" aria-describedby="password-help" required>
+                  </div>
+                </div>
+                <div class="form-text" id="password-help">Must be at least 8 characters long.</div>
+              </div>
+              <div class="d-grid gap-4">
+                <button type="submit" class="btn-solid theme-primary">Create Account</button>
+                <p class="form-text text-center mb-0">Already have an account? <a href="#">Sign in</a></p>
+              </div>
+            </form>
+          </div>
+        </div>
+        <p class="fs-sm fg-2 text-center text-balance px-7 mb-0">By clicking continue, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+      </div>
+    </main>
+  </body>
+</html>

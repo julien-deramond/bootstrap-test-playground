@@ -11,6 +11,6 @@ document.getElementById('page-groups').innerHTML = groups.map(({ label, dir, pag
     ${pages.length === 0 ?
       `<p class="fg-3">Nothing here yet.${dir === 'issues' ? ' Run <code>npm run new-issue 12345</code> to create one.' : ''}</p>` :
       `<ul class="list-group">
-        ${pages.map(({ url, title }) => `<li class="list-group-item"><a href="${url}">${escapeHtml(title)}</a> <code class="fg-3 ms-2">${url}</code></li>`).join('')}
+        ${pages.map(({ url, title, source }) => `<li class="list-group-item"><a href="${url}">${escapeHtml(title)}</a> <code class="fg-3 ms-2">${url}</code>${source ? ` <span class="fg-3 fs-sm ms-2">from <a class="fg-3" href="${escapeHtml(source.url)}">${escapeHtml(source.label)}</a></span>` : ''}</li>`).join('')}
       </ul>`}
   </section>`).join('')

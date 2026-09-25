@@ -1,0 +1,775 @@
+<!doctype html>
+<!-- Adapted from shadcn/ui's "cards" showcase (apps/v4/app/(app)/(root)/cards/), MIT License. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Screens: cards</title>
+    <meta name="playground-source" content="shadcn/ui showcase “cards”" data-url="https://github.com/shadcn-ui/ui/tree/98a1fe67b439324ddc857f47fbdce056600a4329/apps/v4/app/(app)/(root)/cards" data-license="MIT">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <link rel="stylesheet" href="/screens/cards.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body class="bg-1">
+    <!-- Icons: Lucide (ISC License), redrawn as a stroke sprite. -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <symbol id="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+      <symbol id="arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+      <symbol id="arrow-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></symbol>
+      <symbol id="chevron-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></symbol>
+      <symbol id="chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol>
+      <symbol id="search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+      <symbol id="plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+      <symbol id="lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+      <symbol id="circle-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+      <symbol id="circle-ellipsis" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M17 12h.01"/><path d="M12 12h.01"/><path d="M7 12h.01"/></symbol>
+      <symbol id="settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></symbol>
+      <symbol id="calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+      <symbol id="refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+      <symbol id="rotate-cw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></symbol>
+      <symbol id="chart-column" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
+      <symbol id="arrow-left-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></symbol>
+      <symbol id="trending-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 7 13.5 15.5l-5-5L2 17"/><path d="M16 7h6v6"/></symbol>
+      <symbol id="landmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="m12 2 8 5H4z"/></symbol>
+      <symbol id="pie-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></symbol>
+      <symbol id="file-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+      <symbol id="wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+      <symbol id="chart-line" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></symbol>
+      <symbol id="target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+      <symbol id="help-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+      <symbol id="book-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+      <symbol id="message-square" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+      <symbol id="activity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+      <symbol id="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+      <symbol id="user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+      <symbol id="credit-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></symbol>
+      <symbol id="bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+      <symbol id="shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+      <symbol id="palette" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.84-.44-1.13-.29-.29-.44-.65-.44-1.13a1.64 1.64 0 0 1 1.67-1.67h2c3.05 0 5.55-2.5 5.55-5.55C21.97 6.01 17.46 2 12 2z"/></symbol>
+      <symbol id="paperclip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></symbol>
+      <symbol id="image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/></symbol>
+      <symbol id="telescope" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.07 12.49-6.18 1.32a.93.93 0 0 1-1.11-.7l-.54-2.15a1.07 1.07 0 0 1 .69-1.27l13.5-4.44"/><path d="m13.56 11.75 4.33-.93"/><path d="m16 21-3.1-6.21"/><path d="M16.49 5.94a2 2 0 0 1 1.45-2.43l1.09-.27a1 1 0 0 1 1.21.73l1.52 6.06a1 1 0 0 1-.73 1.21l-1.09.27a2 2 0 0 1-2.43-1.45z"/><path d="m6.16 8.63 1.11 4.46"/><path d="m8 21 3.1-6.21"/><circle cx="12" cy="13" r="2"/></symbol>
+    </svg>
+
+    <main class="p-12 lg:p-7 2xl:p-12">
+      <div class="cards-grid d-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-9 lg:gap-7 2xl:gap-11 mx-auto">
+
+        <!-- Column 1: always visible -->
+        <div class="d-flex flex-column gap-9 lg:gap-7 2xl:gap-11 min-w-0">
+
+          <!-- UI elements -->
+          <section class="card shadow-xs fs-sm" aria-label="UI elements">
+            <div class="card-body gap-7">
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn-solid theme-primary">
+                  Button
+                  <svg class="bi" aria-hidden="true"><use href="#arrow-right"/></svg>
+                </button>
+                <button type="button" class="btn-solid theme-secondary">Secondary</button>
+                <button type="button" class="btn-outline theme-secondary">Outline</button>
+              </div>
+              <div class="d-flex flex-column gap-5">
+                <label class="form-control form-adorn form-adorn-end">
+                  <span class="form-adorn-icon" aria-hidden="true">
+                    <svg class="bi"><use href="#search"/></svg>
+                  </span>
+                  <input type="text" class="form-ghost" placeholder="Name" aria-label="Name">
+                </label>
+                <textarea class="form-control" rows="3" placeholder="Message" aria-label="Message"></textarea>
+              </div>
+              <div class="d-flex flex-wrap align-items-center gap-2">
+                <div class="d-flex gap-2">
+                  <span class="badge theme-primary">Badge</span>
+                  <span class="badge badge-subtle theme-secondary">Secondary</span>
+                </div>
+                <div class="d-flex gap-3 ms-auto" role="radiogroup" aria-label="Fruit preference">
+                  <input type="radio" class="radio" name="cardsFruit" value="apple" aria-label="Apple" checked>
+                  <input type="radio" class="radio" name="cardsFruit" value="banana" aria-label="Banana">
+                </div>
+                <input type="checkbox" class="check" aria-label="Enable email alerts" checked>
+                <div class="switch">
+                  <input type="checkbox" role="switch" switch aria-label="Enable compact notifications" checked>
+                </div>
+              </div>
+              <div class="d-flex flex-wrap align-items-center gap-4">
+                <button type="button" class="btn-outline theme-secondary" data-bs-toggle="dialog" data-bs-target="#cardsAlertDialog">
+                  <span class="d-none md:d-inline">Alert Dialog</span>
+                  <span class="md:d-none">Dialog</span>
+                </button>
+                <div class="btn-group ms-auto">
+                  <button type="button" class="btn-outline theme-secondary">Button Group</button>
+                  <button type="button" class="btn-outline theme-secondary btn-icon" data-bs-toggle="menu" data-bs-placement="top-end" aria-expanded="false" aria-label="Open quick actions">
+                    <svg class="bi" aria-hidden="true"><use href="#chevron-up"/></svg>
+                  </button>
+                  <div class="menu">
+                    <h6 class="menu-header">Quick Actions</h6>
+                    <button type="button" class="menu-item">Mute Conversation</button>
+                    <button type="button" class="menu-item">Mark as Read</button>
+                    <button type="button" class="menu-item">Block User</button>
+                    <hr class="menu-divider">
+                    <button type="button" class="menu-item theme-danger">Delete Conversation</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Sidebar nav: four sections, reordered in two columns from xl -->
+          <div class="d-grid grid-cols-2 gap-5 xl:gap-7">
+            <nav class="card shadow-xs rounded-9 overflow-hidden xl:order-3" aria-labelledby="cardsNavOverview">
+              <div class="card-body p-2 gap-1">
+                <h2 class="fs-xs fw-medium fg-3 px-3 py-2 mb-0" id="cardsNavOverview">Overview</h2>
+                <ul class="nav flex-column flex-nowrap fs-sm">
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3 active" aria-current="page" href="#"><svg class="bi" aria-hidden="true"><use href="#chart-column"/></svg><span class="text-truncate">Analytics</span></a></li>
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#arrow-left-right"/></svg><span class="text-truncate">Transactions</span></a></li>
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#trending-up"/></svg><span class="text-truncate">Investments</span></a></li>
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#landmark"/></svg><span class="text-truncate">Accounts</span></a></li>
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#pie-chart"/></svg><span class="text-truncate">Spending</span></a></li>
+                </ul>
+              </div>
+            </nav>
+            <nav class="card shadow-xs rounded-9 overflow-hidden xl:order-1" aria-labelledby="cardsNavPlanning">
+              <div class="card-body p-2 gap-1">
+                <h2 class="fs-xs fw-medium fg-3 px-3 py-2 mb-0" id="cardsNavPlanning">Planning</h2>
+                <ul class="nav flex-column flex-nowrap fs-sm">
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#file-text"/></svg><span class="text-truncate">Documents</span></a></li>
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#wallet"/></svg><span class="text-truncate">Budget</span></a></li>
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#chart-line"/></svg><span class="text-truncate">Reports</span></a></li>
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#target"/></svg><span class="text-truncate">Goals</span></a></li>
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#calendar"/></svg><span class="text-truncate">Calendar</span></a></li>
+                </ul>
+              </div>
+            </nav>
+            <nav class="card shadow-xs rounded-9 overflow-hidden xl:order-2" aria-labelledby="cardsNavSupport">
+              <div class="card-body p-2 gap-1">
+                <h2 class="fs-xs fw-medium fg-3 px-3 py-2 mb-0" id="cardsNavSupport">Support</h2>
+                <ul class="nav flex-column flex-nowrap fs-sm">
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#help-circle"/></svg><span class="text-truncate">Help Center</span></a></li>
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#book-open"/></svg><span class="text-truncate">Docs</span></a></li>
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#message-square"/></svg><span class="text-truncate">Contact Us</span></a></li>
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#activity"/></svg><span class="text-truncate">Status</span></a></li>
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#globe"/></svg><span class="text-truncate">Community</span></a></li>
+                </ul>
+              </div>
+            </nav>
+            <nav class="card shadow-xs rounded-9 overflow-hidden xl:order-4" aria-labelledby="cardsNavAccount">
+              <div class="card-body p-2 gap-1">
+                <h2 class="fs-xs fw-medium fg-3 px-3 py-2 mb-0" id="cardsNavAccount">Account</h2>
+                <ul class="nav flex-column flex-nowrap fs-sm">
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#user"/></svg><span class="text-truncate">Profile</span></a></li>
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3 active" aria-current="page" href="#"><svg class="bi" aria-hidden="true"><use href="#credit-card"/></svg><span class="text-truncate">Billing</span></a></li>
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#bell"/></svg><span class="text-truncate">Notifications</span></a></li>
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#shield"/></svg><span class="text-truncate">Security</span></a></li>
+                  <li class="nav-item"><a class="nav-link justify-content-start w-100 px-3" href="#"><svg class="bi" aria-hidden="true"><use href="#palette"/></svg><span class="text-truncate">Appearance</span></a></li>
+                </ul>
+              </div>
+            </nav>
+          </div>
+
+          <!-- Savings targets -->
+          <section class="card shadow-xs fs-sm" aria-labelledby="cardsSavingsTitle">
+            <div class="card-body gap-6">
+              <div>
+                <h2 class="card-title fs-md fw-medium mb-1" id="cardsSavingsTitle">Savings Targets</h2>
+                <p class="fg-3 mb-0">Active milestones for 2024 across your portfolio. Monitor how close you are to each savings goal.</p>
+              </div>
+              <div class="d-flex flex-column gap-3" role="list">
+                <div class="d-flex flex-column gap-3 bg-2 rounded-7 px-5 py-4" role="listitem">
+                  <span class="fs-xs fw-medium fg-3 text-uppercase">Retirement</span>
+                  <span class="fs-3xl fw-semibold cards-tabular">$420,000</span>
+                  <div class="progress" role="progressbar" aria-label="Retirement savings progress" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar" style="width: 65%"></div>
+                  </div>
+                  <div class="d-flex justify-content-between gap-2">
+                    <span class="fg-3">65% achieved</span>
+                    <span class="fw-medium cards-tabular">$273,000</span>
+                  </div>
+                </div>
+                <div class="d-flex flex-column gap-3 bg-2 rounded-7 px-5 py-4" role="listitem">
+                  <span class="fs-xs fw-medium fg-3 text-uppercase">Real Estate</span>
+                  <span class="fs-3xl fw-semibold cards-tabular">$85,000</span>
+                  <div class="progress" role="progressbar" aria-label="Real estate savings progress" aria-valuenow="32" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar" style="width: 32%"></div>
+                  </div>
+                  <div class="d-flex justify-content-between gap-2">
+                    <span class="fg-3">32% achieved</span>
+                    <span class="fw-medium cards-tabular">$27,200</span>
+                  </div>
+                </div>
+              </div>
+              <p class="fg-3 text-center mb-0">You have not met your targets for this year.</p>
+            </div>
+          </section>
+        </div>
+
+        <!-- Column 2: from lg -->
+        <div class="d-none lg:d-flex flex-column gap-9 lg:gap-7 2xl:gap-11 min-w-0">
+
+          <!-- Contribution history -->
+          <section class="card shadow-xs fs-sm" aria-labelledby="cardsContributionTitle">
+            <div class="card-body gap-6">
+              <div>
+                <h2 class="card-title fs-md fw-medium mb-1" id="cardsContributionTitle">Contribution History</h2>
+                <p class="fg-3 mb-0">Last 6 months of activity</p>
+              </div>
+              <div class="cards-bars-lg d-flex align-items-end gap-3" role="img" aria-label="Last 6 months of contribution activity">
+                <div class="d-flex flex-column justify-content-end gap-2 flex-fill h-100"><div class="bg-primary rounded-5" style="height: 61.5%"></div><span class="fs-xs fg-3 text-center">Dec</span></div>
+                <div class="d-flex flex-column justify-content-end gap-2 flex-fill h-100"><div class="bg-accent rounded-5" style="height: 84.6%"></div><span class="fs-xs fg-3 text-center">Jan</span></div>
+                <div class="d-flex flex-column justify-content-end gap-2 flex-fill h-100"><div class="bg-info rounded-5" style="height: 69.2%"></div><span class="fs-xs fg-3 text-center">Feb</span></div>
+                <div class="d-flex flex-column justify-content-end gap-2 flex-fill h-100"><div class="bg-success rounded-5" style="height: 100%"></div><span class="fs-xs fg-3 text-center">Mar</span></div>
+                <div class="d-flex flex-column justify-content-end gap-2 flex-fill h-100"><div class="bg-warning rounded-5" style="height: 57.7%"></div><span class="fs-xs fg-3 text-center">Apr</span></div>
+              </div>
+              <div class="d-grid grid-cols-1 xl:grid-cols-2 gap-3">
+                <div class="d-flex flex-column gap-1 bg-2 rounded-7 px-5 py-4">
+                  <span class="fs-xs fw-medium fg-3 text-uppercase">Upcoming</span>
+                  <span class="fs-md fw-semibold">May 2024</span>
+                  <span class="fg-3">Scheduled</span>
+                </div>
+                <div class="d-none xl:d-flex flex-column gap-1 bg-2 rounded-7 px-5 py-4">
+                  <span class="fs-xs fw-medium fg-3 text-uppercase">Savings Plan</span>
+                  <span class="fs-md fw-semibold">Accelerated</span>
+                  <span class="fg-3">Recurring</span>
+                </div>
+              </div>
+              <button type="button" class="btn-solid theme-primary w-100">View Full Report</button>
+            </div>
+          </section>
+
+          <!-- Claimable balance -->
+          <section class="card shadow-xs fs-sm" aria-labelledby="cardsClaimableTitle">
+            <div class="card-body gap-6">
+              <div class="d-flex flex-column align-items-start gap-2">
+                <p class="fg-3 mb-0">Claimable Balance</p>
+                <h2 class="card-title fs-3xl fw-medium cards-tabular mb-0" id="cardsClaimableTitle">$1,211.29</h2>
+                <span class="badge badge-outline theme-secondary">
+                  <span class="d-inline-block p-1 rounded-circle bg-warning" aria-hidden="true"></span>
+                  Pending Setup
+                </span>
+              </div>
+              <div class="d-flex flex-column gap-3 bg-2 rounded-7 px-5 py-4">
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                  <span class="fg-3">Net Royalties</span>
+                  <span class="fw-medium cards-tabular">$1,248.75</span>
+                </div>
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                  <span class="fg-3">Processing Fee</span>
+                  <span class="fw-medium cards-tabular">-$37.46</span>
+                </div>
+                <hr class="my-0">
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                  <span class="fg-3">Total Ready to Claim</span>
+                  <span class="fw-semibold cards-tabular">$1,211.29 USD</span>
+                </div>
+              </div>
+              <p class="fg-3 mb-0">Once your bank is connected, balances over $10.00 are automatically eligible for monthly distribution on the 15th of each month.</p>
+            </div>
+          </section>
+
+          <!-- Dividend income -->
+          <section class="card shadow-xs fs-sm" aria-labelledby="cardsDividendTitle">
+            <div class="card-body gap-6">
+              <div class="d-flex align-items-start gap-3">
+                <div class="flex-fill">
+                  <h2 class="card-title fs-md fw-medium mb-1" id="cardsDividendTitle">Q2 Dividend Income</h2>
+                  <p class="fg-3 mb-0">Quarterly dividend payouts across your portfolio holdings.</p>
+                </div>
+                <button type="button" class="btn-close" aria-label="Dismiss dividend income"></button>
+              </div>
+              <ul class="list-group">
+                <li class="list-group-item d-flex align-items-center gap-3 py-3">
+                  <div class="flex-fill">
+                    <div class="fw-medium">Vanguard</div>
+                    <div class="fg-3">450 Shares</div>
+                  </div>
+                  <div class="cards-spark d-none md:d-flex align-items-end gap-1" role="img" aria-label="Vanguard quarterly dividends">
+                    <div class="flex-fill bg-primary rounded-top-2" style="height: 58.3%"></div>
+                    <div class="flex-fill bg-primary rounded-top-2" style="height: 64.4%"></div>
+                    <div class="flex-fill bg-primary rounded-top-2" style="height: 59.8%"></div>
+                    <div class="flex-fill bg-primary rounded-top-2" style="height: 100%"></div>
+                  </div>
+                </li>
+                <li class="list-group-item d-flex align-items-center gap-3 py-3">
+                  <div class="flex-fill">
+                    <div class="fw-medium">S&amp;P 500 VOO</div>
+                    <div class="fg-3">112 Shares</div>
+                  </div>
+                  <div class="cards-spark d-none md:d-flex align-items-end gap-1" role="img" aria-label="S&amp;P 500 VOO quarterly dividends">
+                    <div class="flex-fill bg-primary rounded-top-2" style="height: 56.3%"></div>
+                    <div class="flex-fill bg-primary rounded-top-2" style="height: 65.6%"></div>
+                    <div class="flex-fill bg-primary rounded-top-2" style="height: 100%"></div>
+                    <div class="flex-fill bg-primary rounded-top-2" style="height: 68.1%"></div>
+                  </div>
+                </li>
+                <li class="list-group-item d-flex align-items-center gap-3 py-3">
+                  <div class="flex-fill">
+                    <div class="fw-medium">Apple AAPL</div>
+                    <div class="fg-3">85 Shares</div>
+                  </div>
+                  <div class="cards-spark d-none md:d-flex align-items-end gap-1" role="img" aria-label="Apple AAPL quarterly dividends">
+                    <div class="flex-fill bg-primary rounded-top-2" style="height: 50%"></div>
+                    <div class="flex-fill bg-primary rounded-top-2" style="height: 58.3%"></div>
+                    <div class="flex-fill bg-primary rounded-top-2" style="height: 100%"></div>
+                    <div class="flex-fill bg-primary rounded-top-2" style="height: 75%"></div>
+                  </div>
+                </li>
+                <li class="list-group-item d-flex align-items-center gap-3 py-3">
+                  <div class="flex-fill">
+                    <div class="fw-medium">Realty Income</div>
+                    <div class="fg-3">320 Shares</div>
+                  </div>
+                  <div class="cards-spark d-none md:d-flex align-items-end gap-1" role="img" aria-label="Realty Income quarterly dividends">
+                    <div class="flex-fill bg-primary rounded-top-2" style="height: 66.7%"></div>
+                    <div class="flex-fill bg-primary rounded-top-2" style="height: 72.2%"></div>
+                    <div class="flex-fill bg-primary rounded-top-2" style="height: 77.8%"></div>
+                    <div class="flex-fill bg-primary rounded-top-2" style="height: 100%"></div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </div>
+
+        <!-- Column 3: from xl (shadcn: min-[1400px]) -->
+        <div class="d-none xl:d-flex flex-column gap-9 lg:gap-7 2xl:gap-11 min-w-0">
+
+          <!-- New milestone -->
+          <section class="card shadow-xs fs-sm" aria-labelledby="cardsMilestoneTitle">
+            <form class="card-body gap-6">
+              <div>
+                <h2 class="card-title fs-md fw-medium mb-1" id="cardsMilestoneTitle">Set a new milestone</h2>
+                <p class="fg-3 mb-0">Define your financial target and we’ll help you pace your savings.</p>
+              </div>
+              <div class="d-flex flex-column gap-5">
+                <div class="form-field">
+                  <label for="cardsGoalName" class="form-label">Goal Name</label>
+                  <input type="text" class="form-control" id="cardsGoalName" placeholder="e.g. New Car, Home Downpayment">
+                </div>
+                <div class="d-grid grid-cols-2 gap-4">
+                  <div class="form-field">
+                    <label for="cardsTargetAmount" class="form-label">Target Amount</label>
+                    <input type="text" class="form-control" id="cardsTargetAmount" value="$15,000">
+                  </div>
+                  <div class="form-field">
+                    <label for="cardsTargetDate" class="form-label">Target Date</label>
+                    <input type="text" class="form-control" id="cardsTargetDate" value="Dec 2025">
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex flex-column gap-2">
+                <button type="button" class="btn-solid theme-primary w-100">Create Goal</button>
+                <button type="button" class="btn-outline theme-secondary w-100">Cancel</button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Payout threshold -->
+          <section class="card shadow-xs fs-sm" aria-labelledby="cardsPayoutTitle">
+            <form class="card-body gap-6">
+              <div class="d-flex align-items-start gap-3">
+                <div class="flex-fill">
+                  <h2 class="card-title fs-md fw-medium mb-1" id="cardsPayoutTitle">Payout Threshold</h2>
+                  <p class="fg-3 mb-0">Set the minimum balance required before a payout is triggered.</p>
+                </div>
+                <button type="button" class="btn-close" aria-label="Dismiss payout threshold"></button>
+              </div>
+              <div class="d-flex flex-column gap-6">
+                <div class="form-field">
+                  <label for="cardsCurrency" class="form-label">Preferred Currency</label>
+                  <button class="form-control combobox-toggle min-w-0" type="button" id="cardsCurrency"
+                      data-bs-toggle="combobox"
+                      data-bs-name="currency"
+                      data-bs-placeholder="Select a currency…">
+                    <span class="combobox-value">Select a currency…</span>
+                    <svg class="combobox-caret" width="10" height="16" viewBox="0 0 10 16" fill="none" aria-hidden="true"><path d="M0.46967 5.46967C0.762563 5.17678 1.23744 5.17678 1.53033 5.46967L5 8.93934L8.46967 5.46967C8.76256 5.17678 9.23744 5.17678 9.53033 5.46967C9.82322 5.76256 9.82322 6.23744 9.53033 6.53033L5.53033 10.5303C5.23744 10.8232 4.76256 10.8232 4.46967 10.5303L0.46967 6.53033C0.176777 6.23744 0.176777 5.76256 0.46967 5.46967Z" fill="currentcolor"/></svg>
+                  </button>
+                  <div class="menu">
+                    <button class="menu-item selected" type="button" data-bs-value="usd" aria-selected="true">USD — United States Dollar</button>
+                    <button class="menu-item" type="button" data-bs-value="eur">EUR — Euro</button>
+                    <button class="menu-item" type="button" data-bs-value="gbp">GBP — British Pound</button>
+                    <button class="menu-item" type="button" data-bs-value="jpy">JPY — Japanese Yen</button>
+                  </div>
+                </div>
+                <div class="form-field">
+                  <div class="d-flex align-items-baseline justify-content-between gap-2">
+                    <label for="cardsMinPayout" class="form-label mb-0">Minimum Payout Amount</label>
+                    <output for="cardsMinPayout" class="fs-2xl fw-semibold cards-tabular" id="cardsMinPayoutValue">$2500.00</output>
+                  </div>
+                  <div class="form-range">
+                    <input type="range" class="form-range-input" id="cardsMinPayout" min="50" max="10000" step="50" value="2500" aria-valuetext="$2,500 of $10,000">
+                  </div>
+                  <div class="d-flex justify-content-between gap-2">
+                    <small class="form-text">$50 (MIN)</small>
+                    <small class="form-text">$10,000 (MAX)</small>
+                  </div>
+                </div>
+                <div class="form-field">
+                  <label for="cardsPayoutNotes" class="form-label">Notes</label>
+                  <textarea class="form-control" id="cardsPayoutNotes" rows="4" placeholder="Add any notes for this payout configuration..."></textarea>
+                </div>
+              </div>
+              <button type="button" class="btn-solid theme-primary w-100">Save Threshold</button>
+            </form>
+          </section>
+
+          <!-- Account access -->
+          <section class="card shadow-xs fs-sm" aria-labelledby="cardsAccountTitle">
+            <form class="card-body gap-6">
+              <div>
+                <h2 class="card-title fs-md fw-medium mb-1" id="cardsAccountTitle">Account Access</h2>
+                <p class="fg-3 mb-0">Update your credentials or re-authenticate.</p>
+              </div>
+              <div class="d-flex flex-column gap-5">
+                <div class="form-field">
+                  <label for="cardsEmail" class="form-label">Email Address</label>
+                  <input type="email" class="form-control" id="cardsEmail" placeholder="artist@studio.inc">
+                </div>
+                <div class="form-field">
+                  <div class="d-flex align-items-center justify-content-between gap-2">
+                    <label for="cardsPassword" class="form-label mb-0">Current Password</label>
+                    <a href="#" class="fs-xs fw-medium fg-3 text-uppercase text-decoration-none">Forgot?</a>
+                  </div>
+                  <input type="password" class="form-control" id="cardsPassword" placeholder="••••••••••••••••••••••••">
+                </div>
+              </div>
+              <div class="d-flex flex-column gap-4">
+                <button type="button" class="btn-solid theme-primary w-100">
+                  <svg class="bi" aria-hidden="true"><use href="#lock"/></svg>
+                  Update Security
+                </button>
+                <div class="list-group">
+                  <a href="#" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3">
+                    <svg class="bi fg-danger" aria-hidden="true"><use href="#circle-alert"/></svg>
+                    <span class="flex-fill min-w-0">
+                      <span class="d-block fw-medium fg-body">Danger Zone</span>
+                      <span class="d-block fg-3 text-truncate">Archive account and remove catalog</span>
+                    </span>
+                    <svg class="bi" aria-hidden="true"><use href="#chevron-right"/></svg>
+                  </a>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+
+        <!-- Column 4: from md -->
+        <div class="d-none md:d-flex flex-column gap-9 lg:gap-7 2xl:gap-11 min-w-0">
+
+          <!-- QR connect -->
+          <section class="card shadow-xs fs-sm" aria-labelledby="cardsQrTitle">
+            <div class="card-body gap-6 pt-7">
+              <div class="d-flex justify-content-center">
+                <div class="bg-white border rounded-7 p-5">
+                  <svg class="cards-qr d-block fg-black" viewBox="0 0 21 21" role="img" aria-label="Connect device QR code" shape-rendering="crispEdges">
+                    <path fill="currentColor" d="M0 0h7v1h-7zM9 0h1v1h-1zM11 0h2v1h-2zM14 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM11 1h1v1h-1zM14 1h1v1h-1zM20 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM8 2h5v1h-5zM14 2h1v1h-1zM16 2h3v1h-3zM20 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM9 3h1v1h-1zM14 3h1v1h-1zM16 3h3v1h-3zM20 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM8 4h1v1h-1zM10 4h1v1h-1zM12 4h1v1h-1zM14 4h1v1h-1zM16 4h3v1h-3zM20 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM9 5h3v1h-3zM14 5h1v1h-1zM20 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h7v1h-7zM8 7h2v1h-2zM11 7h1v1h-1zM0 8h1v1h-1zM2 8h1v1h-1zM4 8h5v1h-5zM11 8h4v1h-4zM16 8h1v1h-1zM18 8h2v1h-2zM1 9h1v1h-1zM3 9h1v1h-1zM8 9h3v1h-3zM13 9h1v1h-1zM15 9h1v1h-1zM17 9h1v1h-1zM20 9h1v1h-1zM0 10h3v1h-3zM4 10h1v1h-1zM6 10h3v1h-3zM10 10h3v1h-3zM14 10h4v1h-4zM19 10h1v1h-1zM2 11h2v1h-2zM5 11h1v1h-1zM9 11h1v1h-1zM11 11h1v1h-1zM16 11h1v1h-1zM18 11h1v1h-1zM20 11h1v1h-1zM0 12h2v1h-2zM3 12h4v1h-4zM8 12h4v1h-4zM13 12h1v1h-1zM15 12h3v1h-3zM19 12h2v1h-2zM8 13h1v1h-1zM11 13h1v1h-1zM13 13h1v1h-1zM17 13h1v1h-1zM19 13h1v1h-1zM0 14h7v1h-7zM8 14h2v1h-2zM11 14h5v1h-5zM17 14h1v1h-1zM20 14h1v1h-1zM0 15h1v1h-1zM6 15h1v1h-1zM10 15h1v1h-1zM14 15h1v1h-1zM17 15h4v1h-4zM0 16h1v1h-1zM2 16h3v1h-3zM6 16h1v1h-1zM8 16h1v1h-1zM10 16h3v1h-3zM14 16h3v1h-3zM18 16h1v1h-1zM0 17h1v1h-1zM2 17h3v1h-3zM6 17h1v1h-1zM9 17h2v1h-2zM12 17h1v1h-1zM16 17h1v1h-1zM19 17h2v1h-2zM0 18h1v1h-1zM2 18h3v1h-3zM6 18h1v1h-1zM8 18h1v1h-1zM12 18h4v1h-4zM17 18h3v1h-3zM0 19h1v1h-1zM6 19h1v1h-1zM8 19h2v1h-2zM11 19h1v1h-1zM16 19h2v1h-2zM20 19h1v1h-1zM0 20h7v1h-7zM8 20h1v1h-1zM10 20h3v1h-3zM14 20h2v1h-2zM17 20h4v1h-4z"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="text-center">
+                <h2 class="card-title fs-md fw-medium mb-1" id="cardsQrTitle">Scan to connect your mobile device</h2>
+                <p class="fg-3 text-balance mb-0">Open the Ledger mobile app and scan this code to link your device.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Chat (shadcn's MessageScrollerDemo, frozen after the first exchange) -->
+          <section class="card shadow-xs fs-sm cards-chat overflow-hidden" aria-labelledby="cardsChatTitle">
+            <div class="card-header flex-row align-items-start gap-3">
+              <div class="flex-fill">
+                <h2 class="card-title fs-md fw-medium mb-1" id="cardsChatTitle">New Chat</h2>
+                <p class="fg-3 mb-0">How can I help you today?</p>
+              </div>
+              <button type="button" class="btn-outline theme-secondary btn-icon" aria-label="Reset conversation" data-bs-toggle="tooltip" data-bs-title="Reset">
+                <svg class="bi" aria-hidden="true"><use href="#rotate-cw"/></svg>
+              </button>
+            </div>
+            <div class="card-body gap-6 overflow-y-auto" role="log" aria-relevant="additions">
+              <p class="align-self-end ms-12 bg-2 rounded-7 px-4 py-2">I’m building a chat for our app and the scroll behavior is driving me nuts. Every time the AI streams a reply, the whole thread jumps around.</p>
+              <div class="d-flex flex-column gap-3">
+                <p>That’s the classic streaming scroll problem. Wrap your message list in <code>MessageScroller</code> and turn on <code>autoScroll</code> — the viewport pins to the bottom as tokens arrive, so users always see the latest text land in place.</p>
+                <p class="mb-0">The important part: it only auto-scrolls while the reader is already at the bottom. The moment they scroll up to read something earlier, auto-scroll backs off and their position is preserved. You get smooth streaming without fighting the user’s intent.</p>
+              </div>
+            </div>
+            <div class="card-footer">
+              <form class="form-control d-flex flex-column gap-2">
+                <textarea class="form-ghost" rows="2" readonly aria-label="Next message">Okay, but when someone sends a new message the view still feels jarring — like the whole conversation reloads from the top.</textarea>
+                <div class="d-flex align-items-center gap-2">
+                  <button type="button" class="btn-outline theme-secondary btn-icon btn-sm" data-bs-toggle="menu" data-bs-placement="top-start" aria-expanded="false" aria-label="Add files">
+                    <svg class="bi" aria-hidden="true"><use href="#plus"/></svg>
+                  </button>
+                  <div class="menu">
+                    <button type="button" class="menu-item"><svg class="bi menu-item-icon" aria-hidden="true"><use href="#paperclip"/></svg>Add Photos &amp; Files</button>
+                    <hr class="menu-divider">
+                    <button type="button" class="menu-item"><svg class="bi menu-item-icon" aria-hidden="true"><use href="#image"/></svg>Create Image</button>
+                    <button type="button" class="menu-item"><svg class="bi menu-item-icon" aria-hidden="true"><use href="#telescope"/></svg>Deep Research</button>
+                    <button type="button" class="menu-item"><svg class="bi menu-item-icon" aria-hidden="true"><use href="#globe"/></svg>Web Search</button>
+                  </div>
+                  <button type="button" class="btn-solid theme-primary btn-icon btn-sm ms-auto" aria-label="Send" data-bs-toggle="tooltip" data-bs-title="Send">
+                    <svg class="bi" aria-hidden="true"><use href="#arrow-up"/></svg>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </section>
+
+          <!-- Transfer funds (commented out in shadcn's layout, at this position) -->
+          <section class="card shadow-xs fs-sm" aria-labelledby="cardsTransferTitle">
+            <form class="card-body gap-6">
+              <div class="d-flex align-items-start gap-3">
+                <div class="flex-fill">
+                  <h2 class="card-title fs-md fw-medium mb-1" id="cardsTransferTitle">Transfer Funds</h2>
+                  <p class="fg-3 mb-0">Move money between your connected accounts.</p>
+                </div>
+                <button type="button" class="btn-close" aria-label="Dismiss transfer funds"></button>
+              </div>
+              <div class="d-flex flex-column gap-6">
+                <div class="form-field">
+                  <label for="cardsTransferAmount" class="form-label">Amount to Transfer</label>
+                  <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="text" class="form-control" id="cardsTransferAmount" value="1,200.00">
+                  </div>
+                </div>
+                <div class="form-field">
+                  <label for="cardsFromAccount" class="form-label">From Account</label>
+                  <button class="form-control combobox-toggle min-w-0" type="button" id="cardsFromAccount"
+                      data-bs-toggle="combobox"
+                      data-bs-name="from"
+                      data-bs-placeholder="Select an account…">
+                    <span class="combobox-value">Select an account…</span>
+                    <svg class="combobox-caret" width="10" height="16" viewBox="0 0 10 16" fill="none" aria-hidden="true"><path d="M0.46967 5.46967C0.762563 5.17678 1.23744 5.17678 1.53033 5.46967L5 8.93934L8.46967 5.46967C8.76256 5.17678 9.23744 5.17678 9.53033 5.46967C9.82322 5.76256 9.82322 6.23744 9.53033 6.53033L5.53033 10.5303C5.23744 10.8232 4.76256 10.8232 4.46967 10.5303L0.46967 6.53033C0.176777 6.23744 0.176777 5.76256 0.46967 5.46967Z" fill="currentcolor"/></svg>
+                  </button>
+                  <div class="menu">
+                    <button class="menu-item selected" type="button" data-bs-value="checking" aria-selected="true">Main Checking (··8402) — $12,450.00</button>
+                    <button class="menu-item" type="button" data-bs-value="business">Business (··7731) — $8,920.00</button>
+                  </div>
+                </div>
+                <div class="form-field">
+                  <label for="cardsToAccount" class="form-label">To Account</label>
+                  <button class="form-control combobox-toggle min-w-0" type="button" id="cardsToAccount"
+                      data-bs-toggle="combobox"
+                      data-bs-name="to"
+                      data-bs-placeholder="Select an account…">
+                    <span class="combobox-value">Select an account…</span>
+                    <svg class="combobox-caret" width="10" height="16" viewBox="0 0 10 16" fill="none" aria-hidden="true"><path d="M0.46967 5.46967C0.762563 5.17678 1.23744 5.17678 1.53033 5.46967L5 8.93934L8.46967 5.46967C8.76256 5.17678 9.23744 5.17678 9.53033 5.46967C9.82322 5.76256 9.82322 6.23744 9.53033 6.53033L5.53033 10.5303C5.23744 10.8232 4.76256 10.8232 4.46967 10.5303L0.46967 6.53033C0.176777 6.23744 0.176777 5.76256 0.46967 5.46967Z" fill="currentcolor"/></svg>
+                  </button>
+                  <div class="menu">
+                    <button class="menu-item selected" type="button" data-bs-value="savings" aria-selected="true">High Yield Savings (··1192) — $42,100.00</button>
+                    <button class="menu-item" type="button" data-bs-value="investment">Investment (··3349) — $18,200.00</button>
+                  </div>
+                </div>
+                <div class="d-flex flex-column gap-3 bg-2 rounded-7 px-5 py-4">
+                  <div class="d-flex align-items-center justify-content-between gap-2">
+                    <span class="fg-3">Estimated arrival</span>
+                    <span class="fw-medium">Today, Apr 14</span>
+                  </div>
+                  <hr class="my-0">
+                  <div class="d-flex align-items-center justify-content-between gap-2">
+                    <span class="fg-3">Transaction fee</span>
+                    <span class="fw-medium cards-tabular">$0.00</span>
+                  </div>
+                  <hr class="my-0">
+                  <div class="d-flex align-items-center justify-content-between gap-2">
+                    <span class="fw-medium">Total amount</span>
+                    <span class="fw-semibold cards-tabular">$1,200.00</span>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="btn-solid theme-primary w-100">Confirm Transfer</button>
+            </form>
+          </section>
+
+          <!-- Payments -->
+          <section class="card shadow-xs fs-sm" aria-label="Payments">
+            <div class="card-body gap-6">
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a class="breadcrumb-link" href="#">Home</a>
+                  </li>
+                  <li class="breadcrumb-divider"></li>
+                  <li class="breadcrumb-item">
+                    <button type="button" class="btn-text theme-secondary btn-icon btn-sm" data-bs-toggle="menu" data-bs-placement="bottom-start" aria-expanded="false" aria-label="Account options">
+                      <svg class="bi" aria-hidden="true"><use href="#circle-ellipsis"/></svg>
+                    </button>
+                    <div class="menu">
+                      <a class="menu-item" href="#">Profile</a>
+                      <a class="menu-item" href="#">Statements</a>
+                      <a class="menu-item" href="#">Documents</a>
+                    </div>
+                  </li>
+                  <li class="breadcrumb-divider"></li>
+                  <li class="breadcrumb-item" aria-current="page">
+                    <a class="breadcrumb-link active" href="#">Payments</a>
+                  </li>
+                </ol>
+              </nav>
+              <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action d-flex align-items-start gap-3 py-3">
+                  <svg class="bi mt-1" aria-hidden="true"><use href="#settings"/></svg>
+                  <span class="flex-fill">
+                    <span class="d-block fw-medium fg-body">Change transfer limit</span>
+                    <span class="d-block fg-3">Adjust how much you can send from your balance.</span>
+                  </span>
+                  <svg class="bi fg-3 align-self-center" aria-hidden="true"><use href="#chevron-right"/></svg>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action d-flex align-items-start gap-3 py-3">
+                  <svg class="bi mt-1" aria-hidden="true"><use href="#calendar"/></svg>
+                  <span class="flex-fill">
+                    <span class="d-block fw-medium fg-body">Scheduled transfers</span>
+                    <span class="d-block fg-3">Set up a transfer to send at a later date.</span>
+                  </span>
+                  <svg class="bi fg-3 align-self-center" aria-hidden="true"><use href="#chevron-right"/></svg>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action d-flex align-items-start gap-3 py-3">
+                  <svg class="bi mt-1" aria-hidden="true"><use href="#refresh"/></svg>
+                  <span class="flex-fill">
+                    <span class="d-block fw-medium fg-body">Recurring card payments</span>
+                    <span class="d-block fg-3">Manage your repeated card transactions.</span>
+                  </span>
+                  <svg class="bi fg-3 align-self-center" aria-hidden="true"><use href="#chevron-right"/></svg>
+                </a>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Column 5: from 2xl (shadcn: min-[1900px]) -->
+        <div class="d-none 2xl:d-flex flex-column gap-9 lg:gap-7 2xl:gap-11 min-w-0">
+
+          <!-- Empty state: distribute track -->
+          <section class="card shadow-xs fs-sm" aria-labelledby="cardsEmptyTitle">
+            <div class="card-body align-items-center text-center gap-5 p-9">
+              <span class="avatar rounded-5" aria-hidden="true">
+                <svg class="bi"><use href="#plus"/></svg>
+              </span>
+              <div>
+                <h2 class="card-title fs-lg fw-medium mb-2" id="cardsEmptyTitle">Distribute Track</h2>
+                <p class="fg-3 mb-0">Upload your first master to start reaching listeners on Spotify, Apple Music, and more.</p>
+              </div>
+              <button type="button" class="btn-solid theme-primary align-self-center">Create Release</button>
+            </div>
+          </section>
+
+          <!-- Analytics -->
+          <section class="card shadow-xs fs-sm overflow-hidden" aria-labelledby="cardsAnalyticsTitle">
+            <div class="card-body gap-2 px-5 pt-5 pb-4">
+              <div class="d-flex align-items-start gap-3">
+                <div class="flex-fill">
+                  <h2 class="card-title fs-md fw-medium mb-1" id="cardsAnalyticsTitle">Analytics</h2>
+                  <p class="fg-3 mb-0">418.2K Visitors <span class="badge theme-primary" data-bs-toggle="tooltip" data-bs-title="Compared to last month" tabindex="0">+10%</span></p>
+                </div>
+                <button type="button" class="btn-outline theme-secondary btn-sm">View Analytics</button>
+              </div>
+            </div>
+            <svg class="cards-area d-block w-100 fg-primary" viewBox="0 0 100 86" preserveAspectRatio="none" role="img" aria-label="Visitor trend">
+              <path d="M0 52L18 40L36 46L54 70L72 50L100 49V86H0Z" fill="currentColor" opacity=".28"/>
+              <path d="M0 52L18 40L36 46L54 70L72 50L100 49" fill="none" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+            </svg>
+          </section>
+
+          <!-- Notification settings -->
+          <section class="card shadow-xs fs-sm" aria-labelledby="cardsNotificationsTitle">
+            <form class="card-body gap-6">
+              <div>
+                <h2 class="card-title fs-md fw-medium mb-1" id="cardsNotificationsTitle">Notifications</h2>
+                <p class="fg-3 mb-0">Choose which email and push alerts you want to receive.</p>
+              </div>
+              <div class="d-flex flex-column gap-5">
+                <div class="form-field">
+                  <input type="checkbox" id="cardsNotifyTransactions" class="check" checked>
+                  <div class="form-field-content">
+                    <label for="cardsNotifyTransactions">Transaction alerts</label>
+                    <small class="form-text">Deposits, withdrawals, and transfers.</small>
+                  </div>
+                </div>
+                <div class="form-field">
+                  <input type="checkbox" id="cardsNotifySecurity" class="check" checked>
+                  <div class="form-field-content">
+                    <label for="cardsNotifySecurity">Security alerts</label>
+                    <small class="form-text">Login attempts and account changes.</small>
+                  </div>
+                </div>
+                <div class="form-field">
+                  <input type="checkbox" id="cardsNotifyGoals" class="check">
+                  <div class="form-field-content">
+                    <label for="cardsNotifyGoals">Goal milestones</label>
+                    <small class="form-text">Updates at 25%, 50%, 75%, and 100%.</small>
+                  </div>
+                </div>
+                <div class="form-field">
+                  <input type="checkbox" id="cardsNotifyMarket" class="check">
+                  <div class="form-field-content">
+                    <label for="cardsNotifyMarket">Market updates</label>
+                    <small class="form-text">Daily portfolio summary and price alerts.</small>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="btn-solid theme-primary w-100">Save Preferences</button>
+            </form>
+          </section>
+
+          <!-- Power usage -->
+          <section class="card shadow-xs fs-sm" aria-labelledby="cardsPowerTitle">
+            <div class="card-body gap-6">
+              <div>
+                <h2 class="card-title fs-md fw-medium mb-1" id="cardsPowerTitle">Power Usage</h2>
+                <p class="fg-3 mb-0">Whole Home</p>
+              </div>
+              <div class="d-flex flex-column gap-5">
+                <div class="cards-bars d-flex align-items-end gap-2" role="img" aria-label="Power usage by hour">
+                  <div class="d-flex flex-column justify-content-end gap-2 flex-fill h-100"><div class="bg-primary rounded-top-3" style="height: 31.6%"></div><span class="fs-xs fg-3 text-center">6a</span></div>
+                  <div class="d-flex flex-column justify-content-end gap-2 flex-fill h-100"><div class="bg-primary rounded-top-3" style="height: 73.7%"></div><span class="fs-xs fg-3 text-center">8a</span></div>
+                  <div class="d-flex flex-column justify-content-end gap-2 flex-fill h-100"><div class="bg-primary rounded-top-3" style="height: 81.6%"></div><span class="fs-xs fg-3 text-center">10a</span></div>
+                  <div class="d-flex flex-column justify-content-end gap-2 flex-fill h-100"><div class="bg-primary rounded-top-3" style="height: 63.2%"></div><span class="fs-xs fg-3 text-center">12p</span></div>
+                  <div class="d-flex flex-column justify-content-end gap-2 flex-fill h-100"><div class="bg-primary rounded-top-3" style="height: 89.5%"></div><span class="fs-xs fg-3 text-center">2p</span></div>
+                  <div class="d-flex flex-column justify-content-end gap-2 flex-fill h-100"><div class="bg-primary rounded-top-3" style="height: 76.3%"></div><span class="fs-xs fg-3 text-center">4p</span></div>
+                  <div class="d-flex flex-column justify-content-end gap-2 flex-fill h-100"><div class="bg-primary rounded-top-3" style="height: 100%"></div><span class="fs-xs fg-3 text-center">6p</span></div>
+                  <div class="d-flex flex-column justify-content-end gap-2 flex-fill h-100"><div class="bg-primary rounded-top-3" style="height: 84.2%"></div><span class="fs-xs fg-3 text-center">8p</span></div>
+                </div>
+                <hr class="my-0">
+                <div class="d-grid grid-cols-2 gap-4">
+                  <div class="d-flex flex-column">
+                    <span class="fg-3">Currently Using</span>
+                    <span class="fs-lg fw-semibold cards-tabular">3.4 kW</span>
+                  </div>
+                  <div class="d-flex flex-column">
+                    <span class="fg-3">Solar Gen</span>
+                    <span class="fs-lg fw-semibold cards-tabular">+1.2 kW</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- Alert dialog for the UI elements card -->
+    <dialog class="dialog dialog-sm text-center" id="cardsAlertDialog" aria-labelledby="cardsAlertDialogTitle">
+      <div class="dialog-header justify-content-center">
+        <h1 class="dialog-title fs-md" id="cardsAlertDialogTitle">Allow accessory to connect?</h1>
+      </div>
+      <div class="dialog-body">
+        <p class="fs-sm fg-3 mb-0">Do you want to allow the USB accessory to connect to this device and your data?</p>
+      </div>
+      <div class="dialog-footer">
+        <button type="button" class="btn-outline theme-secondary flex-fill" data-bs-dismiss="dialog">Don’t allow</button>
+        <button type="button" class="btn-solid theme-primary flex-fill" data-bs-dismiss="dialog">Allow</button>
+      </div>
+    </dialog>
+
+    <script type="module">
+      // Payout threshold: show the range value as the amount (shadcn shows a static progress bar).
+      const range = document.getElementById('cardsMinPayout')
+      const output = document.getElementById('cardsMinPayoutValue')
+      const format = value => Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      range.addEventListener('input', () => {
+        output.value = `$${format(range.value)}`
+        range.setAttribute('aria-valuetext', `$${format(range.value)} of $10,000`)
+      })
+    </script>
+  </body>
+</html>

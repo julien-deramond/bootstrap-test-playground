@@ -33,7 +33,7 @@ const styles = `
     box-shadow: 0 6px 24px rgb(0 0 0 / .25);
     backdrop-filter: blur(6px);
   }
-  .bar[data-collapsed] > :not(.toggle) { display: none; }
+  .bar[data-collapsed] > :not(.toggle, .origin) { display: none; }
   a { color: inherit; font-weight: 600; text-decoration: none; }
   a:hover { text-decoration: underline; }
   .group { display: inline-flex; border: 1px solid rgb(255 255 255 / .18); border-radius: 6px; overflow: hidden; }
@@ -52,6 +52,8 @@ const styles = `
   select { max-inline-size: 16em; border: 1px solid rgb(255 255 255 / .18); border-radius: 6px; }
   option { color: #111; }
   .source { opacity: .65; font-size: 11px; }
+  .origin { font-size: 11px; }
+  .origin a { text-decoration: underline; text-underline-offset: 2px; }
   .toggle { padding: 3px 6px; border-radius: 6px; }
   .toggle:hover, .reset:hover { background: rgb(255 255 255 / .1); }
 `
@@ -110,6 +112,13 @@ export function mountToolbar({ source, configs, swappable }) {
 
   const compareUrl = `/compare.html?page=${encodeURIComponent(location.pathname)}`
 
+  // Pages adapted from elsewhere credit their source with
+  // <meta name="playground-source" content="Label" data-url="…" data-license="…">.
+  // The credit stays visible when the toolbar is collapsed.
+  const origin = document.querySelector('meta[name="playground-source"]')
+  const originHtml = origin ? `
+      <span class="origin">Adapted from <a href="${escapeHtml(origin.dataset.url)}" target="_blank" rel="noopener">${escapeHtml(origin.content)}</a>${origin.dataset.license ? ` (${escapeHtml(origin.dataset.license)})` : ''}</span>` : ''
+
   shadow.innerHTML = `
     <style>${styles}</style>
     <div class="bar" role="toolbar" aria-label="Playground settings">
@@ -124,7 +133,7 @@ export function mountToolbar({ source, configs, swappable }) {
       </select>
       <a href="${compareUrl}" title="Compare this page side by side">Compare</a>
       <button type="button" class="reset" title="Back to Bootstrap defaults">Reset</button>
-      <span class="source" title="Bootstrap source">${escapeHtml(source)}</span>
+      <span class="source" title="Bootstrap source">${escapeHtml(source)}</span>${originHtml}
       <button type="button" class="toggle" aria-expanded="true" title="Hide toolbar">&#x2715;</button>
     </div>`
 

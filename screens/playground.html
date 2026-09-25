@@ -1,0 +1,442 @@
+<!doctype html>
+<!-- Adapted from shadcn/ui's "playground" example (apps/v4/app/(app)/examples/playground/), MIT License. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Screens: playground</title>
+    <meta name="playground-source" content="shadcn/ui example “playground”" data-url="https://github.com/shadcn-ui/ui/tree/98a1fe67b439324ddc857f47fbdce056600a4329/apps/v4/app/(app)/examples/playground" data-license="MIT">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <link rel="stylesheet" href="/screens/playground.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <!-- Lucide icons (ISC) -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <symbol id="rotate-ccw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+      </symbol>
+      <symbol id="ellipsis" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+      </symbol>
+      <symbol id="copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+      </symbol>
+      <symbol id="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 6 9 17l-5-5"/>
+      </symbol>
+      <symbol id="chevrons-up-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/>
+      </symbol>
+      <!-- Mode icons, from the original example -->
+      <symbol id="mode-complete" viewBox="0 0 20 20" fill="currentColor">
+        <rect x="4" y="3" width="12" height="2" rx="1"/><rect x="4" y="7" width="12" height="2" rx="1"/>
+        <rect x="4" y="11" width="3" height="2" rx="1"/><rect x="4" y="15" width="3" height="2" rx="1"/>
+        <rect x="8.5" y="11" width="3" height="2" rx="1"/><rect x="8.5" y="15" width="3" height="2" rx="1"/>
+        <rect x="13" y="11" width="3" height="2" rx="1"/>
+      </symbol>
+      <symbol id="mode-insert" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M14.491 7.769a.888.888 0 0 1 .287.648.888.888 0 0 1-.287.648l-3.916 3.667a1.013 1.013 0 0 1-.692.268c-.26 0-.509-.097-.692-.268L5.275 9.065A.886.886 0 0 1 5 8.42a.889.889 0 0 1 .287-.64c.181-.17.427-.267.683-.269.257-.002.504.09.69.258L8.903 9.87V3.917c0-.243.103-.477.287-.649.183-.171.432-.268.692-.268.26 0 .509.097.692.268a.888.888 0 0 1 .287.649V9.87l2.245-2.102c.183-.172.432-.269.692-.269.26 0 .508.097.692.269Z"/>
+        <rect x="4" y="15" width="3" height="2" rx="1"/><rect x="8.5" y="15" width="3" height="2" rx="1"/><rect x="13" y="15" width="3" height="2" rx="1"/>
+      </symbol>
+      <symbol id="mode-edit" viewBox="0 0 20 20" fill="currentColor">
+        <rect x="4" y="3" width="12" height="2" rx="1"/><rect x="4" y="7" width="12" height="2" rx="1"/>
+        <rect x="4" y="11" width="3" height="2" rx="1"/><rect x="4" y="15" width="4" height="2" rx="1"/>
+        <rect x="8.5" y="11" width="3" height="2" rx="1"/>
+        <path d="M17.154 11.346a1.182 1.182 0 0 0-1.671 0L11 15.829V17.5h1.671l4.483-4.483a1.182 1.182 0 0 0 0-1.671Z"/>
+      </symbol>
+    </svg>
+
+    <div class="d-flex flex-column min-vh-100">
+      <!-- Header -->
+      <header class="container d-flex flex-column sm:flex-row align-items-start sm:align-items-center justify-content-between gap-3 py-5 playground-header">
+        <h2 class="fs-lg fw-semibold mb-0">Playground</h2>
+        <div class="d-flex gap-3 w-100 sm:justify-content-end ms-auto">
+          <!-- Preset selector -->
+          <div class="playground-preset">
+            <button class="form-control combobox-toggle" type="button"
+                    aria-label="Load a preset..."
+                    data-bs-toggle="combobox"
+                    data-bs-name="preset"
+                    data-bs-placeholder="Load a preset..."
+                    data-bs-search="true">
+              <span class="combobox-value">Load a preset...</span>
+              <svg class="combobox-caret" width="16" height="16" aria-hidden="true"><use href="#chevrons-up-down"/></svg>
+            </button>
+            <div class="menu playground-preset-menu">
+              <div class="combobox-search">
+                <input type="text" class="form-control combobox-search-input" placeholder="Search presets..." autocomplete="off" aria-label="Search presets...">
+              </div>
+              <div class="menu-header">Examples</div>
+              <button class="menu-item" type="button" data-bs-value="grammatical-standard-english">Grammatical Standard English<svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+              <button class="menu-item" type="button" data-bs-value="summarize-2nd-grader">Summarize for a 2nd grader<svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+              <button class="menu-item" type="button" data-bs-value="text-to-command">Text to command<svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+              <button class="menu-item" type="button" data-bs-value="qa">Q&amp;A<svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+              <button class="menu-item" type="button" data-bs-value="english-to-other-languages">English to other languages<svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+              <button class="menu-item" type="button" data-bs-value="parse-unstructured-data">Parse unstructured data<svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+              <button class="menu-item" type="button" data-bs-value="classification">Classification<svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+              <button class="menu-item" type="button" data-bs-value="natural-language-to-python">Natural language to Python<svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+              <button class="menu-item" type="button" data-bs-value="explain-code">Explain code<svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+              <button class="menu-item" type="button" data-bs-value="chat">Chat<svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+              <div class="combobox-no-results d-none">No presets found.</div>
+              <hr class="menu-divider">
+              <button class="menu-item" type="button" data-bs-value="more">More examples</button>
+            </div>
+          </div>
+
+          <button type="button" class="btn-subtle theme-secondary" data-bs-toggle="dialog" data-bs-target="#saveDialog">Save</button>
+
+          <div class="d-none md:d-flex gap-3">
+            <button type="button" class="btn-subtle theme-secondary" data-bs-toggle="dialog" data-bs-target="#codeDialog">View code</button>
+
+            <!-- Share: a menu holding a small form stands in for shadcn's Popover -->
+            <div>
+              <button type="button" class="btn-subtle theme-secondary" data-bs-toggle="menu" data-bs-auto-close="outside" data-bs-placement="bottom-end" aria-expanded="false">Share</button>
+              <div class="menu playground-share-menu">
+                <div class="d-flex flex-column gap-5 p-5">
+                  <div class="d-flex flex-column gap-1">
+                    <h3 class="fs-lg fw-semibold mb-0">Share preset</h3>
+                    <p class="fs-sm fg-3 mb-0">Anyone who has this link and an OpenAI account will be able to view this.</p>
+                  </div>
+                  <div class="input-group">
+                    <label for="shareLink" class="visually-hidden">Link</label>
+                    <input type="text" class="form-control" id="shareLink" value="https://platform.openai.com/playground/p/7bbKYQvsVkNmVb8NGcdUOLae?model=text-davinci-003" readonly>
+                    <button type="button" class="btn-outline theme-secondary btn-icon" id="shareCopy" aria-label="Copy">
+                      <svg class="bi" width="14" height="14" aria-hidden="true"><use href="#copy"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preset actions -->
+          <div>
+            <button type="button" class="btn-subtle theme-secondary btn-icon" data-bs-toggle="menu" data-bs-placement="bottom-end" aria-expanded="false" aria-label="Actions">
+              <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#ellipsis"/></svg>
+            </button>
+            <div class="menu">
+              <button type="button" class="menu-item" data-bs-toggle="dialog" data-bs-target="#filterDialog">Content filter preferences</button>
+              <hr class="menu-divider">
+              <button type="button" class="menu-item theme-danger" data-bs-toggle="dialog" data-bs-target="#deleteDialog" data-bs-backdrop="static">Delete preset</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <hr class="my-0">
+
+      <!-- Body -->
+      <main class="container flex-grow-1 d-flex flex-column py-7">
+        <div class="playground-grid flex-grow-1">
+          <!-- Settings column: hidden below sm, stacked above the editor from sm to md, on the right from md -->
+          <aside class="d-none sm:d-flex flex-column gap-7 md:order-2">
+            <div class="d-flex flex-column gap-4">
+              <span class="fs-sm fw-medium" tabindex="0"
+                    data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="left"
+                    data-bs-content="Choose the interface that best suits your task. You can provide: a simple prompt to complete, starting and ending text to insert a completion within, or some text with instructions to edit it.">Mode</span>
+              <div class="nav nav-pills nav-justified w-100" role="tablist" aria-label="Mode">
+                <button class="nav-link active" id="mode-complete-tab" data-bs-toggle="tab" data-bs-target="#mode-complete-pane" type="button" role="tab" aria-controls="mode-complete-pane" aria-selected="true">
+                  <span class="visually-hidden">Complete</span>
+                  <svg width="20" height="20" aria-hidden="true"><use href="#mode-complete"/></svg>
+                </button>
+                <button class="nav-link" id="mode-insert-tab" data-bs-toggle="tab" data-bs-target="#mode-insert-pane" type="button" role="tab" aria-controls="mode-insert-pane" aria-selected="false">
+                  <span class="visually-hidden">Insert</span>
+                  <svg width="20" height="20" aria-hidden="true"><use href="#mode-insert"/></svg>
+                </button>
+                <button class="nav-link" id="mode-edit-tab" data-bs-toggle="tab" data-bs-target="#mode-edit-pane" type="button" role="tab" aria-controls="mode-edit-pane" aria-selected="false">
+                  <span class="visually-hidden">Edit</span>
+                  <svg width="20" height="20" aria-hidden="true"><use href="#mode-edit"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Model -->
+            <div class="form-field">
+              <label class="form-label" for="model" tabindex="0"
+                     data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="left"
+                     data-bs-content="The model which will generate the completion. Some models are suitable for natural language tasks, others specialize in code. Learn more.">Model</label>
+              <button class="form-control combobox-toggle" type="button" id="model"
+                      aria-label="Select a model"
+                      data-bs-toggle="combobox"
+                      data-bs-name="model"
+                      data-bs-placeholder="Select a model..."
+                      data-bs-placement="bottom-end"
+                      data-bs-search="true">
+                <span class="combobox-value">text-davinci-003</span>
+                <svg class="combobox-caret" width="16" height="16" aria-hidden="true"><use href="#chevrons-up-down"/></svg>
+              </button>
+              <div class="menu playground-model-menu">
+                <div class="combobox-search">
+                  <input type="text" class="form-control combobox-search-input" placeholder="Search Models..." autocomplete="off" aria-label="Search Models...">
+                </div>
+                <div class="menu-header">GPT-3</div>
+                <button class="menu-item selected" type="button" data-bs-value="text-davinci-003" aria-selected="true">
+                  <span class="menu-item-content">
+                    <span>text-davinci-003</span>
+                    <small class="menu-item-description">Most capable GPT-3 model. Can do any task the other models can do, often with higher quality, longer output and better instruction-following. Also supports inserting completions within text.</small>
+                  </span>
+                  <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                </button>
+                <button class="menu-item" type="button" data-bs-value="text-curie-001">
+                  <span class="menu-item-content">
+                    <span>text-curie-001</span>
+                    <small class="menu-item-description">Very capable, but faster and lower cost than Davinci.</small>
+                  </span>
+                  <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                </button>
+                <button class="menu-item" type="button" data-bs-value="text-babbage-001">
+                  <span class="menu-item-content">
+                    <span>text-babbage-001</span>
+                    <small class="menu-item-description">Capable of straightforward tasks, very fast, and lower cost.</small>
+                  </span>
+                  <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                </button>
+                <button class="menu-item" type="button" data-bs-value="text-ada-001">
+                  <span class="menu-item-content">
+                    <span>text-ada-001</span>
+                    <small class="menu-item-description">Capable of very simple tasks, usually the fastest model in the GPT-3 series, and lowest cost.</small>
+                  </span>
+                  <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                </button>
+                <div class="menu-header">Codex</div>
+                <button class="menu-item" type="button" data-bs-value="code-davinci-002">
+                  <span class="menu-item-content">
+                    <span>code-davinci-002</span>
+                    <small class="menu-item-description">Most capable Codex model. Particularly good at translating natural language to code. In addition to completing code, also supports inserting completions within code.</small>
+                  </span>
+                  <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                </button>
+                <button class="menu-item" type="button" data-bs-value="code-cushman-001">
+                  <span class="menu-item-content">
+                    <span>code-cushman-001</span>
+                    <small class="menu-item-description">Almost as capable as Davinci Codex, but slightly faster. This speed advantage may make it preferable for real-time applications.</small>
+                  </span>
+                  <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+                </button>
+                <div class="combobox-no-results d-none">No Models found.</div>
+              </div>
+            </div>
+
+            <!-- Sliders -->
+            <div class="form-field pt-3" tabindex="-1"
+                 data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="left"
+                 data-bs-content="Controls randomness: lowering results in less random completions. As the temperature approaches zero, the model will become deterministic and repetitive.">
+              <div class="d-flex align-items-center justify-content-between">
+                <label for="temperature" class="form-label mb-0">Temperature</label>
+                <output for="temperature" class="playground-range-value fs-sm fg-3">0.56</output>
+              </div>
+              <div class="form-range">
+                <input type="range" class="form-range-input" id="temperature" min="0" max="1" step="0.01" value="0.56">
+              </div>
+            </div>
+
+            <div class="form-field pt-3" tabindex="-1"
+                 data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="left"
+                 data-bs-content="The maximum number of tokens to generate. Requests can use up to 2,048 or 4,000 tokens, shared between prompt and completion. The exact limit varies by model.">
+              <div class="d-flex align-items-center justify-content-between">
+                <label for="maxlength" class="form-label mb-0">Maximum Length</label>
+                <output for="maxlength" class="playground-range-value fs-sm fg-3">256</output>
+              </div>
+              <div class="form-range">
+                <input type="range" class="form-range-input" id="maxlength" min="0" max="4000" step="10" value="256">
+              </div>
+            </div>
+
+            <div class="form-field pt-3" tabindex="-1"
+                 data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="left"
+                 data-bs-content="Control diversity via nucleus sampling: 0.5 means half of all likelihood-weighted options are considered.">
+              <div class="d-flex align-items-center justify-content-between">
+                <label for="top-p" class="form-label mb-0">Top P</label>
+                <output for="top-p" class="playground-range-value fs-sm fg-3">0.9</output>
+              </div>
+              <div class="form-range">
+                <input type="range" class="form-range-input" id="top-p" min="0" max="1" step="0.1" value="0.9">
+              </div>
+            </div>
+          </aside>
+
+          <!-- Editor -->
+          <div class="tab-content d-flex flex-column md:order-1">
+            <!-- Complete -->
+            <div class="tab-pane active flex-grow-1" id="mode-complete-pane" role="tabpanel" aria-labelledby="mode-complete-tab" tabindex="0">
+              <div class="d-flex flex-column gap-5 h-100">
+                <textarea class="form-control flex-grow-1 p-5 playground-textarea-lg" aria-label="Prompt" placeholder="Write a tagline for an ice cream shop"></textarea>
+                <div class="d-flex align-items-center gap-3">
+                  <button type="button" class="btn-solid theme-primary">Submit</button>
+                  <button type="button" class="btn-subtle theme-secondary btn-icon" aria-label="Show history">
+                    <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#rotate-ccw"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Insert -->
+            <div class="tab-pane flex-grow-1" id="mode-insert-pane" role="tabpanel" aria-labelledby="mode-insert-tab" tabindex="0">
+              <div class="d-flex flex-column gap-5 h-100">
+                <div class="d-grid lg:grid-cols-2 gap-7 flex-grow-1">
+                  <textarea class="form-control h-100 p-5 playground-textarea-insert" aria-label="Prompt" placeholder="We're writing to [inset]. Congrats from OpenAI!"></textarea>
+                  <div class="rounded border bg-1 playground-output-insert"></div>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                  <button type="button" class="btn-solid theme-primary">Submit</button>
+                  <button type="button" class="btn-subtle theme-secondary btn-icon" aria-label="Show history">
+                    <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#rotate-ccw"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Edit -->
+            <div class="tab-pane flex-grow-1" id="mode-edit-pane" role="tabpanel" aria-labelledby="mode-edit-tab" tabindex="0">
+              <div class="d-flex flex-column gap-5 h-100">
+                <div class="d-grid lg:grid-cols-2 gap-7 flex-grow-1">
+                  <div class="d-flex flex-column gap-5">
+                    <div class="d-flex flex-column flex-grow-1">
+                      <label for="input" class="visually-hidden">Input</label>
+                      <textarea id="input" class="form-control flex-grow-1 p-5 playground-textarea-edit" placeholder="We is going to the market."></textarea>
+                    </div>
+                    <div class="form-field">
+                      <label for="instructions" class="form-label">Instructions</label>
+                      <textarea id="instructions" class="form-control" placeholder="Fix the grammar."></textarea>
+                    </div>
+                  </div>
+                  <div class="rounded border bg-1 playground-output-edit"></div>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                  <button type="button" class="btn-solid theme-primary">Submit</button>
+                  <button type="button" class="btn-subtle theme-secondary btn-icon" aria-label="Show history">
+                    <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#rotate-ccw"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Save preset -->
+    <dialog class="dialog" id="saveDialog" aria-labelledby="saveDialogTitle">
+      <div class="dialog-header">
+        <div>
+          <h1 class="dialog-title" id="saveDialogTitle">Save preset</h1>
+          <p class="fs-sm fg-3 mb-0 mt-1">This will save the current playground state as a preset which you can access later or share with others.</p>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="dialog" aria-label="Close"></button>
+      </div>
+      <div class="dialog-body d-flex flex-column gap-7">
+        <div class="form-field">
+          <label for="presetName" class="form-label">Name</label>
+          <input type="text" class="form-control" id="presetName" autofocus>
+        </div>
+        <div class="form-field">
+          <label for="presetDescription" class="form-label">Description</label>
+          <textarea class="form-control" id="presetDescription"></textarea>
+        </div>
+      </div>
+      <div class="dialog-footer">
+        <button type="button" class="btn-solid theme-primary" data-bs-dismiss="dialog">Save</button>
+      </div>
+    </dialog>
+
+    <!-- View code -->
+    <dialog class="dialog" id="codeDialog" aria-labelledby="codeDialogTitle">
+      <div class="dialog-header">
+        <div>
+          <h1 class="dialog-title" id="codeDialogTitle">View code</h1>
+          <p class="fs-sm fg-3 mb-0 mt-1">You can use the following code to start integrating your current prompt and settings into your application.</p>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="dialog" aria-label="Close"></button>
+      </div>
+      <div class="dialog-body d-flex flex-column gap-5">
+        <pre class="bg-black fg-white rounded p-7 mb-0 fs-sm" data-bs-theme="dark"><code><span class="fg-info">import</span> os
+<span class="fg-info">import</span> openai
+
+openai.api_key = os.getenv(<span class="fg-success">"OPENAI_API_KEY"</span>)
+
+response = openai.Completion.create(
+  model=<span class="fg-success">"davinci"</span>,
+  prompt=<span class="fg-warning">""</span>,
+  temperature=<span class="fg-warning">0.9</span>,
+  max_tokens=<span class="fg-warning">5</span>,
+  top_p=<span class="fg-warning">1</span>,
+  frequency_penalty=<span class="fg-warning">0</span>,
+  presence_penalty=<span class="fg-success">0</span>,
+)</code></pre>
+        <p class="fs-sm fg-3 mb-0">Your API Key can be found here. You should use environment variables or a secret management tool to expose your key to your applications.</p>
+      </div>
+    </dialog>
+
+    <!-- Content filter preferences -->
+    <dialog class="dialog" id="filterDialog" aria-labelledby="filterDialogTitle">
+      <div class="dialog-header">
+        <div>
+          <h1 class="dialog-title" id="filterDialogTitle">Content filter preferences</h1>
+          <p class="fs-sm fg-3 mb-0 mt-1">The content filter flags text that may violate our content policy. It's powered by our moderation endpoint which is free to use to moderate your OpenAI API traffic. Learn more.</p>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="dialog" aria-label="Close"></button>
+      </div>
+      <div class="dialog-body py-7">
+        <h4 class="fs-sm fw-normal fg-3 mb-4">Playground Warnings</h4>
+        <div class="form-field">
+          <div class="switch">
+            <input type="checkbox" id="show" name="show" role="switch" switch checked>
+          </div>
+          <label for="show" class="d-flex flex-column gap-1">
+            <span class="fw-semibold">Show a warning when content is flagged</span>
+            <span class="fs-sm fg-3">A warning will be shown when sexual, hateful, violent or self-harm content is detected.</span>
+          </label>
+        </div>
+      </div>
+      <div class="dialog-footer">
+        <button type="button" class="btn-subtle theme-secondary" data-bs-dismiss="dialog">Close</button>
+      </div>
+    </dialog>
+
+    <!-- Delete preset (alert dialog: static backdrop, no close button) -->
+    <dialog class="dialog" id="deleteDialog" role="alertdialog" aria-labelledby="deleteDialogTitle" aria-describedby="deleteDialogDesc">
+      <div class="dialog-header">
+        <div>
+          <h1 class="dialog-title" id="deleteDialogTitle">Are you absolutely sure?</h1>
+          <p class="fs-sm fg-3 mb-0 mt-1" id="deleteDialogDesc">This action cannot be undone. This preset will no longer be accessible by you or others you've shared it with.</p>
+        </div>
+      </div>
+      <div class="dialog-footer">
+        <button type="button" class="btn-outline theme-secondary" data-bs-dismiss="dialog">Cancel</button>
+        <button type="button" class="btn-solid theme-danger" data-bs-dismiss="dialog" id="deleteConfirm">Delete</button>
+      </div>
+    </dialog>
+
+    <!-- Toast shown after deleting (shadcn uses sonner) -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div class="toast" id="deleteToast" role="status" aria-live="polite" aria-atomic="true">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <svg class="bi fg-success" width="16" height="16" aria-hidden="true"><use href="#check"/></svg>
+          This preset has been deleted.
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      // Show each slider's current value next to its label
+      for (const output of document.querySelectorAll('.playground-range-value')) {
+        const input = document.getElementById(output.htmlFor.value)
+        input.addEventListener('input', () => { output.value = input.value })
+      }
+
+      // Copy the share link
+      document.getElementById('shareCopy').addEventListener('click', () => {
+        navigator.clipboard?.writeText(document.getElementById('shareLink').value)
+      })
+
+      // Confirm deletion with a toast
+      document.getElementById('deleteConfirm').addEventListener('click', () => {
+        window.bootstrap.Toast.getOrCreateInstance('#deleteToast').show()
+      })
+    </script>
+  </body>
+</html>

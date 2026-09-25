@@ -9,6 +9,7 @@ const root = path.dirname(fileURLToPath(import.meta.url))
 // Folders scanned for pages. Every `.html` file inside becomes a Vite entry.
 const PAGE_GROUPS = [
   { dir: 'pages', label: 'Starter screens' },
+  { dir: 'screens', label: 'Real screens' },
   { dir: 'kitchen-sink', label: 'Kitchen sink' },
   { dir: 'issues', label: 'Issue reproductions' }
 ]
@@ -29,13 +30,19 @@ function readTitle(file) {
   return match ? match[1].trim() : path.basename(file, '.html')
 }
 
+function readSource(file) {
+  const tag = fs.readFileSync(file, 'utf8').match(/<meta name="playground-source"[^>]*>/i)?.[0]
+  const attribute = name => tag?.match(new RegExp(`${name}="([^"]*)"`))?.[1]
+  return tag ? { label: attribute('content'), url: attribute('data-url') } : undefined
+}
+
 function collectPages() {
   return PAGE_GROUPS.map(({ dir, label }) => ({
     label,
     dir,
     pages: findHtmlFiles(path.join(root, dir)).map(file => {
       const url = '/' + path.relative(root, file).split(path.sep).join('/')
-      return { url: url.replace(/index\.html$/, ''), title: readTitle(file) }
+      return { url: url.replace(/index\.html$/, ''), title: readTitle(file), source: readSource(file) }
     })
   }))
 }

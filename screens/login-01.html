@@ -1,0 +1,51 @@
+<!doctype html>
+<!-- Adapted from shadcn/ui's "login-01" block (apps/v4/registry/new-york-v4/blocks/login-01/), MIT License. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Screens: login-01</title>
+    <meta name="playground-source" content="shadcn/ui block “login-01”" data-url="https://github.com/shadcn-ui/ui/tree/98a1fe67b439324ddc857f47fbdce056600a4329/apps/v4/registry/new-york-v4/blocks/login-01" data-license="MIT">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <link rel="stylesheet" href="/screens/auth.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+
+    </svg>
+    <main class="d-flex min-vh-100 w-100 flex-column align-items-center justify-content-center gap-7 p-7 md:p-11">
+      <div class="w-100 auth-max-sm">
+        <div class="card">
+          <div class="card-body gap-7">
+            <div class="d-flex flex-column gap-2">
+              <h1 class="card-title fs-md fw-semibold lh-1 mb-0">Login to your account</h1>
+              <p class="fs-sm fg-2 mb-0">Enter your email below to login to your account</p>
+            </div>
+            <form class="d-flex flex-column gap-8">
+              <div class="form-field">
+                <label for="email" class="form-label">Email</label>
+                <input id="email" type="email" class="form-control" placeholder="m@example.com" required>
+              </div>
+              <div class="form-field">
+                <div class="d-flex align-items-center">
+                  <label for="password" class="form-label mb-0">Password</label>
+                  <a href="#" class="ms-auto ps-3 fs-sm text-nowrap">Forgot your password?</a>
+                </div>
+                <input id="password" type="password" class="form-control" required>
+              </div>
+              <div class="d-grid gap-4">
+                <button type="submit" class="btn-solid theme-primary">Login</button>
+                <button type="button" class="btn-outline theme-secondary">Login with Google</button>
+                <p class="form-text text-center mb-0">Don&apos;t have an account? <a href="#">Sign up</a></p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+/* Page glue for screens/tasks.html. Everything else comes from Bootstrap. */
+
+@layer custom {
+  /* shadcn's faceted filter trigger: `border-dashed` (no border-style utility in v6) */
+  .btn-dashed {
+    border-style: dashed;
+  }
+
+  /* `w-[150px] lg:w-[250px]`: width utilities aren't responsive */
+  .tasks-filter {
+    width: 150px;
+
+    @media (min-width: 1024px) {
+      width: 250px;
+    }
+  }
+
+  /* `max-w-[500px] truncate` on the title cell */
+  .tasks-title {
+    max-width: 500px;
+  }
+
+  /* The table sits in a bordered wrapper: drop the last row's bottom border */
+  .tasks-table > tbody > tr:last-child > * {
+    border-block-end-width: 0;
+  }
+}

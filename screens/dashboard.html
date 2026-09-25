@@ -1,0 +1,929 @@
+<!doctype html>
+<!-- Adapted from shadcn/ui's "dashboard" example (apps/v4/app/(app)/examples/dashboard/, block dashboard-01), MIT License. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Screens: dashboard</title>
+    <meta name="playground-source" content="shadcn/ui example “dashboard”" data-url="https://github.com/shadcn-ui/ui/tree/98a1fe67b439324ddc857f47fbdce056600a4329/apps/v4/app/(app)/examples/dashboard" data-license="MIT">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <link rel="stylesheet" href="/screens/dashboard.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body class="bg-1">
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <symbol id="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M6 12a6 6 0 0 1 6-6"/></symbol>
+      <symbol id="circle-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></symbol>
+      <symbol id="mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></symbol>
+      <symbol id="layout-dashboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></symbol>
+      <symbol id="list-details" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 5h8"/><path d="M13 9h5"/><path d="M13 15h8"/><path d="M13 19h5"/><rect x="3" y="4" width="6" height="6" rx="1"/><rect x="3" y="14" width="6" height="6" rx="1"/></symbol>
+      <symbol id="chart-bar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
+      <symbol id="folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></symbol>
+      <symbol id="users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+      <symbol id="database" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></symbol>
+      <symbol id="report" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M8 18v-2"/><path d="M12 18v-5"/><path d="M16 18v-3"/></symbol>
+      <symbol id="file-word" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m8 12 1.5 6 2.5-4 2.5 4L16 12"/></symbol>
+      <symbol id="dots" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+      <symbol id="dots-vertical" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></symbol>
+      <symbol id="share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 17 5-5-5-5"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/></symbol>
+      <symbol id="trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></symbol>
+      <symbol id="settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+      <symbol id="search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+      <symbol id="user-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/></symbol>
+      <symbol id="credit-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></symbol>
+      <symbol id="bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+      <symbol id="logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
+      <symbol id="panel-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></symbol>
+      <symbol id="trending-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></symbol>
+      <symbol id="trending-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 17-8.5-8.5-5 5L2 7"/><path d="M16 17h6v-6"/></symbol>
+      <symbol id="layout-columns" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18"/></symbol>
+      <symbol id="chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+      <symbol id="chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></symbol>
+      <symbol id="chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol>
+      <symbol id="chevrons-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></symbol>
+      <symbol id="chevrons-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 17 5-5-5-5"/><path d="m13 17 5-5-5-5"/></symbol>
+      <symbol id="plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+      <symbol id="grip-vertical" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></symbol>
+      <symbol id="circle-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+      <symbol id="loader" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/></symbol>
+      <symbol id="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+    </svg>
+
+    <div class="d-flex min-vh-100">
+      <aside class="app-sidebar d-flex flex-column flex-shrink-0 position-sticky top-0 z-2 vh-100" id="appSidebar">
+        <dialog class="md:drawer drawer-start" id="sidebarDrawer" aria-labelledby="sidebarDrawerLabel">
+          <div class="drawer-header">
+            <h2 class="drawer-title fs-md d-flex align-items-center gap-2" id="sidebarDrawerLabel"><svg class="bi" width="20" height="20" aria-hidden="true"><use href="#logo"/></svg> Acme Inc.</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="drawer" aria-label="Close"></button>
+          </div>
+          <div class="drawer-body flex-column flex-grow-1 gap-0 p-3">
+            <a class="d-none md:d-flex align-items-center gap-2 p-2 fs-md fw-semibold fg-body text-decoration-none" href="#">
+              <svg class="bi" width="20" height="20" aria-hidden="true"><use href="#logo"/></svg> Acme Inc.
+            </a>
+
+            <div class="vstack flex-grow-0 gap-3 py-3">
+              <div class="d-flex align-items-center gap-2">
+                <a class="btn-solid theme-primary btn-sm flex-grow-1 justify-content-start" href="#"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#circle-plus"/></svg> Quick Create</a>
+                <button type="button" class="btn-outline theme-secondary btn-icon btn-sm" aria-label="Inbox"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#mail"/></svg></button>
+              </div>
+              <ul class="nav flex-column fs-sm">
+                <li class="nav-item">
+                  <a class="nav-link flex-grow-1 justify-content-start" href="#"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#layout-dashboard"/></svg> Dashboard</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link flex-grow-1 justify-content-start" href="#"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#list-details"/></svg> Lifecycle</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link flex-grow-1 justify-content-start" href="#"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#chart-bar"/></svg> Analytics</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link flex-grow-1 justify-content-start" href="#"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#folder"/></svg> Projects</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link flex-grow-1 justify-content-start" href="#"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#users"/></svg> Team</a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="py-3">
+              <p class="fs-xs fw-medium fg-3 px-2 mb-2">Documents</p>
+              <ul class="nav flex-column fs-sm">
+                <li class="nav-item position-relative">
+                  <a class="nav-link flex-grow-1 justify-content-start pe-9" href="#"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#database"/></svg> Data Library</a>
+                  <button type="button" class="sidebar-action btn-text theme-secondary btn-icon btn-xs position-absolute top-50 end-0 translate-middle-y me-1" data-bs-toggle="menu" data-bs-placement="bottom-end md:right-start" aria-expanded="false" aria-label="More">
+                    <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#dots"/></svg>
+                  </button>
+                  <div class="menu">
+                    <a class="menu-item" href="#"><svg class="bi menu-item-icon" width="16" height="16" aria-hidden="true"><use href="#folder"/></svg> Open</a>
+                    <a class="menu-item" href="#"><svg class="bi menu-item-icon" width="16" height="16" aria-hidden="true"><use href="#share"/></svg> Share</a>
+                    <hr class="menu-divider">
+                    <button class="menu-item theme-danger" type="button"><svg class="bi menu-item-icon" width="16" height="16" aria-hidden="true"><use href="#trash"/></svg> Delete</button>
+                  </div>
+                </li>
+                <li class="nav-item position-relative">
+                  <a class="nav-link flex-grow-1 justify-content-start pe-9" href="#"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#report"/></svg> Reports</a>
+                  <button type="button" class="sidebar-action btn-text theme-secondary btn-icon btn-xs position-absolute top-50 end-0 translate-middle-y me-1" data-bs-toggle="menu" data-bs-placement="bottom-end md:right-start" aria-expanded="false" aria-label="More">
+                    <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#dots"/></svg>
+                  </button>
+                  <div class="menu">
+                    <a class="menu-item" href="#"><svg class="bi menu-item-icon" width="16" height="16" aria-hidden="true"><use href="#folder"/></svg> Open</a>
+                    <a class="menu-item" href="#"><svg class="bi menu-item-icon" width="16" height="16" aria-hidden="true"><use href="#share"/></svg> Share</a>
+                    <hr class="menu-divider">
+                    <button class="menu-item theme-danger" type="button"><svg class="bi menu-item-icon" width="16" height="16" aria-hidden="true"><use href="#trash"/></svg> Delete</button>
+                  </div>
+                </li>
+                <li class="nav-item position-relative">
+                  <a class="nav-link flex-grow-1 justify-content-start pe-9" href="#"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#file-word"/></svg> Word Assistant</a>
+                  <button type="button" class="sidebar-action btn-text theme-secondary btn-icon btn-xs position-absolute top-50 end-0 translate-middle-y me-1" data-bs-toggle="menu" data-bs-placement="bottom-end md:right-start" aria-expanded="false" aria-label="More">
+                    <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#dots"/></svg>
+                  </button>
+                  <div class="menu">
+                    <a class="menu-item" href="#"><svg class="bi menu-item-icon" width="16" height="16" aria-hidden="true"><use href="#folder"/></svg> Open</a>
+                    <a class="menu-item" href="#"><svg class="bi menu-item-icon" width="16" height="16" aria-hidden="true"><use href="#share"/></svg> Share</a>
+                    <hr class="menu-divider">
+                    <button class="menu-item theme-danger" type="button"><svg class="bi menu-item-icon" width="16" height="16" aria-hidden="true"><use href="#trash"/></svg> Delete</button>
+                  </div>
+                </li>
+                <li class="nav-item">
+                  <button type="button" class="nav-link flex-grow-1 justify-content-start fg-3"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#dots"/></svg> More</button>
+                </li>
+              </ul>
+            </div>
+
+            <ul class="nav flex-column fs-sm mt-auto py-3">
+              <li class="nav-item">
+                <a class="nav-link flex-grow-1 justify-content-start" href="#"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#settings"/></svg> Settings</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link flex-grow-1 justify-content-start" href="#"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#help"/></svg> Get Help</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link flex-grow-1 justify-content-start" href="#"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#search"/></svg> Search</a>
+              </li>
+            </ul>
+
+            <div class="pt-2">
+              <button type="button" class="btn-text theme-secondary fg-body w-100 justify-content-start gap-3 px-2 fs-sm" data-bs-toggle="menu" data-bs-placement="top-end md:right-end" aria-expanded="false">
+                <span class="avatar avatar-sm rounded-4 flex-shrink-0">CN</span>
+                <span class="d-grid flex-grow-1 min-w-0 text-start lh-sm">
+                  <span class="text-truncate fw-medium">shadcn</span>
+                  <span class="text-truncate fs-xs fg-3">m@example.com</span>
+                </span>
+                <svg class="bi flex-shrink-0 ms-auto" width="16" height="16" aria-hidden="true"><use href="#dots-vertical"/></svg>
+              </button>
+              <div class="menu">
+                <div class="d-flex align-items-center gap-2 px-2 py-2">
+                  <span class="avatar avatar-sm rounded-4 flex-shrink-0">CN</span>
+                  <span class="d-grid flex-grow-1 min-w-0 text-start lh-sm">
+                    <span class="text-truncate fw-medium">shadcn</span>
+                    <span class="text-truncate fs-xs fg-3">m@example.com</span>
+                  </span>
+                </div>
+                <hr class="menu-divider">
+                <a class="menu-item" href="#"><svg class="bi menu-item-icon" width="16" height="16" aria-hidden="true"><use href="#user-circle"/></svg> Account</a>
+                <a class="menu-item" href="#"><svg class="bi menu-item-icon" width="16" height="16" aria-hidden="true"><use href="#credit-card"/></svg> Billing</a>
+                <a class="menu-item" href="#"><svg class="bi menu-item-icon" width="16" height="16" aria-hidden="true"><use href="#bell"/></svg> Notifications</a>
+                <hr class="menu-divider">
+                <a class="menu-item" href="#"><svg class="bi menu-item-icon" width="16" height="16" aria-hidden="true"><use href="#logout"/></svg> Log out</a>
+              </div>
+            </div>
+          </div>
+        </dialog>
+      </aside>
+
+      <div class="app-inset d-flex flex-column flex-grow-1 min-w-0 bg-body md:m-3 md:ms-0" id="appInset">
+        <header class="d-flex align-items-center gap-1 lg:gap-2 border-bottom px-5 lg:px-7 py-3">
+          <button type="button" class="btn-text theme-secondary btn-icon btn-sm ms--1" id="sidebarToggle" aria-controls="sidebarDrawer" aria-label="Toggle Sidebar">
+            <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#panel-left"/></svg>
+          </button>
+          <div class="vr align-self-center mx-3"></div>
+          <h1 class="fs-md fw-medium mb-0">Documents</h1>
+          <div class="ms-auto d-flex align-items-center gap-3">
+            <a class="btn-text theme-secondary btn-sm d-none sm:d-inline-flex" href="#">GitHub</a>
+          </div>
+        </header>
+        <main class="d-flex flex-column gap-5 md:gap-7 py-5 md:py-7">
+          <div class="grid gap-5 px-5 lg:px-7">
+            <div class="card section-card shadow-xs g-col-12 sm:g-col-6 lg:g-col-3">
+              <div class="card-body gap-7">
+                <div class="d-flex align-items-start justify-content-between gap-3">
+                  <div class="vstack gap-2">
+                    <p class="fs-sm fg-3 mb-0">Total Revenue</p>
+                    <p class="fs-2xl fw-semibold lh-1 mb-0">$1,250.00</p>
+                  </div>
+                  <span class="badge badge-outline theme-secondary"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#trending-up"/></svg> +12.5%</span>
+                </div>
+                <div class="vstack gap-2 fs-sm">
+                  <div class="d-flex align-items-center gap-2 fw-medium">Trending up this month <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#trending-up"/></svg></div>
+                  <div class="fg-3">Visitors for the last 6 months</div>
+                </div>
+              </div>
+            </div>
+            <div class="card section-card shadow-xs g-col-12 sm:g-col-6 lg:g-col-3">
+              <div class="card-body gap-7">
+                <div class="d-flex align-items-start justify-content-between gap-3">
+                  <div class="vstack gap-2">
+                    <p class="fs-sm fg-3 mb-0">New Customers</p>
+                    <p class="fs-2xl fw-semibold lh-1 mb-0">1,234</p>
+                  </div>
+                  <span class="badge badge-outline theme-secondary"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#trending-down"/></svg> -20%</span>
+                </div>
+                <div class="vstack gap-2 fs-sm">
+                  <div class="d-flex align-items-center gap-2 fw-medium">Down 20% this period <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#trending-down"/></svg></div>
+                  <div class="fg-3">Acquisition needs attention</div>
+                </div>
+              </div>
+            </div>
+            <div class="card section-card shadow-xs g-col-12 sm:g-col-6 lg:g-col-3">
+              <div class="card-body gap-7">
+                <div class="d-flex align-items-start justify-content-between gap-3">
+                  <div class="vstack gap-2">
+                    <p class="fs-sm fg-3 mb-0">Active Accounts</p>
+                    <p class="fs-2xl fw-semibold lh-1 mb-0">45,678</p>
+                  </div>
+                  <span class="badge badge-outline theme-secondary"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#trending-up"/></svg> +12.5%</span>
+                </div>
+                <div class="vstack gap-2 fs-sm">
+                  <div class="d-flex align-items-center gap-2 fw-medium">Strong user retention <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#trending-up"/></svg></div>
+                  <div class="fg-3">Engagement exceed targets</div>
+                </div>
+              </div>
+            </div>
+            <div class="card section-card shadow-xs g-col-12 sm:g-col-6 lg:g-col-3">
+              <div class="card-body gap-7">
+                <div class="d-flex align-items-start justify-content-between gap-3">
+                  <div class="vstack gap-2">
+                    <p class="fs-sm fg-3 mb-0">Growth Rate</p>
+                    <p class="fs-2xl fw-semibold lh-1 mb-0">4.5%</p>
+                  </div>
+                  <span class="badge badge-outline theme-secondary"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#trending-up"/></svg> +4.5%</span>
+                </div>
+                <div class="vstack gap-2 fs-sm">
+                  <div class="d-flex align-items-center gap-2 fw-medium">Steady performance increase <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#trending-up"/></svg></div>
+                  <div class="fg-3">Meets growth projections</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="px-5 lg:px-7">
+            <div class="card shadow-xs">
+              <div class="card-body gap-0 px-3 sm:px-6">
+                <div class="d-flex align-items-start justify-content-between gap-3 px-3 sm:px-0">
+                  <div class="vstack gap-1">
+                    <h2 class="fs-md fw-semibold mb-0">Total Visitors</h2>
+                    <p class="fs-sm fg-3 mb-0">
+                      <span class="d-none sm:d-inline">Total for the last 3 months</span>
+                      <span class="sm:d-none">Last 3 months</span>
+                    </p>
+                  </div>
+                  <div class="btn-group btn-group-sm d-none xl:d-inline-flex" role="group" aria-label="Time range">
+                    <label class="btn-check btn-outline theme-secondary px-5"><input type="radio" name="chartRange" value="90d" autocomplete="off" checked> Last 3 months</label>
+                    <label class="btn-check btn-outline theme-secondary px-5"><input type="radio" name="chartRange" value="30d" autocomplete="off"> Last 30 days</label>
+                    <label class="btn-check btn-outline theme-secondary px-5"><input type="radio" name="chartRange" value="7d" autocomplete="off"> Last 7 days</label>
+                  </div>
+                  <button class="form-control form-control-sm combobox-toggle w-10 flex-shrink-0 xl:d-none" type="button" id="chartRangeSelect" data-bs-toggle="combobox" data-bs-placement="bottom-end" aria-label="Select a value">
+                    <span class="combobox-value">Last 3 months</span>
+                    <svg class="combobox-caret" width="16" height="16" aria-hidden="true"><use href="#chevron-down"/></svg>
+                  </button>
+                  <div class="menu">
+                    <button class="menu-item selected" aria-selected="true" type="button" data-bs-value="90d">Last 3 months</button>
+                    <button class="menu-item" type="button" data-bs-value="30d">Last 30 days</button>
+                    <button class="menu-item" type="button" data-bs-value="7d">Last 7 days</button>
+                  </div>
+                </div>
+                <div class="pt-5 sm:pt-7">
+                  <svg class="d-block w-100 fg-primary" height="250" viewBox="0 0 800 250" preserveAspectRatio="none" role="img" aria-label="Stacked area chart of desktop and mobile visitors">
+                    <defs>
+                      <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stop-color="currentColor" stop-opacity="1"/>
+                        <stop offset="95%" stop-color="currentColor" stop-opacity=".1"/>
+                      </linearGradient>
+                      <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stop-color="currentColor" stop-opacity=".8"/>
+                        <stop offset="95%" stop-color="currentColor" stop-opacity=".1"/>
+                      </linearGradient>
+                    </defs>
+                    <g class="fg-body fg-10" stroke="currentColor" stroke-dasharray="3 3" vector-effect="non-scaling-stroke">
+                      <line x1="0" x2="800" y1="0.0" y2="0.0" vector-effect="non-scaling-stroke"/>
+                      <line x1="0" x2="800" y1="62.5" y2="62.5" vector-effect="non-scaling-stroke"/>
+                      <line x1="0" x2="800" y1="125.0" y2="125.0" vector-effect="non-scaling-stroke"/>
+                      <line x1="0" x2="800" y1="187.5" y2="187.5" vector-effect="non-scaling-stroke"/>
+                      <line x1="0" x2="800" y1="250.0" y2="250.0" vector-effect="non-scaling-stroke"/>
+                    </g>
+                    <g data-range="90d">
+                    <path d="M0,218.8C3,213.8 5.9,208.9 8.9,212.5C11.9,216.1 14.8,228.3 17.8,225C20.7,221.7 23.7,202.8 26.7,195.8C29.6,188.9 32.6,193.8 35.6,189.6C38.5,185.4 41.5,172.1 44.4,179.2C47.4,186.2 50.4,213.5 53.3,212.5C56.3,211.5 59.3,182 62.2,183.3C65.2,184.6 68.1,216.7 71.1,227.1C74.1,237.5 77,226.4 80,210.4C83,194.5 85.9,173.7 88.9,177.1C91.9,180.4 94.8,207.9 97.8,206.3C100.7,204.6 103.7,173.8 106.7,170.8C109.6,167.8 112.6,192.6 115.6,204.2C118.5,215.8 121.5,214.2 124.4,214.6C127.4,215 130.4,217.4 133.3,210.4C136.3,203.4 139.3,187 142.2,175C145.2,163 148.1,155.3 151.1,164.6C154.1,173.9 157,200.3 160,212.5C163,224.7 165.9,222.9 168.9,218.8C171.9,214.6 174.8,208.3 177.8,208.3C180.7,208.4 183.7,214.8 186.7,214.6C189.6,214.4 192.6,207.6 195.6,202.1C198.5,196.5 201.5,192.2 204.4,189.6C207.4,187 210.4,186.2 213.3,197.9C216.3,209.6 219.3,233.9 222.2,222.9C225.2,212 228.1,165.9 231.1,162.5C234.1,159.1 237,198.5 240,212.5C243,226.5 245.9,215 248.9,200C251.9,185 254.8,166.6 257.8,170.8C260.7,175.1 263.7,202.1 266.7,204.2C269.6,206.2 272.6,183.3 275.6,185.4C278.5,187.5 281.5,214.5 284.4,210.4C287.4,206.3 290.4,171 293.3,162.5C296.3,154 299.3,172.3 302.2,168.8C305.2,165.2 308.1,139.7 311.1,141.7C314.1,143.6 317,172.9 320,187.5C323,202.1 325.9,202.1 328.9,206.3C331.9,210.4 334.8,218.8 337.8,212.5C340.7,206.2 343.7,185.3 346.7,181.3C349.6,177.2 352.6,190 355.6,193.8C358.5,197.5 361.5,192.1 364.4,200C367.4,207.9 370.4,229 373.3,216.7C376.3,204.3 379.3,158.4 382.2,147.9C385.2,137.5 388.1,162.4 391.1,170.8C394.1,179.2 397,171.1 400,166.7C403,162.3 405.9,161.6 408.9,162.5C411.9,163.4 414.8,165.7 417.8,177.1C420.7,188.5 423.7,208.9 426.7,212.5C429.6,216.1 432.6,203 435.6,202.1C438.5,201.2 441.5,212.6 444.4,220.8C447.4,229 450.4,234 453.3,225C456.3,216 459.3,193 462.2,189.6C465.2,186.2 468.1,202.5 471.1,204.2C474.1,205.8 477,192.9 480,197.9C483,203 485.9,226 488.9,214.6C491.9,203.2 494.8,157.4 497.8,154.2C500.7,151 503.7,190.3 506.7,210.4C509.6,230.5 512.6,231.3 515.6,222.9C518.5,214.5 521.5,197 524.4,191.7C527.4,186.4 530.4,193.4 533.3,202.1C536.3,210.8 539.3,221.2 542.2,208.3C545.2,195.5 548.1,159.5 551.1,164.6C554.1,169.7 557,215.9 560,216.7C563,217.4 565.9,172.7 568.9,170.8C571.9,168.9 574.8,209.8 577.8,220.8C580.7,231.9 583.7,213.1 586.7,197.9C589.6,182.7 592.6,171 595.6,172.9C598.5,174.8 601.5,190.2 604.4,183.3C607.4,176.5 610.4,147.3 613.3,150C616.3,152.7 619.3,187.4 622.2,208.3C625.2,229.3 628.1,236.5 631.1,218.8C634.1,201 637,158.2 640,162.5C643,166.8 645.9,218.1 648.9,222.9C651.9,227.8 654.8,186.2 657.8,170.8C660.7,155.5 663.7,166.3 666.7,177.1C669.6,187.9 672.6,198.7 675.6,185.4C678.5,172.2 681.5,134.9 684.4,141.7C687.4,148.5 690.4,199.3 693.3,214.6C696.3,229.8 699.3,209.4 702.2,189.6C705.2,169.7 708.1,150.4 711.1,156.3C714.1,162.1 717,193 720,206.3C723,219.5 725.9,215 728.9,193.8C731.9,172.5 734.8,134.4 737.8,139.6C740.7,144.8 743.7,193.2 746.7,212.5C749.6,231.8 752.6,221.9 755.6,210.4C758.5,198.9 761.5,185.8 764.4,170.8C767.4,155.9 770.4,139.2 773.3,147.9C776.3,156.7 779.3,190.9 782.2,208.3C785.2,225.8 788.1,226.4 791.1,216.7C794.1,206.9 797,186.8 800,166.7L800,250L0,250Z" fill="url(#fillMobile)"/>
+                    <path d="M0,172.5C3,180 5.9,187.5 8.9,192.3C11.9,197.1 14.8,199.3 17.8,190.2C20.7,181.1 23.7,160.8 26.7,145.4C29.6,130 32.6,119.6 35.6,111.9C38.5,104.2 41.5,99.2 44.4,116.5C47.4,133.7 50.4,173.2 53.3,161.5C56.3,149.7 59.3,86.9 62.2,98.1C65.2,109.4 68.1,194.8 71.1,214.8C74.1,234.7 77,189.2 80,156C83,122.9 85.9,102.1 88.9,109C91.9,115.8 94.8,150.3 97.8,145.4C100.7,140.5 103.7,96.1 106.7,99.6C109.6,103.1 112.6,154.4 115.6,175.6C118.5,196.9 121.5,188 124.4,189.6C127.4,191.2 130.4,203.2 133.3,181.7C136.3,160.1 139.3,104.9 142.2,82.1C145.2,59.2 148.1,68.7 151.1,88.8C154.1,108.8 157,139.3 160,161.9C163,184.4 165.9,199 168.9,200.2C171.9,201.4 174.8,189.2 177.8,179.8C180.7,170.4 183.7,163.9 186.7,167.9C189.6,172 192.6,186.6 195.6,173.3C198.5,160.1 201.5,119 204.4,109C207.4,98.9 210.4,119.8 213.3,153.1C216.3,186.4 219.3,232 222.2,207.3C225.2,182.6 228.1,87.4 231.1,82.7C234.1,78 237,163.6 240,187.1C243,210.6 245.9,172 248.9,134.4C251.9,96.8 254.8,60.2 257.8,76.3C260.7,92.3 263.7,160.8 266.7,169.8C269.6,178.8 272.6,128.2 275.6,124.4C278.5,120.6 281.5,163.6 284.4,159C287.4,154.3 290.4,102 293.3,82.3C296.3,62.6 299.3,75.6 302.2,68.5C305.2,61.5 308.1,34.3 311.1,37.9C314.1,41.5 317,75.9 320,106.7C323,137.5 325.9,164.7 328.9,175.2C331.9,185.7 334.8,179.4 337.8,165.2C340.7,151 343.7,128.9 346.7,120.2C349.6,111.6 352.6,116.4 355.6,124C358.5,131.5 361.5,141.9 364.4,159C367.4,176 370.4,199.9 373.3,175.6C376.3,151.4 379.3,79 382.2,54.6C385.2,30.2 388.1,53.8 391.1,72.3C394.1,90.8 397,104.2 400,96.3C403,88.3 405.9,59 408.9,58.5C411.9,58.1 414.8,86.6 417.8,111.5C420.7,136.3 423.7,157.6 426.7,163.5C429.6,169.5 432.6,160 435.6,165.2C438.5,170.4 441.5,190.1 444.4,203.8C447.4,217.4 450.4,224.8 453.3,208.1C456.3,191.4 459.3,150.5 462.2,137.1C465.2,123.6 468.1,137.7 471.1,142.9C474.1,148.2 477,144.6 480,156C483,167.5 485.9,193.8 488.9,170.2C491.9,146.6 494.8,73.1 497.8,66.7C500.7,60.2 503.7,120.9 506.7,161.9C509.6,202.9 512.6,224.1 515.6,206.7C518.5,189.2 521.5,132.9 524.4,120.8C527.4,108.7 530.4,140.8 533.3,165C536.3,189.2 539.3,205.5 542.2,171.3C545.2,137 548.1,52.3 551.1,66.7C554.1,81.1 557,194.6 560,195.2C563,195.8 565.9,83.5 568.9,79.4C571.9,75.3 574.8,179.5 577.8,202.5C580.7,225.5 583.7,167.4 586.7,136.7C589.6,105.9 592.6,102.5 595.6,105.6C598.5,108.8 601.5,118.5 604.4,103.1C607.4,87.8 610.4,47.4 613.3,58.8C616.3,70.1 619.3,133.1 622.2,176C625.2,218.9 628.1,241.7 631.1,199.6C634.1,157.5 637,50.6 640,60C643,69.4 645.9,195 648.9,206C651.9,217.1 654.8,113.4 657.8,82.1C660.7,50.7 663.7,91.6 666.7,113.1C669.6,134.6 672.6,136.7 675.6,108.1C678.5,79.6 681.5,20.4 684.4,42.7C687.4,65 690.4,168.7 693.3,192.3C696.3,215.9 699.3,159.3 702.2,118.5C705.2,77.8 708.1,52.9 711.1,71.3C714.1,89.6 717,151.1 720,171C723,191 725.9,169.3 728.9,127.7C731.9,86.1 734.8,24.5 737.8,39.6C740.7,54.6 743.7,146.3 746.7,185C749.6,223.7 752.6,209.3 755.6,181C758.5,152.8 761.5,110.7 764.4,80.4C767.4,50.1 770.4,31.5 773.3,54.6C776.3,77.6 779.3,142.3 782.2,177.3C785.2,212.2 788.1,217.4 791.1,195.2C794.1,173 797,123.4 800,73.8L800,166.7C797,186.8 794.1,206.9 791.1,216.7C788.1,226.4 785.2,225.8 782.2,208.3C779.3,190.9 776.3,156.7 773.3,147.9C770.4,139.2 767.4,155.9 764.4,170.8C761.5,185.8 758.5,198.9 755.6,210.4C752.6,221.9 749.6,231.8 746.7,212.5C743.7,193.2 740.7,144.8 737.8,139.6C734.8,134.4 731.9,172.5 728.9,193.8C725.9,215 723,219.5 720,206.3C717,193 714.1,162.1 711.1,156.3C708.1,150.4 705.2,169.7 702.2,189.6C699.3,209.4 696.3,229.8 693.3,214.6C690.4,199.3 687.4,148.5 684.4,141.7C681.5,134.9 678.5,172.2 675.6,185.4C672.6,198.7 669.6,187.9 666.7,177.1C663.7,166.3 660.7,155.5 657.8,170.8C654.8,186.2 651.9,227.8 648.9,222.9C645.9,218.1 643,166.8 640,162.5C637,158.2 634.1,201 631.1,218.8C628.1,236.5 625.2,229.3 622.2,208.3C619.3,187.4 616.3,152.7 613.3,150C610.4,147.3 607.4,176.5 604.4,183.3C601.5,190.2 598.5,174.8 595.6,172.9C592.6,171 589.6,182.7 586.7,197.9C583.7,213.1 580.7,231.9 577.8,220.8C574.8,209.8 571.9,168.9 568.9,170.8C565.9,172.7 563,217.4 560,216.7C557,215.9 554.1,169.7 551.1,164.6C548.1,159.5 545.2,195.5 542.2,208.3C539.3,221.2 536.3,210.8 533.3,202.1C530.4,193.4 527.4,186.4 524.4,191.7C521.5,197 518.5,214.5 515.6,222.9C512.6,231.3 509.6,230.5 506.7,210.4C503.7,190.3 500.7,151 497.8,154.2C494.8,157.4 491.9,203.2 488.9,214.6C485.9,226 483,203 480,197.9C477,192.9 474.1,205.8 471.1,204.2C468.1,202.5 465.2,186.2 462.2,189.6C459.3,193 456.3,216 453.3,225C450.4,234 447.4,229 444.4,220.8C441.5,212.6 438.5,201.2 435.6,202.1C432.6,203 429.6,216.1 426.7,212.5C423.7,208.9 420.7,188.5 417.8,177.1C414.8,165.7 411.9,163.4 408.9,162.5C405.9,161.6 403,162.3 400,166.7C397,171.1 394.1,179.2 391.1,170.8C388.1,162.4 385.2,137.5 382.2,147.9C379.3,158.4 376.3,204.3 373.3,216.7C370.4,229 367.4,207.9 364.4,200C361.5,192.1 358.5,197.5 355.6,193.8C352.6,190 349.6,177.2 346.7,181.3C343.7,185.3 340.7,206.2 337.8,212.5C334.8,218.8 331.9,210.4 328.9,206.3C325.9,202.1 323,202.1 320,187.5C317,172.9 314.1,143.6 311.1,141.7C308.1,139.7 305.2,165.2 302.2,168.8C299.3,172.3 296.3,154 293.3,162.5C290.4,171 287.4,206.3 284.4,210.4C281.5,214.5 278.5,187.5 275.6,185.4C272.6,183.3 269.6,206.2 266.7,204.2C263.7,202.1 260.7,175.1 257.8,170.8C254.8,166.6 251.9,185 248.9,200C245.9,215 243,226.5 240,212.5C237,198.5 234.1,159.1 231.1,162.5C228.1,165.9 225.2,212 222.2,222.9C219.3,233.9 216.3,209.6 213.3,197.9C210.4,186.2 207.4,187 204.4,189.6C201.5,192.2 198.5,196.5 195.6,202.1C192.6,207.6 189.6,214.4 186.7,214.6C183.7,214.8 180.7,208.4 177.8,208.3C174.8,208.3 171.9,214.6 168.9,218.8C165.9,222.9 163,224.7 160,212.5C157,200.3 154.1,173.9 151.1,164.6C148.1,155.3 145.2,163 142.2,175C139.3,187 136.3,203.4 133.3,210.4C130.4,217.4 127.4,215 124.4,214.6C121.5,214.2 118.5,215.8 115.6,204.2C112.6,192.6 109.6,167.8 106.7,170.8C103.7,173.8 100.7,204.6 97.8,206.3C94.8,207.9 91.9,180.4 88.9,177.1C85.9,173.7 83,194.5 80,210.4C77,226.4 74.1,237.5 71.1,227.1C68.1,216.7 65.2,184.6 62.2,183.3C59.3,182 56.3,211.5 53.3,212.5C50.4,213.5 47.4,186.2 44.4,179.2C41.5,172.1 38.5,185.4 35.6,189.6C32.6,193.8 29.6,188.9 26.7,195.8C23.7,202.8 20.7,221.7 17.8,225C14.8,228.3 11.9,216.1 8.9,212.5C5.9,208.9 3,213.8 0,218.8Z" fill="url(#fillDesktop)"/>
+                    <path d="M0,218.8C3,213.8 5.9,208.9 8.9,212.5C11.9,216.1 14.8,228.3 17.8,225C20.7,221.7 23.7,202.8 26.7,195.8C29.6,188.9 32.6,193.8 35.6,189.6C38.5,185.4 41.5,172.1 44.4,179.2C47.4,186.2 50.4,213.5 53.3,212.5C56.3,211.5 59.3,182 62.2,183.3C65.2,184.6 68.1,216.7 71.1,227.1C74.1,237.5 77,226.4 80,210.4C83,194.5 85.9,173.7 88.9,177.1C91.9,180.4 94.8,207.9 97.8,206.3C100.7,204.6 103.7,173.8 106.7,170.8C109.6,167.8 112.6,192.6 115.6,204.2C118.5,215.8 121.5,214.2 124.4,214.6C127.4,215 130.4,217.4 133.3,210.4C136.3,203.4 139.3,187 142.2,175C145.2,163 148.1,155.3 151.1,164.6C154.1,173.9 157,200.3 160,212.5C163,224.7 165.9,222.9 168.9,218.8C171.9,214.6 174.8,208.3 177.8,208.3C180.7,208.4 183.7,214.8 186.7,214.6C189.6,214.4 192.6,207.6 195.6,202.1C198.5,196.5 201.5,192.2 204.4,189.6C207.4,187 210.4,186.2 213.3,197.9C216.3,209.6 219.3,233.9 222.2,222.9C225.2,212 228.1,165.9 231.1,162.5C234.1,159.1 237,198.5 240,212.5C243,226.5 245.9,215 248.9,200C251.9,185 254.8,166.6 257.8,170.8C260.7,175.1 263.7,202.1 266.7,204.2C269.6,206.2 272.6,183.3 275.6,185.4C278.5,187.5 281.5,214.5 284.4,210.4C287.4,206.3 290.4,171 293.3,162.5C296.3,154 299.3,172.3 302.2,168.8C305.2,165.2 308.1,139.7 311.1,141.7C314.1,143.6 317,172.9 320,187.5C323,202.1 325.9,202.1 328.9,206.3C331.9,210.4 334.8,218.8 337.8,212.5C340.7,206.2 343.7,185.3 346.7,181.3C349.6,177.2 352.6,190 355.6,193.8C358.5,197.5 361.5,192.1 364.4,200C367.4,207.9 370.4,229 373.3,216.7C376.3,204.3 379.3,158.4 382.2,147.9C385.2,137.5 388.1,162.4 391.1,170.8C394.1,179.2 397,171.1 400,166.7C403,162.3 405.9,161.6 408.9,162.5C411.9,163.4 414.8,165.7 417.8,177.1C420.7,188.5 423.7,208.9 426.7,212.5C429.6,216.1 432.6,203 435.6,202.1C438.5,201.2 441.5,212.6 444.4,220.8C447.4,229 450.4,234 453.3,225C456.3,216 459.3,193 462.2,189.6C465.2,186.2 468.1,202.5 471.1,204.2C474.1,205.8 477,192.9 480,197.9C483,203 485.9,226 488.9,214.6C491.9,203.2 494.8,157.4 497.8,154.2C500.7,151 503.7,190.3 506.7,210.4C509.6,230.5 512.6,231.3 515.6,222.9C518.5,214.5 521.5,197 524.4,191.7C527.4,186.4 530.4,193.4 533.3,202.1C536.3,210.8 539.3,221.2 542.2,208.3C545.2,195.5 548.1,159.5 551.1,164.6C554.1,169.7 557,215.9 560,216.7C563,217.4 565.9,172.7 568.9,170.8C571.9,168.9 574.8,209.8 577.8,220.8C580.7,231.9 583.7,213.1 586.7,197.9C589.6,182.7 592.6,171 595.6,172.9C598.5,174.8 601.5,190.2 604.4,183.3C607.4,176.5 610.4,147.3 613.3,150C616.3,152.7 619.3,187.4 622.2,208.3C625.2,229.3 628.1,236.5 631.1,218.8C634.1,201 637,158.2 640,162.5C643,166.8 645.9,218.1 648.9,222.9C651.9,227.8 654.8,186.2 657.8,170.8C660.7,155.5 663.7,166.3 666.7,177.1C669.6,187.9 672.6,198.7 675.6,185.4C678.5,172.2 681.5,134.9 684.4,141.7C687.4,148.5 690.4,199.3 693.3,214.6C696.3,229.8 699.3,209.4 702.2,189.6C705.2,169.7 708.1,150.4 711.1,156.3C714.1,162.1 717,193 720,206.3C723,219.5 725.9,215 728.9,193.8C731.9,172.5 734.8,134.4 737.8,139.6C740.7,144.8 743.7,193.2 746.7,212.5C749.6,231.8 752.6,221.9 755.6,210.4C758.5,198.9 761.5,185.8 764.4,170.8C767.4,155.9 770.4,139.2 773.3,147.9C776.3,156.7 779.3,190.9 782.2,208.3C785.2,225.8 788.1,226.4 791.1,216.7C794.1,206.9 797,186.8 800,166.7" fill="none" stroke="currentColor" vector-effect="non-scaling-stroke"/>
+                    <path d="M0,172.5C3,180 5.9,187.5 8.9,192.3C11.9,197.1 14.8,199.3 17.8,190.2C20.7,181.1 23.7,160.8 26.7,145.4C29.6,130 32.6,119.6 35.6,111.9C38.5,104.2 41.5,99.2 44.4,116.5C47.4,133.7 50.4,173.2 53.3,161.5C56.3,149.7 59.3,86.9 62.2,98.1C65.2,109.4 68.1,194.8 71.1,214.8C74.1,234.7 77,189.2 80,156C83,122.9 85.9,102.1 88.9,109C91.9,115.8 94.8,150.3 97.8,145.4C100.7,140.5 103.7,96.1 106.7,99.6C109.6,103.1 112.6,154.4 115.6,175.6C118.5,196.9 121.5,188 124.4,189.6C127.4,191.2 130.4,203.2 133.3,181.7C136.3,160.1 139.3,104.9 142.2,82.1C145.2,59.2 148.1,68.7 151.1,88.8C154.1,108.8 157,139.3 160,161.9C163,184.4 165.9,199 168.9,200.2C171.9,201.4 174.8,189.2 177.8,179.8C180.7,170.4 183.7,163.9 186.7,167.9C189.6,172 192.6,186.6 195.6,173.3C198.5,160.1 201.5,119 204.4,109C207.4,98.9 210.4,119.8 213.3,153.1C216.3,186.4 219.3,232 222.2,207.3C225.2,182.6 228.1,87.4 231.1,82.7C234.1,78 237,163.6 240,187.1C243,210.6 245.9,172 248.9,134.4C251.9,96.8 254.8,60.2 257.8,76.3C260.7,92.3 263.7,160.8 266.7,169.8C269.6,178.8 272.6,128.2 275.6,124.4C278.5,120.6 281.5,163.6 284.4,159C287.4,154.3 290.4,102 293.3,82.3C296.3,62.6 299.3,75.6 302.2,68.5C305.2,61.5 308.1,34.3 311.1,37.9C314.1,41.5 317,75.9 320,106.7C323,137.5 325.9,164.7 328.9,175.2C331.9,185.7 334.8,179.4 337.8,165.2C340.7,151 343.7,128.9 346.7,120.2C349.6,111.6 352.6,116.4 355.6,124C358.5,131.5 361.5,141.9 364.4,159C367.4,176 370.4,199.9 373.3,175.6C376.3,151.4 379.3,79 382.2,54.6C385.2,30.2 388.1,53.8 391.1,72.3C394.1,90.8 397,104.2 400,96.3C403,88.3 405.9,59 408.9,58.5C411.9,58.1 414.8,86.6 417.8,111.5C420.7,136.3 423.7,157.6 426.7,163.5C429.6,169.5 432.6,160 435.6,165.2C438.5,170.4 441.5,190.1 444.4,203.8C447.4,217.4 450.4,224.8 453.3,208.1C456.3,191.4 459.3,150.5 462.2,137.1C465.2,123.6 468.1,137.7 471.1,142.9C474.1,148.2 477,144.6 480,156C483,167.5 485.9,193.8 488.9,170.2C491.9,146.6 494.8,73.1 497.8,66.7C500.7,60.2 503.7,120.9 506.7,161.9C509.6,202.9 512.6,224.1 515.6,206.7C518.5,189.2 521.5,132.9 524.4,120.8C527.4,108.7 530.4,140.8 533.3,165C536.3,189.2 539.3,205.5 542.2,171.3C545.2,137 548.1,52.3 551.1,66.7C554.1,81.1 557,194.6 560,195.2C563,195.8 565.9,83.5 568.9,79.4C571.9,75.3 574.8,179.5 577.8,202.5C580.7,225.5 583.7,167.4 586.7,136.7C589.6,105.9 592.6,102.5 595.6,105.6C598.5,108.8 601.5,118.5 604.4,103.1C607.4,87.8 610.4,47.4 613.3,58.8C616.3,70.1 619.3,133.1 622.2,176C625.2,218.9 628.1,241.7 631.1,199.6C634.1,157.5 637,50.6 640,60C643,69.4 645.9,195 648.9,206C651.9,217.1 654.8,113.4 657.8,82.1C660.7,50.7 663.7,91.6 666.7,113.1C669.6,134.6 672.6,136.7 675.6,108.1C678.5,79.6 681.5,20.4 684.4,42.7C687.4,65 690.4,168.7 693.3,192.3C696.3,215.9 699.3,159.3 702.2,118.5C705.2,77.8 708.1,52.9 711.1,71.3C714.1,89.6 717,151.1 720,171C723,191 725.9,169.3 728.9,127.7C731.9,86.1 734.8,24.5 737.8,39.6C740.7,54.6 743.7,146.3 746.7,185C749.6,223.7 752.6,209.3 755.6,181C758.5,152.8 761.5,110.7 764.4,80.4C767.4,50.1 770.4,31.5 773.3,54.6C776.3,77.6 779.3,142.3 782.2,177.3C785.2,212.2 788.1,217.4 791.1,195.2C794.1,173 797,123.4 800,73.8" fill="none" stroke="currentColor" vector-effect="non-scaling-stroke"/>
+                    </g>
+                    <g data-range="30d" class="d-none">
+                    <path d="M0,202.1C8.9,211.8 17.8,221.4 26.7,208.3C35.6,195.2 44.4,159.4 53.3,164.6C62.2,169.8 71.1,215.9 80,216.7C88.9,217.4 97.8,172.7 106.7,170.8C115.6,168.9 124.4,209.8 133.3,220.8C142.2,231.9 151.1,213.1 160,197.9C168.9,182.7 177.8,171 186.7,172.9C195.6,174.8 204.4,190.2 213.3,183.3C222.2,176.5 231.1,147.3 240,150C248.9,152.7 257.8,187.4 266.7,208.3C275.6,229.3 284.4,236.5 293.3,218.8C302.2,201 311.1,158.2 320,162.5C328.9,166.8 337.8,218.1 346.7,222.9C355.6,227.8 364.4,186.2 373.3,170.8C382.2,155.5 391.1,166.3 400,177.1C408.9,187.9 417.8,198.7 426.7,185.4C435.6,172.2 444.4,134.9 453.3,141.7C462.2,148.5 471.1,199.3 480,214.6C488.9,229.8 497.8,209.4 506.7,189.6C515.6,169.7 524.4,150.4 533.3,156.3C542.2,162.1 551.1,193 560,206.3C568.9,219.5 577.8,215 586.7,193.8C595.6,172.5 604.4,134.4 613.3,139.6C622.2,144.8 631.1,193.2 640,212.5C648.9,231.8 657.8,221.9 666.7,210.4C675.6,198.9 684.4,185.8 693.3,170.8C702.2,155.9 711.1,139.2 720,147.9C728.9,156.7 737.8,190.9 746.7,208.3C755.6,225.8 764.4,226.4 773.3,216.7C782.2,206.9 791.1,186.8 800,166.7L800,250L0,250Z" fill="url(#fillMobile)"/>
+                    <path d="M0,165C8.9,184.6 17.8,204.3 26.7,171.3C35.6,138.2 44.4,52.6 53.3,66.7C62.2,80.7 71.1,194.5 80,195.2C88.9,195.9 97.8,83.5 106.7,79.4C115.6,75.3 124.4,179.5 133.3,202.5C142.2,225.5 151.1,167.4 160,136.7C168.9,105.9 177.8,102.5 186.7,105.6C195.6,108.8 204.4,118.5 213.3,103.1C222.2,87.8 231.1,47.4 240,58.8C248.9,70.1 257.8,133.1 266.7,176C275.6,218.9 284.4,241.7 293.3,199.6C302.2,157.5 311.1,50.6 320,60C328.9,69.4 337.8,195 346.7,206C355.6,217.1 364.4,113.4 373.3,82.1C382.2,50.7 391.1,91.6 400,113.1C408.9,134.6 417.8,136.7 426.7,108.1C435.6,79.6 444.4,20.4 453.3,42.7C462.2,65 471.1,168.7 480,192.3C488.9,215.9 497.8,159.3 506.7,118.5C515.6,77.8 524.4,52.9 533.3,71.3C542.2,89.6 551.1,151.1 560,171C568.9,191 577.8,169.3 586.7,127.7C595.6,86.1 604.4,24.5 613.3,39.6C622.2,54.6 631.1,146.3 640,185C648.9,223.7 657.8,209.3 666.7,181C675.6,152.8 684.4,110.7 693.3,80.4C702.2,50.1 711.1,31.5 720,54.6C728.9,77.6 737.8,142.3 746.7,177.3C755.6,212.2 764.4,217.4 773.3,195.2C782.2,173 791.1,123.4 800,73.8L800,166.7C791.1,186.8 782.2,206.9 773.3,216.7C764.4,226.4 755.6,225.8 746.7,208.3C737.8,190.9 728.9,156.7 720,147.9C711.1,139.2 702.2,155.9 693.3,170.8C684.4,185.8 675.6,198.9 666.7,210.4C657.8,221.9 648.9,231.8 640,212.5C631.1,193.2 622.2,144.8 613.3,139.6C604.4,134.4 595.6,172.5 586.7,193.8C577.8,215 568.9,219.5 560,206.3C551.1,193 542.2,162.1 533.3,156.3C524.4,150.4 515.6,169.7 506.7,189.6C497.8,209.4 488.9,229.8 480,214.6C471.1,199.3 462.2,148.5 453.3,141.7C444.4,134.9 435.6,172.2 426.7,185.4C417.8,198.7 408.9,187.9 400,177.1C391.1,166.3 382.2,155.5 373.3,170.8C364.4,186.2 355.6,227.8 346.7,222.9C337.8,218.1 328.9,166.8 320,162.5C311.1,158.2 302.2,201 293.3,218.8C284.4,236.5 275.6,229.3 266.7,208.3C257.8,187.4 248.9,152.7 240,150C231.1,147.3 222.2,176.5 213.3,183.3C204.4,190.2 195.6,174.8 186.7,172.9C177.8,171 168.9,182.7 160,197.9C151.1,213.1 142.2,231.9 133.3,220.8C124.4,209.8 115.6,168.9 106.7,170.8C97.8,172.7 88.9,217.4 80,216.7C71.1,215.9 62.2,169.8 53.3,164.6C44.4,159.4 35.6,195.2 26.7,208.3C17.8,221.4 8.9,211.8 0,202.1Z" fill="url(#fillDesktop)"/>
+                    <path d="M0,202.1C8.9,211.8 17.8,221.4 26.7,208.3C35.6,195.2 44.4,159.4 53.3,164.6C62.2,169.8 71.1,215.9 80,216.7C88.9,217.4 97.8,172.7 106.7,170.8C115.6,168.9 124.4,209.8 133.3,220.8C142.2,231.9 151.1,213.1 160,197.9C168.9,182.7 177.8,171 186.7,172.9C195.6,174.8 204.4,190.2 213.3,183.3C222.2,176.5 231.1,147.3 240,150C248.9,152.7 257.8,187.4 266.7,208.3C275.6,229.3 284.4,236.5 293.3,218.8C302.2,201 311.1,158.2 320,162.5C328.9,166.8 337.8,218.1 346.7,222.9C355.6,227.8 364.4,186.2 373.3,170.8C382.2,155.5 391.1,166.3 400,177.1C408.9,187.9 417.8,198.7 426.7,185.4C435.6,172.2 444.4,134.9 453.3,141.7C462.2,148.5 471.1,199.3 480,214.6C488.9,229.8 497.8,209.4 506.7,189.6C515.6,169.7 524.4,150.4 533.3,156.3C542.2,162.1 551.1,193 560,206.3C568.9,219.5 577.8,215 586.7,193.8C595.6,172.5 604.4,134.4 613.3,139.6C622.2,144.8 631.1,193.2 640,212.5C648.9,231.8 657.8,221.9 666.7,210.4C675.6,198.9 684.4,185.8 693.3,170.8C702.2,155.9 711.1,139.2 720,147.9C728.9,156.7 737.8,190.9 746.7,208.3C755.6,225.8 764.4,226.4 773.3,216.7C782.2,206.9 791.1,186.8 800,166.7" fill="none" stroke="currentColor" vector-effect="non-scaling-stroke"/>
+                    <path d="M0,165C8.9,184.6 17.8,204.3 26.7,171.3C35.6,138.2 44.4,52.6 53.3,66.7C62.2,80.7 71.1,194.5 80,195.2C88.9,195.9 97.8,83.5 106.7,79.4C115.6,75.3 124.4,179.5 133.3,202.5C142.2,225.5 151.1,167.4 160,136.7C168.9,105.9 177.8,102.5 186.7,105.6C195.6,108.8 204.4,118.5 213.3,103.1C222.2,87.8 231.1,47.4 240,58.8C248.9,70.1 257.8,133.1 266.7,176C275.6,218.9 284.4,241.7 293.3,199.6C302.2,157.5 311.1,50.6 320,60C328.9,69.4 337.8,195 346.7,206C355.6,217.1 364.4,113.4 373.3,82.1C382.2,50.7 391.1,91.6 400,113.1C408.9,134.6 417.8,136.7 426.7,108.1C435.6,79.6 444.4,20.4 453.3,42.7C462.2,65 471.1,168.7 480,192.3C488.9,215.9 497.8,159.3 506.7,118.5C515.6,77.8 524.4,52.9 533.3,71.3C542.2,89.6 551.1,151.1 560,171C568.9,191 577.8,169.3 586.7,127.7C595.6,86.1 604.4,24.5 613.3,39.6C622.2,54.6 631.1,146.3 640,185C648.9,223.7 657.8,209.3 666.7,181C675.6,152.8 684.4,110.7 693.3,80.4C702.2,50.1 711.1,31.5 720,54.6C728.9,77.6 737.8,142.3 746.7,177.3C755.6,212.2 764.4,217.4 773.3,195.2C782.2,173 791.1,123.4 800,73.8" fill="none" stroke="currentColor" vector-effect="non-scaling-stroke"/>
+                    </g>
+                    <g data-range="7d" class="d-none">
+                    <path d="M0,139.6C38.1,169.7 76.2,199.9 114.3,212.5C152.4,225.1 190.5,220.1 228.6,210.4C266.7,200.7 304.8,186.3 342.9,170.8C381,155.4 419,139 457.1,147.9C495.2,156.8 533.3,190.9 571.4,208.3C609.5,225.7 647.6,226.4 685.7,216.7C723.8,206.9 761.9,186.8 800,166.7L800,250L0,250Z" fill="url(#fillMobile)"/>
+                    <path d="M0,39.6C38.1,98.9 76.2,158.2 114.3,185C152.4,211.8 190.5,206.1 228.6,181C266.7,156 304.8,111.6 342.9,80.4C381,49.2 419,31.3 457.1,54.6C495.2,77.9 533.3,142.4 571.4,177.3C609.5,212.2 647.6,217.4 685.7,195.2C723.8,173 761.9,123.4 800,73.8L800,166.7C761.9,186.8 723.8,206.9 685.7,216.7C647.6,226.4 609.5,225.7 571.4,208.3C533.3,190.9 495.2,156.8 457.1,147.9C419,139 381,155.4 342.9,170.8C304.8,186.3 266.7,200.7 228.6,210.4C190.5,220.1 152.4,225.1 114.3,212.5C76.2,199.9 38.1,169.7 0,139.6Z" fill="url(#fillDesktop)"/>
+                    <path d="M0,139.6C38.1,169.7 76.2,199.9 114.3,212.5C152.4,225.1 190.5,220.1 228.6,210.4C266.7,200.7 304.8,186.3 342.9,170.8C381,155.4 419,139 457.1,147.9C495.2,156.8 533.3,190.9 571.4,208.3C609.5,225.7 647.6,226.4 685.7,216.7C723.8,206.9 761.9,186.8 800,166.7" fill="none" stroke="currentColor" vector-effect="non-scaling-stroke"/>
+                    <path d="M0,39.6C38.1,98.9 76.2,158.2 114.3,185C152.4,211.8 190.5,206.1 228.6,181C266.7,156 304.8,111.6 342.9,80.4C381,49.2 419,31.3 457.1,54.6C495.2,77.9 533.3,142.4 571.4,177.3C609.5,212.2 647.6,217.4 685.7,195.2C723.8,173 761.9,123.4 800,73.8" fill="none" stroke="currentColor" vector-effect="non-scaling-stroke"/>
+                    </g>
+                  </svg>
+                  <div class="d-flex justify-content-between fs-xs fg-3 mt-3" data-range="90d" dir="ltr" aria-hidden="true"><span>Apr 1</span><span class="d-none sm:d-inline">Apr 14</span><span>Apr 27</span><span class="d-none sm:d-inline">May 10</span><span>May 22</span><span class="d-none sm:d-inline">Jun 4</span><span>Jun 17</span><span class="d-none sm:d-inline">Jun 30</span></div>
+                  <div class="d-flex justify-content-between fs-xs fg-3 mt-3 d-none" data-range="30d" dir="ltr" aria-hidden="true"><span>May 31</span><span class="d-none sm:d-inline">Jun 5</span><span>Jun 10</span><span class="d-none sm:d-inline">Jun 15</span><span>Jun 20</span><span class="d-none sm:d-inline">Jun 25</span><span>Jun 30</span></div>
+                  <div class="d-flex justify-content-between fs-xs fg-3 mt-3 d-none" data-range="7d" dir="ltr" aria-hidden="true"><span>Jun 23</span><span class="d-none sm:d-inline">Jun 24</span><span>Jun 25</span><span class="d-none sm:d-inline">Jun 26</span><span>Jun 27</span><span class="d-none sm:d-inline">Jun 28</span><span>Jun 29</span><span class="d-none sm:d-inline">Jun 30</span></div>
+                  <div class="d-flex justify-content-center gap-5 fs-xs fg-3 mt-3">
+                    <span class="d-inline-flex align-items-center gap-2"><span class="d-inline-block p-1 rounded-1 bg-primary"></span> Desktop</span>
+                    <span class="d-inline-flex align-items-center gap-2"><span class="d-inline-block p-1 rounded-1 bg-primary opacity-50"></span> Mobile</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex flex-column gap-7">
+            <div class="d-flex align-items-center justify-content-between gap-3 px-5 lg:px-7">
+              <label class="visually-hidden" for="viewSelector">View</label>
+              <button class="form-control form-control-sm combobox-toggle w-auto xl:d-none" type="button" id="viewSelector" data-bs-toggle="combobox">
+                <span class="combobox-value">Outline</span>
+                <svg class="combobox-caret" width="16" height="16" aria-hidden="true"><use href="#chevron-down"/></svg>
+              </button>
+              <div class="menu">
+                <button class="menu-item selected" aria-selected="true" type="button" data-bs-value="outline">Outline</button>
+                <button class="menu-item" type="button" data-bs-value="past-performance">Past Performance</button>
+                <button class="menu-item" type="button" data-bs-value="key-personnel">Key Personnel</button>
+                <button class="menu-item" type="button" data-bs-value="focus-documents">Focus Documents</button>
+              </div>
+              <ul class="nav nav-pills fs-sm d-none xl:d-inline-flex" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="tab-outline" data-bs-toggle="tab" data-bs-target="#pane-outline" type="button" role="tab" aria-controls="pane-outline" aria-selected="true">Outline</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="tab-past-performance" data-bs-toggle="tab" data-bs-target="#pane-past-performance" type="button" role="tab" aria-controls="pane-past-performance" aria-selected="false">Past Performance <span class="badge rounded-pill">3</span></button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="tab-key-personnel" data-bs-toggle="tab" data-bs-target="#pane-key-personnel" type="button" role="tab" aria-controls="pane-key-personnel" aria-selected="false">Key Personnel <span class="badge rounded-pill">2</span></button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="tab-focus-documents" data-bs-toggle="tab" data-bs-target="#pane-focus-documents" type="button" role="tab" aria-controls="pane-focus-documents" aria-selected="false">Focus Documents</button>
+                </li>
+              </ul>
+              <div class="d-flex align-items-center gap-3">
+                <button type="button" class="btn-outline theme-secondary btn-sm" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-auto-close="outside" aria-expanded="false">
+                  <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#layout-columns"/></svg>
+                  <span class="d-none lg:d-inline">Customize Columns</span>
+                  <span class="lg:d-none">Columns</span>
+                  <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#chevron-down"/></svg>
+                </button>
+                <div class="menu" id="columnsMenu">
+                  <button class="menu-item selected" type="button" role="menuitemcheckbox" aria-checked="true" data-col-toggle="type">Type <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+                  <button class="menu-item selected" type="button" role="menuitemcheckbox" aria-checked="true" data-col-toggle="status">Status <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+                  <button class="menu-item selected" type="button" role="menuitemcheckbox" aria-checked="true" data-col-toggle="target">Target <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+                  <button class="menu-item selected" type="button" role="menuitemcheckbox" aria-checked="true" data-col-toggle="limit">Limit <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+                  <button class="menu-item selected" type="button" role="menuitemcheckbox" aria-checked="true" data-col-toggle="reviewer">Reviewer <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+                </div>
+                <button type="button" class="btn-outline theme-secondary btn-sm">
+                  <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#plus"/></svg>
+                  <span class="d-none lg:d-inline">Add Section</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="tab-content px-5 lg:px-7">
+              <div class="tab-pane active" id="pane-outline" role="tabpanel" aria-labelledby="tab-outline" tabindex="0">
+                <div class="vstack gap-5">
+                  <div class="position-relative overflow-auto border rounded-5">
+                    <table class="table table-hover data-table align-middle fs-sm mb-0 text-nowrap">
+                      <thead>
+                        <tr>
+                          <th scope="col"><span class="visually-hidden">Drag</span></th>
+                          <th scope="col"><input type="checkbox" class="check" id="selectAll" aria-label="Select all"></th>
+                          <th scope="col" class="fw-medium">Header</th>
+                          <th scope="col" class="fw-medium" data-col="type">Section Type</th>
+                          <th scope="col" class="fw-medium" data-col="status">Status</th>
+                          <th scope="col" class="fw-medium text-end" data-col="target">Target</th>
+                          <th scope="col" class="fw-medium text-end" data-col="limit">Limit</th>
+                          <th scope="col" class="fw-medium" data-col="reviewer">Reviewer</th>
+                          <th scope="col"><span class="visually-hidden">Actions</span></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" aria-label="Drag to reorder"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#grip-vertical"/></svg></button>
+                          </td>
+                          <td class="w-1"><input type="checkbox" class="check" aria-label="Select row"></td>
+                          <td><button type="button" class="btn-link fg-body text-start p-0" data-bs-toggle="drawer" data-bs-target="#rowViewer" data-row-header="Cover page">Cover page</button></td>
+                          <td data-col="type"><span class="badge badge-outline theme-secondary fg-3 fw-medium">Cover page</span></td>
+                          <td data-col="status"><span class="badge badge-outline theme-secondary fg-3 fw-medium"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#loader"/></svg> In Process</span></td>
+                          <td data-col="target">
+                            <label class="visually-hidden" for="r1-target">Target</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r1-target" value="18">
+                          </td>
+                          <td data-col="limit">
+                            <label class="visually-hidden" for="r1-limit">Limit</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r1-limit" value="5">
+                          </td>
+                          <td data-col="reviewer">
+                            Eddie Lake
+                          </td>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false" aria-label="Open menu"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#dots-vertical"/></svg></button>
+                            <div class="menu">
+                              <button class="menu-item" type="button">Edit</button>
+                              <button class="menu-item" type="button">Make a copy</button>
+                              <button class="menu-item" type="button">Favorite</button>
+                              <hr class="menu-divider">
+                              <button class="menu-item theme-danger" type="button">Delete</button>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" aria-label="Drag to reorder"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#grip-vertical"/></svg></button>
+                          </td>
+                          <td class="w-1"><input type="checkbox" class="check" aria-label="Select row"></td>
+                          <td><button type="button" class="btn-link fg-body text-start p-0" data-bs-toggle="drawer" data-bs-target="#rowViewer" data-row-header="Table of contents">Table of contents</button></td>
+                          <td data-col="type"><span class="badge badge-outline theme-secondary fg-3 fw-medium">Table of contents</span></td>
+                          <td data-col="status"><span class="badge badge-outline theme-secondary fg-3 fw-medium"><svg class="bi fg-success" width="12" height="12" aria-hidden="true"><use href="#circle-check"/></svg> Done</span></td>
+                          <td data-col="target">
+                            <label class="visually-hidden" for="r2-target">Target</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r2-target" value="29">
+                          </td>
+                          <td data-col="limit">
+                            <label class="visually-hidden" for="r2-limit">Limit</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r2-limit" value="24">
+                          </td>
+                          <td data-col="reviewer">
+                            Eddie Lake
+                          </td>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false" aria-label="Open menu"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#dots-vertical"/></svg></button>
+                            <div class="menu">
+                              <button class="menu-item" type="button">Edit</button>
+                              <button class="menu-item" type="button">Make a copy</button>
+                              <button class="menu-item" type="button">Favorite</button>
+                              <hr class="menu-divider">
+                              <button class="menu-item theme-danger" type="button">Delete</button>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" aria-label="Drag to reorder"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#grip-vertical"/></svg></button>
+                          </td>
+                          <td class="w-1"><input type="checkbox" class="check" aria-label="Select row"></td>
+                          <td><button type="button" class="btn-link fg-body text-start p-0" data-bs-toggle="drawer" data-bs-target="#rowViewer" data-row-header="Executive summary">Executive summary</button></td>
+                          <td data-col="type"><span class="badge badge-outline theme-secondary fg-3 fw-medium">Narrative</span></td>
+                          <td data-col="status"><span class="badge badge-outline theme-secondary fg-3 fw-medium"><svg class="bi fg-success" width="12" height="12" aria-hidden="true"><use href="#circle-check"/></svg> Done</span></td>
+                          <td data-col="target">
+                            <label class="visually-hidden" for="r3-target">Target</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r3-target" value="10">
+                          </td>
+                          <td data-col="limit">
+                            <label class="visually-hidden" for="r3-limit">Limit</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r3-limit" value="13">
+                          </td>
+                          <td data-col="reviewer">
+                            Eddie Lake
+                          </td>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false" aria-label="Open menu"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#dots-vertical"/></svg></button>
+                            <div class="menu">
+                              <button class="menu-item" type="button">Edit</button>
+                              <button class="menu-item" type="button">Make a copy</button>
+                              <button class="menu-item" type="button">Favorite</button>
+                              <hr class="menu-divider">
+                              <button class="menu-item theme-danger" type="button">Delete</button>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" aria-label="Drag to reorder"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#grip-vertical"/></svg></button>
+                          </td>
+                          <td class="w-1"><input type="checkbox" class="check" aria-label="Select row"></td>
+                          <td><button type="button" class="btn-link fg-body text-start p-0" data-bs-toggle="drawer" data-bs-target="#rowViewer" data-row-header="Technical approach">Technical approach</button></td>
+                          <td data-col="type"><span class="badge badge-outline theme-secondary fg-3 fw-medium">Narrative</span></td>
+                          <td data-col="status"><span class="badge badge-outline theme-secondary fg-3 fw-medium"><svg class="bi fg-success" width="12" height="12" aria-hidden="true"><use href="#circle-check"/></svg> Done</span></td>
+                          <td data-col="target">
+                            <label class="visually-hidden" for="r4-target">Target</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r4-target" value="27">
+                          </td>
+                          <td data-col="limit">
+                            <label class="visually-hidden" for="r4-limit">Limit</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r4-limit" value="23">
+                          </td>
+                          <td data-col="reviewer">
+                            Jamik Tashpulatov
+                          </td>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false" aria-label="Open menu"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#dots-vertical"/></svg></button>
+                            <div class="menu">
+                              <button class="menu-item" type="button">Edit</button>
+                              <button class="menu-item" type="button">Make a copy</button>
+                              <button class="menu-item" type="button">Favorite</button>
+                              <hr class="menu-divider">
+                              <button class="menu-item theme-danger" type="button">Delete</button>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" aria-label="Drag to reorder"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#grip-vertical"/></svg></button>
+                          </td>
+                          <td class="w-1"><input type="checkbox" class="check" aria-label="Select row"></td>
+                          <td><button type="button" class="btn-link fg-body text-start p-0" data-bs-toggle="drawer" data-bs-target="#rowViewer" data-row-header="Design">Design</button></td>
+                          <td data-col="type"><span class="badge badge-outline theme-secondary fg-3 fw-medium">Narrative</span></td>
+                          <td data-col="status"><span class="badge badge-outline theme-secondary fg-3 fw-medium"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#loader"/></svg> In Process</span></td>
+                          <td data-col="target">
+                            <label class="visually-hidden" for="r5-target">Target</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r5-target" value="2">
+                          </td>
+                          <td data-col="limit">
+                            <label class="visually-hidden" for="r5-limit">Limit</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r5-limit" value="16">
+                          </td>
+                          <td data-col="reviewer">
+                            Jamik Tashpulatov
+                          </td>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false" aria-label="Open menu"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#dots-vertical"/></svg></button>
+                            <div class="menu">
+                              <button class="menu-item" type="button">Edit</button>
+                              <button class="menu-item" type="button">Make a copy</button>
+                              <button class="menu-item" type="button">Favorite</button>
+                              <hr class="menu-divider">
+                              <button class="menu-item theme-danger" type="button">Delete</button>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" aria-label="Drag to reorder"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#grip-vertical"/></svg></button>
+                          </td>
+                          <td class="w-1"><input type="checkbox" class="check" aria-label="Select row"></td>
+                          <td><button type="button" class="btn-link fg-body text-start p-0" data-bs-toggle="drawer" data-bs-target="#rowViewer" data-row-header="Capabilities">Capabilities</button></td>
+                          <td data-col="type"><span class="badge badge-outline theme-secondary fg-3 fw-medium">Narrative</span></td>
+                          <td data-col="status"><span class="badge badge-outline theme-secondary fg-3 fw-medium"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#loader"/></svg> In Process</span></td>
+                          <td data-col="target">
+                            <label class="visually-hidden" for="r6-target">Target</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r6-target" value="20">
+                          </td>
+                          <td data-col="limit">
+                            <label class="visually-hidden" for="r6-limit">Limit</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r6-limit" value="8">
+                          </td>
+                          <td data-col="reviewer">
+                            Jamik Tashpulatov
+                          </td>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false" aria-label="Open menu"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#dots-vertical"/></svg></button>
+                            <div class="menu">
+                              <button class="menu-item" type="button">Edit</button>
+                              <button class="menu-item" type="button">Make a copy</button>
+                              <button class="menu-item" type="button">Favorite</button>
+                              <hr class="menu-divider">
+                              <button class="menu-item theme-danger" type="button">Delete</button>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" aria-label="Drag to reorder"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#grip-vertical"/></svg></button>
+                          </td>
+                          <td class="w-1"><input type="checkbox" class="check" aria-label="Select row"></td>
+                          <td><button type="button" class="btn-link fg-body text-start p-0" data-bs-toggle="drawer" data-bs-target="#rowViewer" data-row-header="Integration with existing systems">Integration with existing systems</button></td>
+                          <td data-col="type"><span class="badge badge-outline theme-secondary fg-3 fw-medium">Narrative</span></td>
+                          <td data-col="status"><span class="badge badge-outline theme-secondary fg-3 fw-medium"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#loader"/></svg> In Process</span></td>
+                          <td data-col="target">
+                            <label class="visually-hidden" for="r7-target">Target</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r7-target" value="19">
+                          </td>
+                          <td data-col="limit">
+                            <label class="visually-hidden" for="r7-limit">Limit</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r7-limit" value="21">
+                          </td>
+                          <td data-col="reviewer">
+                            Jamik Tashpulatov
+                          </td>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false" aria-label="Open menu"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#dots-vertical"/></svg></button>
+                            <div class="menu">
+                              <button class="menu-item" type="button">Edit</button>
+                              <button class="menu-item" type="button">Make a copy</button>
+                              <button class="menu-item" type="button">Favorite</button>
+                              <hr class="menu-divider">
+                              <button class="menu-item theme-danger" type="button">Delete</button>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" aria-label="Drag to reorder"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#grip-vertical"/></svg></button>
+                          </td>
+                          <td class="w-1"><input type="checkbox" class="check" aria-label="Select row"></td>
+                          <td><button type="button" class="btn-link fg-body text-start p-0" data-bs-toggle="drawer" data-bs-target="#rowViewer" data-row-header="Innovation and Advantages">Innovation and Advantages</button></td>
+                          <td data-col="type"><span class="badge badge-outline theme-secondary fg-3 fw-medium">Narrative</span></td>
+                          <td data-col="status"><span class="badge badge-outline theme-secondary fg-3 fw-medium"><svg class="bi fg-success" width="12" height="12" aria-hidden="true"><use href="#circle-check"/></svg> Done</span></td>
+                          <td data-col="target">
+                            <label class="visually-hidden" for="r8-target">Target</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r8-target" value="25">
+                          </td>
+                          <td data-col="limit">
+                            <label class="visually-hidden" for="r8-limit">Limit</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r8-limit" value="26">
+                          </td>
+                          <td data-col="reviewer">
+                            <label class="visually-hidden" for="r8-reviewer">Reviewer</label>
+                              <button class="form-control form-control-sm combobox-toggle w-10" type="button" id="r8-reviewer" data-bs-toggle="combobox" data-bs-placeholder="Assign reviewer" data-bs-placement="bottom-end" data-bs-strategy="fixed">
+                                <span class="combobox-value">Assign reviewer</span>
+                                <svg class="combobox-caret" width="16" height="16" aria-hidden="true"><use href="#chevron-down"/></svg>
+                              </button>
+                              <div class="menu">
+                                <button class="menu-item" type="button" data-bs-value="Eddie Lake">Eddie Lake</button>
+                                <button class="menu-item" type="button" data-bs-value="Jamik Tashpulatov">Jamik Tashpulatov</button>
+                              </div>
+                          </td>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false" aria-label="Open menu"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#dots-vertical"/></svg></button>
+                            <div class="menu">
+                              <button class="menu-item" type="button">Edit</button>
+                              <button class="menu-item" type="button">Make a copy</button>
+                              <button class="menu-item" type="button">Favorite</button>
+                              <hr class="menu-divider">
+                              <button class="menu-item theme-danger" type="button">Delete</button>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" aria-label="Drag to reorder"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#grip-vertical"/></svg></button>
+                          </td>
+                          <td class="w-1"><input type="checkbox" class="check" aria-label="Select row"></td>
+                          <td><button type="button" class="btn-link fg-body text-start p-0" data-bs-toggle="drawer" data-bs-target="#rowViewer" data-row-header="Overview of EMR's Innovative Solutions">Overview of EMR's Innovative Solutions</button></td>
+                          <td data-col="type"><span class="badge badge-outline theme-secondary fg-3 fw-medium">Technical content</span></td>
+                          <td data-col="status"><span class="badge badge-outline theme-secondary fg-3 fw-medium"><svg class="bi fg-success" width="12" height="12" aria-hidden="true"><use href="#circle-check"/></svg> Done</span></td>
+                          <td data-col="target">
+                            <label class="visually-hidden" for="r9-target">Target</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r9-target" value="7">
+                          </td>
+                          <td data-col="limit">
+                            <label class="visually-hidden" for="r9-limit">Limit</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r9-limit" value="23">
+                          </td>
+                          <td data-col="reviewer">
+                            <label class="visually-hidden" for="r9-reviewer">Reviewer</label>
+                              <button class="form-control form-control-sm combobox-toggle w-10" type="button" id="r9-reviewer" data-bs-toggle="combobox" data-bs-placeholder="Assign reviewer" data-bs-placement="bottom-end" data-bs-strategy="fixed">
+                                <span class="combobox-value">Assign reviewer</span>
+                                <svg class="combobox-caret" width="16" height="16" aria-hidden="true"><use href="#chevron-down"/></svg>
+                              </button>
+                              <div class="menu">
+                                <button class="menu-item" type="button" data-bs-value="Eddie Lake">Eddie Lake</button>
+                                <button class="menu-item" type="button" data-bs-value="Jamik Tashpulatov">Jamik Tashpulatov</button>
+                              </div>
+                          </td>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false" aria-label="Open menu"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#dots-vertical"/></svg></button>
+                            <div class="menu">
+                              <button class="menu-item" type="button">Edit</button>
+                              <button class="menu-item" type="button">Make a copy</button>
+                              <button class="menu-item" type="button">Favorite</button>
+                              <hr class="menu-divider">
+                              <button class="menu-item theme-danger" type="button">Delete</button>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" aria-label="Drag to reorder"><svg class="bi" width="12" height="12" aria-hidden="true"><use href="#grip-vertical"/></svg></button>
+                          </td>
+                          <td class="w-1"><input type="checkbox" class="check" aria-label="Select row"></td>
+                          <td><button type="button" class="btn-link fg-body text-start p-0" data-bs-toggle="drawer" data-bs-target="#rowViewer" data-row-header="Advanced Algorithms and Machine Learning">Advanced Algorithms and Machine Learning</button></td>
+                          <td data-col="type"><span class="badge badge-outline theme-secondary fg-3 fw-medium">Narrative</span></td>
+                          <td data-col="status"><span class="badge badge-outline theme-secondary fg-3 fw-medium"><svg class="bi fg-success" width="12" height="12" aria-hidden="true"><use href="#circle-check"/></svg> Done</span></td>
+                          <td data-col="target">
+                            <label class="visually-hidden" for="r10-target">Target</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r10-target" value="30">
+                          </td>
+                          <td data-col="limit">
+                            <label class="visually-hidden" for="r10-limit">Limit</label>
+                            <input class="form-control form-control-sm text-end w-4 ms-auto" id="r10-limit" value="28">
+                          </td>
+                          <td data-col="reviewer">
+                            <label class="visually-hidden" for="r10-reviewer">Reviewer</label>
+                              <button class="form-control form-control-sm combobox-toggle w-10" type="button" id="r10-reviewer" data-bs-toggle="combobox" data-bs-placeholder="Assign reviewer" data-bs-placement="bottom-end" data-bs-strategy="fixed">
+                                <span class="combobox-value">Assign reviewer</span>
+                                <svg class="combobox-caret" width="16" height="16" aria-hidden="true"><use href="#chevron-down"/></svg>
+                              </button>
+                              <div class="menu">
+                                <button class="menu-item" type="button" data-bs-value="Eddie Lake">Eddie Lake</button>
+                                <button class="menu-item" type="button" data-bs-value="Jamik Tashpulatov">Jamik Tashpulatov</button>
+                              </div>
+                          </td>
+                          <td class="w-1">
+                            <button type="button" class="btn-text theme-secondary btn-icon btn-sm fg-3" data-bs-toggle="menu" data-bs-placement="bottom-end" data-bs-strategy="fixed" aria-expanded="false" aria-label="Open menu"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#dots-vertical"/></svg></button>
+                            <div class="menu">
+                              <button class="menu-item" type="button">Edit</button>
+                              <button class="menu-item" type="button">Make a copy</button>
+                              <button class="menu-item" type="button">Favorite</button>
+                              <hr class="menu-divider">
+                              <button class="menu-item theme-danger" type="button">Delete</button>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="d-flex align-items-center justify-content-between px-5">
+                    <div class="d-none lg:d-flex flex-grow-1 fs-sm fg-3" id="selectionCount">0 of 68 row(s) selected.</div>
+                    <div class="d-flex align-items-center gap-8 flex-grow-1 lg:flex-grow-0">
+                      <div class="d-none lg:d-flex align-items-center gap-3">
+                        <label class="fs-sm fw-medium text-nowrap" for="rowsPerPage">Rows per page</label>
+                        <button class="form-control form-control-sm combobox-toggle w-5" type="button" id="rowsPerPage" data-bs-toggle="combobox" data-bs-placement="top">
+                          <span class="combobox-value">10</span>
+                          <svg class="combobox-caret" width="16" height="16" aria-hidden="true"><use href="#chevron-down"/></svg>
+                        </button>
+                        <div class="menu">
+                          <button class="menu-item selected" aria-selected="true" type="button" data-bs-value="10">10</button>
+                          <button class="menu-item" type="button" data-bs-value="20">20</button>
+                          <button class="menu-item" type="button" data-bs-value="30">30</button>
+                          <button class="menu-item" type="button" data-bs-value="40">40</button>
+                          <button class="menu-item" type="button" data-bs-value="50">50</button>
+                        </div>
+                      </div>
+                      <div class="fs-sm fw-medium text-nowrap">Page 1 of 7</div>
+                      <div class="d-flex align-items-center gap-3 ms-auto lg:ms-0">
+                        <button type="button" class="btn-outline theme-secondary btn-icon btn-sm d-none lg:d-inline-flex" disabled aria-label="Go to first page"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#chevrons-left"/></svg></button>
+                        <button type="button" class="btn-outline theme-secondary btn-icon btn-sm" disabled aria-label="Go to previous page"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#chevron-left"/></svg></button>
+                        <button type="button" class="btn-outline theme-secondary btn-icon btn-sm" aria-label="Go to next page"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#chevron-right"/></svg></button>
+                        <button type="button" class="btn-outline theme-secondary btn-icon btn-sm d-none lg:d-inline-flex" aria-label="Go to last page"><svg class="bi" width="16" height="16" aria-hidden="true"><use href="#chevrons-right"/></svg></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane" id="pane-past-performance" role="tabpanel" aria-labelledby="tab-past-performance" tabindex="0">
+                <div class="ratio-16x9 border-dashed rounded-5"></div>
+              </div>
+              <div class="tab-pane" id="pane-key-personnel" role="tabpanel" aria-labelledby="tab-key-personnel" tabindex="0">
+                <div class="ratio-16x9 border-dashed rounded-5"></div>
+              </div>
+              <div class="tab-pane" id="pane-focus-documents" role="tabpanel" aria-labelledby="tab-focus-documents" tabindex="0">
+                <div class="ratio-16x9 border-dashed rounded-5"></div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <dialog class="drawer drawer-end" id="rowViewer" aria-labelledby="rowViewerLabel">
+      <div class="drawer-header">
+        <div>
+          <h2 class="drawer-title" id="rowViewerLabel">Cover page</h2>
+          <p class="fs-sm fg-3 mb-0">Showing total visitors for the last 6 months</p>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="drawer" aria-label="Close"></button>
+      </div>
+      <div class="drawer-body fs-sm">
+        <svg class="d-none md:d-block w-100 fg-primary" height="150" viewBox="0 0 400 150" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="sheetDesktop" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stop-color="currentColor" stop-opacity="1"/>
+              <stop offset="95%" stop-color="currentColor" stop-opacity=".1"/>
+            </linearGradient>
+            <linearGradient id="sheetMobile" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stop-color="currentColor" stop-opacity=".8"/>
+              <stop offset="95%" stop-color="currentColor" stop-opacity=".1"/>
+            </linearGradient>
+          </defs>
+          <g class="fg-body fg-10" stroke="currentColor" stroke-dasharray="3 3" vector-effect="non-scaling-stroke">
+            <line x1="0" x2="400" y1="0.0" y2="0.0" vector-effect="non-scaling-stroke"/>
+            <line x1="0" x2="400" y1="37.5" y2="37.5" vector-effect="non-scaling-stroke"/>
+            <line x1="0" x2="400" y1="75.0" y2="75.0" vector-effect="non-scaling-stroke"/>
+            <line x1="0" x2="400" y1="112.5" y2="112.5" vector-effect="non-scaling-stroke"/>
+            <line x1="0" x2="400" y1="150.0" y2="150.0" vector-effect="non-scaling-stroke"/>
+          </g>
+          <path d="M0,130C26.7,114.4 53.3,98.8 80,100C106.7,101.2 133.3,119.2 160,120C186.7,120.8 213.3,104.4 240,102.5C266.7,100.6 293.3,113 320,117.5C346.7,122 373.3,118.5 400,115L400,150L0,150Z" fill="url(#sheetMobile)"/>
+          <path d="M0,83.5C26.7,54.9 53.3,26.3 80,23.8C106.7,21.2 133.3,44.6 160,60.8C186.7,76.9 213.3,85.8 240,84.3C266.7,82.7 293.3,70.8 320,65.3C346.7,59.7 373.3,60.6 400,61.5L400,115C373.3,118.5 346.7,122 320,117.5C293.3,113 266.7,100.6 240,102.5C213.3,104.4 186.7,120.8 160,120C133.3,119.2 106.7,101.2 80,100C53.3,98.8 26.7,114.4 0,130Z" fill="url(#sheetDesktop)"/>
+          <path d="M0,130C26.7,114.4 53.3,98.8 80,100C106.7,101.2 133.3,119.2 160,120C186.7,120.8 213.3,104.4 240,102.5C266.7,100.6 293.3,113 320,117.5C346.7,122 373.3,118.5 400,115" fill="none" stroke="currentColor" vector-effect="non-scaling-stroke"/>
+          <path d="M0,83.5C26.7,54.9 53.3,26.3 80,23.8C106.7,21.2 133.3,44.6 160,60.8C186.7,76.9 213.3,85.8 240,84.3C266.7,82.7 293.3,70.8 320,65.3C346.7,59.7 373.3,60.6 400,61.5" fill="none" stroke="currentColor" vector-effect="non-scaling-stroke"/>
+        </svg>
+        <hr class="d-none md:d-block my-0">
+        <div class="d-none md:d-grid gap-2">
+          <div class="d-flex align-items-center gap-2 fw-medium">Trending up by 5.2% this month <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#trending-up"/></svg></div>
+          <div class="fg-3">Showing total visitors for the last 6 months. This is just some random text to test the layout. It spans multiple lines and should wrap around.</div>
+        </div>
+        <hr class="d-none md:d-block my-0">
+        <form class="vstack gap-5">
+          <div class="form-field">
+            <label class="form-label" for="viewerHeader">Header</label>
+            <input class="form-control" id="viewerHeader" value="Cover page">
+          </div>
+          <div class="grid gap-5">
+            <div class="form-field g-col-6">
+              <label class="form-label" for="viewerType">Type</label>
+              <select class="form-control" id="viewerType">
+                <option>Table of Contents</option>
+                <option>Executive Summary</option>
+                <option>Technical Approach</option>
+                <option>Design</option>
+                <option>Capabilities</option>
+                <option>Focus Documents</option>
+                <option>Narrative</option>
+                <option selected>Cover Page</option>
+              </select>
+            </div>
+            <div class="form-field g-col-6">
+              <label class="form-label" for="viewerStatus">Status</label>
+              <select class="form-control" id="viewerStatus">
+                <option>Done</option>
+                <option selected>In Progress</option>
+                <option>Not Started</option>
+              </select>
+            </div>
+            <div class="form-field g-col-6">
+              <label class="form-label" for="viewerTarget">Target</label>
+              <input class="form-control" id="viewerTarget" value="18">
+            </div>
+            <div class="form-field g-col-6">
+              <label class="form-label" for="viewerLimit">Limit</label>
+              <input class="form-control" id="viewerLimit" value="5">
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="form-label" for="viewerReviewer">Reviewer</label>
+            <select class="form-control" id="viewerReviewer">
+              <option selected>Eddie Lake</option>
+              <option>Jamik Tashpulatov</option>
+              <option>Emily Whalen</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="drawer-footer flex-column align-items-stretch">
+        <button type="button" class="btn-solid theme-primary">Submit</button>
+        <button type="button" class="btn-outline theme-secondary" data-bs-dismiss="drawer">Done</button>
+      </div>
+    </dialog>
+
+    <script type="module">
+      // Sidebar trigger: collapses the inline sidebar from md up, opens it as a drawer below.
+      const sidebar = document.getElementById('appSidebar')
+      const inset = document.getElementById('appInset')
+      document.getElementById('sidebarToggle').addEventListener('click', () => {
+        if (window.matchMedia('(width >= 768px)').matches) {
+          sidebar.classList.toggle('md:d-none')
+          inset.classList.toggle('md:ms-0')
+        } else {
+          window.bootstrap.Drawer.getOrCreateInstance('#sidebarDrawer').toggle()
+        }
+      })
+
+      // Chart time range: segmented control (wide) and combobox (narrow).
+      const setRange = range => {
+        for (const el of document.querySelectorAll('[data-range]')) {
+          el.classList.toggle('d-none', el.dataset.range !== range)
+        }
+      }
+      for (const radio of document.querySelectorAll('[name="chartRange"]')) {
+        radio.addEventListener('change', () => setRange(radio.value))
+      }
+      document.getElementById('chartRangeSelect').addEventListener('change.bs.combobox', event => setRange(event.value))
+
+      // View combobox mirrors the tabs on narrow screens.
+      document.getElementById('viewSelector').addEventListener('change.bs.combobox', event => {
+        window.bootstrap.Tab.getOrCreateInstance(document.getElementById('tab-' + event.value)).show()
+      })
+
+      // Row selection.
+      const table = document.querySelector('.data-table')
+      const selectAll = document.getElementById('selectAll')
+      const rowChecks = [...table.querySelectorAll('tbody .check')]
+      const syncSelection = () => {
+        const count = rowChecks.filter(check => check.checked).length
+        for (const check of rowChecks) {
+          check.closest('tr').classList.toggle('table-active', check.checked)
+        }
+        selectAll.checked = count === rowChecks.length
+        selectAll.indeterminate = count > 0 && count < rowChecks.length
+        document.getElementById('selectionCount').textContent = count + ' of 68 row(s) selected.'
+      }
+      selectAll.addEventListener('change', () => {
+        for (const check of rowChecks) {
+          check.checked = selectAll.checked
+        }
+        syncSelection()
+      })
+      for (const check of rowChecks) {
+        check.addEventListener('change', syncSelection)
+      }
+
+      // Column visibility.
+      for (const item of document.querySelectorAll('[data-col-toggle]')) {
+        item.addEventListener('click', () => {
+          const visible = item.classList.toggle('selected')
+          item.setAttribute('aria-checked', visible)
+          for (const cell of table.querySelectorAll('[data-col="' + item.dataset.colToggle + '"]')) {
+            cell.classList.toggle('d-none', !visible)
+          }
+        })
+      }
+
+      // Row viewer title.
+      for (const button of table.querySelectorAll('[data-row-header]')) {
+        button.addEventListener('click', () => {
+          document.getElementById('rowViewerLabel').textContent = button.dataset.rowHeader
+          document.getElementById('viewerHeader').value = button.dataset.rowHeader
+        })
+      }
+    </script>
+  </body>
+</html>
