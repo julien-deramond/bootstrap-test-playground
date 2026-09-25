@@ -1,0 +1,45 @@
+// What tokens can't express in shadcn/ui's look, in Bootstrap's `custom`
+// cascade layer (after components, before helpers and utilities).
+
+@layer custom {
+  // shadcn/ui draws the focus ring outside the border and turns the border
+  // into --ring. Bootstrap overlaps the border (-1px) or leaves a gap (1px).
+  :is(.btn, .btn-solid, .btn-outline, .btn-subtle, .btn-text, .btn-icon, .btn-link):focus-visible,
+  .btn-check:has(input:focus-visible),
+  .check:focus-visible,
+  .radio:focus-visible {
+    --focus-ring-offset: 0;
+  }
+
+  .form-control:is(:focus-visible, :focus-within) {
+    --focus-ring-offset: 0;
+    border-color: light-dark(oklch(70.8% 0 0), oklch(55.6% 0 0));
+  }
+
+  // Default and outline buttons carry shadow-xs
+  .btn-solid,
+  .btn-outline {
+    box-shadow: var(--box-shadow-xs);
+  }
+
+  // hover:bg-primary/90 and hover:bg-secondary/80 lighten, where Bootstrap darkens
+  .btn-solid:hover {
+    --btn-hover-bg: color-mix(in oklch, var(--theme-bg) 90%, transparent);
+    --btn-hover-border-color: transparent;
+  }
+
+  .btn-subtle:hover {
+    --btn-hover-bg: color-mix(in oklch, var(--theme-bg-subtle) 80%, transparent);
+  }
+
+  // Outline: bg-background (bg-input/30 in dark mode), border-input, hover:bg-accent
+  .btn-outline.theme-secondary {
+    --btn-bg: var(--btn-input-bg);
+
+    &:hover {
+      --btn-hover-bg: var(--bg-1);
+      --btn-hover-color: var(--fg-body);
+      --btn-hover-border-color: var(--theme-border);
+    }
+  }
+}

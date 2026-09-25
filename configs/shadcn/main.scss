@@ -1,0 +1,261 @@
+// shadcn/ui look: Bootstrap configured to match shadcn/ui's default theme
+// (new-york style, "neutral" base color), so the screens in screens/ can be
+// compared with the originals at https://ui.shadcn.com.
+//
+// Values come from shadcn/ui's CSS variables (apps/v4/styles/globals.css) and
+// its component classes. The mapping, shadcn variable → Bootstrap token:
+//
+//   --background / --foreground   → --bg-body / --fg-body
+//   --muted, --accent             → --bg-1 (hover and muted surfaces)
+//   --card, --popover             → card, menu, popover and dialog backgrounds
+//   --muted-foreground            → --fg-3
+//   --border / --input            → --border-color / secondary "border"
+//   --ring                        → every theme's "focus-ring" (at 50%, like ring-ring/50)
+//   --primary                     → theme "primary" (near-black, near-white in dark mode)
+//   --secondary, --accent         → theme "secondary" (outline, ghost and secondary buttons)
+//   --destructive                 → theme "danger"
+//   --radius: .625rem             → $radius (--radius-5)
+//
+// Everything is plain Bootstrap configuration. Rules that tokens can't express
+// (focus ring placement, flat buttons) live in _custom.scss.
+
+@use "bootstrap/scss/bootstrap" with (
+  $enable-gradients: false,
+
+  // shadcn/ui's --radius. Its rounded-md (radius - 2px) is used for controls below.
+  $radius: .625rem,
+
+  // Tailwind's "neutral": no chroma. Bootstrap tints and shades it into
+  // --gray-025…975; the semantic tokens below use shadcn's exact values instead.
+  $gray: oklch(55.6% 0 0),
+
+  $root-tokens: (
+    --body-font-family: "Geist, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
+    --font-mono: "'Geist Mono', ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace",
+
+    --link-color: var(--fg-body),
+    --link-hover-color: var(--fg-body),
+    --link-underline-offset: .25em,
+
+    // --border and --input
+    --border-color: light-dark(oklch(92.2% 0 0), oklch(100% 0 0 / 10%)),
+    --border-color-translucent: light-dark(oklch(92.2% 0 0), oklch(100% 0 0 / 10%)),
+
+    // ring-[3px] ring-ring/50
+    --focus-ring-width: 3px,
+    --focus-ring-offset: 0,
+
+    // Buttons and inputs: h-9, text-sm, rounded-md
+    --btn-input-min-height: 2.25rem,
+    --btn-input-padding-y: .25rem,
+    --btn-input-padding-x: .75rem,
+    --btn-input-gap: .5rem,
+    --btn-input-font-size: var(--font-size-sm),
+    --btn-input-line-height: 1.25rem,
+    --btn-input-border-radius: calc(var(--radius-5) - 2px),
+    --btn-input-bg: light-dark(var(--bg-body), oklch(100% 0 0 / 4.5%)),
+
+    --btn-input-xs-min-height: 1.5rem,
+    --btn-input-xs-border-radius: calc(var(--radius-5) - 2px),
+
+    --btn-input-sm-min-height: 2rem,
+    --btn-input-sm-padding-x: .75rem,
+    --btn-input-sm-font-size: var(--font-size-sm),
+    --btn-input-sm-line-height: 1.25rem,
+    --btn-input-sm-border-radius: calc(var(--radius-5) - 2px),
+
+    --btn-input-lg-min-height: 2.5rem,
+    --btn-input-lg-padding-x: 1.5rem,
+    --btn-input-lg-font-size: var(--font-size-sm),
+    --btn-input-lg-line-height: 1.25rem,
+    --btn-input-lg-border-radius: calc(var(--radius-5) - 2px),
+
+    --control-checked-bg: var(--primary-bg),
+    --control-active-bg: var(--primary-bg),
+    --control-disabled-opacity: .5,
+  ),
+
+  // Pass whole sub-maps: a theme listed here replaces Bootstrap's.
+  $theme-colors: (
+    "primary": (
+      "base": light-dark(oklch(20.5% 0 0), oklch(92.2% 0 0)),
+      "fg": light-dark(oklch(20.5% 0 0), oklch(92.2% 0 0)),
+      "fg-emphasis": light-dark(oklch(14.5% 0 0), oklch(98.5% 0 0)),
+      "bg": light-dark(oklch(20.5% 0 0), oklch(92.2% 0 0)),
+      "bg-subtle": light-dark(oklch(97% 0 0), oklch(26.9% 0 0)),
+      "bg-muted": light-dark(oklch(92.2% 0 0), oklch(37.1% 0 0)),
+      "border": light-dark(oklch(87% 0 0), oklch(43.9% 0 0)),
+      "focus-ring": light-dark(oklch(70.8% 0 0 / 50%), oklch(55.6% 0 0 / 50%)),
+      "contrast": light-dark(oklch(98.5% 0 0), oklch(20.5% 0 0))
+    ),
+    "secondary": (
+      "base": light-dark(oklch(97% 0 0), oklch(26.9% 0 0)),
+      "fg": light-dark(oklch(20.5% 0 0), oklch(98.5% 0 0)),
+      "fg-emphasis": light-dark(oklch(14.5% 0 0), oklch(98.5% 0 0)),
+      "bg": light-dark(oklch(97% 0 0), oklch(26.9% 0 0)),
+      "bg-subtle": light-dark(oklch(97% 0 0), oklch(26.9% 0 0)),
+      "bg-muted": light-dark(oklch(92.2% 0 0), oklch(37.1% 0 0)),
+      "border": light-dark(oklch(92.2% 0 0), oklch(100% 0 0 / 15%)),
+      "focus-ring": light-dark(oklch(70.8% 0 0 / 50%), oklch(55.6% 0 0 / 50%)),
+      "contrast": light-dark(oklch(20.5% 0 0), oklch(98.5% 0 0))
+    ),
+    "danger": (
+      "base": light-dark(oklch(57.7% .245 27.325), oklch(70.4% .191 22.216)),
+      "fg": light-dark(oklch(57.7% .245 27.325), oklch(70.4% .191 22.216)),
+      "fg-emphasis": light-dark(var(--red-800), var(--red-300)),
+      "bg": light-dark(oklch(57.7% .245 27.325), oklch(70.4% .191 22.216 / 60%)),
+      "bg-subtle": light-dark(oklch(57.7% .245 27.325 / 10%), oklch(70.4% .191 22.216 / 20%)),
+      "bg-muted": light-dark(oklch(57.7% .245 27.325 / 20%), oklch(70.4% .191 22.216 / 30%)),
+      "border": light-dark(oklch(57.7% .245 27.325 / 40%), oklch(70.4% .191 22.216 / 50%)),
+      "focus-ring": light-dark(oklch(57.7% .245 27.325 / 20%), oklch(70.4% .191 22.216 / 40%)),
+      "contrast": var(--white)
+    ),
+  ),
+
+  $theme-bgs: (
+    "body": light-dark(oklch(100% 0 0), oklch(14.5% 0 0)),
+    "1": light-dark(oklch(97% 0 0), oklch(26.9% 0 0)),
+    "2": light-dark(oklch(94.6% 0 0), oklch(30.9% 0 0)),
+    "3": light-dark(oklch(92.2% 0 0), oklch(37.1% 0 0)),
+    "4": light-dark(oklch(87% 0 0), oklch(43.9% 0 0)),
+  ),
+
+  $theme-fgs: (
+    "body": light-dark(oklch(14.5% 0 0), oklch(98.5% 0 0)),
+    "1": light-dark(oklch(20.5% 0 0), oklch(92.2% 0 0)),
+    "2": light-dark(oklch(37.1% 0 0), oklch(87% 0 0)),
+    "3": light-dark(oklch(55.6% 0 0), oklch(70.8% 0 0)),
+    "4": light-dark(oklch(70.8% 0 0), oklch(55.6% 0 0)),
+  ),
+
+  $theme-borders: (
+    "body": light-dark(oklch(92.2% 0 0), oklch(100% 0 0 / 10%)),
+    "muted": light-dark(oklch(92.2% 0 0), oklch(100% 0 0 / 10%)),
+    "subtle": light-dark(oklch(94.6% 0 0), oklch(100% 0 0 / 6%)),
+    "emphasized": light-dark(oklch(87% 0 0), oklch(100% 0 0 / 20%)),
+  ),
+
+  // Buttons: font-medium, px-4 (px-3 for sm), no gradient or inner highlight
+  $button-tokens: (
+    --btn-font-weight: var(--font-weight-medium),
+    --btn-padding-x: 1rem,
+    --btn-border-radius: var(--btn-input-border-radius),
+    --btn-disabled-opacity: .5,
+  ),
+
+  // Inputs: border-input, shadow-xs, placeholder muted-foreground
+  $form-control-tokens: (
+    --control-border-color: light-dark(oklch(92.2% 0 0), oklch(100% 0 0 / 15%)),
+    --control-box-shadow: var(--box-shadow-xs),
+    --control-placeholder-color: var(--fg-3),
+    --control-disabled-bg: var(--control-bg),
+  ),
+
+  // Label: text-sm font-medium; description: text-sm text-muted-foreground
+  $form-label-tokens: (
+    --label-font-size: var(--font-size-sm),
+    --label-font-weight: var(--font-weight-medium),
+  ),
+
+  $form-text-tokens: (
+    --form-text-color: var(--fg-3),
+  ),
+
+  // Checkbox: size-4, rounded-[4px], border-input
+  $check-tokens: (
+    --check-size: 1rem,
+    --check-border-color: light-dark(oklch(92.2% 0 0), oklch(100% 0 0 / 15%)),
+    --check-border-radius: 4px,
+  ),
+
+  // Radio: size-4, border-input
+  $radio-tokens: (
+    --radio-size: 1rem,
+    --radio-border-color: light-dark(oklch(92.2% 0 0), oklch(100% 0 0 / 15%)),
+  ),
+
+  // Switch: h-[1.15rem] w-8, bg-input when off
+  $switch-tokens: (
+    --switch-height: 1.15rem,
+    --switch-width: 2rem,
+    --switch-bg: light-dark(oklch(92.2% 0 0), oklch(100% 0 0 / 15%)),
+    --switch-border-color: transparent,
+    --switch-indicator-bg: var(--bg-body),
+    --switch-checked-indicator-bg: light-dark(var(--bg-body), oklch(20.5% 0 0)),
+  ),
+
+  // Card: rounded-xl, border, shadow-sm, no tinted header or footer
+  $card-tokens: (
+    --card-bg: light-dark(oklch(100% 0 0), oklch(20.5% 0 0)),
+    --card-border-radius: calc(var(--radius-5) + 4px),
+    --card-box-shadow: var(--box-shadow-sm),
+    --card-cap-bg: transparent,
+    --card-cap-padding-y: var(--spacer-5),
+    --card-cap-padding-x: var(--spacer-6),
+  ),
+
+  // Badge: rounded-md, px-2 py-0.5, text-xs font-medium
+  $badge-tokens: (
+    --badge-padding-x: .5rem,
+    --badge-padding-y: .125rem,
+    --badge-font-size: .75rem,
+    --badge-font-weight: var(--font-weight-medium),
+    --badge-border-radius: calc(var(--radius-5) - 2px),
+  ),
+
+  // DropdownMenu: rounded-md, p-1, shadow-md; items rounded-sm, px-2 py-1.5, hover bg-accent
+  $menu-tokens: (
+    --menu-min-width: 8rem,
+    --menu-bg: light-dark(oklch(100% 0 0), oklch(20.5% 0 0)),
+    --menu-box-shadow: var(--box-shadow),
+    --menu-divider-bg: var(--border-color),
+    --menu-divider-margin-x: -.25rem,
+    --menu-divider-margin-y: .25rem,
+    --menu-item-hover-bg: var(--bg-1),
+    --menu-item-active-color: var(--fg-body),
+    --menu-item-active-bg: var(--bg-1),
+    --menu-item-padding-x: .5rem,
+    --menu-item-padding-y: .375rem,
+    --menu-item-border-radius: calc(var(--radius-5) - 4px),
+    --menu-header-color: var(--fg-body),
+    --menu-header-padding-x: .5rem,
+    --menu-header-padding-y: .375rem,
+  ),
+
+  // Popover: rounded-md, p-4, shadow-md
+  $popover-tokens: (
+    --popover-bg: light-dark(oklch(100% 0 0), oklch(20.5% 0 0)),
+    --popover-border-color: var(--border-color),
+    --popover-border-radius: calc(var(--radius-5) - 2px),
+    --popover-inner-border-radius: calc(var(--radius-5) - 3px),
+    --popover-header-bg: transparent,
+  ),
+
+  // Tooltip: bg-primary text-primary-foreground, rounded-md, px-3 py-1.5, text-xs
+  $tooltip-tokens: (
+    --tooltip-font-size: var(--font-size-xs),
+    --tooltip-color: var(--primary-contrast),
+    --tooltip-bg: var(--primary-bg),
+    --tooltip-border-radius: calc(var(--radius-5) - 2px),
+    --tooltip-opacity: 1,
+  ),
+
+  // Dialog: rounded-lg, p-6, gap-4, shadow-lg, bg-black/50, no dividers
+  $dialog-tokens: (
+    --dialog-width: 32rem,
+    --dialog-bg: light-dark(oklch(100% 0 0), oklch(20.5% 0 0)),
+    --dialog-padding: 0 1.5rem,
+    --dialog-border-color: var(--border-color),
+    --dialog-border-radius: var(--radius-5),
+    --dialog-box-shadow: var(--box-shadow-lg),
+    --dialog-backdrop-bg: rgb(0 0 0 / 50%),
+    --dialog-backdrop-blur: 0,
+    --dialog-header-padding: 1.5rem 1.5rem 1rem,
+    --dialog-header-border-width: 0,
+    --dialog-footer-padding: 1rem 1.5rem 1.5rem,
+    --dialog-footer-border-width: 0,
+  ),
+);
+
+// Your own Sass, with access to Bootstrap's mixins and functions.
+@use "custom";

@@ -70,7 +70,7 @@ Then:
 - **Start a reproduction from it**: `npm run new-issue 42928 -- --config rounded-dark`
 - **Make it the working copy**: `npm run use-config rounded-dark`. This refuses to run if `src/styles/` has uncommitted changes, unless you pass `-- --force`.
 
-`configs/default/` holds Bootstrap's defaults. Keep it pristine; `npm run use-config default` resets the working copy.
+`configs/default/` holds Bootstrap's defaults. Keep it pristine; `npm run use-config default` resets the working copy. `configs/shadcn/` recreates shadcn/ui's default theme (see [Real screens](#real-screens)).
 
 ## Pages
 
@@ -117,6 +117,8 @@ Adapted from Bootstrap's own examples (`site/src/assets/examples/`). Like the re
 Modern application screens ported from [shadcn/ui](https://github.com/shadcn-ui/ui) (MIT): its examples (`apps/v4/app/(app)/examples/`), the cards showcase from its home page, and its login and signup blocks. Each one is rebuilt with Bootstrap v6 components and utilities, and the little custom CSS they need sticks to Bootstrap's tokens. That way they follow the color mode, the direction, the *Primary* hue and the configs. Charts are inline SVG, so there's no chart library.
 
 They're meant as realistic test beds: the places where a screen needs custom CSS point to what Bootstrap is missing.
+
+To see how close Bootstrap can get to the originals, open them with the `shadcn` config (*Styles* in the toolbar, or `?config=shadcn`). It configures Bootstrap with shadcn/ui's default theme: neutral palette, near-black primary, `.625rem` radius, Geist, 36px controls and outer focus rings. See [`configs/shadcn/`](configs/shadcn/).
 
 Each screen credits its source with a `<meta name="playground-source" content="…" data-url="…" data-license="…">` tag in its `<head>`. The toolbar then shows "Adapted from …" with a permalink to the shadcn/ui commit it was ported from, even when collapsed, and the home page lists it next to the page. Any other page adapted from elsewhere can use the same tag.
 

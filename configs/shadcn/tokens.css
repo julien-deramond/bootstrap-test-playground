@@ -1,0 +1,5 @@
+/*
+ * Geist and Geist Mono, shadcn/ui's fonts (the stacks are set in main.scss).
+ * Without network access, the stacks fall back to the system fonts.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap");
