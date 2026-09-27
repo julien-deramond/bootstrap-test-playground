@@ -17,6 +17,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | --- | --- |
 | `npm run dev` | Starts the dev server with hot reload |
 | `npm run build` / `npm run preview` | Builds every page to `dist/` and serves the build |
+| `npm run test:visual [-- -u]` | Screenshots every page and compares with the baselines (see [Visual regression tests](#visual-regression-tests)) |
 | `npm run new-issue 42928 [-- --config <name>]` | Creates `issues/42928/` from the reproduction template and a config |
 | `npm run save-config <name> [-- "Description"]` | Saves the working copy (`src/styles/`) as `configs/<name>/` |
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
@@ -87,6 +88,7 @@ src/js/main.js           Shared entry: Bootstrap JS, demo wiring, config switche
 src/js/page-index.js     Page list and search, shared by the home page and the page switcher
 public/                  Favicon and the early preferences script
 scripts/                 new-issue, save-config, use-config, sync-kitchen-sink, issue template
+tests/visual/            Visual regression suite (Playwright) and its baselines
 ```
 
 Every `.html` file under `pages/`, `screens/`, `kitchen-sink/` and `issues/` is picked up automatically. There's no list to maintain.
@@ -178,6 +180,37 @@ Mark playground UI on a new page with `data-playground-chrome` so `?chrome=0` hi
 ### Compare
 
 [`/compare.html`](compare.html) shows any page twice, side by side, with separate theme, direction, primary and config settings, and keeps the two panes' scroll positions in sync. Presets cover Light / Dark, LTR / RTL, and Working / Default. The whole setup lives in the URL, so a comparison can be shared as a link.
+
+## Visual regression tests
+
+[`tests/visual/`](tests/visual/visual.spec.js) screenshots every page with [Playwright](https://playwright.dev) and compares each screenshot with a baseline, pixel for pixel. Kitchen sink pages get one screenshot per example, other pages one full-page screenshot. Pages load with `?chrome=0&freeze` (see [Screenshot and embed flags](#screenshot-and-embed-flags)), and remote images are replaced with a local placeholder, so two runs on the same machine produce identical pixels.
+
+The suite runs against a production build served by `vite preview`, which it starts on port 4179. It builds with your `.env.local`, so `BOOTSTRAP_PATH` works here too. Once, after `npm install`:
+
+```sh
+npx playwright install chromium
+```
+
+Then, to check what a Bootstrap change does to the rendering:
+
+```sh
+npm run test:visual -- -u     # 1. record baselines from the current state
+# 2. change Bootstrap: npm run update-bootstrap, a BOOTSTRAP_PATH checkout, or src/styles/
+npm run test:visual           # 3. compare
+npx playwright show-report tests/report   # 4. expected, actual and diff for each failure
+```
+
+After an intended change, run `npm run test:visual -- -u` again to accept the new rendering. Filter with Playwright's options, like `npm run test:visual -- -g tooltip`.
+
+The default matrix is light and dark, LTR, with the working copy. Widen it with environment variables:
+
+| Variable | Default | Example |
+| --- | --- | --- |
+| `VISUAL_THEMES` | `light,dark` | `VISUAL_THEMES=light` for a quicker run |
+| `VISUAL_DIRS` | `ltr` | `VISUAL_DIRS=ltr,rtl` |
+| `VISUAL_CONFIGS` | `working` | `VISUAL_CONFIGS=working,shadcn`, or `all` for every folder in `configs/` |
+
+Baselines live in `tests/visual/screenshots/<platform>/`. Fonts and anti-aliasing differ between operating systems, so a baseline only compares with screenshots taken on the same one. Local baselines (`darwin/`, `win32/`) are ignored by git. Only `linux/`, the platform CI uses, is meant to be committed.
 
 ## Deployment
 

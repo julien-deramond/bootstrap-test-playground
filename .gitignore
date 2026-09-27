@@ -4,3 +4,9 @@ dist/
 .DS_Store
 *.log
 .claude/
+# Playwright: results and reports are local. Only the Linux baselines, which
+# CI compares against, are committed.
+tests/results/
+tests/report/
+tests/*/screenshots/*
+!tests/*/screenshots/linux/

@@ -11,6 +11,7 @@
     "start": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "test:visual": "playwright test --project visual",
     "new-issue": "node scripts/new-issue.mjs",
     "save-config": "node scripts/save-config.mjs",
     "use-config": "node scripts/use-config.mjs",
@@ -26,6 +27,7 @@
     "vanilla-calendar-pro": "^3.4.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "autoprefixer": "^10.6.1",
     "postcss-prefix-custom-properties": "^0.1.0",
     "sass-embedded": "^1.105.0",
