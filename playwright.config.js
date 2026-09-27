@@ -27,7 +27,8 @@ export default defineConfig({
   },
   projects: [
     { name: 'visual', testDir: 'tests/visual' },
-    { name: 'console', testDir: 'tests/console' }
+    { name: 'console', testDir: 'tests/console' },
+    { name: 'smoke', testDir: 'tests/smoke' }
   ],
   webServer: {
     command: `npm run build && npm run preview -- --port ${PORT} --strictPort`,
