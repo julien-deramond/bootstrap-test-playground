@@ -15,7 +15,7 @@
     <script type="module" src="/src/js/main.js"></script>
   </head>
   <body>
-    <header class="container py-5">
+    <header class="container py-5" data-playground-chrome>
       <p class="mb-2"><a href="/">Playground</a> / Kitchen sink</p>
       <h1>OTP input</h1>
       <p class="fs-lg fg-2">Collect one-time passwords, PIN codes, and verification codes with a single accessible input rendered as separate digit slots.</p>
@@ -23,7 +23,7 @@
     </header>
 
     <main class="container pb-5">
-      <details class="bd-kitchen-sink-nav mb-5">
+      <details class="bd-kitchen-sink-nav mb-5" data-playground-chrome>
         <summary>All kitchen sink pages</summary>
         <p class="mb-1 fg-3">Components</p>
         <p class="d-flex flex-wrap gap-2 mb-3">
@@ -78,7 +78,7 @@
         </p>
       </details>
 
-      <nav class="mb-5" aria-label="On this page">
+      <nav class="mb-5" aria-label="On this page" data-playground-chrome>
         <p class="d-flex flex-wrap gap-2 mb-0">
           <a href="#how-it-works">How it works</a>
           <a href="#connected-inputs">Connected inputs</a>
@@ -93,7 +93,7 @@
       </nav>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="how-it-works">
-        <h2 class="h5" id="how-it-works">How it works</h2>
+        <h2 class="h5" id="how-it-works" data-playground-chrome>How it works</h2>
         <div class="bd-example">
           <div class="otp" data-bs-otp>
             <input type="text" class="otp-input" maxlength="6" aria-label="Verification code">
@@ -102,7 +102,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="connected-inputs">
-        <h2 class="h5" id="connected-inputs">Connected inputs</h2>
+        <h2 class="h5" id="connected-inputs" data-playground-chrome>Connected inputs</h2>
         <div class="bd-example">
           <div class="otp otp-connected" data-bs-otp>
             <input type="text" class="otp-input" maxlength="6" aria-label="Verification code">
@@ -111,7 +111,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="four-digit-pin">
-        <h2 class="h5" id="four-digit-pin">Four-digit PIN</h2>
+        <h2 class="h5" id="four-digit-pin" data-playground-chrome>Four-digit PIN</h2>
         <div class="bd-example">
           <div class="otp otp-connected" data-bs-otp>
             <input type="text" class="otp-input" maxlength="4" aria-label="PIN">
@@ -120,7 +120,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="with-separator">
-        <h2 class="h5" id="with-separator">With separator</h2>
+        <h2 class="h5" id="with-separator" data-playground-chrome>With separator</h2>
         <div class="bd-example">
           <div class="otp" data-bs-otp data-bs-groups="[3,3]">
             <input type="text" class="otp-input" maxlength="6" aria-label="Verification code">
@@ -129,7 +129,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="sizes">
-        <h2 class="h5" id="sizes">Sizes</h2>
+        <h2 class="h5" id="sizes" data-playground-chrome>Sizes</h2>
         <div class="bd-example">
           <div class="otp otp-sm mb-3" data-bs-otp>
             <input type="text" class="otp-input" maxlength="6" aria-label="Small verification code">
@@ -141,7 +141,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="alphanumeric-and-masking">
-        <h2 class="h5" id="alphanumeric-and-masking">Alphanumeric and masking</h2>
+        <h2 class="h5" id="alphanumeric-and-masking" data-playground-chrome>Alphanumeric and masking</h2>
         <div class="bd-example">
           <div class="otp otp-connected mb-3" data-bs-otp data-bs-type="alphanumeric">
             <input type="text" class="otp-input" maxlength="6" aria-label="Alphanumeric code">
@@ -153,7 +153,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="disabled">
-        <h2 class="h5" id="disabled">Disabled</h2>
+        <h2 class="h5" id="disabled" data-playground-chrome>Disabled</h2>
         <div class="bd-example">
           <div class="otp otp-connected" data-bs-otp>
             <input type="text" class="otp-input" maxlength="6" aria-label="Verification code" disabled>
@@ -162,7 +162,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="validation">
-        <h2 class="h5" id="validation">Validation</h2>
+        <h2 class="h5" id="validation" data-playground-chrome>Validation</h2>
         <div class="bd-example">
           <div class="otp otp-connected is-valid mb-3" data-bs-otp>
             <input type="text" class="otp-input" maxlength="6" value="123456" aria-label="Verification code">
@@ -174,7 +174,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="with-form-label">
-        <h2 class="h5" id="with-form-label">With form label</h2>
+        <h2 class="h5" id="with-form-label" data-playground-chrome>With form label</h2>
         <div class="bd-example">
           <div class="vstack gap-2">
             <label class="form-label" for="otpCode">Verification code</label>

@@ -4,7 +4,13 @@
 //
 // Saved preferences live in localStorage. URL parameters override them for the
 // current view only, without saving: ?theme=dark&dir=rtl&primary=teal&config=name
-// (`embed` hides the toolbar, as used by /compare.html).
+//
+// View flags, for screenshots and embeds:
+// - `embed` hides the toolbar, as used by /compare.html
+// - `chrome=0` also hides the page's own playground UI, marked with
+//   `data-playground-chrome` (kitchen sink header, navigation, headings)
+// - `frame=0` removes the kitchen sink's `.bd-example` frame
+// - `section=<id>` shows one kitchen sink example only
 (() => {
   'use strict'
 
@@ -98,19 +104,45 @@
     handler(effective().config)
   }
 
+  const addStyle = (id, css) => {
+    const style = document.createElement('style')
+    style.id = id
+    style.textContent = css
+    document.head.append(style)
+    return style
+  }
+
   // Hide the page until a non-default config's stylesheets are swapped in, so it
   // doesn't flash with the working styles first. Failsafe after 3 seconds.
   if (effective().config !== 'working') {
-    const style = document.createElement('style')
-    style.id = 'playground-config-pending'
-    style.textContent = 'html { visibility: hidden !important; }'
-    document.head.append(style)
+    const style = addStyle('playground-config-pending', 'html { visibility: hidden !important; }')
     setTimeout(() => style.remove(), 3000)
+  }
+
+  const chromeless = params.get('chrome') === '0'
+  const section = params.get('section')
+
+  // Unlayered, so these win over the pages' `@layer custom` rules.
+  const viewRules = []
+  if (chromeless) {
+    viewRules.push('[data-playground-chrome] { display: none !important; }')
+  }
+
+  if (params.get('frame') === '0') {
+    viewRules.push('.bd-example { --bd-example-padding: 0px; background-color: transparent; border: 0; border-radius: 0; }')
+  }
+
+  if (section) {
+    viewRules.push(`.bd-kitchen-sink-section:not([aria-labelledby="${CSS.escape(section)}"]) { display: none !important; }`)
+  }
+
+  if (viewRules.length > 0) {
+    addStyle('playground-view', viewRules.join('\n'))
   }
 
   window.playgroundPrefs = {
     DEFAULTS,
-    embedded: params.has('embed'),
+    embedded: params.has('embed') || chromeless,
     read,
     effective,
     save,
