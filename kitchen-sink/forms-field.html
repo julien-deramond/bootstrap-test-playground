@@ -15,7 +15,7 @@
     <script type="module" src="/src/js/main.js"></script>
   </head>
   <body>
-    <header class="container py-5">
+    <header class="container py-5" data-playground-chrome>
       <p class="mb-2"><a href="/">Playground</a> / Kitchen sink</p>
       <h1>Field</h1>
       <p class="fs-lg fg-2">A universal layout wrapper for form controls that handles label, description, and validation feedback placement with CSS grid.</p>
@@ -23,7 +23,7 @@
     </header>
 
     <main class="container pb-5">
-      <details class="bd-kitchen-sink-nav mb-5">
+      <details class="bd-kitchen-sink-nav mb-5" data-playground-chrome>
         <summary>All kitchen sink pages</summary>
         <p class="mb-1 fg-3">Components</p>
         <p class="d-flex flex-wrap gap-2 mb-3">
@@ -78,7 +78,7 @@
         </p>
       </details>
 
-      <nav class="mb-5" aria-label="On this page">
+      <nav class="mb-5" aria-label="On this page" data-playground-chrome>
         <p class="d-flex flex-wrap gap-2 mb-0">
           <a href="#example">Example</a>
           <a href="#select">Select</a>
@@ -97,7 +97,7 @@
       </nav>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="example">
-        <h2 class="h5" id="example">Example</h2>
+        <h2 class="h5" id="example" data-playground-chrome>Example</h2>
         <div class="bd-example">
           <div class="form-field">
             <label for="fieldText" class="form-label">Email address</label>
@@ -110,7 +110,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="select">
-        <h2 class="h5" id="select">Select</h2>
+        <h2 class="h5" id="select" data-playground-chrome>Select</h2>
         <div class="bd-example">
           <div class="form-field">
             <label for="fieldSelect" class="form-label">Country</label>
@@ -125,7 +125,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="textarea">
-        <h2 class="h5" id="textarea">Textarea</h2>
+        <h2 class="h5" id="textarea" data-playground-chrome>Textarea</h2>
         <div class="bd-example">
           <div class="form-field">
             <label for="fieldTextarea" class="form-label">Message</label>
@@ -138,7 +138,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="checkbox">
-        <h2 class="h5" id="checkbox">Checkbox</h2>
+        <h2 class="h5" id="checkbox" data-playground-chrome>Checkbox</h2>
         <div class="bd-example">
           <div class="form-field">
             <input type="checkbox" id="fieldCheck" class="check" />
@@ -148,7 +148,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="radio">
-        <h2 class="h5" id="radio">Radio</h2>
+        <h2 class="h5" id="radio" data-playground-chrome>Radio</h2>
         <div class="bd-example d-flex flex-column gap-2">
           <div class="form-field">
             <input type="radio" id="fieldRadio1" class="radio" name="fieldRadioGroup" />
@@ -162,7 +162,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="grouped">
-        <h2 class="h5" id="grouped">Grouped</h2>
+        <h2 class="h5" id="grouped" data-playground-chrome>Grouped</h2>
         <div class="bd-example">
           <div class="form-group">
             <label class="form-label">Shipping method</label>
@@ -180,7 +180,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="group-cards">
-        <h2 class="h5" id="group-cards">Group cards</h2>
+        <h2 class="h5" id="group-cards" data-playground-chrome>Group cards</h2>
         <div class="bd-example">
           <div class="form-group">
             <label class="form-label">Select a plan</label>
@@ -205,7 +205,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="switch">
-        <h2 class="h5" id="switch">Switch</h2>
+        <h2 class="h5" id="switch" data-playground-chrome>Switch</h2>
         <div class="bd-example">
           <div class="form-field">
             <div class="switch">
@@ -217,7 +217,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="combobox">
-        <h2 class="h5" id="combobox">Combobox</h2>
+        <h2 class="h5" id="combobox" data-playground-chrome>Combobox</h2>
         <div class="bd-example">
           <div class="form-field">
             <label>Combobox</label>
@@ -239,7 +239,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="overhead-label">
-        <h2 class="h5" id="overhead-label">Overhead label</h2>
+        <h2 class="h5" id="overhead-label" data-playground-chrome>Overhead label</h2>
         <div class="bd-example">
           <div class="form-field">
             <label class="form-label">Terms and conditions</label>
@@ -253,7 +253,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="descriptions">
-        <h2 class="h5" id="descriptions">Descriptions</h2>
+        <h2 class="h5" id="descriptions" data-playground-chrome>Descriptions</h2>
         <div class="bd-example d-flex flex-column gap-3">
           <div class="form-field">
             <input type="checkbox" id="fieldCheckDesc" class="check" />
@@ -278,7 +278,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="client-side">
-        <h2 class="h5" id="client-side">Client-side</h2>
+        <h2 class="h5" id="client-side" data-playground-chrome>Client-side</h2>
         <div class="bd-example">
           <form class="vstack gap-3" data-bs-validate novalidate><!-- [!code highlight] -->
             <div class="form-field flex-1">
@@ -300,7 +300,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="server-side">
-        <h2 class="h5" id="server-side">Server-side</h2>
+        <h2 class="h5" id="server-side" data-playground-chrome>Server-side</h2>
         <div class="bd-example">
           <div class="form-field mb-3">
             <label for="fieldServerEmail" class="form-label">Email address</label>

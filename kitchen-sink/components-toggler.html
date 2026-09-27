@@ -15,7 +15,7 @@
     <script type="module" src="/src/js/main.js"></script>
   </head>
   <body>
-    <header class="container py-5">
+    <header class="container py-5" data-playground-chrome>
       <p class="mb-2"><a href="/">Playground</a> / Kitchen sink</p>
       <h1>Toggler</h1>
       <p class="fs-lg fg-2">Toggle attributes or classes on click using only data attributes and our JavaScript plugin. Works with any attribute except id.</p>
@@ -23,7 +23,7 @@
     </header>
 
     <main class="container pb-5">
-      <details class="bd-kitchen-sink-nav mb-5">
+      <details class="bd-kitchen-sink-nav mb-5" data-playground-chrome>
         <summary>All kitchen sink pages</summary>
         <p class="mb-1 fg-3">Components</p>
         <p class="d-flex flex-wrap gap-2 mb-3">
@@ -78,7 +78,7 @@
         </p>
       </details>
 
-      <nav class="mb-5" aria-label="On this page">
+      <nav class="mb-5" aria-label="On this page" data-playground-chrome>
         <p class="d-flex flex-wrap gap-2 mb-0">
           <a href="#toggle-class">Toggle class</a>
           <a href="#remove-existing">Remove existing</a>
@@ -89,7 +89,7 @@
       </nav>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="toggle-class">
-        <h2 class="h5" id="toggle-class">Toggle class</h2>
+        <h2 class="h5" id="toggle-class" data-playground-chrome>Toggle class</h2>
         <div class="bd-example">
           <div class="w-100 p-3 rounded border"
                data-bs-toggle="toggler"
@@ -101,7 +101,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="remove-existing">
-        <h2 class="h5" id="remove-existing">Remove existing</h2>
+        <h2 class="h5" id="remove-existing" data-playground-chrome>Remove existing</h2>
         <div class="bd-example">
           <div class="w-100 p-3 rounded border bg-subtle-info"
                data-bs-toggle="toggler"
@@ -113,7 +113,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="target-element">
-        <h2 class="h5" id="target-element">Target element</h2>
+        <h2 class="h5" id="target-element" data-playground-chrome>Target element</h2>
         <div class="bd-example d-flex gap-2 flex-column align-items-start">
           <button class="btn-solid theme-primary" data-bs-toggle="toggler" data-bs-target="#togglerExample1">Toggle</button>
 
@@ -124,7 +124,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="multiple-elements">
-        <h2 class="h5" id="multiple-elements">Multiple elements</h2>
+        <h2 class="h5" id="multiple-elements" data-playground-chrome>Multiple elements</h2>
         <div class="bd-example vstack gap-2">
           <button class="btn-solid theme-primary align-self-start"
                   data-bs-toggle="toggler" data-bs-target=".togglerExampleClass1">Toggle</button>
@@ -144,7 +144,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="toggle-attribute">
-        <h2 class="h5" id="toggle-attribute">Toggle attribute</h2>
+        <h2 class="h5" id="toggle-attribute" data-playground-chrome>Toggle attribute</h2>
         <div class="bd-example">
           <div class="w-100 p-3 rounded border"
                data-bs-toggle="toggler"

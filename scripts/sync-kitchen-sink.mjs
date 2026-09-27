@@ -6,6 +6,9 @@
 // The npm package does not ship the docs, so this needs a Bootstrap checkout:
 //   npm run sync-kitchen-sink -- ../twbs/bootstrap
 // or set BOOTSTRAP_PATH in .env.local and run `npm run sync-kitchen-sink`.
+//
+// Everything around the examples (header, navigation, example headings) carries
+// `data-playground-chrome`, so `?chrome=0` can hide it (see playground-prefs.js).
 
 import fs from 'node:fs'
 import path from 'node:path'
@@ -249,7 +252,7 @@ ${allPages.filter(page => page.section === dir).map(page => `          <a href="
     <script type="module" src="/src/js/main.js"></script>
   </head>
   <body>
-    <header class="container py-5">
+    <header class="container py-5" data-playground-chrome>
       <p class="mb-2"><a href="/">Playground</a> / Kitchen sink</p>
       <h1>${escapeHtml(title)}</h1>
       <p class="fs-lg fg-2">${escapeHtml(description)}</p>
@@ -257,19 +260,19 @@ ${allPages.filter(page => page.section === dir).map(page => `          <a href="
     </header>
 
     <main class="container pb-5">
-      <details class="bd-kitchen-sink-nav mb-5">
+      <details class="bd-kitchen-sink-nav mb-5" data-playground-chrome>
         <summary>All kitchen sink pages</summary>
 ${pageLinks}
       </details>
 
-      <nav class="mb-5" aria-label="On this page">
+      <nav class="mb-5" aria-label="On this page" data-playground-chrome>
         <p class="d-flex flex-wrap gap-2 mb-0">
 ${toc.map(([heading, id]) => `          <a href="#${id}">${escapeHtml(plainText(heading))}</a>`).join('\n')}
         </p>
       </nav>
 
 ${blocks.map(({ id, heading, className, html }) => `      <section class="bd-kitchen-sink-section" aria-labelledby="${id}">
-        <h2 class="h5" id="${id}">${escapeHtml(plainText(heading))}</h2>
+        <h2 class="h5" id="${id}" data-playground-chrome>${escapeHtml(plainText(heading))}</h2>
         <div class="bd-example${className ? ` ${className}` : ''}">
 ${indent(html, 10)}
         </div>

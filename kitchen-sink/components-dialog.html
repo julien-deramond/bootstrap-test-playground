@@ -15,7 +15,7 @@
     <script type="module" src="/src/js/main.js"></script>
   </head>
   <body>
-    <header class="container py-5">
+    <header class="container py-5" data-playground-chrome>
       <p class="mb-2"><a href="/">Playground</a> / Kitchen sink</p>
       <h1>Dialog</h1>
       <p class="fs-lg fg-2">A modern component built on the native &lt;dialog&gt; element with built-in accessibility and backdrop support that replaces the old Modal component.</p>
@@ -23,7 +23,7 @@
     </header>
 
     <main class="container pb-5">
-      <details class="bd-kitchen-sink-nav mb-5">
+      <details class="bd-kitchen-sink-nav mb-5" data-playground-chrome>
         <summary>All kitchen sink pages</summary>
         <p class="mb-1 fg-3">Components</p>
         <p class="d-flex flex-wrap gap-2 mb-3">
@@ -78,7 +78,7 @@
         </p>
       </details>
 
-      <nav class="mb-5" aria-label="On this page">
+      <nav class="mb-5" aria-label="On this page" data-playground-chrome>
         <p class="d-flex flex-wrap gap-2 mb-0">
           <a href="#example">Example</a>
           <a href="#without-javascript">Without JavaScript</a>
@@ -97,7 +97,7 @@
       </nav>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="example">
-        <h2 class="h5" id="example">Example</h2>
+        <h2 class="h5" id="example" data-playground-chrome>Example</h2>
         <div class="bd-example">
           <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#exampleDialog">
             Open dialog
@@ -120,7 +120,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="without-javascript">
-        <h2 class="h5" id="without-javascript">Without JavaScript</h2>
+        <h2 class="h5" id="without-javascript" data-playground-chrome>Without JavaScript</h2>
         <div class="bd-example">
           <button type="button" class="btn-solid theme-primary" commandfor="invokerDialog" command="show-modal">
             Open dialog
@@ -142,7 +142,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="dark-dialog">
-        <h2 class="h5" id="dark-dialog">Dark dialog</h2>
+        <h2 class="h5" id="dark-dialog" data-playground-chrome>Dark dialog</h2>
         <div class="bd-example">
           <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#exampleDialogDark">
             Open dark dialog
@@ -165,7 +165,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="static-backdrop">
-        <h2 class="h5" id="static-backdrop">Static backdrop</h2>
+        <h2 class="h5" id="static-backdrop" data-playground-chrome>Static backdrop</h2>
         <div class="bd-example">
           <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#staticBackdropDialog" data-bs-backdrop="static"><!-- [!code highlight] -->
             Open static backdrop dialog
@@ -187,7 +187,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="overlays">
-        <h2 class="h5" id="overlays">Overlays</h2>
+        <h2 class="h5" id="overlays" data-playground-chrome>Overlays</h2>
         <div class="bd-example">
           <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#dialogWithComponents">
             Open dialog
@@ -244,7 +244,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="instant">
-        <h2 class="h5" id="instant">Instant</h2>
+        <h2 class="h5" id="instant" data-playground-chrome>Instant</h2>
         <div class="bd-example">
           <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#instantDialog">
             Instant dialog
@@ -267,7 +267,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="slide-down">
-        <h2 class="h5" id="slide-down">Slide down</h2>
+        <h2 class="h5" id="slide-down" data-playground-chrome>Slide down</h2>
         <div class="bd-example">
           <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#slideDownDialog">
             Slide down dialog
@@ -290,7 +290,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="slide-up">
-        <h2 class="h5" id="slide-up">Slide up</h2>
+        <h2 class="h5" id="slide-up" data-playground-chrome>Slide up</h2>
         <div class="bd-example">
           <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#slideUpDialog">
             Slide up dialog
@@ -313,7 +313,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="scrollable">
-        <h2 class="h5" id="scrollable">Scrollable</h2>
+        <h2 class="h5" id="scrollable" data-playground-chrome>Scrollable</h2>
         <div class="bd-example">
           <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#scrollableBodyDialog">
             Launch scrollable body dialog
@@ -343,7 +343,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="swapping-dialogs">
-        <h2 class="h5" id="swapping-dialogs">Swapping dialogs</h2>
+        <h2 class="h5" id="swapping-dialogs" data-playground-chrome>Swapping dialogs</h2>
         <div class="bd-example">
           <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#swapDialog1">
             Open first dialog
@@ -380,7 +380,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="non-modal-dialogs">
-        <h2 class="h5" id="non-modal-dialogs">Non-modal dialogs</h2>
+        <h2 class="h5" id="non-modal-dialogs" data-playground-chrome>Non-modal dialogs</h2>
         <div class="bd-example">
           <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#nonModalDialog" data-bs-modal="false"><!-- [!code highlight] -->
             Open non-modal dialog
@@ -402,7 +402,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="optional-sizes">
-        <h2 class="h5" id="optional-sizes">Optional sizes</h2>
+        <h2 class="h5" id="optional-sizes" data-playground-chrome>Optional sizes</h2>
         <div class="bd-example">
           <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#exampleDialogXl">
             Extra large dialog
@@ -420,7 +420,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="fullscreen-dialog">
-        <h2 class="h5" id="fullscreen-dialog">Fullscreen dialog</h2>
+        <h2 class="h5" id="fullscreen-dialog" data-playground-chrome>Fullscreen dialog</h2>
         <div class="bd-example">
           <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#exampleDialogFullscreen">
             Fullscreen dialog
@@ -442,7 +442,7 @@
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="fullscreen-dialog-2">
-        <h2 class="h5" id="fullscreen-dialog-2">Fullscreen dialog</h2>
+        <h2 class="h5" id="fullscreen-dialog-2" data-playground-chrome>Fullscreen dialog</h2>
         <div class="bd-example">
           <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#exampleDialogFullscreenLg">
             Fullscreen below lg

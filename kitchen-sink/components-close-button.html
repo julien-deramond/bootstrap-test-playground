@@ -15,7 +15,7 @@
     <script type="module" src="/src/js/main.js"></script>
   </head>
   <body>
-    <header class="container py-5">
+    <header class="container py-5" data-playground-chrome>
       <p class="mb-2"><a href="/">Playground</a> / Kitchen sink</p>
       <h1>Close button</h1>
       <p class="fs-lg fg-2">A generic close button for dismissing content like modals and alerts.</p>
@@ -23,7 +23,7 @@
     </header>
 
     <main class="container pb-5">
-      <details class="bd-kitchen-sink-nav mb-5">
+      <details class="bd-kitchen-sink-nav mb-5" data-playground-chrome>
         <summary>All kitchen sink pages</summary>
         <p class="mb-1 fg-3">Components</p>
         <p class="d-flex flex-wrap gap-2 mb-3">
@@ -78,7 +78,7 @@
         </p>
       </details>
 
-      <nav class="mb-5" aria-label="On this page">
+      <nav class="mb-5" aria-label="On this page" data-playground-chrome>
         <p class="d-flex flex-wrap gap-2 mb-0">
           <a href="#example">Example</a>
           <a href="#disabled-state">Disabled state</a>
@@ -87,21 +87,21 @@
       </nav>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="example">
-        <h2 class="h5" id="example">Example</h2>
+        <h2 class="h5" id="example" data-playground-chrome>Example</h2>
         <div class="bd-example">
           <button type="button" class="btn-close" aria-label="Close"></button>
         </div>
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="disabled-state">
-        <h2 class="h5" id="disabled-state">Disabled state</h2>
+        <h2 class="h5" id="disabled-state" data-playground-chrome>Disabled state</h2>
         <div class="bd-example">
           <button type="button" class="btn-close" disabled aria-label="Close"></button>
         </div>
       </section>
 
       <section class="bd-kitchen-sink-section" aria-labelledby="dark-variant">
-        <h2 class="h5" id="dark-variant">Dark variant</h2>
+        <h2 class="h5" id="dark-variant" data-playground-chrome>Dark variant</h2>
         <div class="bd-example bg-inverse">
           <div data-bs-theme="dark">
             <button type="button" class="btn-close" aria-label="Close"></button>
