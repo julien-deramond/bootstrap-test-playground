@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 // Shows what changed between two Bootstrap commits.
-// Usage: npm run diff-bootstrap -- <from> <to> [--no-screens] [--page=<filter>]
+// Usage: npm run diff-bootstrap -- <from> <to> [--no-screens] [--page=<filter>] [--serve]
 //   <from> and <to> are commits (full or short), branches or tags of
 //   twbs/bootstrap, like `npm run diff-bootstrap -- 624c7b9 v6-dev`.
+//
+// `--serve` skips the report: it serves the playground with <from> and, under
+// /b/, with <to>, from one origin, so the compare view can put one commit in
+// each pane. It prints the compare URL and runs until stopped.
 //
 // Fetches each commit into .cache/bootstrap/<sha>/ (shallow, reused on later
 // runs), then compares:
@@ -35,6 +39,7 @@ if (!fromRef || !toRef) {
 }
 
 const screens = !process.argv.includes('--no-screens')
+const serve = process.argv.includes('--serve')
 const pageFilter = process.argv.find(arg => arg.startsWith('--page='))?.slice('--page='.length)
 const MIN_PIXELS = 10
 const REPO = 'https://github.com/twbs/bootstrap.git'
@@ -86,6 +91,33 @@ const short = sha => sha.slice(0, 7)
 console.log(`Comparing ${short(from)} (${fromRef}) with ${short(to)} (${toRef})`)
 
 const dirs = { from: checkout(from), to: checkout(to) }
+
+// --- --serve: both commits in the compare view --------------------------------
+
+if (serve) {
+  const watch = { ignored: ['**/.cache/**'] }
+  // vite.config.js reads BOOTSTRAP_PATH when a server is created. <to> goes
+  // under /b/, and <from>'s server proxies /b/ to it, so both share an origin:
+  // the compare view reads its panes and syncs their scrolling.
+  process.env.BOOTSTRAP_PATH = dirs.to
+  const b = await createServer({ root, base: '/b/', logLevel: 'warn', server: { port: 5199, strictPort: true, watch } })
+  await b.listen()
+
+  process.env.BOOTSTRAP_PATH = dirs.from
+  // `bd0a4f6`, or `bd0a4f6 (v6-dev)` for a branch or a tag.
+  const label = (sha, ref) => (/^[\da-f]{7,40}$/.test(ref) ? short(sha) : `${short(sha)} (${ref})`)
+  process.env.VITE_BOOTSTRAP_A = label(from, fromRef)
+  process.env.VITE_BOOTSTRAP_B = label(to, toRef)
+  const a = await createServer({ root, logLevel: 'warn', server: { port: 5198, strictPort: true, watch, proxy: { '/b/': { target: 'http://localhost:5199', ws: true } } } })
+  await a.listen()
+
+  const params = new URLSearchParams({ page: '/kitchen-sink/components-button.html', a: 'bootstrap=a', b: 'bootstrap=b' })
+  console.log(`\nA: ${short(from)} at http://localhost:5198/`)
+  console.log(`B: ${short(to)} at http://localhost:5198/b/`)
+  console.log(`Compare: http://localhost:5198/compare.html?${params}`)
+  console.log('Stop with Ctrl+C.')
+  await new Promise(() => {})
+}
 const reportDir = path.join(root, 'reports/diff', `${short(from)}-${short(to)}`)
 fs.rmSync(reportDir, { recursive: true, force: true })
 fs.mkdirSync(path.join(reportDir, 'images'), { recursive: true })

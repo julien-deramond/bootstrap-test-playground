@@ -35,7 +35,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
 | `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs`, `check-dist`, `audit-tokens`, `compile-matrix`, `audit-rtl`, `audit-motion` and `audit-layers` against it, and records its sizes |
 | `npm run sync-kitchen-sink -- ../twbs/bootstrap` | Regenerates `kitchen-sink/` from a Bootstrap checkout's docs |
-| `npm run diff-bootstrap -- <from> <to>` | Compares two Bootstrap commits: CSS diff, tokens, sizes and kitchen sink screenshots (see [Comparing two commits](#comparing-two-commits)) |
+| `npm run diff-bootstrap -- <from> <to> [--serve]` | Compares two Bootstrap commits: CSS diff, tokens, sizes and kitchen sink screenshots, or with `--serve` both in the compare view (see [Comparing two commits](#comparing-two-commits)) |
 | `npm run canary-report [-- --only <checks>]` | Runs every check and writes the nightly canary's report to `reports/canary/report.md` (see [Nightly canary](#nightly-canary)) |
 
 ## Where Bootstrap comes from
@@ -61,7 +61,14 @@ After an update, the question is what the upstream commits changed. `npm run dif
    280446 px  /kitchen-sink/forms-datepicker.html#inline-mode-4
 ```
 
-It writes `reports/diff/<from>-<to>/index.html`, a browsable report with the diff, the token lists and each changed example (both commits and their difference), plus `summary.md`. The nightly canary runs it on every update: the summary goes into its pull request, and the full report into the run's artifact. A comparison takes one to two minutes. The compare view can't put two commits side by side yet.
+It writes `reports/diff/<from>-<to>/index.html`, a browsable report with the diff, the token lists and each changed example (both commits and their difference), plus `summary.md`. The nightly canary runs it on every update: the summary goes into its pull request, and the full report into the run's artifact. A comparison takes one to two minutes.
+
+To look at the two commits yourself, `npm run diff-bootstrap -- <from> <to> --serve` skips the report and serves the playground with `<from>` at <http://localhost:5198/> and with `<to>` under <http://localhost:5198/b/>, from one origin. The [compare view](#compare) then gets a *Bootstrap* field in each pane and a *Commit A / B* preset, and keeps both panes in sync as usual:
+
+```sh
+npm run diff-bootstrap -- 624c7b9 v6-dev --serve
+# Compare: http://localhost:5198/compare.html?page=%2Fkitchen-sink%2Fcomponents-button.html&a=bootstrap%3Da&b=bootstrap%3Db
+```
 
 ### Nightly canary
 
@@ -410,7 +417,7 @@ Mark playground UI on a new page with `data-playground-chrome` so `?chrome=0` hi
 
 ### Compare
 
-[`/compare.html`](compare.html) shows any page twice, side by side, with separate theme, direction, primary, config and source (CSS and JS, `src` or `dist`) settings, and keeps the two panes' scroll positions in sync. Presets cover Light / Dark, LTR / RTL, Working / Default and Source / Dist. The whole setup lives in the URL, so a comparison can be shared as a link.
+[`/compare.html`](compare.html) shows any page twice, side by side, with separate theme, direction, primary, config and source (CSS and JS, `src` or `dist`) settings, and keeps the two panes' scroll positions in sync. Presets cover Light / Dark, LTR / RTL, Working / Default and Source / Dist, plus Commit A / B under [`diff-bootstrap --serve`](#comparing-two-commits). The whole setup lives in the URL, so a comparison can be shared as a link.
 
 ## Visual regression tests
 

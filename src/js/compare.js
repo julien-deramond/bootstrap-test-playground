@@ -1,10 +1,17 @@
 // Side-by-side comparison of one page under two sets of preferences, using the
 // URL overrides understood by public/playground-prefs.js. The state lives in
 // the URL: /compare.html?page=/pages/dashboard.html&a=theme%3Dlight&b=theme%3Ddark
+//
+// Under `npm run diff-bootstrap -- <from> <to> --serve`, a second Bootstrap
+// commit is served under /b/, and a pane's `bootstrap` field picks A or B.
 import configs from 'virtual:playground-configs'
 import groups from 'virtual:playground-pages'
 
+// Set by `diff-bootstrap --serve`: labels of the two commits being served.
+const COMMITS = import.meta.env.VITE_BOOTSTRAP_B ? { a: import.meta.env.VITE_BOOTSTRAP_A, b: import.meta.env.VITE_BOOTSTRAP_B } : null
+
 const FIELDS = {
+  ...(COMMITS ? { bootstrap: { label: 'Bootstrap', options: ['a', 'b'], labels: COMMITS } } : {}),
   theme: { label: 'Theme', options: ['auto', 'light', 'dark'] },
   dir: { label: 'Dir', options: ['ltr', 'rtl'] },
   primary: { label: 'Primary', options: ['default', 'indigo', 'violet', 'purple', 'pink', 'red', 'orange', 'amber', 'lime', 'green', 'teal', 'cyan', 'brown', 'gray'] },
@@ -18,7 +25,8 @@ const PRESETS = {
   dir: [{ dir: 'ltr' }, { dir: 'rtl' }],
   config: [{ config: 'working' }, { config: 'default' }],
   // The compiled default config against the prebuilt files it should match.
-  dist: [{ config: 'default', css: 'src', js: 'src' }, { config: 'default', css: 'dist', js: 'dist' }]
+  dist: [{ config: 'default', css: 'src', js: 'src' }, { config: 'default', css: 'dist', js: 'dist' }],
+  commits: [{ bootstrap: 'a' }, { bootstrap: 'b' }]
 }
 
 const escapeHtml = value => String(value).replace(/[&<>"]/g, char => `&#${char.charCodeAt(0)};`)
@@ -41,21 +49,29 @@ pageSelect.innerHTML = [{ label: 'Home', pages: [{ url: import.meta.env.BASE_URL
 
 for (const pane of document.querySelectorAll('.compare-pane')) {
   const side = pane.dataset.side
-  pane.querySelector('.compare-side').innerHTML = Object.entries(FIELDS).map(([name, { label, options }]) => `
+  pane.querySelector('.compare-side').innerHTML = Object.entries(FIELDS).map(([name, { label, options, labels }]) => `
     <label class="d-flex gap-1 align-items-center">${label}
       <select class="form-control form-control-sm" data-side="${side}" data-field="${name}">
-        ${name === 'config' || name === 'primary' ? '' : '<option value="">saved</option>'}
-        ${options.map(option => `<option value="${option}">${option}</option>`).join('')}
+        ${['config', 'primary', 'bootstrap'].includes(name) ? '' : '<option value="">saved</option>'}
+        ${options.map(option => `<option value="${option}">${escapeHtml(labels ? `${option.toUpperCase()}: ${labels[option]}` : option)}</option>`).join('')}
       </select>
     </label>`).join('')
 }
 
+document.querySelector('[data-preset="commits"]').hidden = !COMMITS
+
 const frames = Object.fromEntries([...document.querySelectorAll('.compare-pane')].map(pane => [pane.dataset.side, pane.querySelector('iframe')]))
 
+// Commit B's pages live under /b/.
+const B_PREFIX = '/b'
+
 function frameUrl(side) {
-  const url = new URL(page, location.origin)
+  const onB = COMMITS && sides[side].get('bootstrap') === 'b'
+  const url = new URL(onB ? `${B_PREFIX}${page}` : page, location.origin)
   for (const [key, value] of sides[side]) {
-    url.searchParams.set(key, value)
+    if (key !== 'bootstrap') {
+      url.searchParams.set(key, value)
+    }
   }
 
   url.searchParams.set('embed', '')
@@ -112,7 +128,7 @@ let syncing = false
 for (const [side, frame] of Object.entries(frames)) {
   frame.addEventListener('load', () => {
     const win = frame.contentWindow
-    const path = win.location.pathname
+    const path = COMMITS ? win.location.pathname.replace(new RegExp(`^${B_PREFIX}(?=/)`), '') : win.location.pathname
     if (path !== new URL(page, location.origin).pathname) {
       page = path
       render()
