@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Audits the `--bs-*` custom properties of every config's compiled CSS: the
 // working copy, configs/<name>/ and issues/<name>/, each with its tokens.css.
-// Usage: npm run audit-tokens [-- --all]
+// Usage: npm run audit-tokens [-- --all | --render]
 //
 // Four kinds of findings, each with the Sass file and line that causes it:
 //   - undefined: read without a fallback and never defined, so the whole
@@ -16,6 +16,9 @@
 // the others, or all of them with --all. Exits non-zero when there is a new
 // finding or when a known one no longer happens anywhere.
 // Tokens are named like in the Sass source, without the `bs-` prefix.
+//
+// --render checks what the static audit can't: that overriding each component
+// token of configs/default changes the rendering. See scripts/lib/render-tokens.mjs.
 
 import fs from 'node:fs'
 import path from 'node:path'
@@ -25,6 +28,7 @@ import { bootstrapSource } from './lib/bootstrap.mjs'
 import { compileConfig, processCss } from './lib/compile.mjs'
 import { root, styleFolders } from './lib/configs.mjs'
 import known from './known-tokens.mjs'
+import { renderTokens } from './lib/render-tokens.mjs'
 
 // Bugs are tracked, intended findings explained: see "Upstream issue tracking" in CLAUDE.md.
 for (const entry of known) {
@@ -147,7 +151,7 @@ function analyze(roots) {
     }
   }
 
-  return findings.sort((a, b) => a.token.localeCompare(b.token))
+  return { findings: findings.sort((a, b) => a.token.localeCompare(b.token)), defined, reads }
 }
 
 const matches = (entry, finding) => entry.kind === finding.kind &&
@@ -182,12 +186,18 @@ function printFinding({ token, places, definedOn }, reason) {
 
 console.log(`Bootstrap: ${bootstrap.label}\n`)
 
+if (process.argv.includes('--render')) {
+  const { findings, defined, reads } = await audit(path.join(root, 'configs/default'))
+  process.exitCode = await renderTokens({ defined, reads, unused: new Set(findings.filter(({ kind }) => kind === 'unused').map(({ token }) => token)), isGlobal: selector => GLOBAL_SELECTOR.test(selector) })
+  process.exit()
+}
+
 const used = new Set()
 let problems = 0
 
 for (const folder of styleFolders()) {
   const name = path.relative(root, folder)
-  const findings = await audit(folder)
+  const { findings } = await audit(folder)
   const entryOf = finding => known.find(entry => matches(entry, finding))
   for (const finding of findings) {
     const entry = entryOf(finding)

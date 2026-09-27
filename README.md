@@ -21,7 +21,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run test:console` | Opens every page and fails on errors, warnings and failed requests (see [Console crawl](#console-crawl)) |
 | `npm run check-configs [-- --strict]` | Compiles the working copy, every config and every reproduction, and lists Sass errors and warnings (see [Checking configs](#checking-configs)) |
 | `npm run check-dist` | Checks that the default config compiles to Bootstrap's `dist/css/bootstrap.css` (see [Checking the dist](#checking-the-dist)) |
-| `npm run audit-tokens [-- --all]` | Lists `--bs-*` tokens that are read but never defined, or defined but never read (see [Auditing tokens](#auditing-tokens)) |
+| `npm run audit-tokens [-- --all \| --render]` | Lists `--bs-*` tokens that are read but never defined, or defined but never read, and with `--render` the ones overriding doesn't change (see [Auditing tokens](#auditing-tokens)) |
 | `npm run new-issue 42928 [-- --config <name>]` | Creates `issues/42928/` from the reproduction template and a config |
 | `npm run save-config <name> [-- "Description"]` | Saves the working copy (`src/styles/`) as `configs/<name>/` |
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
@@ -90,6 +90,14 @@ A token that is read but never defined silently drops its declaration. A token t
 ```
 
 `-- --all` lists the known findings too. The audit fails on a new finding, and on a known entry that no longer matches anything, so a fix upstream gets noticed. `npm run update-bootstrap` runs it after each update, and the *Configs* workflow on every pull request. Record a new bug as an upstream issue (see [Upstream issues](#upstream-issues)) and add it to `known-tokens.mjs` with the issue number.
+
+The static audit can't see a token that is read but shadowed, like the hard-coded radius next to `--check-border-radius` ([#4](https://github.com/julien-deramond/bootstrap-test-playground/issues/4)). `npm run audit-tokens -- --render` checks the rendering instead. It starts a dev server, and for each of the ~630 component tokens of `configs/default`:
+
+1. It finds an element that defines the token and contains one that reads it, on the kitchen sink pages first, then the other pages.
+2. It overrides the token there with a series of test values (a color, a length, a keyword, `none`…).
+3. It compares computed styles, including the `::before`, `::after`, `::backdrop`… that read it, then screenshots.
+
+It takes about four minutes and writes one line per token to `reports/tokens/render.md`: *effective*, *no visible effect*, *not read*, or why it couldn't tell (no example on any page, or a hover or focus state the pages don't show). A token with no visible effect on a page may be masked there by a utility or the page's own CSS, so check the page before filing it upstream.
 
 ## Customizing
 
