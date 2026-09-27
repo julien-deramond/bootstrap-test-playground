@@ -12,6 +12,7 @@ A Vite multi-page playground for Bootstrap v6 (`twbs/bootstrap`, branch `v6-dev`
 - After changing a config or updating Bootstrap, run `npm run audit-tokens`. It reports tokens that are read but never defined, or defined but never read. Allowlist known findings in `scripts/known-tokens.mjs` with their tracking issue number.
 - After updating Bootstrap, run `npm run audit-rtl`. It lists declarations that use the physical left or right, which v6 should express with logical properties. Allowlist known findings in `scripts/known-rtl.mjs`. `-- --render` compares every kitchen sink example with the mirror image of its RTL rendering.
 - After updating Bootstrap, run `npm run audit-motion`. It lists transitions and animations that ignore `prefers-reduced-motion`, and what survives `$enable-transitions: false` or `$enable-reduced-motion: false`. Allowlist known findings in `scripts/known-motion.mjs`. `-- --render` checks in the browser that nothing moves with reduced motion emulated.
+- After updating Bootstrap, run `npm run audit-layers`. It lists rules outside Bootstrap's cascade layers, undeclared layers and every `!important`. Allowlist known findings in `scripts/known-layers.mjs`. `-- --render` reads the pass/fail markers of `issues/pg-27/`, which checks the README's override rules.
 - After changing `postcss.config.js` or updating Bootstrap, run `npm run check-dist`. It checks that the default config still compiles to Bootstrap's committed `dist/css/bootstrap.css`. A stale dist there is an upstream bug.
 - New pages get a `<meta name="description">` and `<meta name="playground-tags">` (reuse existing tags) so search on the home page and the <kbd>Ctrl</kbd>+<kbd>K</kbd> switcher can find them. See "Finding pages" in the README.
 - To see what a change does to the rendering, record baselines with `npm run test:visual -- -u` before it and run `npm run test:visual` after it. See "Visual regression tests" in the README.
@@ -29,10 +30,10 @@ A Vite multi-page playground for Bootstrap v6 (`twbs/bootstrap`, branch `v6-dev`
 
 Whenever you find a potential bug in Bootstrap itself (not in this playground), record it as an issue in **this repository** (`julien-deramond/bootstrap-test-playground`), then keep its label in sync with what happens upstream. Never open issues or PRs on `twbs/bootstrap`, and never comment there, unless the user explicitly asks.
 
-This includes everything the check scripts surface: `npm run test:console`, `test:visual`, `check-configs` (warnings from `bootstrap/scss/`), `check-dist` (a stale `dist` line), `audit-tokens`, `compile-matrix`, `audit-rtl` and `audit-motion`. Every Bootstrap bug they find gets a tracking issue (steps 1 and 2 below) **before** it goes into an allowlist. The allowlist entry then references it with `issue: <n>`:
+This includes everything the check scripts surface: `npm run test:console`, `test:visual`, `check-configs` (warnings from `bootstrap/scss/`), `check-dist` (a stale `dist` line), `audit-tokens`, `compile-matrix`, `audit-rtl`, `audit-motion` and `audit-layers`. Every Bootstrap bug they find gets a tracking issue (steps 1 and 2 below) **before** it goes into an allowlist. The allowlist entry then references it with `issue: <n>`:
 
 - `tests/console/known-issues.js`: every entry has an `issue`
-- `scripts/known-tokens.mjs`, `scripts/known-options.mjs`, `scripts/known-rtl.mjs` and `scripts/known-motion.mjs`: `issue` for bugs, `reason` only for intended behavior, never both
+- `scripts/known-tokens.mjs`, `scripts/known-options.mjs`, `scripts/known-rtl.mjs`, `scripts/known-motion.mjs` and `scripts/known-layers.mjs`: `issue` for bugs, `reason` only for intended behavior, never both
 
 When a script reports that a known entry no longer happens, that's step 3 for its issue.
 
@@ -87,7 +88,7 @@ Also put the upstream link in the reproduction page, if there is one.
 
 When the upstream fix lands on `v6-dev`, meaning the PR is merged or the issue is closed as completed:
 
-1. Check the fix in the playground when practical (`npm run update-bootstrap`, then the reproduction page), and remove the issue's entries from `tests/console/known-issues.js`, `scripts/known-tokens.mjs`, `scripts/known-options.mjs`, `scripts/known-rtl.mjs` and `scripts/known-motion.mjs`.
+1. Check the fix in the playground when practical (`npm run update-bootstrap`, then the reproduction page), and remove the issue's entries from `tests/console/known-issues.js`, `scripts/known-tokens.mjs`, `scripts/known-options.mjs`, `scripts/known-rtl.mjs`, `scripts/known-motion.mjs` and `scripts/known-layers.mjs`, and the `data-issue` of `issues/pg-27/` checks.
 2. Update and close:
    ```sh
    gh issue edit <n> --remove-label upstream-reported --add-label upstream-fixed

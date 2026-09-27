@@ -24,11 +24,12 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run compile-matrix` | Compiles Bootstrap under combinations of its `$enable-*` options and reports failures and options that do nothing (see [Option combinations](#option-combinations)) |
 | `npm run audit-rtl [-- --all \| --render]` | Lists declarations that use the physical left or right, and with `--render` the kitchen sink examples whose RTL rendering isn't the mirror image of the LTR one (see [Auditing RTL](#auditing-rtl)) |
 | `npm run audit-motion [-- --all \| --render]` | Lists transitions and animations that ignore `prefers-reduced-motion` or survive `$enable-transitions: false`, and with `--render` what still moves in the browser (see [Auditing motion](#auditing-motion)) |
+| `npm run audit-layers [-- --all \| --render]` | Lists rules outside Bootstrap's cascade layers, undeclared layers and every `!important`, and with `--render` checks the documented override rules in the browser (see [Auditing cascade layers](#auditing-cascade-layers)) |
 | `npm run audit-tokens [-- --all \| --render]` | Lists `--bs-*` tokens that are read but never defined, or defined but never read, and with `--render` the ones overriding doesn't change (see [Auditing tokens](#auditing-tokens)) |
 | `npm run new-issue 42928 [-- --config <name>]` | Creates `issues/42928/` from the reproduction template and a config |
 | `npm run save-config <name> [-- "Description"]` | Saves the working copy (`src/styles/`) as `configs/<name>/` |
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
-| `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs`, `check-dist`, `audit-tokens`, `compile-matrix`, `audit-rtl` and `audit-motion` against it |
+| `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs`, `check-dist`, `audit-tokens`, `compile-matrix`, `audit-rtl`, `audit-motion` and `audit-layers` against it |
 | `npm run sync-kitchen-sink -- ../twbs/bootstrap` | Regenerates `kitchen-sink/` from a Bootstrap checkout's docs |
 
 ## Where Bootstrap comes from
@@ -157,6 +158,20 @@ Then it compiles the two motion configs. [`configs/no-transitions`](configs/no-t
 `npm run audit-motion -- --render` watches the browser instead, so it also sees motion started by Bootstrap's JavaScript. It opens every kitchen sink page twice: with `prefers-reduced-motion: reduce` emulated, where nothing may move, and with `configs/no-transitions`, where nothing may transition. On each page it records what runs once loaded, then clicks every toggle and focuses every field, and records what `document.getAnimations()` returns after each step. It takes about a minute and a half and writes `reports/motion/render.md`. The `runtime` patterns in `known-motion.mjs` match what it sees.
 
 `npm run update-bootstrap` and the *Configs* workflow run the static audit. The *Console crawl* workflow runs `--render`.
+
+### Auditing cascade layers
+
+Bootstrap declares `@layer colors, config, root, reboot, layout, content, forms, components, custom, helpers, utilities`, and the [customization rules](#customizing) rely on it: global tokens stay unlayered, component overrides go in `@layer custom`, helpers and utilities win. `npm run audit-layers` maps every rule of `configs/default` to its layer and reports:
+
+- **unlayered** rules, other than the global tokens on `:root`, `:host` and `[data-bs-theme]`. An unlayered rule beats every layer, so neither a utility nor `@layer custom` can override it.
+- **undeclared** layers: an `@layer` block missing from the statement is ordered after `utilities`.
+- **split** files: a Bootstrap source file whose rules land in more than one layer.
+- every **`!important`**, grouped by rule. Across layers `!important` reverses the order: one in `reboot` beats one in `utilities`, and beats an unlayered one too.
+- with a `BOOTSTRAP_PATH` checkout, a layer list in Bootstrap's `AGENTS.md` that differs from the statement (npm doesn't ship that file).
+
+Known findings are listed in [`scripts/known-layers.mjs`](scripts/known-layers.mjs), with their tracking issue or the reason. The audit fails on a new finding and on an entry that no longer matches.
+
+[`issues/pg-27/`](issues/pg-27/) checks the rules themselves in the browser. Each check uses an override in that reproduction's own `tokens.css` or `_custom.scss`, the files the rules are about, with a `:where()` selector so only layer order can make it win, and shows a pass or fail marker. `npm run audit-layers -- --render` reads the markers. A check that fails with a `data-issue` is a known upstream bug; one that passes with it may be fixed. `npm run update-bootstrap` and the *Configs* workflow run the static audit, and the *Console crawl* workflow runs `--render`.
 
 ## Customizing
 

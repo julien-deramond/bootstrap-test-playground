@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-27: Issue reproduction</title>
+    <meta name="description" content="Cascade layers: checks each override rule the README documents (unlayered :root tokens, @layer custom against components, helpers and utilities), with a pass or fail marker, and shows the rules Bootstrap leaves unlayered.">
+    <meta name="playground-tags" content="components">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-27: cascade layers</h1>
+        <p class="fs-lg fg-2">
+          Upstream: <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/148">#148</a> (drawer tokens) and <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/149">#149</a> (<code>.fade</code>, <code>.collapse</code>), not reported yet
+        </p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">What this checks</h2>
+        <p>Bootstrap declares <code>@layer colors, config, root, reboot, layout, content, forms, components, custom, helpers, utilities</code>. The README's customization rules depend on that order. Global tokens stay unlayered, in <code>tokens.css</code>. Component tokens and rules go in <code>@layer custom</code>, in <code>_custom.scss</code>, which wins over <code>components</code> and loses to <code>helpers</code> and <code>utilities</code>.</p>
+        <p>Each check below uses the override in this reproduction's <code>tokens.css</code> or <code>_custom.scss</code>. Those overrides use <code>:where()</code>, so their specificity is 0 and only layer order can make them win. The marker compares the computed style with what the rule promises. <code>npm run audit-layers -- --render</code> reads the same markers.</p>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Checks</h2>
+        <ol class="list-unstyled vstack gap-3" id="layer-cases">
+          <li data-layer-case="root-unlayered" data-expect="Unlayered :root override in tokens.css wins over Bootstrap's :root tokens">
+            <div class="pg-marker"></div>
+          </li>
+
+          <li data-layer-case="root-in-custom" data-expect=":root override inside @layer custom loses, as documented">
+            <div class="pg-marker"></div>
+          </li>
+
+          <li data-layer-case="component-token" data-expect="Component token in @layer custom wins over components">
+            <div class="pg-marker"></div>
+            <button type="button" class="btn-solid theme-primary pg-btn" id="case-component-token">Button with --btn-padding-x: 37px</button>
+          </li>
+
+          <li data-layer-case="component-rule" data-expect="Rule in @layer custom wins over components">
+            <div class="pg-marker"></div>
+            <div class="card card-body pg-card" id="case-component-rule">Card with background-color: rgb(1, 2, 3)</div>
+          </li>
+
+          <li data-layer-case="utility-beats-custom" data-expect="Utility wins over @layer custom">
+            <div class="pg-marker"></div>
+            <div class="p-0 border pg-util" id="case-utility-beats-custom">.p-0 against padding: 13px</div>
+          </li>
+
+          <li data-layer-case="helper-beats-custom" data-expect="Helper wins over @layer custom">
+            <div class="pg-marker"></div>
+            <div class="hstack gap-2 pg-helper" id="case-helper-beats-custom"><span>.hstack</span><span>against display: block</span></div>
+          </li>
+
+          <li data-layer-case="hidden-important" data-expect="[hidden] wins over a utility: the !important in reboot beats utilities">
+            <div class="pg-marker"></div>
+            <div class="d-flex" hidden id="case-hidden-important">Hidden with .d-flex</div>
+          </li>
+
+          <li data-layer-case="drawer-token" data-expect="Drawer token in @layer custom wins over components" data-issue="148">
+            <div class="pg-marker"></div>
+            <dialog class="drawer drawer-start pg-drawer" id="case-drawer-token" aria-label="Drawer with --drawer-width: 321px"></dialog>
+          </li>
+
+          <li data-layer-case="collapse-utility" data-expect="Utility wins over .collapse" data-issue="149">
+            <div class="pg-marker"></div>
+            <div class="collapse d-block" id="case-collapse-utility">.collapse.d-block: visible when the utility wins</div>
+          </li>
+
+          <li data-layer-case="fade-utility" data-expect="Utility wins over .fade" data-issue="149">
+            <div class="pg-marker"></div>
+            <div class="fade opacity-100" id="case-fade-utility">.fade.opacity-100: opaque when the utility wins</div>
+          </li>
+        </ol>
+      </section>
+    </main>
+
+    <script type="module">
+      // Each check reads computed styles once the page's styles are in, and
+      // writes data-result="pass" or "fail" on its <li>, which
+      // `npm run audit-layers -- --render` reads.
+      const html = document.documentElement
+      const style = id => getComputedStyle(document.getElementById(`case-${id}`))
+      const token = (element, name) => getComputedStyle(element).getPropertyValue(name).trim()
+
+      const CHECKS = {
+        'root-unlayered': () => token(html, '--bs-gradient').includes('rgb(4, 5, 6)'),
+        'root-in-custom': () => token(html, '--bs-heading-margin-bottom') !== '7.7rem',
+        'component-token': () => style('component-token').paddingInlineStart === '37px',
+        'component-rule': () => style('component-rule').backgroundColor === 'rgb(1, 2, 3)',
+        'utility-beats-custom': () => style('utility-beats-custom').paddingInlineStart === '0px',
+        'helper-beats-custom': () => style('helper-beats-custom').display === 'flex',
+        'hidden-important': () => style('hidden-important').display === 'none',
+        'drawer-token': () => token(document.getElementById('case-drawer-token'), '--bs-drawer-width') === '321px',
+        'collapse-utility': () => style('collapse-utility').display === 'block',
+        'fade-utility': () => style('fade-utility').opacity === '1'
+      }
+
+      const run = () => {
+        for (const item of document.querySelectorAll('[data-layer-case]')) {
+          const pass = CHECKS[item.dataset.layerCase]()
+          item.dataset.result = pass ? 'pass' : 'fail'
+          const issue = item.dataset.issue
+          const marker = item.querySelector('.pg-marker')
+          marker.className = 'pg-marker hstack gap-2 mb-2'
+          marker.innerHTML = `<span class="badge ${pass ? 'theme-success' : 'theme-danger'}">${pass ? 'Pass' : 'Fail'}</span>
+            <span>${item.dataset.expect}</span>
+            ${issue ? `<a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/${issue}">#${issue}</a>` : ''}`
+        }
+
+        html.dataset.layerCases = 'done'
+      }
+
+      // A non-default config swaps its styles in after load.
+      const ready = () => !document.getElementById('playground-config-pending')
+      const wait = () => (ready() ? requestAnimationFrame(run) : setTimeout(wait, 50))
+      window.addEventListener('load', wait)
+    </script>
+  </body>
+</html>
