@@ -12,21 +12,13 @@ import { fileURLToPath } from 'node:url'
 import { loadEnv } from 'vite'
 import { bootstrapSource } from './lib/bootstrap.mjs'
 import { compileConfig, processCss } from './lib/compile.mjs'
-import { configsDir, root, workingDir } from './lib/configs.mjs'
+import { root, styleFolders } from './lib/configs.mjs'
 
 const strict = process.argv.includes('--strict')
 const bootstrap = bootstrapSource(loadEnv('production', root, ''))
 const bootstrapDir = bootstrap.dir ?? path.join(root, 'node_modules/bootstrap')
 
-const folders = [
-  workingDir,
-  ...[configsDir, path.join(root, 'issues')].flatMap(dir => (fs.existsSync(dir) ?
-    fs.readdirSync(dir, { withFileTypes: true })
-      .filter(entry => entry.isDirectory() && fs.existsSync(path.join(dir, entry.name, 'main.scss')))
-      .map(entry => path.join(dir, entry.name))
-      .sort((a, b) => a.localeCompare(b, 'en', { numeric: true })) :
-    []))
-]
+const folders = styleFolders()
 
 // A file as the report shows it: `configs/shadcn/main.scss`, or
 // `bootstrap/scss/_root.scss` for Bootstrap's own files.

@@ -167,7 +167,7 @@ console.log(`Bootstrap: ${bootstrap.label}\n`)
 fs.mkdirSync(reportDir, { recursive: true })
 
 const playground = save('playground', 'playground (configs/default)',
-  await compileConfig(path.join(configDir('default'), 'main.scss'), { bootstrapDir, logger: quiet }))
+  (await compileConfig(path.join(configDir('default'), 'main.scss'), { bootstrapDir, logger: quiet })).css)
 const dist = save('dist', 'dist/css/bootstrap.css', fs.readFileSync(distFile, 'utf8'))
 const reference = await referenceBuild()
 
