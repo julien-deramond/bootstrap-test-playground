@@ -25,6 +25,20 @@ export function listConfigs() {
     .sort((a, b) => (a.name === 'default' ? -1 : b.name === 'default' ? 1 : a.name.localeCompare(b.name)))
 }
 
+// Every folder that compiles its own copy of Bootstrap: the working copy,
+// then configs/<name>/ and issues/<name>/.
+export function styleFolders() {
+  return [
+    workingDir,
+    ...[configsDir, path.join(root, 'issues')].flatMap(dir => (fs.existsSync(dir) ?
+      fs.readdirSync(dir, { withFileTypes: true })
+        .filter(entry => entry.isDirectory() && fs.existsSync(path.join(dir, entry.name, 'main.scss')))
+        .map(entry => path.join(dir, entry.name))
+        .sort((a, b) => a.localeCompare(b, 'en', { numeric: true })) :
+      []))
+  ]
+}
+
 // First paragraph of the config's README.md, if any.
 export function readDescription(dir) {
   const readme = path.join(dir, 'README.md')

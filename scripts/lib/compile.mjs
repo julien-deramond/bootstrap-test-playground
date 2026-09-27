@@ -12,9 +12,11 @@ export const bootstrapImporter = bootstrapDir => ({
   findFileUrl: url => (url.startsWith('bootstrap/') ? pathToFileURL(path.join(bootstrapDir, url.slice('bootstrap/'.length))) : null)
 })
 
-export async function compileConfig(file, { bootstrapDir, logger }) {
-  const { css } = await sass.compileAsync(file, { importers: [bootstrapImporter(bootstrapDir)], logger })
-  return (await postcss(postcssConfig.plugins).process(css, { from: file })).css
+// Resolves to PostCSS's result: `.css`, and `.root` to walk. With `sourceMap`,
+// `node.source.input.origin(line, column)` points back to the Sass source.
+export async function compileConfig(file, { bootstrapDir, logger, sourceMap = false }) {
+  const { css, sourceMap: map } = await sass.compileAsync(file, { importers: [bootstrapImporter(bootstrapDir)], logger, sourceMap })
+  return postcss(postcssConfig.plugins).process(css, { from: file, map: sourceMap && { prev: map, inline: false, annotation: false } })
 }
 
 export const processCss = (css, from) => postcss(postcssConfig.plugins).process(css, { from })

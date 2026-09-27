@@ -21,10 +21,11 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run test:console` | Opens every page and fails on errors, warnings and failed requests (see [Console crawl](#console-crawl)) |
 | `npm run check-configs [-- --strict]` | Compiles the working copy, every config and every reproduction, and lists Sass errors and warnings (see [Checking configs](#checking-configs)) |
 | `npm run check-dist` | Checks that the default config compiles to Bootstrap's `dist/css/bootstrap.css` (see [Checking the dist](#checking-the-dist)) |
+| `npm run audit-tokens [-- --all]` | Lists `--bs-*` tokens that are read but never defined, or defined but never read (see [Auditing tokens](#auditing-tokens)) |
 | `npm run new-issue 42928 [-- --config <name>]` | Creates `issues/42928/` from the reproduction template and a config |
 | `npm run save-config <name> [-- "Description"]` | Saves the working copy (`src/styles/`) as `configs/<name>/` |
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
-| `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs` and `check-dist` against it |
+| `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs`, `check-dist` and `audit-tokens` against it |
 | `npm run sync-kitchen-sink -- ../twbs/bootstrap` | Regenerates `kitchen-sink/` from a Bootstrap checkout's docs |
 
 ## Where Bootstrap comes from
@@ -66,6 +67,29 @@ A difference means one of two things: the playground's pipeline moved away from 
 ```
 
 The normalized CSS and the full diffs go to `reports/dist/`. `npm run update-bootstrap` runs the check after each update, and so does the *Configs* workflow on every pull request, which uploads `reports/dist/` as the *dist-drift* artifact when it fails. When the `dist` line fails, record it as an upstream issue (see [Upstream issues](#upstream-issues)). When the `pipeline` line fails, update `postcss.config.js` to match Bootstrap's `build/postcss.config.mjs`.
+
+### Auditing tokens
+
+A token that is read but never defined silently drops its declaration. A token that is defined but never read does nothing when you override it. Both are easy to miss and easy to detect. `npm run audit-tokens` compiles every config, reads its `--bs-*` custom properties and reports four kinds of findings, each with the Sass file and line:
+
+| Kind | Meaning |
+| --- | --- |
+| `undefined` | Read without a fallback and never defined. Usually a bug, like a renamed token |
+| `hook` | Read with a fallback and never defined: a customization hook, listed so a new one stands out |
+| `unused` | Defined and never read: a scale meant for users, or a dead token |
+| `foreign` | Defined only on one component and read on an unrelated selector, which is usually intended composition, like `.combobox-toggle.form-control` |
+
+[`scripts/known-tokens.mjs`](scripts/known-tokens.mjs) lists the known findings, each with its tracking issue or the reason it is intended. By default the report only shows the others, so it stays empty until something changes:
+
+```
+✓ configs/default: 0 new, 276 known
+✗ configs/rounded: 1 new, 276 known
+  Read without a fallback, never defined (undefined): 1
+    --probe-color
+      .probe  configs/rounded/_custom.scss:14
+```
+
+`-- --all` lists the known findings too. The audit fails on a new finding, and on a known entry that no longer matches anything, so a fix upstream gets noticed. `npm run update-bootstrap` runs it after each update, and the *Configs* workflow on every pull request. Record a new bug as an upstream issue (see [Upstream issues](#upstream-issues)) and add it to `known-tokens.mjs` with the issue number.
 
 ## Customizing
 
