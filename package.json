@@ -14,11 +14,12 @@
     "test:visual": "playwright test --project visual",
     "test:console": "playwright test --project console",
     "check-configs": "node scripts/check-configs.mjs",
+    "check-dist": "node scripts/check-dist.mjs",
     "new-issue": "node scripts/new-issue.mjs",
     "save-config": "node scripts/save-config.mjs",
     "use-config": "node scripts/use-config.mjs",
     "sync-kitchen-sink": "node scripts/sync-kitchen-sink.mjs",
-    "update-bootstrap": "npm install bootstrap@github:twbs/bootstrap#v6-dev && BOOTSTRAP_PATH= npm run check-configs"
+    "update-bootstrap": "npm install bootstrap@github:twbs/bootstrap#v6-dev && BOOTSTRAP_PATH= npm run check-configs && BOOTSTRAP_PATH= npm run check-dist"
   },
   "engines": {
     "node": ">=20.19"

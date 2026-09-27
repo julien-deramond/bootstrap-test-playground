@@ -2,7 +2,8 @@ name: Configs
 
 # Compiles the working copy, every config in configs/ and every reproduction in
 # issues/, and fails on a Sass or PostCSS error. Warnings, such as Sass
-# deprecations, show up as annotations on the run and the pull request.
+# deprecations, show up as annotations on the run and the pull request. Then
+# checks that the default config still compiles to Bootstrap's committed dist.
 on:
   pull_request:
   push:
@@ -29,3 +30,13 @@ jobs:
       - run: npm ci
 
       - run: npm run check-configs
+
+      - run: npm run check-dist
+
+      # The normalized CSS and the full diffs, when the dist check fails.
+      - uses: actions/upload-artifact@v7
+        if: ${{ failure() }}
+        with:
+          name: dist-drift
+          path: reports/dist/
+          retention-days: 14
