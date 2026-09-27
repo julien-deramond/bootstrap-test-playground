@@ -1,0 +1,89 @@
+name: Visual tests
+
+# Compares every page with the Linux baselines in tests/visual/screenshots/linux/.
+# To create or refresh them after an intended change, add the `update-baselines`
+# label to the pull request: the `update` job records them, commits them to the
+# pull request's branch and removes the label.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    if: ${{ github.event.action != 'labeled' }}
+    # Pinned, so the fonts that baselines are recorded with don't change under them.
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: visual-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: npx playwright install --with-deps chromium
+
+      - run: npm run test:visual
+
+      # Expected, actual and diff for each failure: download it and open
+      # index.html, or run `npx playwright show-report <folder>`.
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: visual-report
+          path: tests/report/
+          retention-days: 14
+
+  update:
+    # Only for branches of this repository: a fork's branch can't be pushed to.
+    if: ${{ github.event.action == 'labeled' && github.event.label.name == 'update-baselines' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.head_ref }}
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: npx playwright install --with-deps chromium
+
+      # Starting from an empty folder also drops the baselines of removed pages.
+      - run: |
+          rm -rf tests/visual/screenshots/linux
+          npm run test:visual -- --update-snapshots=all
+
+      # A push made with GITHUB_TOKEN doesn't start workflows, so the `compare`
+      # job runs again on the next push to the branch, or after the merge.
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/visual/screenshots/linux
+          if git diff --cached --quiet; then
+            echo "The baselines are up to date."
+          else
+            git commit -m "test: update the Linux visual baselines"
+            git push
+          fi
+
+      - if: ${{ always() }}
+        run: gh pr edit "${{ github.event.pull_request.number }}" --remove-label update-baselines
+        env:
+          GH_TOKEN: ${{ github.token }}

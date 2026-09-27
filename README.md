@@ -214,6 +214,12 @@ The default matrix is light and dark, LTR, with the working copy. Widen it with 
 
 Baselines live in `tests/visual/screenshots/<platform>/`. Fonts and anti-aliasing differ between operating systems, so a baseline only compares with screenshots taken on the same one. Local baselines (`darwin/`, `win32/`) are ignored by git. Only `linux/`, the platform CI uses, is meant to be committed.
 
+### In CI
+
+[`.github/workflows/visual.yml`](.github/workflows/visual.yml) runs the suite on every pull request and every push to `main`, against the committed Linux baselines. When it fails, the *visual-report* artifact of the run holds the report: download it and open `index.html`.
+
+When a pull request changes the rendering on purpose, such as a Bootstrap update, add the `update-baselines` label to it. CI then records new Linux baselines, commits them to the pull request's branch as `test: update the Linux visual baselines`, and removes the label. Review that commit's images before merging. This works for branches of this repository, not for forks. A push made by CI doesn't start other workflows, so the comparison runs again on the next push, or on `main` after the merge.
+
 ## Deployment
 
 Every push to `main` builds the playground and deploys it to GitHub Pages at <https://julien-deramond.github.io/bootstrap-test-playground/> ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)). The site lives in a subfolder, so the workflow sets `BASE_PATH=/bootstrap-test-playground/`, and the build adds that prefix to every root-relative link. To check such a build locally:
