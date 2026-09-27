@@ -186,6 +186,10 @@ if (reference.skipped) {
   print('pipeline (playground vs Bootstrap’s build)', pipeline)
   print('dist (committed dist vs Bootstrap’s build)', stale)
   drift = !pipeline.identical || !stale.identical
+  if (!stale.identical) {
+    console.log('\nThe committed dist is out of date upstream: open a tracking issue in this repository labeled `upstream`,')
+    console.log('unless one exists (see "Upstream issue tracking" in CLAUDE.md).')
+  }
 }
 
 process.exitCode = drift ? 1 : 0
