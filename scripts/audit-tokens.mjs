@@ -154,7 +154,9 @@ function analyze(roots) {
   return { findings: findings.sort((a, b) => a.token.localeCompare(b.token)), defined, reads }
 }
 
-const matches = (entry, finding) => entry.kind === finding.kind &&
+// `configs` limits an entry to some folders, by name: `no-transitions`.
+const matches = (entry, finding, folder) => entry.kind === finding.kind &&
+  (!entry.configs || entry.configs.includes(path.basename(folder))) &&
   (entry.tokens?.includes(finding.token) || entry.pattern?.test(finding.token))
 
 async function audit(folder) {
@@ -198,7 +200,7 @@ let problems = 0
 for (const folder of styleFolders()) {
   const name = path.relative(root, folder)
   const { findings } = await audit(folder)
-  const entryOf = finding => known.find(entry => matches(entry, finding))
+  const entryOf = finding => known.find(entry => matches(entry, finding, folder))
   for (const finding of findings) {
     const entry = entryOf(finding)
     if (entry) {
