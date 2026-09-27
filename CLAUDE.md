@@ -13,6 +13,12 @@ A Vite multi-page playground for Bootstrap v6 (`twbs/bootstrap`, branch `v6-dev`
 - Mark a page's own playground UI (headers, navigation, notes around the markup under test) with `data-playground-chrome`, so `?chrome=0` hides it for screenshots.
 - Reproductions go in `issues/<name>/` (`npm run new-issue <name> -- --config <config>`). Name them after the upstream issue number when one exists, or `pg-<number>` after the issue in this repository.
 
+## Commits and pull requests
+
+- Commit messages and PR titles follow [Conventional Commits](https://www.conventionalcommits.org/): `feat`, `fix`, `docs`, `test`, `ci`, `refactor`, `chore`, and `chore(deps)` for dependency and Bootstrap updates. Add a scope when one area is concerned, as in `feat(home):` or `fix(configs):`. Then a lowercase, imperative summary.
+- One issue per pull request. Pull requests are squash-merged, so the PR title becomes the commit on `main`. Reference the issue in the body (`Closes #n`, or `Refs #n` for partial work).
+- Don't apply the `good first issue` label.
+
 ## Upstream issue tracking
 
 Whenever you find a potential bug in Bootstrap itself (not in this playground), record it as an issue in **this repository** (`julien-deramond/bootstrap-test-playground`), then keep its label in sync with what happens upstream. Never open issues or PRs on `twbs/bootstrap`, and never comment there, unless the user explicitly asks.
