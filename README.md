@@ -21,11 +21,12 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run test:console` | Opens every page and fails on errors, warnings and failed requests (see [Console crawl](#console-crawl)) |
 | `npm run check-configs [-- --strict]` | Compiles the working copy, every config and every reproduction, and lists Sass errors and warnings (see [Checking configs](#checking-configs)) |
 | `npm run check-dist` | Checks that the default config compiles to Bootstrap's `dist/css/bootstrap.css` (see [Checking the dist](#checking-the-dist)) |
+| `npm run compile-matrix` | Compiles Bootstrap under combinations of its `$enable-*` options and reports failures and options that do nothing (see [Option combinations](#option-combinations)) |
 | `npm run audit-tokens [-- --all \| --render]` | Lists `--bs-*` tokens that are read but never defined, or defined but never read, and with `--render` the ones overriding doesn't change (see [Auditing tokens](#auditing-tokens)) |
 | `npm run new-issue 42928 [-- --config <name>]` | Creates `issues/42928/` from the reproduction template and a config |
 | `npm run save-config <name> [-- "Description"]` | Saves the working copy (`src/styles/`) as `configs/<name>/` |
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
-| `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs`, `check-dist` and `audit-tokens` against it |
+| `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs`, `check-dist`, `audit-tokens` and `compile-matrix` against it |
 | `npm run sync-kitchen-sink -- ../twbs/bootstrap` | Regenerates `kitchen-sink/` from a Bootstrap checkout's docs |
 
 ## Where Bootstrap comes from
@@ -98,6 +99,25 @@ The static audit can't see a token that is read but shadowed, like the hard-code
 3. It compares computed styles, including the `::before`, `::after`, `::backdrop`… that read it, then screenshots.
 
 It takes about four minutes and writes one line per token to `reports/tokens/render.md`: *effective*, *no visible effect*, *not read*, or why it couldn't tell (no example on any page, or a hover or focus state the pages don't show). A token with no visible effect on a page may be masked there by a utility or the page's own CSS, so check the page before filing it upstream.
+
+### Option combinations
+
+`scss/_config.scss` has a dozen `$enable-*` flags, plus `$color-mode-type`, and they interact: shadows and gradients, grid and CSS grid, transitions and reduced motion. `npm run compile-matrix` compiles Bootstrap under 94 combinations in a few seconds: the defaults, every flag on, every flag off, each option toggled alone and each pair of options toggled together. It fails when:
+
+- a combination doesn't compile, and it names the combination;
+- toggling an option leaves the CSS byte-identical, meaning the option does nothing;
+- toggling one option changes nothing once another is toggled, although it does on its own, meaning the first masks it.
+
+```
+Combination            Status  Size      Δ default  Rules  Warnings  Notes
+default                ok      481.4 KB  ±0         4419   0
+all-off                ok      418.7 KB  −62.6 KB   3794   0
+caret=false            ok      481.4 KB  ±0         4419   0         identical to default
+rounded=false          ok      469.2 KB  −12.1 KB   4366   0
+✓ caret: toggling it leaves the CSS byte-identical (known: #129)
+```
+
+Options known to do nothing are listed in [`scripts/known-options.mjs`](scripts/known-options.mjs), with their tracking issue or the reason. The full table is in `reports/matrix/summary.md`, and each combination's CSS is next to it, ready to diff. `npm run update-bootstrap` runs the matrix after each update, and so does the *Configs* workflow.
 
 ## Customizing
 

@@ -1,6 +1,6 @@
 // Compiles a config's `main.scss` the way Vite does: Sass with `bootstrap/…`
 // resolved like Vite's alias, then this project's postcss.config.js. Shared by
-// scripts/check-configs.mjs and scripts/check-dist.mjs.
+// the check and audit scripts.
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 import postcss from 'postcss'
@@ -17,6 +17,14 @@ export const bootstrapImporter = bootstrapDir => ({
 export async function compileConfig(file, { bootstrapDir, logger, sourceMap = false }) {
   const { css, sourceMap: map } = await sass.compileAsync(file, { importers: [bootstrapImporter(bootstrapDir)], logger, sourceMap })
   return postcss(postcssConfig.plugins).process(css, { from: file, map: sourceMap && { prev: map, inline: false, annotation: false } })
+}
+
+// The same for Sass source code, like `@use "bootstrap/scss/bootstrap" with (…)`.
+// `compiler` is an optional `sass.initAsyncCompiler()`, to run many at once.
+export async function compileSource(source, { bootstrapDir, logger, compiler = sass }) {
+  const url = pathToFileURL(path.join(bootstrapDir, 'scss/virtual.scss'))
+  const { css } = await compiler.compileStringAsync(source, { url, importers: [bootstrapImporter(bootstrapDir)], logger })
+  return postcss(postcssConfig.plugins).process(css, { from: undefined })
 }
 
 export const processCss = (css, from) => postcss(postcssConfig.plugins).process(css, { from })
