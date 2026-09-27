@@ -9,6 +9,14 @@ import { listConfigs } from '../../scripts/lib/configs.mjs'
 import { collectPages } from '../../scripts/lib/pages.mjs'
 import knownIssues from './known-issues.js'
 
+// Every known problem is an upstream bug with a tracking issue: see
+// "Upstream issue tracking" in CLAUDE.md.
+for (const { issue, message, pages } of knownIssues) {
+  if (!issue || !message || !pages?.length) {
+    throw new Error(`tests/console/known-issues.js: each entry needs an \`issue\`, a \`message\` and \`pages\` (${message})`)
+  }
+}
+
 const THEMES = ['light', 'dark']
 const CONFIGS = ['working', ...listConfigs().map(({ name }) => name)]
 
@@ -56,9 +64,11 @@ for (const theme of THEMES) {
           const unexpected = problems.filter(problem => !known.some(({ message }) => message.test(problem)))
           const gone = known.filter(({ message }) => !problems.some(problem => message.test(problem)))
 
-          expect(unexpected, `${url}?${params} reported problems`).toEqual([])
+          expect(unexpected, `${url}?${params} reported problems. If Bootstrap causes one, open a tracking issue labeled \`upstream\` ` +
+            '(see "Upstream issue tracking" in CLAUDE.md) and add it to tests/console/known-issues.js').toEqual([])
           expect(gone.map(({ issue, message }) => `#${issue} ${message}`),
-            'Known issues that no longer happen here: remove them from tests/console/known-issues.js and check the tracking issues').toEqual([])
+            'Known issues that no longer happen here: remove them from tests/console/known-issues.js, ' +
+            'and if Bootstrap fixed them, mark the tracking issue `upstream-fixed` and close it').toEqual([])
         })
       }
     })

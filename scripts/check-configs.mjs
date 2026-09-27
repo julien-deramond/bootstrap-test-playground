@@ -87,6 +87,7 @@ console.log(`Bootstrap: ${bootstrap.label}\n`)
 
 let errors = 0
 let warningCount = 0
+let upstreamWarnings = 0
 
 for (const folder of folders) {
   const name = path.relative(root, folder)
@@ -106,6 +107,10 @@ for (const folder of folders) {
   }
 
   for (const { message, where } of warnings) {
+    if (where && display(where.file).startsWith('bootstrap/')) {
+      upstreamWarnings++
+    }
+
     console.log(`    ${message.split('\n').join('\n    ')}`)
     if (where) {
       console.log(`      at ${format(where)}`)
@@ -116,6 +121,11 @@ for (const folder of folders) {
 }
 
 console.log(`\n${folders.length} folders, ${errors} with errors, ${warningCount} warnings`)
+
+if (upstreamWarnings) {
+  console.log(`\n${upstreamWarnings} of the warnings come from Bootstrap's own files: open a tracking issue in this repository labeled`)
+  console.log('`upstream` for each distinct warning, unless one exists (see "Upstream issue tracking" in CLAUDE.md).')
+}
 
 if (errors || (strict && warningCount)) {
   process.exit(1)

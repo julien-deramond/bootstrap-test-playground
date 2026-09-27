@@ -27,6 +27,13 @@ A Vite multi-page playground for Bootstrap v6 (`twbs/bootstrap`, branch `v6-dev`
 
 Whenever you find a potential bug in Bootstrap itself (not in this playground), record it as an issue in **this repository** (`julien-deramond/bootstrap-test-playground`), then keep its label in sync with what happens upstream. Never open issues or PRs on `twbs/bootstrap`, and never comment there, unless the user explicitly asks.
 
+This includes everything the check scripts surface: `npm run test:console`, `test:visual`, `check-configs` (warnings from `bootstrap/scss/`), `check-dist` (a stale `dist` line) and `audit-tokens`. Every Bootstrap bug they find gets a tracking issue (steps 1 and 2 below) **before** it goes into an allowlist. The allowlist entry then references it with `issue: <n>`:
+
+- `tests/console/known-issues.js`: every entry has an `issue`
+- `scripts/known-tokens.mjs`: `issue` for bugs, `reason` only for intended behavior, never both
+
+When a script reports that a known entry no longer happens, that's step 3 for its issue.
+
 ### Labels
 
 Each tracking issue carries exactly one of these labels. Swap them; never stack them.

@@ -321,6 +321,8 @@ npx vite preview --base /bootstrap-test-playground/
 
 Potential Bootstrap bugs found here are tracked as issues in this repository. Each one carries one of three labels as it moves through the process: `upstream` (not reported yet), then `upstream-reported`, then `upstream-fixed`, when the issue is closed. The workflow is in [CLAUDE.md](CLAUDE.md).
 
+This includes the bugs the checks find: console errors, Sass warnings from Bootstrap's files, a stale dist and token findings. Each one gets a tracking issue before it's allowlisted in [`tests/console/known-issues.js`](tests/console/known-issues.js) or [`scripts/known-tokens.mjs`](scripts/known-tokens.mjs), and the allowlist entry carries the issue number. When a check reports that a known entry is gone, the fix has landed: move the issue to `upstream-fixed` and close it.
+
 ## License
 
 [MIT](LICENSE). The starter screens and kitchen sink examples are adapted from [Bootstrap](https://github.com/twbs/bootstrap), which is also MIT-licensed. The real screens are adapted from [shadcn/ui](https://github.com/shadcn-ui/ui), MIT-licensed, see [`screens/LICENSE-shadcn-ui.md`](screens/LICENSE-shadcn-ui.md).

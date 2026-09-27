@@ -26,6 +26,13 @@ import { compileConfig, processCss } from './lib/compile.mjs'
 import { root, styleFolders } from './lib/configs.mjs'
 import known from './known-tokens.mjs'
 
+// Bugs are tracked, intended findings explained: see "Upstream issue tracking" in CLAUDE.md.
+for (const entry of known) {
+  if (Boolean(entry.issue) === Boolean(entry.reason)) {
+    throw new Error(`scripts/known-tokens.mjs: each entry needs either an \`issue\` or a \`reason\`: ${entry.tokens?.join(', ') ?? entry.pattern}`)
+  }
+}
+
 const showAll = process.argv.includes('--all')
 const bootstrap = bootstrapSource(loadEnv('production', root, ''))
 const bootstrapDir = bootstrap.dir ?? path.join(root, 'node_modules/bootstrap')
@@ -209,6 +216,15 @@ for (const folder of styleFolders()) {
 const stale = known.filter(entry => !used.has(entry))
 for (const entry of stale) {
   console.log(`\n✗ Known entry no longer found anywhere, remove it from scripts/known-tokens.mjs: ${entry.kind} ${entry.tokens?.join(', ') ?? entry.pattern}${entry.issue ? ` (#${entry.issue})` : ''}`)
+  if (entry.issue) {
+    console.log(`  If Bootstrap fixed it, mark #${entry.issue} \`upstream-fixed\` and close it (step 3 of "Upstream issue tracking" in CLAUDE.md).`)
+  }
+}
+
+if (problems) {
+  console.log('\nFor each new finding: if it’s a Bootstrap bug, open a tracking issue in this repository labeled `upstream`')
+  console.log('(see "Upstream issue tracking" in CLAUDE.md), then add it to scripts/known-tokens.mjs with `issue: <n>`.')
+  console.log('If it’s intended, add it with a `reason`.')
 }
 
 process.exitCode = problems || stale.length ? 1 : 0
