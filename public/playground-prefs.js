@@ -11,6 +11,9 @@
 //   `data-playground-chrome` (kitchen sink header, navigation, headings)
 // - `frame=0` removes the kitchen sink's `.bd-example` frame
 // - `section=<id>` shows one kitchen sink example only
+// - `freeze` makes the page render the same way every time: no animations,
+//   transitions or caret, carousels don't autoplay, a fixed date and a seeded
+//   Math.random
 (() => {
   'use strict'
 
@@ -120,6 +123,7 @@
   }
 
   const chromeless = params.get('chrome') === '0'
+  const frozen = params.has('freeze') && !['0', 'false'].includes(params.get('freeze'))
   const section = params.get('section')
 
   // Unlayered, so these win over the pages' `@layer custom` rules.
@@ -136,6 +140,34 @@
     viewRules.push(`.bd-kitchen-sink-section:not([aria-labelledby="${CSS.escape(section)}"]) { display: none !important; }`)
   }
 
+  if (frozen) {
+    viewRules.push(
+      'html { scroll-behavior: auto !important; }',
+      '*, ::before, ::after { animation: none !important; transition: none !important; caret-color: transparent !important; }'
+    )
+
+    // A fixed "today" (the datepicker's month, relative dates) that still
+    // ticks, so code measuring elapsed time keeps working. Noon UTC is the
+    // same calendar day in nearly every time zone.
+    const RealDate = Date
+    const start = RealDate.UTC(2026, 0, 15, 12)
+    const now = () => start + Math.floor(performance.now())
+    window.Date = new Proxy(RealDate, {
+      construct: (target, args, newTarget) => Reflect.construct(target, args.length > 0 ? args : [now()], newTarget),
+      apply: () => new RealDate(now()).toString(),
+      get: (target, key, receiver) => (key === 'now' ? now : Reflect.get(target, key, receiver))
+    })
+
+    // Seeded Math.random (mulberry32), for generated ids and demo data.
+    let seed = 0x2F6B_3A91
+    Math.random = () => {
+      seed = (seed + 0x6D2B_79F5) | 0
+      let value = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+      value = (value + Math.imul(value ^ (value >>> 7), 61 | value)) ^ value
+      return ((value ^ (value >>> 14)) >>> 0) / 4_294_967_296
+    }
+  }
+
   if (viewRules.length > 0) {
     addStyle('playground-view', viewRules.join('\n'))
   }
@@ -143,6 +175,7 @@
   window.playgroundPrefs = {
     DEFAULTS,
     embedded: params.has('embed') || chromeless,
+    frozen,
     read,
     effective,
     save,

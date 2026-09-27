@@ -163,7 +163,7 @@ Toolbar choices are saved in `localStorage` and applied before first paint by `p
 
 ### Screenshot and embed flags
 
-More URL parameters change what a page shows, for screenshots, embeds and visual tests. They combine, as in `/kitchen-sink/components-tooltip.html?chrome=0&section=placement`.
+More URL parameters change what a page shows, for screenshots, embeds and visual tests. They combine, as in `/kitchen-sink/components-tooltip.html?chrome=0&section=placement&freeze`.
 
 | Parameter | Effect |
 | --- | --- |
@@ -171,6 +171,7 @@ More URL parameters change what a page shows, for screenshots, embeds and visual
 | `?chrome=0` | Hides the toolbar and the page's own playground UI: every element marked `data-playground-chrome`, like the kitchen sink header, navigation and example headings, or the header and steps of a reproduction. Only the markup under test remains. |
 | `?frame=0` | Removes the padding, border and background of the kitchen sink's `.bd-example` frames. |
 | `?section=<id>` | Shows one kitchen sink example only. The id is the example heading's, as in the page's *On this page* links. |
+| `?freeze` | Makes the page render the same way on every load: no animations, transitions or text caret, no smooth scrolling, carousels don't autoplay, "today" is January 15, 2026 (for the datepicker), and `Math.random` is seeded. |
 
 Mark playground UI on a new page with `data-playground-chrome` so `?chrome=0` hides it. The kitchen sink generator and the reproduction template already do.
 

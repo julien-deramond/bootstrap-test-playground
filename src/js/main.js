@@ -15,6 +15,15 @@ import { mountToolbar } from './toolbar.js'
 window.bootstrap = bootstrap
 
 const { swappable } = window.playgroundPrefs ? initConfigs(window.playgroundPrefs) : { swappable: false }
+
+// `?freeze`: Bootstrap starts autoplaying carousels on window load, which comes
+// after this module runs. initExamples then sets them up as static carousels.
+if (window.playgroundPrefs?.frozen) {
+  for (const carousel of document.querySelectorAll('[data-bs-autoplay="true"]')) {
+    carousel.dataset.bsAutoplay = 'false'
+  }
+}
+
 initExamples(bootstrap)
 mountToolbar({ source: __BOOTSTRAP_SOURCE__, configs, swappable })
 
