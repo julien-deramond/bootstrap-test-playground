@@ -19,10 +19,11 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run build` / `npm run preview` | Builds every page to `dist/` and serves the build |
 | `npm run test:visual [-- -u]` | Screenshots every page and compares with the baselines (see [Visual regression tests](#visual-regression-tests)) |
 | `npm run test:console` | Opens every page and fails on errors, warnings and failed requests (see [Console crawl](#console-crawl)) |
+| `npm run check-configs [-- --strict]` | Compiles the working copy, every config and every reproduction, and lists Sass errors and warnings (see [Checking configs](#checking-configs)) |
 | `npm run new-issue 42928 [-- --config <name>]` | Creates `issues/42928/` from the reproduction template and a config |
 | `npm run save-config <name> [-- "Description"]` | Saves the working copy (`src/styles/`) as `configs/<name>/` |
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
-| `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit |
+| `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs` against it |
 | `npm run sync-kitchen-sink -- ../twbs/bootstrap` | Regenerates `kitchen-sink/` from a Bootstrap checkout's docs |
 
 ## Where Bootstrap comes from
@@ -75,6 +76,24 @@ Then:
 - **Make it the working copy**: `npm run use-config rounded-dark`. This refuses to run if `src/styles/` has uncommitted changes, unless you pass `-- --force`.
 
 `configs/default/` holds Bootstrap's defaults. Keep it pristine; `npm run use-config default` resets the working copy. `configs/shadcn/` recreates shadcn/ui's default theme (see [Real screens](#real-screens)).
+
+### Checking configs
+
+A config only compiles when a page uses it, so a Bootstrap update that renames a Sass variable or a token map can break one without anyone noticing. `npm run check-configs` compiles `main.scss` of the working copy, of every folder in `configs/` and of every reproduction in `issues/`. It uses Sass, then `postcss.config.js`, the way Vite does, and runs `tokens.css` through PostCSS too:
+
+```
+Bootstrap: twbs/bootstrap#v6-dev @ 624c7b98c
+
+✓ src/styles
+✓ configs/default
+! configs/shadcn: 1 warning
+    Deprecation [color-functions]: darken() is deprecated. …
+      at configs/shadcn/_custom.scss:15:13
+✗ issues/42928: This variable was not declared with !default in the @used module.
+    at issues/42928/main.scss:10:39
+```
+
+It exits with an error when a folder fails to compile, and with `-- --strict` when there is any warning, `@warn` and Sass deprecations included. It honors `BOOTSTRAP_PATH`, like the dev server. `npm run update-bootstrap` runs it against the newly installed commit. [`.github/workflows/configs.yml`](.github/workflows/configs.yml) runs it on every pull request and every push to `main`, and shows each warning as an annotation.
 
 ## Pages
 
@@ -240,7 +259,7 @@ Each failure names the page, with its `?theme=` and `?config=`, and lists the me
 
 Problems caused by an open upstream bug go in [`tests/console/known-issues.js`](tests/console/known-issues.js), with the tracking issue number, a pattern for the message and the pages where it happens. They no longer fail the run on those pages. When a listed problem stops happening on a page, the run fails, so the entry gets removed and the tracking issue moves to `upstream-fixed` (see [Upstream issues](#upstream-issues)).
 
-Sass `@warn` output shows up in the build log, not in the browser, so the crawl doesn't see it.
+Sass `@warn` output shows up in the build log, not in the browser, so the crawl doesn't see it. [`npm run check-configs`](#checking-configs) reports it.
 
 [`.github/workflows/console.yml`](.github/workflows/console.yml) runs the crawl on every pull request and every push to `main`.
 
