@@ -3,7 +3,8 @@ name: Console crawl
 # Opens every page and fails on uncaught exceptions, console errors and
 # warnings, and failed requests. Known upstream bugs are allowlisted in
 # tests/console/known-issues.js. Then opens every component with reduced
-# motion emulated, and with transitions compiled out, and fails on motion.
+# motion emulated, and with transitions compiled out, and fails on motion,
+# and checks the documented cascade layer overrides on issues/pg-27/.
 on:
   pull_request:
   push:
@@ -34,4 +35,7 @@ jobs:
       - run: npm run test:console
 
       - run: npm run audit-motion -- --render
+        if: ${{ !cancelled() }}
+
+      - run: npm run audit-layers -- --render
         if: ${{ !cancelled() }}

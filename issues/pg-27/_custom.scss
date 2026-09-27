@@ -1,0 +1,36 @@
+// The `@layer custom` half of the layers page. Every override uses `:where()`,
+// so its specificity is 0: it can only win through layer order, never through
+// a more specific selector. See index.html for what each one should do.
+
+@layer custom {
+  // Documented to lose: global tokens must stay unlayered (Bootstrap's `:root`
+  // tokens are unlayered, and unlayered beats every layer).
+  :root {
+    --heading-margin-bottom: 7.7rem;
+  }
+
+  // Component token: `custom` comes after `components`, so it wins.
+  :where(.pg-btn) {
+    --btn-padding-x: 37px;
+  }
+
+  // Component rule: same.
+  :where(.pg-card) {
+    background-color: rgb(1, 2, 3);
+  }
+
+  // Loses to a utility (`utilities` comes after `custom`)…
+  :where(.pg-util) {
+    padding: 13px;
+  }
+
+  // …and to a helper (`helpers` comes after `custom`).
+  :where(.pg-helper) {
+    display: block;
+  }
+
+  // Should win like any component token, but the drawer's tokens are unlayered (#148).
+  :where(.pg-drawer) {
+    --drawer-width: 321px;
+  }
+}
