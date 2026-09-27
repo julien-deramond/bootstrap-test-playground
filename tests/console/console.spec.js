@@ -28,7 +28,7 @@ const VARIANTS = [
   { name: 'dist', params: { config: 'working', css: 'dist', js: 'dist' } }
 ]
 
-const urls = ['/', '/compare.html', ...collectPages('/').flatMap(({ pages }) => pages.map(({ url }) => url))]
+const urls = ['/', '/compare.html', '/sizes.html', ...collectPages('/').flatMap(({ pages }) => pages.map(({ url }) => url))]
 
 for (const theme of THEMES) {
   for (const { name, params: variant } of VARIANTS) {

@@ -1,0 +1,48 @@
+[
+  {
+    "commit": "bd0a4f63ce5cc444063c28a6946bdae3dacdce20",
+    "date": "2026-09-27T16:44:30.944Z",
+    "sizes": {
+      "css/default": {
+        "min": 378944,
+        "gzip": 50997,
+        "brotli": 36238
+      },
+      "css/no-reduced-motion": {
+        "min": 372752,
+        "gzip": 50504,
+        "brotli": 35820
+      },
+      "css/no-transitions": {
+        "min": 364368,
+        "gzip": 49577,
+        "brotli": 35193
+      },
+      "css/shadcn": {
+        "min": 379691,
+        "gzip": 51416,
+        "brotli": 36510
+      },
+      "dist/bootstrap.min.css": {
+        "min": 379028,
+        "gzip": 51047,
+        "brotli": 36263
+      },
+      "dist/bootstrap.min.js": {
+        "min": 137252,
+        "gzip": 34820,
+        "brotli": 29465
+      },
+      "dist/bootstrap.bundle.min.js": {
+        "min": 216441,
+        "gzip": 59203,
+        "brotli": 50485
+      },
+      "src/bootstrap.bundle.js": {
+        "min": 190543,
+        "gzip": 54789,
+        "brotli": 47596
+      }
+    }
+  }
+]
