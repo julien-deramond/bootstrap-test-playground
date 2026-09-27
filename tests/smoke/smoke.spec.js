@@ -8,7 +8,9 @@
 // transitions are off and `shown`/`hidden` fire right away.
 //
 // Known upstream bugs are listed in known-issues.js: their scenario is marked
-// `test.fail()`, so Playwright reports it when it starts passing.
+// `test.fail()`, so Playwright reports it when it starts passing. The suite
+// runs in each engine (`smoke`, `smoke-firefox`, `smoke-webkit`), and an
+// entry can be limited to some of them.
 import { expect, test } from '@playwright/test'
 import { listConfigs } from '../../scripts/lib/configs.mjs'
 import known from './known-issues.js'
@@ -392,8 +394,10 @@ const SCENARIOS = {
 for (const config of CONFIGS) {
   test.describe(config, () => {
     for (const [name, scenario] of Object.entries(SCENARIOS)) {
-      test(name, async ({ page }) => {
-        const issue = known.find(entry => entry.scenario === name && (!entry.configs || entry.configs.includes(config)))
+      test(name, async ({ page, browserName }) => {
+        const issue = known.find(entry => entry.scenario === name &&
+          (!entry.configs || entry.configs.includes(config)) &&
+          (!entry.engines || entry.engines.includes(browserName)))
         test.fail(Boolean(issue), issue && `known upstream bug #${issue.issue}`)
         page.config = config
         await scenario(page)

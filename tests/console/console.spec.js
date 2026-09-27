@@ -28,7 +28,7 @@ for (const theme of THEMES) {
       test.use({ colorScheme: theme })
 
       for (const url of urls) {
-        test(url, async ({ page, baseURL }) => {
+        test(url, async ({ page, baseURL, browserName }) => {
           const { origin } = new URL(baseURL)
           const problems = []
 
@@ -60,7 +60,7 @@ for (const theme of THEMES) {
           // Catches errors thrown by late scripts and timers too.
           await page.waitForLoadState('networkidle')
 
-          const known = knownIssues.filter(entry => entry.pages.includes(url))
+          const known = knownIssues.filter(entry => entry.pages.includes(url) && (!entry.engines || entry.engines.includes(browserName)))
           const unexpected = problems.filter(problem => !known.some(({ message }) => message.test(problem)))
           const gone = known.filter(({ message }) => !problems.some(problem => message.test(problem)))
 

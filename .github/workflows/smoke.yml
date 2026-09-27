@@ -1,9 +1,9 @@
 name: Smoke tests
 
 # Opens, drives and closes every Bootstrap JavaScript component on its kitchen
-# sink page, with the working copy and every config, and fails on a missing
-# event or a stuck state. Known upstream bugs are listed in
-# tests/smoke/known-issues.js.
+# sink page, with the working copy and every config, in Chromium, Firefox and
+# WebKit, and fails on a missing event or a stuck state. Known upstream bugs
+# are listed in tests/smoke/known-issues.js.
 on:
   pull_request:
   push:
@@ -29,6 +29,14 @@ jobs:
 
       - run: npm ci
 
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps chromium firefox webkit
 
-      - run: npm run test:smoke
+      - run: npm run test:smoke:engines
+
+      # One project per engine in the report, so an engine-only failure stands out.
+      - uses: actions/upload-artifact@v7
+        if: ${{ failure() }}
+        with:
+          name: smoke-report
+          path: tests/report/
+          retention-days: 14

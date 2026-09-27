@@ -3,7 +3,9 @@
 // exact pages it happens on. On those pages, a matching problem doesn't fail
 // the run. If it stops happening on one of them, the run fails, so the entry
 // gets removed and the tracking issue checked (see "Upstream issue tracking"
-// in CLAUDE.md).
+// in CLAUDE.md). The crawl runs in each engine (`console`, `console-firefox`,
+// `console-webkit`); `engines` limits an entry to some of them (chromium,
+// firefox, webkit).
 export default [
   {
     issue: 2,
