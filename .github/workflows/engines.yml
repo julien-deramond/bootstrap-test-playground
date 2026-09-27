@@ -1,10 +1,11 @@
 name: Engines
 
-# The console crawl in Firefox and WebKit, every night and on demand. Pull
-# requests run it in Chromium only (console.yml), and the smoke tests in all
-# three engines (smoke.yml). An engine-only failure is usually a browser
-# difference Bootstrap doesn't handle: track it upstream and list it in
-# tests/console/known-issues.js with `engines`.
+# The console crawl and the visual suite in Firefox and WebKit, every night and
+# on demand. Pull requests run them in Chromium only (console.yml, visual.yml),
+# and the smoke tests in all three engines (smoke.yml). An engine-only failure
+# is usually a browser difference Bootstrap doesn't handle: track it upstream,
+# and list it in tests/console/known-issues.js with `engines`, or refresh the
+# engine's baselines with the `update-baselines` label once it's tracked.
 on:
   schedule:
     - cron: '17 3 * * *'
@@ -29,6 +30,9 @@ jobs:
       - run: npx playwright install --with-deps firefox webkit
 
       - run: npx playwright test --project console-firefox --project console-webkit
+
+      - run: npx playwright test --project visual-firefox --project visual-webkit
+        if: ${{ !cancelled() }}
 
       - uses: actions/upload-artifact@v7
         if: ${{ failure() }}

@@ -12,6 +12,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:visual": "playwright test --project visual",
+    "test:visual:engines": "playwright test --project \"visual*\"",
     "test:console": "playwright test --project console",
     "test:console:engines": "playwright test --project \"console*\"",
     "test:smoke": "playwright test --project smoke",

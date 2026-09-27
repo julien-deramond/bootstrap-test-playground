@@ -33,18 +33,17 @@ export default defineConfig({
     timezoneId: 'UTC',
     locale: 'en-US'
   },
-  // The visual suite runs in Chromium only: its baselines are per engine. The
-  // console crawl and the smoke tests run in each engine, as `console`,
-  // `console-firefox`, `console-webkit` and so on. The unsuffixed project is
-  // Chromium, the default for `npm run test:console` and `npm run test:smoke`.
-  projects: [
-    { name: 'visual', testDir: 'tests/visual' },
-    ...['console', 'smoke'].flatMap(suite => Object.entries(ENGINES).map(([engine, device]) => ({
-      name: engine === 'chromium' ? suite : `${suite}-${engine}`,
-      testDir: `tests/${suite}`,
-      use: { ...device }
-    })))
-  ],
+  // Every suite runs in each engine, as `visual`, `visual-firefox`,
+  // `visual-webkit`, `console`, `console-firefox` and so on. The unsuffixed
+  // project is Chromium, the default for `npm run test:visual`, `test:console`
+  // and `test:smoke`. Visual baselines are per engine: Chromium's stay in
+  // screenshots/<platform>/, the others go in screenshots/<platform>/<project>/.
+  projects: ['visual', 'console', 'smoke'].flatMap(suite => Object.entries(ENGINES).map(([engine, device]) => ({
+    name: engine === 'chromium' ? suite : `${suite}-${engine}`,
+    testDir: `tests/${suite}`,
+    use: { ...device },
+    ...(suite === 'visual' && engine !== 'chromium' ? { snapshotPathTemplate: '{testDir}/screenshots/{platform}/{projectName}/{arg}{ext}' } : {})
+  }))),
   webServer: {
     command: `npm run build && npm run preview -- --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}`,

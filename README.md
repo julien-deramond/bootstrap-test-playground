@@ -499,18 +499,23 @@ A scenario that fails because of an open upstream bug goes in [`tests/smoke/know
 
 ## Browser engines
 
-v6 leans on features whose support differs between engines at the floors of Bootstrap's `.browserslistrc` (Chrome 130, Firefox 132, Safari 18): `light-dark()`, `color-mix()`, `oklch()`, `:has()`, `@layer`, `<dialog>`. The console crawl and the smoke tests run in each of Playwright's engines, as one project per engine: `console`, `console-firefox`, `console-webkit`, `smoke`, `smoke-firefox` and `smoke-webkit`. The unsuffixed projects are Chromium, and `npm run test:console` and `npm run test:smoke` run only those, for speed:
+v6 leans on features whose support differs between engines at the floors of Bootstrap's `.browserslistrc` (Chrome 130, Firefox 132, Safari 18): `light-dark()`, `color-mix()`, `oklch()`, `:has()`, `@layer`, `<dialog>`. Every suite runs in each of Playwright's engines, as one project per engine: `visual`, `visual-firefox`, `visual-webkit`, `console`, `console-firefox` and so on. The unsuffixed projects are Chromium, and `npm run test:visual`, `test:console` and `test:smoke` run only those, for speed:
 
 ```sh
 npx playwright install firefox webkit   # once
 npm run test:smoke:engines              # the smoke tests in all three
 npm run test:console:engines            # the console crawl in all three
+npm run test:visual:engines             # the visual suite in all three
 npx playwright test --project smoke-webkit -g dialog
 ```
 
 Failures are reported per project, so an engine-only failure stands out. It's usually a browser difference that Bootstrap doesn't handle, like WebKit leaving focus behind a dialog that opens ([#158](https://github.com/julien-deramond/bootstrap-test-playground/issues/158)). It gets a tracking issue like any other bug, and its entry in `known-issues.js` takes `engines: ['webkit']` so it only applies there.
 
-In CI, pull requests run the smoke tests in all three engines ([`smoke.yml`](.github/workflows/smoke.yml)) and the console crawl in Chromium ([`console.yml`](.github/workflows/console.yml)). [`engines.yml`](.github/workflows/engines.yml) runs the console crawl in Firefox and WebKit every night, and on demand from the *Actions* tab. The visual suite stays in Chromium for now: other engines would need their own baselines.
+Visual baselines are per engine, since fonts and native controls render differently: Chromium's in `tests/visual/screenshots/<platform>/`, the others' in `tests/visual/screenshots/<platform>/visual-firefox/` and `visual-webkit/`. The `update-baselines` label records all three.
+
+In CI, pull requests run the smoke tests in all three engines ([`smoke.yml`](.github/workflows/smoke.yml)) and the console crawl and visual suite in Chromium ([`console.yml`](.github/workflows/console.yml), [`visual.yml`](.github/workflows/visual.yml)). [`engines.yml`](.github/workflows/engines.yml) runs the console crawl and the visual suite in Firefox and WebKit every night, and on demand from the *Actions* tab.
+
+A baseline records whatever an engine renders, bugs included, so it's worth comparing engines before trusting one. Comparing every kitchen sink example across the three, with text hidden, found one engine-only difference that isn't font metrics or native controls: WebKit leaves a `<legend>` in a `fieldset.row` above the row ([#169](https://github.com/julien-deramond/bootstrap-test-playground/issues/169)).
 
 To add a device preset, such as a phone viewport with touch, add it to `ENGINES` in [`playwright.config.js`](playwright.config.js), like `iphone: devices['iPhone 15']`. Every console and smoke scenario then also runs as `console-iphone` and `smoke-iphone`.
 

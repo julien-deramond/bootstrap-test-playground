@@ -1,9 +1,10 @@
 name: Visual tests
 
-# Compares every page with the Linux baselines in tests/visual/screenshots/linux/.
-# To create or refresh them after an intended change, add the `update-baselines`
-# label to the pull request: the `update` job records them, commits them to the
-# pull request's branch and removes the label.
+# Compares every page with the Linux baselines in tests/visual/screenshots/linux/,
+# in Chromium; engines.yml compares Firefox and WebKit every night. To create or
+# refresh them after an intended change, add the `update-baselines` label to the
+# pull request: the `update` job records them for all three engines, commits them
+# to the pull request's branch and removes the label.
 on:
   pull_request:
     types: [opened, synchronize, reopened, labeled]
@@ -63,12 +64,14 @@ jobs:
 
       - run: npm ci
 
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps chromium firefox webkit
 
       # Starting from an empty folder also drops the baselines of removed pages.
+      # Every engine: Chromium's baselines, and Firefox's and WebKit's in their
+      # own folders, which the nightly engines.yml compares against.
       - run: |
           rm -rf tests/visual/screenshots/linux
-          npm run test:visual -- --update-snapshots=all
+          npm run test:visual:engines -- --update-snapshots=all
 
       # A push made with GITHUB_TOKEN doesn't start workflows, so the `compare`
       # job runs again on the next push to the branch, or after the merge.
