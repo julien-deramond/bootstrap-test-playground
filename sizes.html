@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sizes</title>
+    <meta name="description" content="Minified, gzip and brotli sizes of each config's CSS, Bootstrap's dist files and its JavaScript bundle, per Bootstrap commit.">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/src/styles/main.scss">
+    <style>
+      .size-chart { inline-size: 160px; block-size: 32px; overflow: visible; }
+      .size-chart polyline { fill: none; stroke: var(--bs-primary-base); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+      .size-chart circle { fill: var(--bs-primary-base); }
+      td.num, th.num { text-align: end; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .size-up { color: var(--bs-danger-fg); }
+      .size-down { color: var(--bs-success-fg); }
+    </style>
+    <script type="module" src="/src/js/sizes.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <p class="mb-2"><a href="/">Playground</a></p>
+      <h1>Sizes</h1>
+      <p class="fs-lg fg-2">What Bootstrap weighs, per <code>v6-dev</code> commit: each config's CSS minified like <code>vite build</code>, the prebuilt <code>dist</code> files, and a bundle of <code>js/src</code>. Recorded by <code>npm run check-size -- --record</code>, which the nightly canary runs on every update.</p>
+      <p id="sizes-summary" class="fg-2"></p>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">File</th>
+              <th scope="col" class="num">Minified</th>
+              <th scope="col" class="num">Gzip</th>
+              <th scope="col" class="num">Brotli</th>
+              <th scope="col" class="num">Gzip change</th>
+              <th scope="col">Gzip history</th>
+            </tr>
+          </thead>
+          <tbody id="sizes-rows"></tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>

@@ -24,6 +24,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run lint:html [-- --all]` | Validates the HTML of every page with html-validate (see [Validating HTML](#validating-html)) |
 | `npm run check-configs [-- --strict]` | Compiles the working copy, every config and every reproduction, and lists Sass errors and warnings (see [Checking configs](#checking-configs)) |
 | `npm run check-dist` | Checks that the default config compiles to Bootstrap's `dist/css/bootstrap.css` (see [Checking the dist](#checking-the-dist)) |
+| `npm run check-size [-- --record]` | Measures each config's CSS, the dist files and the JS bundle (minified, gzip, brotli) and compares them with `sizes/history.json` (see [Sizes](#sizes)) |
 | `npm run compile-matrix` | Compiles Bootstrap under combinations of its `$enable-*` options and reports failures and options that do nothing (see [Option combinations](#option-combinations)) |
 | `npm run audit-rtl [-- --all \| --render]` | Lists declarations that use the physical left or right, and with `--render` the kitchen sink examples whose RTL rendering isn't the mirror image of the LTR one (see [Auditing RTL](#auditing-rtl)) |
 | `npm run audit-motion [-- --all \| --render]` | Lists transitions and animations that ignore `prefers-reduced-motion` or survive `$enable-transitions: false`, and with `--render` what still moves in the browser (see [Auditing motion](#auditing-motion)) |
@@ -32,7 +33,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run new-issue 42928 [-- --config <name>]` | Creates `issues/42928/` from the reproduction template and a config |
 | `npm run save-config <name> [-- "Description"]` | Saves the working copy (`src/styles/`) as `configs/<name>/` |
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
-| `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs`, `check-dist`, `audit-tokens`, `compile-matrix`, `audit-rtl`, `audit-motion` and `audit-layers` against it |
+| `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs`, `check-dist`, `audit-tokens`, `compile-matrix`, `audit-rtl`, `audit-motion` and `audit-layers` against it, and records its sizes |
 | `npm run sync-kitchen-sink -- ../twbs/bootstrap` | Regenerates `kitchen-sink/` from a Bootstrap checkout's docs |
 | `npm run canary-report [-- --only <checks>]` | Runs every check and writes the nightly canary's report to `reports/canary/report.md` (see [Nightly canary](#nightly-canary)) |
 
@@ -48,7 +49,7 @@ Dependabot updates the playground's other dependencies and its GitHub Actions ev
 
 1. updates Bootstrap like `npm run update-bootstrap` (`package.json` keeps `#v6-dev`, the lockfile pins the new commit);
 2. fetches that exact commit's docs and resyncs the kitchen sink;
-3. runs every check with `npm run canary-report`: the compile and dist checks, every audit, `lint:html`, the rendered audits, the console crawl, the smoke tests in all three engines, and the visual suite;
+3. runs every check with `npm run canary-report`: the compile and dist checks, every audit, `lint:html`, the size check (its table goes into the report, and the new sizes into `sizes/history.json`), the rendered audits, the console crawl, the smoke tests in all three engines, and the visual suite;
 4. opens a pull request `chore(deps): update bootstrap to v6-dev@<sha>`, or updates the open one. It's labelled `canary`, plus `checks-failing` when a check fails.
 
 The pull request body is the report: the upstream commits since the last update, one row per check, the kitchen sink pages the sync changed, the end of each failing check's output, and the allowlist entries that no longer match. A stale entry usually means Bootstrap fixed a tracked bug, which is step 3 of [Upstream issues](#upstream-issues). The visual suite is reported as *changed* rather than failed, since a Bootstrap update can change the rendering on purpose; the run's *canary-report* artifact has the diffs. When `v6-dev` hasn't moved, or the open pull request is already at its head, the workflow stops after one `git ls-remote`. When the pull request's branch has commits of your own, it leaves the branch alone and comments with a link to the new report. It never merges.
@@ -137,6 +138,23 @@ The static audit can't see a token that is read but shadowed, like the hard-code
 3. It compares computed styles, including the `::before`, `::after`, `::backdrop`… that read it, then screenshots.
 
 It takes about four minutes and writes one line per token to `reports/tokens/render.md`: *effective*, *no visible effect*, *not read*, or why it couldn't tell (no example on any page, or a hover or focus state the pages don't show). A token with no visible effect on a page may be masked there by a utility or the page's own CSS, so check the page before filing it upstream.
+
+### Sizes
+
+A config that adds a theme color or turns on every utility has a size cost, and a jump in output size is an early sign of a Sass loop gone wrong. `npm run check-size` measures, minified, gzipped and brotli-compressed:
+
+- `css/<config>`: each saved config's CSS, compiled like the playground and minified with Lightning CSS at Bootstrap's browser floors, like `vite build`. The working copy isn't measured.
+- `dist/…`: Bootstrap's prebuilt `bootstrap.min.css`, `bootstrap.min.js` and `bootstrap.bundle.min.js`, as users download them.
+- `src/bootstrap.bundle.js`: `js/src` and its dependencies bundled and minified with Rolldown, which follows the source even when `dist/` wasn't rebuilt.
+
+```
+File                          Minified  Gzip     Brotli   Gzip change
+css/default                   370.1 KB  49.8 KB  35.4 KB  ±0
+dist/bootstrap.bundle.min.js  211.4 KB  57.8 KB  49.3 KB  ±0
+src/bootstrap.bundle.js       186.1 KB  53.5 KB  46.5 KB  ±0
+```
+
+It compares with the last entry of [`sizes/history.json`](sizes/history.json) and flags a change of more than 2%, without failing. `-- --record` adds the current Bootstrap commit to the history (or replaces its entry). `npm run update-bootstrap` records after each update, and so does the [nightly canary](#nightly-canary), whose report has the table with each file's change. [`/sizes.html`](sizes.html) shows the latest sizes, their change and each file's history. A config edited between two updates shows up in the next change too.
 
 ### Option combinations
 

@@ -96,6 +96,8 @@ jobs:
         run: |
           npx playwright install --with-deps chromium firefox webkit
           npm run canary-report -- --from "${{ steps.check.outputs.from }}" --to "${{ steps.update.outputs.to }}"
+          # After the report, which compares with the previous entry: record this commit's sizes.
+          npm run check-size -- --record
 
       # The report, and Playwright's report of the last suite run: the visual
       # diffs.
@@ -137,7 +139,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "$bot"
           git switch -C "$BRANCH"
-          git add package.json package-lock.json kitchen-sink
+          git add package.json package-lock.json kitchen-sink sizes
           git commit -q -m "$title" -m "Opened by the nightly canary: $run_url"
           git push -q --force origin "$BRANCH"
 

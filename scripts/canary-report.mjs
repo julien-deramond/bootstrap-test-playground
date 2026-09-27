@@ -41,6 +41,8 @@ const CHECKS = [
   { name: 'audit-motion', command: 'npm run -s audit-motion' },
   { name: 'audit-layers', command: 'npm run -s audit-layers' },
   { name: 'lint:html', command: 'npm run -s lint:html' },
+  // Compares with the last recorded entry; the workflow records the new one after the report.
+  { name: 'check-size', command: 'npm run -s check-size', table: true },
   { name: 'audit-motion --render', command: 'npm run -s audit-motion -- --render' },
   { name: 'audit-layers --render', command: 'npm run -s audit-layers -- --render' },
   { name: 'test:console', command: 'npm run -s test:console -- --reporter=line' },
@@ -73,7 +75,9 @@ for (const check of CHECKS) {
     summary: cell || (passed ? 'passed' : `exit code ${run.status}`),
     stale: lines.filter(line => STALE.test(line)).map(line => line.trim()),
     // Without Playwright's `[12/132] …` progress lines, so failures show.
-    tail: lines.filter(line => line && !/^\[\d+\/\d+\]/.test(line)).slice(-60).join('\n')
+    tail: lines.filter(line => line && !/^\[\d+\/\d+\]/.test(line)).slice(-60).join('\n'),
+    // check-size's table goes into the report whole.
+    table: check.table ? lines.filter(line => /^(File|css\/|dist\/|src\/|Compared|No recorded)/.test(line)).join('\n') : undefined
   })
   console.log(passed ? '✓' : check.informational ? '≠' : '✗')
 }
@@ -125,6 +129,14 @@ const report = [
     ...stale.map(({ check, line }) => `- \`${check}\`: ${line}`),
     ''
   ] : []),
+  ...results.filter(({ table }) => table).flatMap(({ table }) => [
+    '### Sizes',
+    '',
+    '```',
+    table,
+    '```',
+    ''
+  ]),
   ...(changedPages.length ? [
     `### Kitchen sink pages changed by the sync (${changedPages.length})`,
     '',

@@ -119,6 +119,7 @@ export default defineConfig(({ mode }) => {
   const input = {
     main: path.join(root, 'index.html'),
     compare: path.join(root, 'compare.html'),
+    sizes: path.join(root, 'sizes.html'),
     ...Object.fromEntries(PAGE_GROUPS.flatMap(({ dir }) =>
       findHtmlFiles(path.join(root, dir)).map(file => [path.relative(root, file).replace(/\.html$/, ''), file])
     ))
