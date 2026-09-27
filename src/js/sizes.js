@@ -1,5 +1,7 @@
 // The sizes page: the latest entry of sizes/history.json, its change from the
-// previous one, and a sparkline of each file's gzip size over the history.
+// previous one, and a sparkline of each file's brotli size over the history.
+// Brotli, because gzip sizes vary slightly with the platform that measured
+// them (see scripts/check-size.mjs).
 // scripts/check-size.mjs writes the history.
 import history from '../../sizes/history.json'
 
@@ -23,9 +25,9 @@ function change(now, before) {
   return `<span class="${diff > 0 ? 'size-up' : 'size-down'}">${sign}${kb(Math.abs(diff))} (${sign}${Math.abs(ratio).toFixed(1)}%)</span>`
 }
 
-// Gzip size over the history, scaled to the file's own range.
+// Brotli size over the history, scaled to the file's own range.
 function sparkline(file) {
-  const values = history.map(entry => entry.sizes[file]?.gzip).filter(value => value !== undefined)
+  const values = history.map(entry => entry.sizes[file]?.brotli).filter(value => value !== undefined)
   if (values.length < 2) {
     return '<span class="fg-3">one entry</span>'
   }
@@ -50,6 +52,6 @@ document.getElementById('sizes-rows').innerHTML = latest ? Object.entries(latest
     <td class="num">${kb(size.min)}</td>
     <td class="num">${kb(size.gzip)}</td>
     <td class="num">${kb(size.brotli)}</td>
-    <td class="num">${change(size.gzip, previous?.sizes[file]?.gzip)}</td>
+    <td class="num">${change(size.brotli, previous?.sizes[file]?.brotli)}</td>
     <td>${sparkline(file)}</td>
   </tr>`).join('') : ''

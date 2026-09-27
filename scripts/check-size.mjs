@@ -17,6 +17,11 @@
 // commit, replacing an entry for the same commit. The nightly canary records
 // every update, so the history follows v6-dev; sizes.html charts it. A change
 // of more than 2% is flagged; nothing fails.
+//
+// Changes are measured on the brotli size. Node's gzip output depends on the
+// platform (CPU-specific code in its zlib): macOS and the Linux runners
+// disagree by up to 0.3% on identical files, while brotli matches byte for
+// byte. Gzip is still reported, as a server would send it.
 
 import fs from 'node:fs'
 import path from 'node:path'
@@ -99,9 +104,9 @@ const rows = Object.entries(sizes).map(([file, size]) => [
   kb(size.min),
   kb(size.gzip),
   kb(size.brotli),
-  delta(size.gzip, baseline?.sizes[file]?.gzip)
+  delta(size.brotli, baseline?.sizes[file]?.brotli)
 ])
-const header = ['File', 'Minified', 'Gzip', 'Brotli', 'Gzip change']
+const header = ['File', 'Minified', 'Gzip', 'Brotli', 'Brotli change']
 const widths = header.map((title, index) => Math.max(title.length, ...rows.map(row => row[index].length)))
 for (const row of [header, ...rows]) {
   console.log(row.map((cell, index) => cell.padEnd(widths[index])).join('  ').trimEnd())

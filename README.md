@@ -148,13 +148,13 @@ A config that adds a theme color or turns on every utility has a size cost, and 
 - `src/bootstrap.bundle.js`: `js/src` and its dependencies bundled and minified with Rolldown, which follows the source even when `dist/` wasn't rebuilt.
 
 ```
-File                          Minified  Gzip     Brotli   Gzip change
+File                          Minified  Gzip     Brotli   Brotli change
 css/default                   370.1 KB  49.8 KB  35.4 KB  ±0
 dist/bootstrap.bundle.min.js  211.4 KB  57.8 KB  49.3 KB  ±0
 src/bootstrap.bundle.js       186.1 KB  53.5 KB  46.5 KB  ±0
 ```
 
-It compares with the last entry of [`sizes/history.json`](sizes/history.json) and flags a change of more than 2%, without failing. `-- --record` adds the current Bootstrap commit to the history (or replaces its entry). `npm run update-bootstrap` records after each update, and so does the [nightly canary](#nightly-canary), whose report has the table with each file's change. [`/sizes.html`](sizes.html) shows the latest sizes, their change and each file's history. A config edited between two updates shows up in the next change too.
+It compares the brotli size with the last entry of [`sizes/history.json`](sizes/history.json) and flags a change of more than 2%, without failing. Brotli, because it matches byte for byte on every platform, while Node's gzip output varies by up to 0.3% between macOS and the Linux runners on identical files. Gzip is still listed, as a server would send it. `-- --record` adds the current Bootstrap commit to the history (or replaces its entry). `npm run update-bootstrap` records after each update, and so does the [nightly canary](#nightly-canary), whose report has the table with each file's change. [`/sizes.html`](sizes.html) shows the latest sizes, their change and each file's history. A config edited between two updates shows up in the next change too.
 
 ### Option combinations
 
