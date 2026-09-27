@@ -8,13 +8,17 @@ const FIELDS = {
   theme: { label: 'Theme', options: ['auto', 'light', 'dark'] },
   dir: { label: 'Dir', options: ['ltr', 'rtl'] },
   primary: { label: 'Primary', options: ['default', 'indigo', 'violet', 'purple', 'pink', 'red', 'orange', 'amber', 'lime', 'green', 'teal', 'cyan', 'brown', 'gray'] },
-  config: { label: 'Styles', options: ['working', ...configs.map(config => config.name)] }
+  config: { label: 'Styles', options: ['working', ...configs.map(config => config.name)] },
+  css: { label: 'CSS', options: ['src', 'dist'] },
+  js: { label: 'JS', options: ['src', 'dist'] }
 }
 
 const PRESETS = {
   theme: [{ theme: 'light' }, { theme: 'dark' }],
   dir: [{ dir: 'ltr' }, { dir: 'rtl' }],
-  config: [{ config: 'working' }, { config: 'default' }]
+  config: [{ config: 'working' }, { config: 'default' }],
+  // The compiled default config against the prebuilt files it should match.
+  dist: [{ config: 'default', css: 'src', js: 'src' }, { config: 'default', css: 'dist', js: 'dist' }]
 }
 
 const escapeHtml = value => String(value).replace(/[&<>"]/g, char => `&#${char.charCodeAt(0)};`)

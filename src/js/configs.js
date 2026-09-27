@@ -1,6 +1,10 @@
 // Swaps the page's shared stylesheets (the <link data-playground-styles> tags
-// pointing at src/styles/) for a saved config from configs/. Pages without
-// those links, like issue reproductions, keep their own styles.
+// pointing at src/styles/) for a saved config from configs/, and with
+// `css: 'dist'` the compiled main.scss for Bootstrap's prebuilt
+// dist/css/bootstrap.css. The config's tokens.css still applies on top of
+// dist; its Sass options can't. Pages without those links, like issue
+// reproductions, keep their own styles.
+import distCss from 'bootstrap/dist/css/bootstrap.css?url'
 import configs from 'virtual:playground-configs'
 
 export { configs }
@@ -11,7 +15,7 @@ export function initConfigs(prefs) {
   )
   const swappable = 'main' in links
   const working = Object.fromEntries(Object.entries(links).map(([key, link]) => [key, link.href]))
-  let current = 'working'
+  let current = 'working|src'
 
   const swap = (key, href) => {
     const link = links[key]
@@ -31,16 +35,20 @@ export function initConfigs(prefs) {
     }).then(() => link.remove())
   }
 
-  prefs.setConfigHandler(name => {
+  prefs.setConfigHandler(({ config: name, css }) => {
     const pending = document.getElementById('playground-config-pending')
-    if (!swappable || name === current) {
+    const config = configs.find(item => item.name === name)
+    const key = `${config ? name : 'working'}|${css === 'dist' ? 'dist' : 'src'}`
+    if (!swappable || key === current) {
       pending?.remove()
       return
     }
 
-    const config = configs.find(item => item.name === name)
-    current = config ? name : 'working'
-    const target = config ? { main: config.main, tokens: config.tokens } : working
+    current = key
+    const target = config ? { main: config.main, tokens: config.tokens } : { ...working }
+    if (css === 'dist') {
+      target.main = distCss
+    }
 
     Promise.all(Object.keys(links).map(key => swap(key, new URL(target[key], location.href).href)))
       .then(() => pending?.remove())

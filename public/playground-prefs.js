@@ -1,9 +1,13 @@
-// Applies the playground preferences (color mode, direction, primary hue and
-// styles config) before first paint. Loaded as a classic, render-blocking
+// Applies the playground preferences (color mode, direction, primary hue,
+// styles config and Bootstrap source) before first paint. Loaded as a classic, render-blocking
 // script in the <head> of every page. The toolbar in src/js/toolbar.js drives it.
 //
 // Saved preferences live in localStorage. URL parameters override them for the
 // current view only, without saving: ?theme=dark&dir=rtl&primary=teal&config=name
+//
+// `css` and `js` pick where Bootstrap comes from: `src`, compiled from its Sass
+// and TypeScript (the default), or `dist`, the prebuilt files the package ships
+// (dist/css/bootstrap.css, js/dist/). ?css=dist&js=dist tests what users get.
 //
 // View flags, for screenshots and embeds:
 // - `embed` hides the toolbar, as used by /compare.html
@@ -18,8 +22,8 @@
   'use strict'
 
   const STORAGE_KEY = 'bootstrap-playground'
-  const DEFAULTS = { colorMode: 'auto', dir: 'ltr', primary: 'default', config: 'working' }
-  const URL_PARAMS = { theme: 'colorMode', dir: 'dir', primary: 'primary', config: 'config' }
+  const DEFAULTS = { colorMode: 'auto', dir: 'ltr', primary: 'default', config: 'working', css: 'src', js: 'src' }
+  const URL_PARAMS = { theme: 'colorMode', dir: 'dir', primary: 'primary', config: 'config', css: 'css', js: 'js' }
 
   const params = new URLSearchParams(location.search)
   const overrides = {}
@@ -52,8 +56,9 @@
 
   const effective = () => ({ ...read(), ...overrides })
 
-  // Swapping the stylesheets needs the list of configs, which only the module
-  // script (src/js/configs.js) has. It registers itself here.
+  // Swapping the stylesheets needs the list of configs and the dist stylesheet's
+  // URL, which only the module script (src/js/configs.js) has. It registers
+  // itself here, and gets the whole preferences (`config` and `css`).
   let configHandler = null
 
   const apply = prefs => {
@@ -77,7 +82,7 @@
       }
     }
 
-    configHandler?.(prefs.config)
+    configHandler?.(prefs)
   }
 
   // Saving a key drops its URL override, so the toolbar always wins.
@@ -104,7 +109,7 @@
 
   const setConfigHandler = handler => {
     configHandler = handler
-    handler(effective().config)
+    handler(effective())
   }
 
   const addStyle = (id, css) => {
@@ -115,9 +120,10 @@
     return style
   }
 
-  // Hide the page until a non-default config's stylesheets are swapped in, so it
-  // doesn't flash with the working styles first. Failsafe after 3 seconds.
-  if (effective().config !== 'working') {
+  // Hide the page until a non-default config's stylesheets, or the dist
+  // stylesheet, are swapped in, so it doesn't flash with the working styles
+  // first. Failsafe after 3 seconds.
+  if (effective().config !== 'working' || effective().css === 'dist') {
     const style = addStyle('playground-config-pending', 'html { visibility: hidden !important; }')
     setTimeout(() => style.remove(), 3000)
   }

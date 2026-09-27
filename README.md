@@ -53,7 +53,16 @@ Vite then resolves every `bootstrap/...` import (Sass and JS) to that folder, an
 The playground builds Bootstrap from **source**, the way Bootstrap's own build does:
 
 - **CSS** is compiled from `scss/`, then `postcss.config.js` applies the same PostCSS step as Bootstrap's `build/postcss.config.mjs`. That step adds the `--bs-` prefix to every custom property and runs Autoprefixer with Bootstrap's `.browserslistrc`. The output matches `dist/css/bootstrap.css` (see [Checking the dist](#checking-the-dist)), and the builds keep `light-dark()` intact.
-- **JavaScript** is imported from `js/src/index.ts`, so the playground runs the branch's current code even when the committed `js/dist/` hasn't been rebuilt yet. To test the prebuilt files instead, import `'bootstrap'` in `src/js/main.js`.
+- **JavaScript** is imported from `js/src/index.ts`, so the playground runs the branch's current code even when the committed `js/dist/` hasn't been rebuilt yet.
+
+Users install the package and get its prebuilt files, though, and a stale or broken `dist` is its own kind of bug (#1). The toolbar's **Source / Dist** switch, or `?css=dist` and `?js=dist` in the URL, loads those instead:
+
+- **`css=dist`** replaces the compiled `main.scss` with `dist/css/bootstrap.css`. `tokens.css` still applies on top, from the working copy or the selected config, but a config's Sass options can't reach a prebuilt file. Issue reproductions compile their own styles, so they keep them.
+- **`js=dist`** loads `js/dist/index.js`, what `import 'bootstrap'` gives users, instead of `js/src/index.ts`. Only one of the two ever loads. The JavaScript can't be swapped live, so the switch reloads the page.
+
+Both honor `BOOTSTRAP_PATH`. The compare view's *Source / Dist* preset puts the default config compiled from source next to the prebuilt files, and the [console crawl](#console-crawl) and the [smoke tests](#interaction-smoke-tests) run a `dist` variant too.
+
+`src/js/main.js` imports Bootstrap dynamically, so it runs after `DOMContentLoaded`, and sometimes after `load`. Several components only initialize from those events ([#160](https://github.com/julien-deramond/bootstrap-test-playground/issues/160)), so `main.js` replays the ones that fired while it loaded. A page's own inline scripts are bundled after `main.js` in a build: have them check `document.readyState` rather than only listen for `load`.
 
 ### Checking the dist
 
@@ -316,6 +325,7 @@ Each page has a small floating toolbar. It renders in a shadow root, so it doesn
 | Direction | LTR or RTL, through `dir` on `<html>` | <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> toggles | `?dir=rtl` |
 | Primary | Remaps the `--bs-primary-*` tokens to another hue at runtime | | `?primary=teal` |
 | Styles | Swaps the working copy for a saved config | | `?config=<name>` |
+| Source / Dist | Compiles Bootstrap from `scss/` and `js/src/`, or loads the prebuilt `dist/css/bootstrap.css` and `js/dist/` (see [Where Bootstrap comes from](#where-bootstrap-comes-from)) | | `?css=dist`, `?js=dist` |
 | ‹ › | Previous and next page in the same group | | |
 | Search | Opens the page switcher | <kbd>Ctrl</kbd>+<kbd>K</kbd> (<kbd>⌘</kbd>+<kbd>K</kbd>) | |
 | Compare | Opens the current page in the compare view | | |
@@ -339,7 +349,7 @@ Mark playground UI on a new page with `data-playground-chrome` so `?chrome=0` hi
 
 ### Compare
 
-[`/compare.html`](compare.html) shows any page twice, side by side, with separate theme, direction, primary and config settings, and keeps the two panes' scroll positions in sync. Presets cover Light / Dark, LTR / RTL, and Working / Default. The whole setup lives in the URL, so a comparison can be shared as a link.
+[`/compare.html`](compare.html) shows any page twice, side by side, with separate theme, direction, primary, config and source (CSS and JS, `src` or `dist`) settings, and keeps the two panes' scroll positions in sync. Presets cover Light / Dark, LTR / RTL, Working / Default and Source / Dist. The whole setup lives in the URL, so a comparison can be shared as a link.
 
 ## Visual regression tests
 
@@ -380,7 +390,7 @@ When a pull request changes the rendering on purpose, such as a Bootstrap update
 
 ## Console crawl
 
-[`tests/console/`](tests/console/console.spec.js) opens every page, including the home and compare pages, in light and dark with the working copy and every saved config. It fails on anything a page reports:
+[`tests/console/`](tests/console/console.spec.js) opens every page, including the home and compare pages, in light and dark with the working copy and every saved config, and once more with Bootstrap's prebuilt files (`?css=dist&js=dist`). It fails on anything a page reports:
 
 - uncaught exceptions
 - `console.error` and `console.warn`, which includes Bootstrap's deprecation notices
@@ -410,7 +420,7 @@ Screenshots and the console crawl can't see a menu that no longer opens or a dia
 - closes it and checks that nothing is stuck (focus back on the trigger, no scroll lock, no leftover open dialog or inert content);
 - checks that the expected `*.bs.*` events fired, in order. An init script records every event Bootstrap dispatches, so a test fails when one stops firing.
 
-Every scenario runs with the working copy and every config: a config must never break behavior. Pages load with `?chrome=0&freeze`, so transitions are off. Like the other suites, it runs against a production build:
+Every scenario runs with the working copy, every config, and a `dist` variant with Bootstrap's prebuilt files (`?css=dist&js=dist`): neither a config nor the shipped files may break behavior. Pages load with `?chrome=0&freeze`, so transitions are off. Like the other suites, it runs against a production build:
 
 ```sh
 npm run test:smoke
