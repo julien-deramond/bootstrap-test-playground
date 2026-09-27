@@ -22,11 +22,12 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run check-configs [-- --strict]` | Compiles the working copy, every config and every reproduction, and lists Sass errors and warnings (see [Checking configs](#checking-configs)) |
 | `npm run check-dist` | Checks that the default config compiles to Bootstrap's `dist/css/bootstrap.css` (see [Checking the dist](#checking-the-dist)) |
 | `npm run compile-matrix` | Compiles Bootstrap under combinations of its `$enable-*` options and reports failures and options that do nothing (see [Option combinations](#option-combinations)) |
+| `npm run audit-rtl [-- --all \| --render]` | Lists declarations that use the physical left or right, and with `--render` the kitchen sink examples whose RTL rendering isn't the mirror image of the LTR one (see [Auditing RTL](#auditing-rtl)) |
 | `npm run audit-tokens [-- --all \| --render]` | Lists `--bs-*` tokens that are read but never defined, or defined but never read, and with `--render` the ones overriding doesn't change (see [Auditing tokens](#auditing-tokens)) |
 | `npm run new-issue 42928 [-- --config <name>]` | Creates `issues/42928/` from the reproduction template and a config |
 | `npm run save-config <name> [-- "Description"]` | Saves the working copy (`src/styles/`) as `configs/<name>/` |
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
-| `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs`, `check-dist`, `audit-tokens` and `compile-matrix` against it |
+| `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs`, `check-dist`, `audit-tokens`, `compile-matrix` and `audit-rtl` against it |
 | `npm run sync-kitchen-sink -- ../twbs/bootstrap` | Regenerates `kitchen-sink/` from a Bootstrap checkout's docs |
 
 ## Where Bootstrap comes from
@@ -118,6 +119,28 @@ color-mode-type=data   ok      481.4 KB  ±0         4419   0         identical 
 ```
 
 Options known to do nothing are listed in [`scripts/known-options.mjs`](scripts/known-options.mjs), with their tracking issue or the reason. The full table is in `reports/matrix/summary.md`, and each combination's CSS is next to it, ready to diff. `npm run update-bootstrap` runs the matrix after each update, and so does the *Configs* workflow.
+
+### Auditing RTL
+
+Bootstrap v6 has no RTL stylesheet. It relies on logical properties (`margin-inline-start`, `inset-inline-end`), so every declaration that still uses the physical left or right either renders the same in both directions by design or is an RTL bug. `npm run audit-rtl` compiles `configs/default` and lists them, each with its Sass file and line:
+
+- physical properties: `left`, `margin-right`, `border-top-left-radius`…
+- directional values: `left`/`right` keywords (`background-position: right …`, `to right` gradients), an x offset (`translateX()`, a non-centered `transform-origin`), a rotation, a mirror (`scaleX(-1)`) or a slanted gradient, including in custom properties
+- shorthands whose left and right sides differ, and shadows with an x offset
+
+It leaves out what renders the same in both directions: `left: 0` with `right: 0` in the same rule, `left: 50%` with `translateX(-50%)`, and declarations that a `:dir(rtl)` or `[dir=rtl]` rule overrides for the same selector. Known findings are listed in [`scripts/known-rtl.mjs`](scripts/known-rtl.mjs), with their tracking issue or the reason. The audit fails on a new finding and on an entry that no longer matches. `npm run update-bootstrap` runs it, and so does the *Configs* workflow.
+
+The static list can't tell a bug from a deliberate choice. `npm run audit-rtl -- --render` looks at the result instead. It starts a dev server, screenshots each of the ~480 kitchen sink examples in LTR and in RTL, mirrors the RTL screenshot and compares it with the LTR one. A docs example should be its own mirror image, so what differs is a lead: a divider on the outer edge, a chevron on the wrong side. Text is made transparent first, since glyphs don't mirror. Some images are meant not to mirror either, like a check mark or a logo.
+
+```
+482 kitchen sink examples compared, 54 differ from their mirror image:
+     8289 px  /kitchen-sink/forms-range.html#value-bubble
+     5643 px  /kitchen-sink/components-avatar.html#stack-with-sizes
+     1317 px  /kitchen-sink/components-badge.html#positioned
+       36 px  /kitchen-sink/components-button-group.html#dividers
+```
+
+It takes under a minute and writes `reports/rtl/render.md`, with one image per example: the LTR screenshot, the mirrored RTL one and their difference in magenta. `--page=range` limits it to matching pages, and `--min-pixels=<n>` sets how many pixels must differ for an example to be listed (10 by default).
 
 ## Customizing
 

@@ -4,8 +4,9 @@ name: Configs
 # issues/, and fails on a Sass or PostCSS error. Warnings, such as Sass
 # deprecations, show up as annotations on the run and the pull request. Then
 # checks that the default config still compiles to Bootstrap's committed dist,
-# audits the tokens of every config for new undefined or unused ones, and
-# compiles Bootstrap under combinations of its $enable-* options.
+# audits the tokens of every config for new undefined or unused ones,
+# compiles Bootstrap under combinations of its $enable-* options, and audits
+# the default CSS for new physical left/right declarations.
 on:
   pull_request:
   push:
@@ -39,6 +40,9 @@ jobs:
         if: ${{ !cancelled() }}
 
       - run: npm run compile-matrix
+        if: ${{ !cancelled() }}
+
+      - run: npm run audit-rtl
         if: ${{ !cancelled() }}
 
       # The normalized CSS and the full diffs, when the dist check fails.

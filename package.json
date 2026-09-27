@@ -17,11 +17,12 @@
     "check-dist": "node scripts/check-dist.mjs",
     "audit-tokens": "node scripts/audit-tokens.mjs",
     "compile-matrix": "node scripts/compile-matrix.mjs",
+    "audit-rtl": "node scripts/audit-rtl.mjs",
     "new-issue": "node scripts/new-issue.mjs",
     "save-config": "node scripts/save-config.mjs",
     "use-config": "node scripts/use-config.mjs",
     "sync-kitchen-sink": "node scripts/sync-kitchen-sink.mjs",
-    "update-bootstrap": "npm install bootstrap@github:twbs/bootstrap#v6-dev && BOOTSTRAP_PATH= npm run check-configs && BOOTSTRAP_PATH= npm run check-dist && BOOTSTRAP_PATH= npm run audit-tokens && BOOTSTRAP_PATH= npm run compile-matrix"
+    "update-bootstrap": "npm install bootstrap@github:twbs/bootstrap#v6-dev && BOOTSTRAP_PATH= npm run check-configs && BOOTSTRAP_PATH= npm run check-dist && BOOTSTRAP_PATH= npm run audit-tokens && BOOTSTRAP_PATH= npm run compile-matrix && BOOTSTRAP_PATH= npm run audit-rtl"
   },
   "engines": {
     "node": ">=20.19"
