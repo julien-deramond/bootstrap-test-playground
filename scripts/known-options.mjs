@@ -5,7 +5,6 @@
 // When an upstream fix lands, remove its entry: the matrix fails on an entry
 // that no longer matches (see "Upstream issue tracking" in CLAUDE.md).
 export default [
-  { option: 'caret', issue: 129 },
   { option: 'deprecation-messages', reason: 'only silences Sass deprecation warnings, and the default build uses nothing deprecated' },
   { option: 'color-mode-type', reason: 'only changes the output of the color-mode() mixin, which Bootstrap’s own CSS doesn’t use since light-dark() handles dark mode' }
 ]

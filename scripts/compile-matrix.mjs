@@ -172,7 +172,8 @@ for (const result of masked) {
 }
 
 for (const entry of stale) {
-  console.log(`✗ ${entry.option} has an effect again: remove it from scripts/known-options.mjs${entry.issue ? `, and if Bootstrap fixed it, mark #${entry.issue} \`upstream-fixed\` and close it` : ''}`)
+  const change = options.some(option => option.label === entry.option) ? 'has an effect again' : 'no longer exists in scss/_config.scss'
+  console.log(`✗ ${entry.option} ${change}: remove it from scripts/known-options.mjs${entry.issue ? `, and if Bootstrap fixed it, mark #${entry.issue} \`upstream-fixed\` and close it` : ''}`)
 }
 
 if (fresh.length || masked.length) {
