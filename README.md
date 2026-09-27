@@ -20,6 +20,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run test:visual [-- -u]` | Screenshots every page and compares with the baselines (see [Visual regression tests](#visual-regression-tests)) |
 | `npm run test:console` | Opens every page and fails on errors, warnings and failed requests (see [Console crawl](#console-crawl)) |
 | `npm run test:smoke` | Opens, drives and closes every JavaScript component and checks its state and events (see [Interaction smoke tests](#interaction-smoke-tests)) |
+| `npm run test:smoke:engines` / `test:console:engines` | The same suites in Chromium, Firefox and WebKit (see [Browser engines](#browser-engines)) |
 | `npm run lint:html [-- --all]` | Validates the HTML of every page with html-validate (see [Validating HTML](#validating-html)) |
 | `npm run check-configs [-- --strict]` | Compiles the working copy, every config and every reproduction, and lists Sass errors and warnings (see [Checking configs](#checking-configs)) |
 | `npm run check-dist` | Checks that the default config compiles to Bootstrap's `dist/css/bootstrap.css` (see [Checking the dist](#checking-the-dist)) |
@@ -416,7 +417,24 @@ npm run test:smoke
 npm run test:smoke -- -g "shadcn menu"   # one config and component
 ```
 
-A scenario that fails because of an open upstream bug goes in [`tests/smoke/known-issues.js`](tests/smoke/known-issues.js) with its tracking issue. It's marked `test.fail()`, so the run fails as soon as it passes again, and the entry gets removed. NavOverflow has no kitchen sink example yet, so it has no scenario. [`.github/workflows/smoke.yml`](.github/workflows/smoke.yml) runs the suite on every pull request and every push to `main`.
+A scenario that fails because of an open upstream bug goes in [`tests/smoke/known-issues.js`](tests/smoke/known-issues.js) with its tracking issue. It's marked `test.fail()`, so the run fails as soon as it passes again, and the entry gets removed. NavOverflow has no kitchen sink example yet, so it has no scenario. [`.github/workflows/smoke.yml`](.github/workflows/smoke.yml) runs the suite in all three engines on every pull request and every push to `main`.
+
+## Browser engines
+
+v6 leans on features whose support differs between engines at the floors of Bootstrap's `.browserslistrc` (Chrome 130, Firefox 132, Safari 18): `light-dark()`, `color-mix()`, `oklch()`, `:has()`, `@layer`, `<dialog>`. The console crawl and the smoke tests run in each of Playwright's engines, as one project per engine: `console`, `console-firefox`, `console-webkit`, `smoke`, `smoke-firefox` and `smoke-webkit`. The unsuffixed projects are Chromium, and `npm run test:console` and `npm run test:smoke` run only those, for speed:
+
+```sh
+npx playwright install firefox webkit   # once
+npm run test:smoke:engines              # the smoke tests in all three
+npm run test:console:engines            # the console crawl in all three
+npx playwright test --project smoke-webkit -g dialog
+```
+
+Failures are reported per project, so an engine-only failure stands out. It's usually a browser difference that Bootstrap doesn't handle, like WebKit leaving focus behind a dialog that opens ([#158](https://github.com/julien-deramond/bootstrap-test-playground/issues/158)). It gets a tracking issue like any other bug, and its entry in `known-issues.js` takes `engines: ['webkit']` so it only applies there.
+
+In CI, pull requests run the smoke tests in all three engines ([`smoke.yml`](.github/workflows/smoke.yml)) and the console crawl in Chromium ([`console.yml`](.github/workflows/console.yml)). [`engines.yml`](.github/workflows/engines.yml) runs the console crawl in Firefox and WebKit every night, and on demand from the *Actions* tab. The visual suite stays in Chromium for now: other engines would need their own baselines.
+
+To add a device preset, such as a phone viewport with touch, add it to `ENGINES` in [`playwright.config.js`](playwright.config.js), like `iphone: devices['iPhone 15']`. Every console and smoke scenario then also runs as `console-iphone` and `smoke-iphone`.
 
 ## Deployment
 

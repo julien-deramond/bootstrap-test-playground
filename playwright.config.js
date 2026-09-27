@@ -5,6 +5,14 @@ import { defineConfig, devices } from '@playwright/test'
 
 const PORT = 4179
 
+// Playwright's three engines, at desktop size. To add a device preset (a
+// phone viewport with touch), add an entry like `'iphone': devices['iPhone 15']`.
+const ENGINES = {
+  chromium: devices['Desktop Chrome'],
+  firefox: devices['Desktop Firefox'],
+  webkit: devices['Desktop Safari']
+}
+
 export default defineConfig({
   testDir: 'tests',
   outputDir: 'tests/results',
@@ -25,10 +33,17 @@ export default defineConfig({
     timezoneId: 'UTC',
     locale: 'en-US'
   },
+  // The visual suite runs in Chromium only: its baselines are per engine. The
+  // console crawl and the smoke tests run in each engine, as `console`,
+  // `console-firefox`, `console-webkit` and so on. The unsuffixed project is
+  // Chromium, the default for `npm run test:console` and `npm run test:smoke`.
   projects: [
     { name: 'visual', testDir: 'tests/visual' },
-    { name: 'console', testDir: 'tests/console' },
-    { name: 'smoke', testDir: 'tests/smoke' }
+    ...['console', 'smoke'].flatMap(suite => Object.entries(ENGINES).map(([engine, device]) => ({
+      name: engine === 'chromium' ? suite : `${suite}-${engine}`,
+      testDir: `tests/${suite}`,
+      use: { ...device }
+    })))
   ],
   webServer: {
     command: `npm run build && npm run preview -- --port ${PORT} --strictPort`,

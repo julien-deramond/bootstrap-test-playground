@@ -1,0 +1,38 @@
+name: Engines
+
+# The console crawl in Firefox and WebKit, every night and on demand. Pull
+# requests run it in Chromium only (console.yml), and the smoke tests in all
+# three engines (smoke.yml). An engine-only failure is usually a browser
+# difference Bootstrap doesn't handle: track it upstream and list it in
+# tests/console/known-issues.js with `engines`.
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  console:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: npx playwright install --with-deps firefox webkit
+
+      - run: npx playwright test --project console-firefox --project console-webkit
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ failure() }}
+        with:
+          name: engines-report
+          path: tests/report/
+          retention-days: 14

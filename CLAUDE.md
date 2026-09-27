@@ -19,6 +19,7 @@ A Vite multi-page playground for Bootstrap v6 (`twbs/bootstrap`, branch `v6-dev`
 - To see what a change does to the rendering, record baselines with `npm run test:visual -- -u` before it and run `npm run test:visual` after it. See "Visual regression tests" in the README.
 - `npm run test:console` must stay green. When an open upstream bug makes a page log errors, allowlist it in `tests/console/known-issues.js` with its tracking issue number. See "Console crawl" in the README.
 - `npm run test:smoke` must stay green. When an open upstream bug breaks a component's scenario, list it in `tests/smoke/known-issues.js` with its tracking issue number. See "Interaction smoke tests" in the README.
+- The console crawl and the smoke tests also run in Firefox and WebKit (`npm run test:smoke:engines`, `test:console:engines`). An engine-only failure gets a tracking issue too, and its known-issues entry takes `engines` (for example `['webkit']`). See "Browser engines" in the README.
 - Mark a page's own playground UI (headers, navigation, notes around the markup under test) with `data-playground-chrome`, so `?chrome=0` hides it for screenshots.
 - Reproductions go in `issues/<name>/` (`npm run new-issue <name> -- --config <config>`). Name them after the upstream issue number when one exists, or `pg-<number>` after the issue in this repository.
 
