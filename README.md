@@ -34,12 +34,35 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
 | `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs`, `check-dist`, `audit-tokens`, `compile-matrix`, `audit-rtl`, `audit-motion` and `audit-layers` against it |
 | `npm run sync-kitchen-sink -- ../twbs/bootstrap` | Regenerates `kitchen-sink/` from a Bootstrap checkout's docs |
+| `npm run canary-report [-- --only <checks>]` | Runs every check and writes the nightly canary's report to `reports/canary/report.md` (see [Nightly canary](#nightly-canary)) |
 
 ## Where Bootstrap comes from
 
 By default, Bootstrap is installed from GitHub (`github:twbs/bootstrap#v6-dev`), and `package-lock.json` pins the commit. Run `npm run update-bootstrap` to move to the latest commit. The toolbar and home page show which commit is in use.
 
-Dependabot updates the playground's other dependencies and its GitHub Actions every week, but never `bootstrap`, so each Bootstrap update stays a deliberate `npm run update-bootstrap`.
+Dependabot updates the playground's other dependencies and its GitHub Actions every week, but never `bootstrap`. Bootstrap updates come from the [nightly canary](#nightly-canary), or from a deliberate `npm run update-bootstrap`.
+
+### Nightly canary
+
+[`.github/workflows/canary.yml`](.github/workflows/canary.yml) runs every night, and on demand from the *Actions* tab. When `v6-dev` has moved, it:
+
+1. updates Bootstrap like `npm run update-bootstrap` (`package.json` keeps `#v6-dev`, the lockfile pins the new commit);
+2. fetches that exact commit's docs and resyncs the kitchen sink;
+3. runs every check with `npm run canary-report`: the compile and dist checks, every audit, `lint:html`, the rendered audits, the console crawl, the smoke tests in all three engines, and the visual suite;
+4. opens a pull request `chore(deps): update bootstrap to v6-dev@<sha>`, or updates the open one. It's labelled `canary`, plus `checks-failing` when a check fails.
+
+The pull request body is the report: the upstream commits since the last update, one row per check, the kitchen sink pages the sync changed, the end of each failing check's output, and the allowlist entries that no longer match. A stale entry usually means Bootstrap fixed a tracked bug, which is step 3 of [Upstream issues](#upstream-issues). The visual suite is reported as *changed* rather than failed, since a Bootstrap update can change the rendering on purpose; the run's *canary-report* artifact has the diffs. When `v6-dev` hasn't moved, or the open pull request is already at its head, the workflow stops after one `git ls-remote`. When the pull request's branch has commits of your own, it leaves the branch alone and comments with a link to the new report. It never merges.
+
+Upstream pull request numbers in commit subjects are shown as code, not links, so the report doesn't add a cross-reference to twbs/bootstrap every night.
+
+Opening the pull request needs one of these:
+
+- a `CANARY_TOKEN` repository secret: a fine-grained token with *Contents* and *Pull requests* read/write on this repository. With it, the pull request also starts the other workflows.
+- *Allow GitHub Actions to create and approve pull requests* in the repository's *Settings › Actions › General*. The pull request then comes from `GITHUB_TOKEN`, which doesn't start other workflows, so the report is its only check run.
+
+From the *Actions* tab, *Run workflow* with *force* runs the checks even when `v6-dev` hasn't moved, and uploads the report without opening a pull request when nothing changed.
+
+`npm run canary-report` runs the same checks locally, against `node_modules/bootstrap`, in about four minutes. `-- --only audit-rtl,lint:html` runs a subset, and `-- --from <sha> --to <sha>` adds the upstream commit range.
 
 To test a **local checkout** instead, such as a branch you're working on:
 
