@@ -22,6 +22,7 @@ import postcss from 'postcss'
 import { loadEnv } from 'vite'
 import { bootstrapSource } from './lib/bootstrap.mjs'
 import { compileConfig } from './lib/compile.mjs'
+import { normalizeCss as normalize } from './lib/normalize-css.mjs'
 import { configDir, root } from './lib/configs.mjs'
 
 const bootstrap = bootstrapSource(loadEnv('production', root, ''))
@@ -29,38 +30,6 @@ const bootstrapDir = bootstrap.dir ?? path.join(root, 'node_modules/bootstrap')
 const distFile = path.join(bootstrapDir, 'dist/css/bootstrap.css')
 const reportDir = path.join(root, 'reports/dist')
 const quiet = { warn() {}, debug() {} }
-
-// One declaration or rule per line, indented by nesting, so a line diff reads
-// like a CSS diff.
-function normalize(css) {
-  const lines = []
-  const write = (node, depth) => {
-    const indent = '  '.repeat(depth)
-    if (node.type === 'decl') {
-      lines.push(`${indent}${node.prop}: ${node.value.replace(/\s+/g, ' ').trim()}${node.important ? ' !important' : ''};`)
-    } else if (node.type === 'rule' || (node.type === 'atrule' && node.name !== 'charset')) {
-      const head = node.type === 'rule' ?
-        node.selectors.map(selector => selector.replace(/\s+/g, ' ').trim()).join(', ') :
-        `@${node.name} ${node.params.replace(/\s+/g, ' ').trim()}`.trim()
-      if (node.nodes?.length === 0) {
-        // Like the `@layer custom {}` an empty _custom.scss produces. The
-        // `@layer …;` statement at the top already fixes the layer order.
-        return
-      }
-
-      if (node.nodes) {
-        lines.push(`${indent}${head} {`)
-        node.each(child => write(child, depth + 1))
-        lines.push(`${indent}}`)
-      } else {
-        lines.push(`${indent}${head};`)
-      }
-    }
-  }
-
-  postcss.parse(css).each(node => write(node, 0))
-  return `${lines.join('\n')}\n`
-}
 
 // Every block that holds declarations, keyed by where it sits
 // (`@layer components > @media (…) > .btn`) and its occurrence there.

@@ -6,6 +6,8 @@ dist/
 .claude/
 # Output of the check scripts, like reports/dist/.
 reports/
+# Bootstrap commits fetched by `npm run diff-bootstrap`.
+.cache/
 # Playwright: results and reports are local. Only the Linux baselines, which
 # CI compares against, are committed.
 tests/results/
