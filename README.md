@@ -57,7 +57,7 @@ Upstream pull request numbers in commit subjects are shown as code, not links, s
 
 Opening the pull request needs one of these:
 
-- a `CANARY_TOKEN` repository secret: a fine-grained token with *Contents* and *Pull requests* read/write on this repository. With it, the pull request also starts the other workflows.
+- a `CANARY_TOKEN` repository secret (*Settings › Secrets and variables › Actions*, not an environment secret): a fine-grained token limited to this repository, with *Contents*, *Pull requests* and *Issues* read/write. *Issues* covers the labels and the take-over comment. With it, the pull request also starts the other workflows, and shows the token's owner as its author. When the token expires, the canary fails at checkout until the secret is updated.
 - *Allow GitHub Actions to create and approve pull requests* in the repository's *Settings › Actions › General*. The pull request then comes from `GITHUB_TOKEN`, which doesn't start other workflows, so the report is its only check run.
 
 From the *Actions* tab, *Run workflow* with *force* runs the checks even when `v6-dev` hasn't moved, and uploads the report without opening a pull request when nothing changed.

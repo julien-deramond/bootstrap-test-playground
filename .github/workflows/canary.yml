@@ -5,11 +5,13 @@ name: Canary
 # opens or updates one pull request with the report. Does nothing when v6-dev
 # hasn't moved. Never merges.
 #
-# Opening the pull request needs either a CANARY_TOKEN secret (a fine-grained
-# token with contents and pull requests read/write on this repository), or
-# "Allow GitHub Actions to create and approve pull requests" in the
-# repository's Actions settings. With GITHUB_TOKEN, the pull request doesn't
-# start the other workflows: the report is the only check run.
+# Opening the pull request needs either a CANARY_TOKEN repository secret (a
+# fine-grained token limited to this repository, with contents, pull requests
+# and issues read/write: issues covers the labels and comments), or "Allow
+# GitHub Actions to create and approve pull requests" in the repository's
+# Actions settings. With GITHUB_TOKEN, the pull request doesn't start the
+# other workflows: the report is the only check run.
+
 on:
   schedule:
     - cron: '41 4 * * *'
