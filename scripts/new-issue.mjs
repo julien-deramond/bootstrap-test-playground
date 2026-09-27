@@ -11,7 +11,8 @@ import { NAME_PATTERN, configDir, copyStyles, fail, listConfigs, root, workingDi
 const args = process.argv.slice(2)
 const configIndex = args.indexOf('--config')
 const configName = configIndex === -1 ? 'default' : args[configIndex + 1]
-const name = args.filter((arg, index) => index !== configIndex && index !== configIndex + 1)[0]?.replace(/^#/, '')
+const positional = configIndex === -1 ? args : args.filter((arg, index) => index !== configIndex && index !== configIndex + 1)
+const name = positional[0]?.replace(/^#/, '')
 
 if (!name || !NAME_PATTERN.test(name)) {
   fail('Usage: npm run new-issue <number-or-slug> [-- --config <config>]   (e.g. npm run new-issue 42928)')
