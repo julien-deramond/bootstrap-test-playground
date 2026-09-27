@@ -1,0 +1,31 @@
+name: Configs
+
+# Compiles the working copy, every config in configs/ and every reproduction in
+# issues/, and fails on a Sass or PostCSS error. Warnings, such as Sass
+# deprecations, show up as annotations on the run and the pull request.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: configs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compile:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run check-configs
