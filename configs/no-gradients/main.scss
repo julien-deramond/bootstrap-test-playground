@@ -1,0 +1,8 @@
+// `$enable-gradients: false`: Bootstrap stops adding `var(--gradient)` as a
+// background image on range thumbs and active nav pills, and drops the
+// `background-image: none` resets of buttons and menu items. The `.bg-gradient`
+// utility and `.btn-styled`, which opt in, keep theirs.
+
+@use "bootstrap/scss/bootstrap" with (
+  $enable-gradients: false
+);

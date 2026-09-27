@@ -1,0 +1,6 @@
+// `$enable-button-pointers: false`: buttons keep the default cursor instead of
+// `cursor: pointer`.
+
+@use "bootstrap/scss/bootstrap" with (
+  $enable-button-pointers: false
+);

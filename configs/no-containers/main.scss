@@ -1,0 +1,7 @@
+// `$enable-container-classes: false`: no `.container`, `.container-fluid` or
+// responsive containers. Almost every page here uses `.container`, so this
+// shows what depends on it.
+
+@use "bootstrap/scss/bootstrap" with (
+  $enable-container-classes: false
+);

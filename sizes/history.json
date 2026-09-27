@@ -1,17 +1,52 @@
 [
   {
     "commit": "bd0a4f63ce5cc444063c28a6946bdae3dacdce20",
-    "date": "2026-09-27T16:44:30.944Z",
+    "date": "2026-09-27T18:41:09.701Z",
     "sizes": {
       "css/default": {
         "min": 378944,
         "gzip": 50997,
         "brotli": 36238
       },
+      "css/grid-css-only": {
+        "min": 364876,
+        "gzip": 48853,
+        "brotli": 35145
+      },
+      "css/grid-flex-only": {
+        "min": 373564,
+        "gzip": 50177,
+        "brotli": 36055
+      },
+      "css/no-button-pointers": {
+        "min": 378806,
+        "gzip": 50978,
+        "brotli": 36271
+      },
+      "css/no-containers": {
+        "min": 378241,
+        "gzip": 50903,
+        "brotli": 36149
+      },
+      "css/no-gradients": {
+        "min": 378654,
+        "gzip": 50974,
+        "brotli": 36219
+      },
       "css/no-reduced-motion": {
         "min": 372752,
         "gzip": 50504,
         "brotli": 35820
+      },
+      "css/no-rounded": {
+        "min": 368331,
+        "gzip": 49916,
+        "brotli": 35440
+      },
+      "css/no-shadows": {
+        "min": 377946,
+        "gzip": 50903,
+        "brotli": 36418
       },
       "css/no-transitions": {
         "min": 364368,
@@ -22,6 +57,11 @@
         "min": 379691,
         "gzip": 51416,
         "brotli": 36510
+      },
+      "css/smooth-scroll": {
+        "min": 379026,
+        "gzip": 51046,
+        "brotli": 36308
       },
       "dist/bootstrap.min.css": {
         "min": 379028,
