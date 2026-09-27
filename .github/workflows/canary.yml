@@ -99,6 +99,13 @@ jobs:
           # After the report, which compares with the previous entry: record this commit's sizes.
           npm run check-size -- --record
 
+      # What changed between the two commits: CSS diff, tokens, sizes and kitchen
+      # sink screenshots, in the artifact. A failure here doesn't stop the run.
+      - name: Diff the two commits
+        if: steps.check.outputs.moved == 'true' && steps.check.outputs.from != steps.update.outputs.to
+        continue-on-error: true
+        run: npm run diff-bootstrap -- "${{ steps.check.outputs.from }}" "${{ steps.update.outputs.to }}"
+
       # The report, and Playwright's report of the last suite run: the visual
       # diffs.
       - uses: actions/upload-artifact@v7
@@ -145,6 +152,15 @@ jobs:
 
           {
             cat reports/canary/report.md
+            for summary in reports/diff/*/summary.md; do
+              [ -f "$summary" ] || continue
+              echo
+              echo "### What changed"
+              echo
+              cat "$summary"
+              echo
+              echo "Full report: \`$(dirname "$summary")/index.html\` in the run's *canary-report* artifact."
+            done
             echo
             echo "---"
             echo "Opened by the nightly canary ([run]($run_url), [\`canary.yml\`](.github/workflows/canary.yml)). The run's *canary-report* artifact has the full report and the visual diffs. Never merged automatically."

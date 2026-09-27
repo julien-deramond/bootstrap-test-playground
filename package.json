@@ -30,6 +30,7 @@
     "use-config": "node scripts/use-config.mjs",
     "sync-kitchen-sink": "node scripts/sync-kitchen-sink.mjs",
     "canary-report": "node scripts/canary-report.mjs",
+    "diff-bootstrap": "node scripts/diff-bootstrap.mjs",
     "update-bootstrap": "npm install bootstrap@github:twbs/bootstrap#v6-dev && BOOTSTRAP_PATH= npm run check-configs && BOOTSTRAP_PATH= npm run check-dist && BOOTSTRAP_PATH= npm run audit-tokens && BOOTSTRAP_PATH= npm run compile-matrix && BOOTSTRAP_PATH= npm run audit-rtl && BOOTSTRAP_PATH= npm run audit-motion && BOOTSTRAP_PATH= npm run audit-layers && BOOTSTRAP_PATH= npm run check-size -- --record"
   },
   "engines": {

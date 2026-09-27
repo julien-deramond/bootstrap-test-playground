@@ -35,6 +35,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
 | `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs`, `check-dist`, `audit-tokens`, `compile-matrix`, `audit-rtl`, `audit-motion` and `audit-layers` against it, and records its sizes |
 | `npm run sync-kitchen-sink -- ../twbs/bootstrap` | Regenerates `kitchen-sink/` from a Bootstrap checkout's docs |
+| `npm run diff-bootstrap -- <from> <to>` | Compares two Bootstrap commits: CSS diff, tokens, sizes and kitchen sink screenshots (see [Comparing two commits](#comparing-two-commits)) |
 | `npm run canary-report [-- --only <checks>]` | Runs every check and writes the nightly canary's report to `reports/canary/report.md` (see [Nightly canary](#nightly-canary)) |
 
 ## Where Bootstrap comes from
@@ -43,13 +44,32 @@ By default, Bootstrap is installed from GitHub (`github:twbs/bootstrap#v6-dev`),
 
 Dependabot updates the playground's other dependencies and its GitHub Actions every week, but never `bootstrap`. Bootstrap updates come from the [nightly canary](#nightly-canary), or from a deliberate `npm run update-bootstrap`.
 
+### Comparing two commits
+
+After an update, the question is what the upstream commits changed. `npm run diff-bootstrap -- <from> <to>` takes two commits, branches or tags of twbs/bootstrap (`npm run diff-bootstrap -- 624c7b9 v6-dev`) and fetches each into `.cache/bootstrap/<sha>/`, shallowly, reused on later runs. It then compares:
+
+- the upstream commits between them;
+- the default config's compiled CSS, normalized like [Checking the dist](#checking-the-dist), as a diff;
+- its `--bs-*` tokens: added, removed, and changed values;
+- the sizes [`check-size`](#sizes) measures;
+- every kitchen sink example, screenshotted on a dev server per commit and compared pixel by pixel. `--no-screens` skips that part, and `--page=<filter>` narrows it.
+
+```
+35 upstream commits. CSS diff +465 −450 lines. Tokens: 22 added, 22 removed, 15 changed.
+  dist/bootstrap.bundle.min.js: 49.3 KB +1.9 KB (+4.1%) brotli
+5 kitchen sink examples render differently:
+   280446 px  /kitchen-sink/forms-datepicker.html#inline-mode-4
+```
+
+It writes `reports/diff/<from>-<to>/index.html`, a browsable report with the diff, the token lists and each changed example (both commits and their difference), plus `summary.md`. The nightly canary runs it on every update: the summary goes into its pull request, and the full report into the run's artifact. A comparison takes one to two minutes. The compare view can't put two commits side by side yet.
+
 ### Nightly canary
 
 [`.github/workflows/canary.yml`](.github/workflows/canary.yml) runs every night, and on demand from the *Actions* tab. When `v6-dev` has moved, it:
 
 1. updates Bootstrap like `npm run update-bootstrap` (`package.json` keeps `#v6-dev`, the lockfile pins the new commit);
 2. fetches that exact commit's docs and resyncs the kitchen sink;
-3. runs every check with `npm run canary-report`: the compile and dist checks, every audit, `lint:html`, the size check (its table goes into the report, and the new sizes into `sizes/history.json`), the rendered audits, the console crawl, the smoke tests in all three engines, and the visual suite;
+3. runs every check with `npm run canary-report`, then compares the two commits with `npm run diff-bootstrap`: the compile and dist checks, every audit, `lint:html`, the size check (its table goes into the report, and the new sizes into `sizes/history.json`), the rendered audits, the console crawl, the smoke tests in all three engines, and the visual suite;
 4. opens a pull request `chore(deps): update bootstrap to v6-dev@<sha>`, or updates the open one. It's labelled `canary`, plus `checks-failing` when a check fails.
 
 The pull request body is the report: the upstream commits since the last update, one row per check, the kitchen sink pages the sync changed, the end of each failing check's output, and the allowlist entries that no longer match. A stale entry usually means Bootstrap fixed a tracked bug, which is step 3 of [Upstream issues](#upstream-issues). The visual suite is reported as *changed* rather than failed, since a Bootstrap update can change the rendering on purpose; the run's *canary-report* artifact has the diffs. When `v6-dev` hasn't moved, or the open pull request is already at its head, the workflow stops after one `git ls-remote`. When the pull request's branch has commits of your own, it leaves the branch alone and comments with a link to the new report. It never merges.
