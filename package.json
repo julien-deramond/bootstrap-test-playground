@@ -13,6 +13,7 @@
     "preview": "vite preview",
     "test:visual": "playwright test --project visual",
     "test:console": "playwright test --project console",
+    "test:smoke": "playwright test --project smoke",
     "lint:html": "node scripts/lint-html.mjs",
     "check-configs": "node scripts/check-configs.mjs",
     "check-dist": "node scripts/check-dist.mjs",

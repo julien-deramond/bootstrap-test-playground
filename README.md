@@ -19,6 +19,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run build` / `npm run preview` | Builds every page to `dist/` and serves the build |
 | `npm run test:visual [-- -u]` | Screenshots every page and compares with the baselines (see [Visual regression tests](#visual-regression-tests)) |
 | `npm run test:console` | Opens every page and fails on errors, warnings and failed requests (see [Console crawl](#console-crawl)) |
+| `npm run test:smoke` | Opens, drives and closes every JavaScript component and checks its state and events (see [Interaction smoke tests](#interaction-smoke-tests)) |
 | `npm run lint:html [-- --all]` | Validates the HTML of every page with html-validate (see [Validating HTML](#validating-html)) |
 | `npm run check-configs [-- --strict]` | Compiles the working copy, every config and every reproduction, and lists Sass errors and warnings (see [Checking configs](#checking-configs)) |
 | `npm run check-dist` | Checks that the default config compiles to Bootstrap's `dist/css/bootstrap.css` (see [Checking the dist](#checking-the-dist)) |
@@ -239,6 +240,8 @@ src/js/page-index.js     Page list and search, shared by the home page and the p
 public/                  Favicon and the early preferences script
 scripts/                 new-issue, save-config, use-config, sync-kitchen-sink, issue template
 tests/visual/            Visual regression suite (Playwright) and its baselines
+tests/console/           Console crawl (Playwright) and its known issues
+tests/smoke/             Interaction smoke tests (Playwright) and their known issues
 ```
 
 Every `.html` file under `pages/`, `screens/`, `kitchen-sink/` and `issues/` is picked up automatically. There's no list to maintain.
@@ -396,6 +399,24 @@ Problems caused by an open upstream bug go in [`tests/console/known-issues.js`](
 Sass `@warn` output shows up in the build log, not in the browser, so the crawl doesn't see it. [`npm run check-configs`](#checking-configs) reports it.
 
 [`.github/workflows/console.yml`](.github/workflows/console.yml) runs the crawl on every pull request and every push to `main`.
+
+## Interaction smoke tests
+
+Screenshots and the console crawl can't see a menu that no longer opens or a dialog that ignores Escape. [`tests/smoke/`](tests/smoke/smoke.spec.js) drives each of Bootstrap's JavaScript components on its kitchen sink page: alert, button, carousel, chips, collapse, combobox, datepicker, dialog, drawer, menu, OTP input, popover, range, scrollspy, password strength, tab, toast, toggler and tooltip. For each one it:
+
+- opens it and checks its state (`open`, `aria-expanded`, `.show`, `aria-selected`, focus);
+- walks its keyboard paths where it has them (arrows, Home and End, Escape);
+- closes it and checks that nothing is stuck (focus back on the trigger, no scroll lock, no leftover open dialog or inert content);
+- checks that the expected `*.bs.*` events fired, in order. An init script records every event Bootstrap dispatches, so a test fails when one stops firing.
+
+Every scenario runs with the working copy and every config: a config must never break behavior. Pages load with `?chrome=0&freeze`, so transitions are off. Like the other suites, it runs against a production build:
+
+```sh
+npm run test:smoke
+npm run test:smoke -- -g "shadcn menu"   # one config and component
+```
+
+A scenario that fails because of an open upstream bug goes in [`tests/smoke/known-issues.js`](tests/smoke/known-issues.js) with its tracking issue. It's marked `test.fail()`, so the run fails as soon as it passes again, and the entry gets removed. NavOverflow has no kitchen sink example yet, so it has no scenario. [`.github/workflows/smoke.yml`](.github/workflows/smoke.yml) runs the suite on every pull request and every push to `main`.
 
 ## Deployment
 
