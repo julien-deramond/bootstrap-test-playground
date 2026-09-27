@@ -102,7 +102,7 @@ It takes about four minutes and writes one line per token to `reports/tokens/ren
 
 ### Option combinations
 
-`scss/_config.scss` has a dozen `$enable-*` flags, plus `$color-mode-type`, and they interact: shadows and gradients, grid and CSS grid, transitions and reduced motion. `npm run compile-matrix` compiles Bootstrap under 94 combinations in a few seconds: the defaults, every flag on, every flag off, each option toggled alone and each pair of options toggled together. It fails when:
+`scss/_config.scss` has a dozen `$enable-*` flags, plus `$color-mode-type`, and they interact: shadows and gradients, grid and CSS grid, transitions and reduced motion. `npm run compile-matrix` compiles Bootstrap under about 80 combinations in a few seconds: the defaults, every flag on, every flag off, each option toggled alone and each pair of options toggled together. It fails when:
 
 - a combination doesn't compile, and it names the combination;
 - toggling an option leaves the CSS byte-identical, meaning the option does nothing;
@@ -112,9 +112,9 @@ It takes about four minutes and writes one line per token to `reports/tokens/ren
 Combination            Status  Size      Δ default  Rules  Warnings  Notes
 default                ok      481.4 KB  ±0         4419   0
 all-off                ok      418.7 KB  −62.6 KB   3794   0
-caret=false            ok      481.4 KB  ±0         4419   0         identical to default
 rounded=false          ok      469.2 KB  −12.1 KB   4366   0
-✓ caret: toggling it leaves the CSS byte-identical (known: #129)
+color-mode-type=data   ok      481.4 KB  ±0         4419   0         identical to default
+✓ color-mode-type: toggling it leaves the CSS byte-identical (known: only changes the output of the color-mode() mixin, …)
 ```
 
 Options known to do nothing are listed in [`scripts/known-options.mjs`](scripts/known-options.mjs), with their tracking issue or the reason. The full table is in `reports/matrix/summary.md`, and each combination's CSS is next to it, ready to diff. `npm run update-bootstrap` runs the matrix after each update, and so does the *Configs* workflow.
