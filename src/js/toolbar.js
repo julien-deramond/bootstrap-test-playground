@@ -102,6 +102,9 @@ export function mountToolbar({ source, configs, swappable }) {
     render(prefs.effective())
   })
 
+  // And the page, like the home page's configs, when it saves a preference.
+  window.addEventListener('playground-prefs', () => render(prefs.effective()))
+
   let render = () => {}
   if (prefs.embedded) {
     return

@@ -1,6 +1,8 @@
 // Home page: every page found by vite.config.js, with search, group and tag
 // filters, and recently viewed pages. The filters live in the URL
 // (?q=menu&group=kitchen-sink&tag=forms), so a filtered list can be shared.
+// Below them, the saved configs, applied in one click.
+import { configs } from './configs.js'
 import { groups, pages, readRecent, resultUrl, search } from './page-index.js'
 
 const VIEW_KEY = 'bootstrap-playground-home-view'
@@ -291,3 +293,50 @@ document.addEventListener('keydown', event => {
 }, { capture: true })
 
 render()
+
+// Configs: applying one saves the toolbar's Styles preference, so it applies
+// here right away and on every page opened next.
+const prefs = window.playgroundPrefs
+const configList = document.getElementById('config-list')
+const issueUrl = issue => `https://github.com/julien-deramond/bootstrap-test-playground/issues/${issue}`
+// READMEs write code in backticks.
+const inlineCode = text => escapeHtml(text).replace(/`([^`]+)`/g, '<code>$1</code>')
+
+function renderConfigs() {
+  const current = prefs?.effective().config
+  const items = [
+    { name: 'working', label: 'src/styles', description: 'The working copy, what every page uses until a config is applied. Save it as a config with `npm run save-config <name>`.', gaps: [] },
+    ...configs
+  ]
+
+  document.getElementById('configs-count').textContent = configs.length
+  configList.innerHTML = items.map(({ name, label, description, gaps, tokensOnly }) => {
+    const active = name === current || (name === 'working' && !configs.some(config => config.name === current))
+    return `
+      <li class="page-card config-card${active ? ' active' : ''}">
+        <div class="page-card-head">
+          <h3 class="page-card-title"><code>${escapeHtml(label ?? name)}</code></h3>
+          <button type="button" class="btn-sm ${active ? 'btn-solid' : 'btn-outline'} theme-primary ms-auto" data-config="${escapeHtml(name)}" aria-pressed="${active}" ${prefs ? '' : 'disabled'}>${active ? 'Applied' : 'Apply'}</button>
+        </div>
+        <p class="page-card-description" title="${escapeHtml(description)}">${inlineCode(description || `configs/${name}/`)}</p>
+        <div class="page-card-meta">
+          ${tokensOnly && name !== 'default' ? '<span class="page-card-tag" title="Only changes tokens.css, so it also applies on top of the prebuilt dist">tokens only</span>' : ''}
+          ${gaps.map(issue => `<a class="config-card-gap" href="${issueUrl(issue)}" rel="noopener" title="Known gap: tracking issue #${issue}">#${issue}</a>`).join('')}
+          <code class="config-card-path">${name === 'working' ? 'src/styles/' : `configs/${escapeHtml(name)}/`}</code>
+        </div>
+      </li>`
+  }).join('')
+}
+
+configList.addEventListener('click', event => {
+  const button = event.target.closest('[data-config]')
+  if (button && prefs) {
+    prefs.save({ config: button.dataset.config })
+  }
+})
+
+// Saves from the toolbar, here or in another tab.
+window.addEventListener('playground-prefs', renderConfigs)
+window.addEventListener('storage', renderConfigs)
+
+renderConfigs()

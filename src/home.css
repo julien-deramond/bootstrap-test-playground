@@ -525,6 +525,47 @@
     }
   }
 
+  /* Configs, below the pages */
+  .home-configs {
+    padding-block: 1rem 3rem;
+    /* Clear the sticky filters when jumping to #configs. */
+    scroll-margin-block-start: 10rem;
+  }
+
+  .config-card {
+    &.active {
+      border-color: var(--bs-primary-border);
+    }
+
+    .page-card-title code {
+      font-size: inherit;
+      color: inherit;
+    }
+
+    .page-card-description {
+      -webkit-line-clamp: 3;
+    }
+
+    .page-card-tag {
+      cursor: default;
+    }
+  }
+
+  .config-card-gap {
+    color: var(--bs-link-color);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .config-card-path {
+    margin-inline-start: auto;
+    font-size: inherit;
+    color: var(--bs-fg-3);
+  }
+
   .home-footer {
     padding-block-end: 5rem;
     font-size: var(--bs-font-size-sm);

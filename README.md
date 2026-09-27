@@ -33,6 +33,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run new-issue 42928 [-- --config <name>]` | Creates `issues/42928/` from the reproduction template and a config |
 | `npm run save-config <name> [-- "Description"]` | Saves the working copy (`src/styles/`) as `configs/<name>/` |
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
+| `npm run configs-table [-- --check]` | Regenerates the table of configs in `configs/README.md` from their READMEs, or with `--check` fails when it's stale (see [Configs](#configs)) |
 | `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs`, `check-dist`, `audit-tokens`, `compile-matrix`, `audit-rtl`, `audit-motion` and `audit-layers` against it, and records its sizes |
 | `npm run sync-kitchen-sink -- ../twbs/bootstrap` | Regenerates `kitchen-sink/` from a Bootstrap checkout's docs |
 | `npm run diff-bootstrap -- <from> <to> [--serve]` | Compares two Bootstrap commits: CSS diff, tokens, sizes and kitchen sink screenshots, or with `--serve` both in the compare view (see [Comparing two commits](#comparing-two-commits)) |
@@ -276,9 +277,11 @@ Once the working copy holds a good test case, save it as a **config**, a folder 
 npm run save-config rounded-dark -- "Large radii and a dark-first palette"
 ```
 
+Its `README.md` starts from [the template](scripts/templates/config/README.md). The first paragraph describes the config, and the toolbar and the home page show it. Then come *What it stresses*, *Pages to check*, and *Known gaps*, which links the tracking issues. [`configs/README.md`](configs/README.md#saved-configs) has a table of every config, generated from those READMEs by `npm run configs-table`. `save-config` updates it, and the *Configs* workflow fails when it's stale.
+
 Then:
 
-- **Preview it on any page** with the toolbar's *Styles* menu, or with `?config=rounded-dark` in the URL. The shared stylesheets are swapped live, and the page doesn't need a reload.
+- **Preview it on any page** with the toolbar's *Styles* menu, the *Configs* section at the bottom of the home page, or `?config=rounded-dark` in the URL. The shared stylesheets are swapped live, and the page doesn't need a reload.
 - **Start a reproduction from it**: `npm run new-issue 42928 -- --config rounded-dark`
 - **Make it the working copy**: `npm run use-config rounded-dark`. This refuses to run if `src/styles/` has uncommitted changes, unless you pass `-- --force`.
 

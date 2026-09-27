@@ -8,7 +8,8 @@ name: Configs
 # compiles Bootstrap under combinations of its $enable-* options, audits the
 # default CSS for new physical left/right declarations, audits its motion
 # against prefers-reduced-motion and the two motion options, and audits its
-# cascade layers. Also validates the HTML of every page.
+# cascade layers. Also validates the HTML of every page, and checks that the
+# configs table in configs/README.md matches the configs' READMEs.
 on:
   pull_request:
   push:
@@ -54,6 +55,9 @@ jobs:
         if: ${{ !cancelled() }}
 
       - run: npm run lint:html
+        if: ${{ !cancelled() }}
+
+      - run: npm run configs-table -- --check
         if: ${{ !cancelled() }}
 
       # The normalized CSS and the full diffs, when the dist check fails.
