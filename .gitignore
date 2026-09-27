@@ -4,6 +4,8 @@ dist/
 .DS_Store
 *.log
 .claude/
+# Output of the check scripts, like reports/dist/.
+reports/
 # Playwright: results and reports are local. Only the Linux baselines, which
 # CI compares against, are committed.
 tests/results/

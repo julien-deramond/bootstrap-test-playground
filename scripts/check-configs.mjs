@@ -8,12 +8,10 @@
 
 import fs from 'node:fs'
 import path from 'node:path'
-import { fileURLToPath, pathToFileURL } from 'node:url'
-import postcss from 'postcss'
-import * as sass from 'sass-embedded'
+import { fileURLToPath } from 'node:url'
 import { loadEnv } from 'vite'
-import postcssConfig from '../postcss.config.js'
 import { bootstrapSource } from './lib/bootstrap.mjs'
+import { compileConfig, processCss } from './lib/compile.mjs'
 import { configsDir, root, workingDir } from './lib/configs.mjs'
 
 const strict = process.argv.includes('--strict')
@@ -29,12 +27,6 @@ const folders = [
       .sort((a, b) => a.localeCompare(b, 'en', { numeric: true })) :
     []))
 ]
-
-// `bootstrap/…` resolves to node_modules or to the BOOTSTRAP_PATH checkout,
-// like Vite's alias.
-const bootstrapImporter = {
-  findFileUrl: url => (url.startsWith('bootstrap/') ? pathToFileURL(path.join(bootstrapDir, url.slice('bootstrap/'.length))) : null)
-}
 
 // A file as the report shows it: `configs/shadcn/main.scss`, or
 // `bootstrap/scss/_root.scss` for Bootstrap's own files.
@@ -85,12 +77,10 @@ async function check(folder) {
   }
 
   try {
-    const { css } = await sass.compileAsync(path.join(folder, 'main.scss'), { importers: [bootstrapImporter], logger })
-    const processor = postcss(postcssConfig.plugins)
-    await processor.process(css, { from: path.join(folder, 'main.scss') })
+    await compileConfig(path.join(folder, 'main.scss'), { bootstrapDir, logger })
     const tokens = path.join(folder, 'tokens.css')
     if (fs.existsSync(tokens)) {
-      await processor.process(fs.readFileSync(tokens, 'utf8'), { from: tokens })
+      await processCss(fs.readFileSync(tokens, 'utf8'), tokens)
     }
 
     return { warnings }

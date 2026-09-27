@@ -20,10 +20,11 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run test:visual [-- -u]` | Screenshots every page and compares with the baselines (see [Visual regression tests](#visual-regression-tests)) |
 | `npm run test:console` | Opens every page and fails on errors, warnings and failed requests (see [Console crawl](#console-crawl)) |
 | `npm run check-configs [-- --strict]` | Compiles the working copy, every config and every reproduction, and lists Sass errors and warnings (see [Checking configs](#checking-configs)) |
+| `npm run check-dist` | Checks that the default config compiles to Bootstrap's `dist/css/bootstrap.css` (see [Checking the dist](#checking-the-dist)) |
 | `npm run new-issue 42928 [-- --config <name>]` | Creates `issues/42928/` from the reproduction template and a config |
 | `npm run save-config <name> [-- "Description"]` | Saves the working copy (`src/styles/`) as `configs/<name>/` |
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
-| `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs` against it |
+| `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs` and `check-dist` against it |
 | `npm run sync-kitchen-sink -- ../twbs/bootstrap` | Regenerates `kitchen-sink/` from a Bootstrap checkout's docs |
 
 ## Where Bootstrap comes from
@@ -43,8 +44,28 @@ Vite then resolves every `bootstrap/...` import (Sass and JS) to that folder, an
 
 The playground builds Bootstrap from **source**, the way Bootstrap's own build does:
 
-- **CSS** is compiled from `scss/`, then `postcss.config.js` applies the same PostCSS step as Bootstrap's `build/postcss.config.mjs`. That step adds the `--bs-` prefix to every custom property and runs Autoprefixer with Bootstrap's `.browserslistrc`. The output matches `dist/css/bootstrap.css`, and the builds keep `light-dark()` intact.
+- **CSS** is compiled from `scss/`, then `postcss.config.js` applies the same PostCSS step as Bootstrap's `build/postcss.config.mjs`. That step adds the `--bs-` prefix to every custom property and runs Autoprefixer with Bootstrap's `.browserslistrc`. The output matches `dist/css/bootstrap.css` (see [Checking the dist](#checking-the-dist)), and the builds keep `light-dark()` intact.
 - **JavaScript** is imported from `js/src/index.ts`, so the playground runs the branch's current code even when the committed `js/dist/` hasn't been rebuilt yet. To test the prebuilt files instead, import `'bootstrap'` in `src/js/main.js`.
+
+### Checking the dist
+
+Findings here only carry over upstream if the playground compiles Bootstrap the way Bootstrap does. `npm run check-dist` compiles `configs/default/` the way Vite does and compares the result with Bootstrap's committed `dist/css/bootstrap.css`, rule by rule. It ignores comments, the banner, the source map and formatting:
+
+```
+✗ playground vs dist: 1 changed, 1 only in playground
+    changed: @layer components > .badge
+    only in playground: @layer components > .badge-dot
+    full diff: reports/dist/playground-vs-dist.diff
+```
+
+A difference means one of two things: the playground's pipeline moved away from Bootstrap's build, or Bootstrap's source moved and nobody rebuilt the committed dist, as in [#1](https://github.com/julien-deramond/bootstrap-test-playground/issues/1). With `BOOTSTRAP_PATH` pointing to a checkout that has its dependencies installed, the script also runs Bootstrap's own build, with the checkout's Sass and `build/postcss.config.mjs`, and tells the two apart:
+
+```
+✓ pipeline (playground vs Bootstrap’s build): no drift
+✗ dist (committed dist vs Bootstrap’s build): 3 changed
+```
+
+The normalized CSS and the full diffs go to `reports/dist/`. `npm run update-bootstrap` runs the check after each update, and so does the *Configs* workflow on every pull request, which uploads `reports/dist/` as the *dist-drift* artifact when it fails. When the `dist` line fails, record it as an upstream issue (see [Upstream issues](#upstream-issues)). When the `pipeline` line fails, update `postcss.config.js` to match Bootstrap's `build/postcss.config.mjs`.
 
 ## Customizing
 
