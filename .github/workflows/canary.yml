@@ -71,6 +71,9 @@ jobs:
         id: update
         if: steps.check.outputs.moved == 'true'
         run: |
+          # npm 11 writes the lockfile like the maintainers' npm does (with its
+          # `libc` fields). Node 22's npm 10 would strip them, a diff on every run.
+          npm install -g npm@11
           npm ci
           # Like `npm run update-bootstrap`: package.json keeps `#v6-dev`, the lockfile pins the commit.
           npm install bootstrap@github:twbs/bootstrap#v6-dev
@@ -110,8 +113,10 @@ jobs:
           title="chore(deps): update bootstrap to v6-dev@${to:0:7}"
           run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
 
-          # A forced run on an unchanged v6-dev has nothing to propose.
-          if [ -z "$(git status --porcelain -- package.json package-lock.json kitchen-sink)" ]; then
+          # A forced run on an unchanged v6-dev has nothing to propose. Compare
+          # the Bootstrap commit, not the lockfile: other entries can change
+          # format with the npm version.
+          if [ "$to" = "${{ steps.check.outputs.from }}" ] && [ -z "$(git status --porcelain -- kitchen-sink)" ]; then
             echo "Nothing changed: no pull request. The report is in the run's artifact."
             exit 0
           fi
