@@ -19,6 +19,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run build` / `npm run preview` | Builds every page to `dist/` and serves the build |
 | `npm run test:visual [-- -u]` | Screenshots every page and compares with the baselines (see [Visual regression tests](#visual-regression-tests)) |
 | `npm run test:console` | Opens every page and fails on errors, warnings and failed requests (see [Console crawl](#console-crawl)) |
+| `npm run lint:html [-- --all]` | Validates the HTML of every page with html-validate (see [Validating HTML](#validating-html)) |
 | `npm run check-configs [-- --strict]` | Compiles the working copy, every config and every reproduction, and lists Sass errors and warnings (see [Checking configs](#checking-configs)) |
 | `npm run check-dist` | Checks that the default config compiles to Bootstrap's `dist/css/bootstrap.css` (see [Checking the dist](#checking-the-dist)) |
 | `npm run compile-matrix` | Compiles Bootstrap under combinations of its `$enable-*` options and reports failures and options that do nothing (see [Option combinations](#option-combinations)) |
@@ -282,6 +283,12 @@ npm run sync-kitchen-sink -- ../twbs/bootstrap   # or rely on BOOTSTRAP_PATH in 
 ```
 
 Don't edit these files by hand. They're overwritten on every sync.
+
+### Validating HTML
+
+Invalid markup can hide or fake a Bootstrap bug: a `<div>` inside a `<button>`, a duplicate id, an unknown element. `npm run lint:html` validates every page, the home page, `compare.html` and the reproduction template with [html-validate](https://html-validate.org/), the validator Bootstrap uses for its docs. It uses the `html-validate:standard` preset, which checks validity (content models, duplicate ids, attributes) rather than style. Bootstrap's own docs config only checks duplicate ids.
+
+It lists errors by file, so duplicate ids read per page. The kitchen sink has none: each example's ids are the docs' own, and the generator suffixes repeated section headings (`-2`, `-3`). An error in `kitchen-sink/` is an upstream docs bug, since those pages are generated. It gets a tracking issue and an entry in [`scripts/known-html.mjs`](scripts/known-html.mjs); fix errors in the playground's own pages instead. The lint fails on a new error and on an entry that no longer matches. The *Configs* workflow runs it.
 
 ### Issue reproductions
 
