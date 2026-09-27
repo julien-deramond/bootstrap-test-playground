@@ -102,6 +102,8 @@
 
     history.replaceState(history.state, '', url)
     apply(effective())
+    // The toolbar and the home page's configs follow saves made by the other.
+    window.dispatchEvent(new Event('playground-prefs'))
     return effective()
   }
 

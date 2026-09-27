@@ -21,6 +21,7 @@
       <symbol id="icon-columns" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></symbol>
       <symbol id="icon-corner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></symbol>
       <symbol id="icon-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></symbol>
+      <symbol id="icon-palette" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
       <symbol id="icon-git" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="3" x2="9" y1="12" y2="12"/><line x1="15" x2="21" y1="12" y2="12"/></symbol>
     </svg>
 
@@ -39,6 +40,10 @@
             <a href="/sizes.html">
               <svg width="16" height="16" aria-hidden="true"><use href="#icon-chart"/></svg>
               Sizes
+            </a>
+            <a href="#configs">
+              <svg width="16" height="16" aria-hidden="true"><use href="#icon-palette"/></svg>
+              Configs
             </a>
             <a href="https://github.com/twbs/bootstrap/tree/v6-dev" rel="noopener">
               <svg width="16" height="16" aria-hidden="true"><use href="#icon-git"/></svg>
@@ -82,6 +87,15 @@
       <p class="visually-hidden" id="result-count" aria-live="polite"></p>
       <div id="results"></div>
     </main>
+
+    <section class="container home-configs" id="configs" aria-labelledby="configs-heading">
+      <div class="home-group-head">
+        <h2 class="home-group-title" id="configs-heading">Configs</h2>
+        <span class="home-group-count" id="configs-count"></span>
+        <p class="home-group-description">Saved styles from <code>configs/</code>. Apply one to see every page with it, like the toolbar's <em>Styles</em> menu. <a href="https://github.com/julien-deramond/bootstrap-test-playground/tree/main/configs#saved-configs" rel="noopener">What each one stresses</a></p>
+      </div>
+      <ul class="page-list" id="config-list"></ul>
+    </section>
 
     <footer class="container home-footer">
       <p>Press <kbd>/</kbd> to search here, or <kbd id="palette-key">Ctrl K</kbd> on any page to jump to another one.</p>
