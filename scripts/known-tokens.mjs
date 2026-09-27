@@ -59,6 +59,24 @@ export default [
   },
   {
     kind: 'unused',
+    configs: ['no-rounded'],
+    reason: '$enable-rounded: false removes the border-radius declarations, not their tokens',
+    pattern: /-radius$/
+  },
+  {
+    kind: 'unused',
+    configs: ['no-shadows'],
+    reason: '$enable-shadows: false removes the box-shadow declarations, not their tokens',
+    pattern: /-box-shadow$/
+  },
+  {
+    kind: 'unused',
+    configs: ['grid-css-only'],
+    reason: 'containers set --gutter-y for .row, which $enable-grid-classes: false removes',
+    tokens: ['--gutter-y']
+  },
+  {
+    kind: 'unused',
     issue: 125,
     tokens: [
       '--card-subtitle-color',

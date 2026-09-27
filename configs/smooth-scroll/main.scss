@@ -1,0 +1,7 @@
+// `$enable-smooth-scroll: true`: `:root` gets `scroll-behavior: smooth`, under
+// `prefers-reduced-motion: no-preference`, so in-page links and scrollspy
+// scroll smoothly.
+
+@use "bootstrap/scss/bootstrap" with (
+  $enable-smooth-scroll: true
+);

@@ -1,0 +1,6 @@
+// `$enable-grid-classes: false`: no flexbox grid, so no `.row`, `.col-*`,
+// `.offset-*` or gutter classes. The CSS grid (`.grid`, `.g-col-*`) stays.
+
+@use "bootstrap/scss/bootstrap" with (
+  $enable-grid-classes: false
+);

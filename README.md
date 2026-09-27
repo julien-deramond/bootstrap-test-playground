@@ -285,7 +285,7 @@ Then:
 - **Start a reproduction from it**: `npm run new-issue 42928 -- --config rounded-dark`
 - **Make it the working copy**: `npm run use-config rounded-dark`. This refuses to run if `src/styles/` has uncommitted changes, unless you pass `-- --force`.
 
-`configs/default/` holds Bootstrap's defaults. Keep it pristine; `npm run use-config default` resets the working copy. `configs/shadcn/` recreates shadcn/ui's default theme (see [Real screens](#real-screens)). `configs/no-transitions/` and `configs/no-reduced-motion/` turn off `$enable-transitions` and `$enable-reduced-motion` (see [Auditing motion](#auditing-motion)).
+`configs/default/` holds Bootstrap's defaults. Keep it pristine; `npm run use-config default` resets the working copy. `configs/shadcn/` recreates shadcn/ui's default theme (see [Real screens](#real-screens)). Every `$enable-*` option that changes the CSS has a config that flips it, like `configs/no-rounded/` or `configs/grid-css-only/`. `configs/no-transitions/` and `configs/no-reduced-motion/` are also used by [Auditing motion](#auditing-motion). [`configs/README.md`](configs/README.md#saved-configs) lists them all.
 
 ### Checking configs
 

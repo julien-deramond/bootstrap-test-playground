@@ -1,0 +1,6 @@
+// `$enable-cssgrid: false`: no CSS grid, so no `.grid`, `.g-col-*` or
+// `.g-start-*`. The flexbox grid (`.row`, `.col-*`) stays.
+
+@use "bootstrap/scss/bootstrap" with (
+  $enable-cssgrid: false
+);
