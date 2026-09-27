@@ -1,5 +1,6 @@
 // Opens every page of the playground, in light and dark and with every config,
-// and fails on anything the page reports: uncaught exceptions, console errors
+// and once more with Bootstrap's prebuilt dist files (`?css=dist&js=dist`), what
+// users install, and fails on anything the page reports: uncaught exceptions, console errors
 // and warnings (Bootstrap's deprecation notices included) and same-origin
 // requests that fail or return an error status.
 //
@@ -20,11 +21,18 @@ for (const { issue, message, pages } of knownIssues) {
 const THEMES = ['light', 'dark']
 const CONFIGS = ['working', ...listConfigs().map(({ name }) => name)]
 
+// Each config compiled from source, then the working copy with dist: a
+// config's Sass options don't reach the prebuilt CSS, so one is enough.
+const VARIANTS = [
+  ...CONFIGS.map(config => ({ name: config, params: { config } })),
+  { name: 'dist', params: { config: 'working', css: 'dist', js: 'dist' } }
+]
+
 const urls = ['/', '/compare.html', ...collectPages('/').flatMap(({ pages }) => pages.map(({ url }) => url))]
 
 for (const theme of THEMES) {
-  for (const config of CONFIGS) {
-    test.describe(`${theme}-${config}`, () => {
+  for (const { name, params: variant } of VARIANTS) {
+    test.describe(`${theme}-${name}`, () => {
       test.use({ colorScheme: theme })
 
       for (const url of urls) {
@@ -54,7 +62,7 @@ for (const theme of THEMES) {
             }
           })
 
-          const params = new URLSearchParams({ theme, config })
+          const params = new URLSearchParams({ theme, ...variant })
           await page.goto(`${url}?${params}`)
           await page.waitForFunction(() => !document.getElementById('playground-config-pending'))
           // Catches errors thrown by late scripts and timers too.

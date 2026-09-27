@@ -1,5 +1,6 @@
-// Floating playground toolbar: color mode, direction, primary hue and styles
-// config switchers. It renders in a shadow root with its own styles, so it
+// Floating playground toolbar: color mode, direction, primary hue, styles
+// config and Bootstrap source (compiled from source, or the prebuilt dist)
+// switchers. It renders in a shadow root with its own styles, so it
 // neither inherits from nor leaks into the Bootstrap page under test.
 // Preferences are applied by public/playground-prefs.js, which runs in <head>
 // before first paint.
@@ -148,6 +149,7 @@ export function mountToolbar({ source, configs, swappable }) {
       <select data-pref="primary" aria-label="Primary color" title="Remaps the --bs-primary-* tokens at runtime">
         ${HUES.map(hue => `<option value="${hue}">Primary: ${hue}</option>`).join('')}
       </select>
+      <span title="Source compiles Bootstrap from scss/ and js/src/. Dist loads the prebuilt dist/css/bootstrap.css and js/dist/ the package ships.">${segmented('source', 'Bootstrap source', [['src', 'Source'], ['dist', 'Dist']])}</span>
       <select data-pref="config" aria-label="Styles config" ${swappable ? 'title="Swap src/styles/ for a saved config from configs/"' : 'disabled title="This page compiles its own styles"'}>
         ${configOptions.map(([value, label, description]) => `<option value="${escapeHtml(value)}" title="${escapeHtml(description)}">${escapeHtml(label)}</option>`).join('')}
       </select>
@@ -160,9 +162,22 @@ export function mountToolbar({ source, configs, swappable }) {
   const bar = shadow.querySelector('.bar')
   const toggle = shadow.querySelector('.toggle')
 
+  // The Source switch sets `css` and `js` together. Mixed URL overrides
+  // (?css=dist alone) leave both buttons unpressed.
+  const valueOf = (current, pref) => (pref === 'source' ? (current.css === current.js ? current.css : null) : current[pref])
+
+  // Loaded JavaScript can't be swapped: reload when its source changes.
+  const saveAndReload = (before, next) => {
+    if (next.js !== before.js) {
+      location.reload()
+    }
+
+    return next
+  }
+
   render = current => {
     for (const button of shadow.querySelectorAll('button[data-pref]')) {
-      button.setAttribute('aria-pressed', String(current[button.dataset.pref] === button.value))
+      button.setAttribute('aria-pressed', String(valueOf(current, button.dataset.pref) === button.value))
     }
 
     for (const select of shadow.querySelectorAll('select[data-pref]')) {
@@ -189,10 +204,12 @@ export function mountToolbar({ source, configs, swappable }) {
       return
     }
 
-    if (button.dataset.pref) {
+    if (button.dataset.pref === 'source') {
+      render(saveAndReload(prefs.effective(), prefs.save({ css: button.value, js: button.value })))
+    } else if (button.dataset.pref) {
       render(prefs.save({ [button.dataset.pref]: button.value }))
     } else if (button.classList.contains('reset')) {
-      render(prefs.reset())
+      render(saveAndReload(prefs.effective(), prefs.reset()))
     } else if (button.classList.contains('search')) {
       palette.open()
     } else if (button === toggle) {

@@ -93,7 +93,7 @@
       const token = (element, name) => getComputedStyle(element).getPropertyValue(name).trim()
 
       const CHECKS = {
-        'root-unlayered': () => token(html, '--bs-gradient').includes('rgb(4, 5, 6)'),
+        'root-unlayered': () => token(html, '--bs-gradient') === 'none',
         'root-in-custom': () => token(html, '--bs-heading-margin-bottom') !== '7.7rem',
         'component-token': () => style('component-token').paddingInlineStart === '37px',
         'component-rule': () => style('component-rule').backgroundColor === 'rgb(1, 2, 3)',
@@ -120,10 +120,16 @@
         html.dataset.layerCases = 'done'
       }
 
-      // A non-default config swaps its styles in after load.
+      // A non-default config swaps its styles in after load. In a build, this
+      // script runs after src/js/main.js, which may be after `load`: check
+      // the ready state rather than only waiting for the event.
       const ready = () => !document.getElementById('playground-config-pending')
       const wait = () => (ready() ? requestAnimationFrame(run) : setTimeout(wait, 50))
-      window.addEventListener('load', wait)
+      if (document.readyState === 'complete') {
+        wait()
+      } else {
+        window.addEventListener('load', wait, { once: true })
+      }
     </script>
   </body>
 </html>

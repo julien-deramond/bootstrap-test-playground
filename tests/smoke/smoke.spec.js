@@ -4,7 +4,8 @@
 // stuck (focus, scroll lock, an open dialog).
 //
 // Every scenario runs against the working copy and every config: a config
-// must never break behavior. Pages load with `?chrome=0&freeze`, so
+// must never break behavior. A `dist` variant runs the working copy with
+// Bootstrap's prebuilt files (`?css=dist&js=dist`), what users install. Pages load with `?chrome=0&freeze`, so
 // transitions are off and `shown`/`hidden` fire right away.
 //
 // Known upstream bugs are listed in known-issues.js: their scenario is marked
@@ -15,7 +16,10 @@ import { expect, test } from '@playwright/test'
 import { listConfigs } from '../../scripts/lib/configs.mjs'
 import known from './known-issues.js'
 
-const CONFIGS = ['working', ...listConfigs().map(({ name }) => name)]
+const VARIANTS = [
+  ...['working', ...listConfigs().map(({ name }) => name)].map(config => ({ name: config, params: `config=${config}` })),
+  { name: 'dist', params: 'config=working&css=dist&js=dist' }
+]
 
 // Records every Bootstrap event (`show.bs.menu`…) as it's dispatched.
 function recordEvents() {
@@ -30,9 +34,9 @@ function recordEvents() {
   }
 }
 
-async function load(page, url, config) {
+async function load(page, url, params) {
   await page.addInitScript(recordEvents)
-  await page.goto(`${url}?config=${config}&chrome=0&freeze`)
+  await page.goto(`${url}?${params}&chrome=0&freeze`)
   await page.waitForFunction(() => !document.getElementById('playground-config-pending'))
   await page.waitForFunction(() => window.bootstrap)
 }
@@ -391,15 +395,15 @@ const SCENARIOS = {
   }
 }
 
-for (const config of CONFIGS) {
-  test.describe(config, () => {
+for (const { name: variant, params } of VARIANTS) {
+  test.describe(variant, () => {
     for (const [name, scenario] of Object.entries(SCENARIOS)) {
       test(name, async ({ page, browserName }) => {
         const issue = known.find(entry => entry.scenario === name &&
-          (!entry.configs || entry.configs.includes(config)) &&
+          (!entry.configs || entry.configs.includes(variant)) &&
           (!entry.engines || entry.engines.includes(browserName)))
         test.fail(Boolean(issue), issue && `known upstream bug #${issue.issue}`)
-        page.config = config
+        page.config = params
         await scenario(page)
       })
     }

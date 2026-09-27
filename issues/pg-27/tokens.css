@@ -4,5 +4,6 @@
  * own `:root` tokens.
  */
 :root {
-  --gradient: linear-gradient(rgb(4, 5, 6), rgb(4, 5, 6));
+  /* `none`: a sentinel the production build's minifier leaves as is. */
+  --gradient: none;
 }
