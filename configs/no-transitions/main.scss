@@ -1,0 +1,11 @@
+// `$enable-transitions: false`: every transition Bootstrap emits through its
+// `transition()` and `transition-props()` mixins disappears, and so do the
+// progress bar stripes and the carousel's progress indicator. Other
+// animations (spinners, placeholders) stay.
+// `npm run audit-motion` checks that no transition survives, and its
+// `--render` run opens every component with this config and fails on a
+// transition.
+
+@use "bootstrap/scss/bootstrap" with (
+  $enable-transitions: false
+);

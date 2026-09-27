@@ -23,11 +23,12 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run check-dist` | Checks that the default config compiles to Bootstrap's `dist/css/bootstrap.css` (see [Checking the dist](#checking-the-dist)) |
 | `npm run compile-matrix` | Compiles Bootstrap under combinations of its `$enable-*` options and reports failures and options that do nothing (see [Option combinations](#option-combinations)) |
 | `npm run audit-rtl [-- --all \| --render]` | Lists declarations that use the physical left or right, and with `--render` the kitchen sink examples whose RTL rendering isn't the mirror image of the LTR one (see [Auditing RTL](#auditing-rtl)) |
+| `npm run audit-motion [-- --all \| --render]` | Lists transitions and animations that ignore `prefers-reduced-motion` or survive `$enable-transitions: false`, and with `--render` what still moves in the browser (see [Auditing motion](#auditing-motion)) |
 | `npm run audit-tokens [-- --all \| --render]` | Lists `--bs-*` tokens that are read but never defined, or defined but never read, and with `--render` the ones overriding doesn't change (see [Auditing tokens](#auditing-tokens)) |
 | `npm run new-issue 42928 [-- --config <name>]` | Creates `issues/42928/` from the reproduction template and a config |
 | `npm run save-config <name> [-- "Description"]` | Saves the working copy (`src/styles/`) as `configs/<name>/` |
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
-| `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs`, `check-dist`, `audit-tokens`, `compile-matrix` and `audit-rtl` against it |
+| `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs`, `check-dist`, `audit-tokens`, `compile-matrix`, `audit-rtl` and `audit-motion` against it |
 | `npm run sync-kitchen-sink -- ../twbs/bootstrap` | Regenerates `kitchen-sink/` from a Bootstrap checkout's docs |
 
 ## Where Bootstrap comes from
@@ -142,6 +143,21 @@ The static list can't tell a bug from a deliberate choice. `npm run audit-rtl --
 
 It takes under a minute and writes `reports/rtl/render.md`, with one image per example: the LTR screenshot, the mirrored RTL one and their difference in magenta. `--page=range` limits it to matching pages, and `--min-pixels=<n>` sets how many pixels must differ for an example to be listed (10 by default).
 
+### Auditing motion
+
+`$enable-reduced-motion` and `$enable-transitions` promise that motion can be removed, for the reader or for everyone. `npm run audit-motion` checks every transition, animation and smooth scroll of `configs/default`, each with its Sass file and line. Each one is:
+
+- **guarded**: only declared under `@media (prefers-reduced-motion: no-preference)`;
+- **stopped**: a `prefers-reduced-motion: reduce` rule sets it to `none`;
+- **slowed**: a `reduce` rule only changes a custom property it reads, like a spinner's speed;
+- **uncovered**: it moves whatever the reader's setting.
+
+Then it compiles the two motion configs. [`configs/no-transitions`](configs/no-transitions/) (`$enable-transitions: false`) must have no transition left, and [`configs/no-reduced-motion`](configs/no-reduced-motion/) (`$enable-reduced-motion: false`) no `prefers-reduced-motion` query. Known findings are listed in [`scripts/known-motion.mjs`](scripts/known-motion.mjs), with their tracking issue or the reason. The audit fails on a new finding and on an entry that no longer matches.
+
+`npm run audit-motion -- --render` watches the browser instead, so it also sees motion started by Bootstrap's JavaScript. It opens every kitchen sink page twice: with `prefers-reduced-motion: reduce` emulated, where nothing may move, and with `configs/no-transitions`, where nothing may transition. On each page it records what runs once loaded, then clicks every toggle and focuses every field, and records what `document.getAnimations()` returns after each step. It takes about a minute and a half and writes `reports/motion/render.md`. The `runtime` patterns in `known-motion.mjs` match what it sees.
+
+`npm run update-bootstrap` and the *Configs* workflow run the static audit. The *Console crawl* workflow runs `--render`.
+
 ## Customizing
 
 The styles for the shared pages come from three files in `src/styles/`, the **working copy**. Out of the box they're empty or commented out, so the output is Bootstrap's defaults.
@@ -171,7 +187,7 @@ Then:
 - **Start a reproduction from it**: `npm run new-issue 42928 -- --config rounded-dark`
 - **Make it the working copy**: `npm run use-config rounded-dark`. This refuses to run if `src/styles/` has uncommitted changes, unless you pass `-- --force`.
 
-`configs/default/` holds Bootstrap's defaults. Keep it pristine; `npm run use-config default` resets the working copy. `configs/shadcn/` recreates shadcn/ui's default theme (see [Real screens](#real-screens)).
+`configs/default/` holds Bootstrap's defaults. Keep it pristine; `npm run use-config default` resets the working copy. `configs/shadcn/` recreates shadcn/ui's default theme (see [Real screens](#real-screens)). `configs/no-transitions/` and `configs/no-reduced-motion/` turn off `$enable-transitions` and `$enable-reduced-motion` (see [Auditing motion](#auditing-motion)).
 
 ### Checking configs
 

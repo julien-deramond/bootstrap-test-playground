@@ -1,6 +1,7 @@
 // Findings of scripts/audit-tokens.mjs that are known: tracked as an upstream
 // bug (`issue`, a tracking issue in this repository) or intended (`reason`).
-// Each entry matches one kind and either a list of tokens or a pattern.
+// Each entry matches one kind and either a list of tokens or a pattern, in
+// every config or only in the ones `configs` names.
 // Tokens are named like in the Sass source, without the `bs-` prefix.
 //
 // When an upstream fix lands, remove its tokens here: the audit fails on an
@@ -50,6 +51,12 @@ export default [
   { kind: 'unused', reason: 'generated from the color maps and the theme API, for users', tokens: ['--bg-inherit', '--fg-inherit', '--theme-base'] },
   { kind: 'unused', reason: 'the shadcn config sets --btn-font-weight directly', tokens: ['--btn-input-font-weight'] },
   { kind: 'unused', issue: 4, tokens: ['--check-border-radius'] },
+  {
+    kind: 'unused',
+    configs: ['no-transitions'],
+    reason: '$enable-transitions: false removes the transitions, the progress bar stripes and the carousel progress indicator, not their tokens',
+    pattern: /transition|^--carousel-(fade|indicator-(opacity|width))-(duration|timing)$|^--carousel-indicator-progress-bg$|^--progress-bar-animation$/
+  },
   {
     kind: 'unused',
     issue: 125,
