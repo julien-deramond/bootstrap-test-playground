@@ -10,6 +10,7 @@ A Vite multi-page playground for Bootstrap v6 (`twbs/bootstrap`, branch `v6-dev`
 - `configs/default/` holds Bootstrap's defaults and stays pristine. Save experiments with `npm run save-config <name>`.
 - New pages get a `<meta name="description">` and `<meta name="playground-tags">` (reuse existing tags) so search on the home page and the <kbd>Ctrl</kbd>+<kbd>K</kbd> switcher can find them. See "Finding pages" in the README.
 - To see what a change does to the rendering, record baselines with `npm run test:visual -- -u` before it and run `npm run test:visual` after it. See "Visual regression tests" in the README.
+- `npm run test:console` must stay green. When an open upstream bug makes a page log errors, allowlist it in `tests/console/known-issues.js` with its tracking issue number. See "Console crawl" in the README.
 - Mark a page's own playground UI (headers, navigation, notes around the markup under test) with `data-playground-chrome`, so `?chrome=0` hides it for screenshots.
 - Reproductions go in `issues/<name>/` (`npm run new-issue <name> -- --config <config>`). Name them after the upstream issue number when one exists, or `pg-<number>` after the issue in this repository.
 
@@ -74,7 +75,7 @@ Also put the upstream link in the reproduction page, if there is one.
 
 When the upstream fix lands on `v6-dev`, meaning the PR is merged or the issue is closed as completed:
 
-1. Check the fix in the playground when practical (`npm run update-bootstrap`, then the reproduction page).
+1. Check the fix in the playground when practical (`npm run update-bootstrap`, then the reproduction page), and remove the issue's entries from `tests/console/known-issues.js`.
 2. Update and close:
    ```sh
    gh issue edit <n> --remove-label upstream-reported --add-label upstream-fixed

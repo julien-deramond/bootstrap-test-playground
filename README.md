@@ -18,6 +18,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run dev` | Starts the dev server with hot reload |
 | `npm run build` / `npm run preview` | Builds every page to `dist/` and serves the build |
 | `npm run test:visual [-- -u]` | Screenshots every page and compares with the baselines (see [Visual regression tests](#visual-regression-tests)) |
+| `npm run test:console` | Opens every page and fails on errors, warnings and failed requests (see [Console crawl](#console-crawl)) |
 | `npm run new-issue 42928 [-- --config <name>]` | Creates `issues/42928/` from the reproduction template and a config |
 | `npm run save-config <name> [-- "Description"]` | Saves the working copy (`src/styles/`) as `configs/<name>/` |
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
@@ -219,6 +220,29 @@ Baselines live in `tests/visual/screenshots/<platform>/`. Fonts and anti-aliasin
 [`.github/workflows/visual.yml`](.github/workflows/visual.yml) runs the suite on every pull request and every push to `main`, against the committed Linux baselines. When it fails, the *visual-report* artifact of the run holds the report: download it and open `index.html`.
 
 When a pull request changes the rendering on purpose, such as a Bootstrap update, add the `update-baselines` label to it. CI then records new Linux baselines, commits them to the pull request's branch as `test: update the Linux visual baselines`, and removes the label. Review that commit's images before merging. This works for branches of this repository, not for forks. A push made by CI doesn't start other workflows, so the comparison runs again on the next push, or on `main` after the merge.
+
+## Console crawl
+
+[`tests/console/`](tests/console/console.spec.js) opens every page, including the home and compare pages, in light and dark with the working copy and every saved config. It fails on anything a page reports:
+
+- uncaught exceptions
+- `console.error` and `console.warn`, which includes Bootstrap's deprecation notices
+- requests to the playground itself that fail or return an error status, like a missing asset
+
+Remote resources, such as avatars and web fonts, are blocked, so an unreachable host never fails the run. Like the visual suite, the crawl runs against a production build on port 4179, with your `.env.local`:
+
+```sh
+npm run test:console
+npm run test:console -- -g combobox   # only the pages whose URL matches
+```
+
+Each failure names the page, with its `?theme=` and `?config=`, and lists the messages.
+
+Problems caused by an open upstream bug go in [`tests/console/known-issues.js`](tests/console/known-issues.js), with the tracking issue number, a pattern for the message and the pages where it happens. They no longer fail the run on those pages. When a listed problem stops happening on a page, the run fails, so the entry gets removed and the tracking issue moves to `upstream-fixed` (see [Upstream issues](#upstream-issues)).
+
+Sass `@warn` output shows up in the build log, not in the browser, so the crawl doesn't see it.
+
+[`.github/workflows/console.yml`](.github/workflows/console.yml) runs the crawl on every pull request and every push to `main`.
 
 ## Deployment
 

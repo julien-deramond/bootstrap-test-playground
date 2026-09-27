@@ -12,6 +12,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:visual": "playwright test --project visual",
+    "test:console": "playwright test --project console",
     "new-issue": "node scripts/new-issue.mjs",
     "save-config": "node scripts/save-config.mjs",
     "use-config": "node scripts/use-config.mjs",

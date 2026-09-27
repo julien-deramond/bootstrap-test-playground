@@ -1,0 +1,66 @@
+// Opens every page of the playground, in light and dark and with every config,
+// and fails on anything the page reports: uncaught exceptions, console errors
+// and warnings (Bootstrap's deprecation notices included) and same-origin
+// requests that fail or return an error status.
+//
+// Problems caused by an open upstream bug are listed in known-issues.js.
+import { expect, test } from '@playwright/test'
+import { listConfigs } from '../../scripts/lib/configs.mjs'
+import { collectPages } from '../../scripts/lib/pages.mjs'
+import knownIssues from './known-issues.js'
+
+const THEMES = ['light', 'dark']
+const CONFIGS = ['working', ...listConfigs().map(({ name }) => name)]
+
+const urls = ['/', '/compare.html', ...collectPages('/').flatMap(({ pages }) => pages.map(({ url }) => url))]
+
+for (const theme of THEMES) {
+  for (const config of CONFIGS) {
+    test.describe(`${theme}-${config}`, () => {
+      test.use({ colorScheme: theme })
+
+      for (const url of urls) {
+        test(url, async ({ page, baseURL }) => {
+          const { origin } = new URL(baseURL)
+          const problems = []
+
+          // Remote resources (avatars, web fonts) aren't the playground's to
+          // fix, and an unreachable one must not fail the run.
+          await page.route(target => target.origin !== origin, route => route.abort())
+
+          page.on('pageerror', error => problems.push(`uncaught ${error.name}: ${error.message}`))
+          page.on('console', message => {
+            // Failed resources are reported below, with their URL.
+            if (['error', 'warning'].includes(message.type()) && !message.text().startsWith('Failed to load resource')) {
+              problems.push(`console.${message.type() === 'warning' ? 'warn' : 'error'}: ${message.text()}`)
+            }
+          })
+          page.on('requestfailed', request => {
+            if (new URL(request.url()).origin === origin) {
+              problems.push(`request failed: ${request.url()} (${request.failure()?.errorText})`)
+            }
+          })
+          page.on('response', response => {
+            if (response.status() >= 400 && new URL(response.url()).origin === origin) {
+              problems.push(`HTTP ${response.status()}: ${response.url()}`)
+            }
+          })
+
+          const params = new URLSearchParams({ theme, config })
+          await page.goto(`${url}?${params}`)
+          await page.waitForFunction(() => !document.getElementById('playground-config-pending'))
+          // Catches errors thrown by late scripts and timers too.
+          await page.waitForLoadState('networkidle')
+
+          const known = knownIssues.filter(entry => entry.pages.includes(url))
+          const unexpected = problems.filter(problem => !known.some(({ message }) => message.test(problem)))
+          const gone = known.filter(({ message }) => !problems.some(problem => message.test(problem)))
+
+          expect(unexpected, `${url}?${params} reported problems`).toEqual([])
+          expect(gone.map(({ issue, message }) => `#${issue} ${message}`),
+            'Known issues that no longer happen here: remove them from tests/console/known-issues.js and check the tracking issues').toEqual([])
+        })
+      }
+    })
+  }
+}
