@@ -527,7 +527,15 @@ Baselines live in `tests/visual/screenshots/<platform>/`. Fonts and anti-aliasin
 
 [`.github/workflows/visual.yml`](.github/workflows/visual.yml) runs the suite on every pull request and every push to `main`, against the committed Linux baselines. When it fails, the *visual-report* artifact of the run holds the report: download it and open `index.html`.
 
-When a pull request changes the rendering on purpose, such as a Bootstrap update, add the `update-baselines` label to it. CI then records new Linux baselines, commits them to the pull request's branch as `test: update the Linux visual baselines`, and removes the label. Review that commit's images before merging. This works for branches of this repository, not for forks. While the label is on, the comparison is skipped: it could only fail on the changes being recorded, so a pull request opened with the label, like one that adds a page, gets no failure for nothing. A push made by CI doesn't start other workflows, so the comparison runs again on the next push, or on `main` after the merge.
+When a pull request changes the rendering on purpose, such as a Bootstrap update, add the `update-baselines` label to it. CI then records new Linux baselines, commits them to the pull request's branch as `test: update the Linux visual baselines`, removes the label, and every check runs again on that commit. Review that commit's images before merging. When nothing changed, the commit is empty (`test: the Linux visual baselines are up to date`), so the checks still get a commit of their own. This works for branches of this repository, not for forks.
+
+Recording takes several minutes, and the pull request must not be merged in the meantime. While the label is on, the `compare` check fails at once with *Baselines are being recorded*, including when the label is added to a pull request that was already green. It turns green when the comparison runs on CI's commit. GitHub holds the workflows of a commit pushed by `github-actions[bot]` for approval (*action required*), since the repository requires it for first-time contributors, so the job approves them itself. If it can't, it fails and comments: approve them on the pull request. Removing the label by hand runs the comparison on the current commit.
+
+CI only pushes to the branch of an open pull request, and only while it still points to the commit the baselines were recorded from. Otherwise it pushes nothing, fails and comments on the pull request:
+
+- merged: `main` is missing the new baselines, and the run's *visual-baselines* artifact holds them for a new pull request;
+- closed: reopen it and add the label again;
+- the branch moved: add the label again to record from the new commit.
 
 ## Console crawl
 
