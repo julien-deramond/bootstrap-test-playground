@@ -1,0 +1,45 @@
+// The public Sass API: every documented mixin and function, used from
+// `_custom.scss` the way the docs show, and three utilities built here with
+// the map functions (customize/sass, "Map helpers"). A rename or removal
+// upstream fails `npm run check-configs`, and `_custom.scss` checks what the
+// functions return. pages/sass-api.html always uses this config.
+//
+// Adding utilities that read Bootstrap's maps means loading the config first,
+// as configs/utilities-custom/ does: write the new map back to `$utilities`,
+// then load Bootstrap, which reuses the same modules.
+
+@use "sass:map";
+@use "bootstrap/scss/config" as *;
+@use "bootstrap/scss/functions" as *;
+@use "bootstrap/scss/theme" as *;
+@use "bootstrap/scss/utilities";
+
+$utilities: map.merge(
+  $utilities,
+  (
+    // `map-merge-multiple()` and `negativify-map()`, as in the docs:
+    // .pull-2, .pull-n2, .pull-auto
+    "pull": (
+      property: margin-block-start,
+      class: pull,
+      values: map-merge-multiple($spacers, negativify-map($spacers), (auto: auto))
+    ),
+    // `map-get-nested()`: one property of each type scale step, .type-lg
+    "type": (
+      property: font-size,
+      class: type,
+      values: map-get-nested($font-sizes, "font-size")
+    ),
+    // `map-get-multiple()` and `theme-opacity-values()`: the theme's
+    // background at 10%, 30% and 50%, .tint-30, over `--bg-3` without a theme
+    "tint": (
+      property: background-color,
+      class: tint,
+      values: map-get-multiple(theme-opacity-values(--theme-bg, var(--bg-3)), (10, 30, 50))
+    ),
+  )
+);
+
+@use "bootstrap/scss/bootstrap";
+
+@use "custom";
