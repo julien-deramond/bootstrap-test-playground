@@ -20,7 +20,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run test:visual [-- -u]` | Screenshots every page and compares with the baselines (see [Visual regression tests](#visual-regression-tests)) |
 | `npm run test:console` | Opens every page and fails on errors, warnings and failed requests (see [Console crawl](#console-crawl)) |
 | `npm run test:smoke` | Opens, drives and closes every JavaScript component and checks its state and events (see [Interaction smoke tests](#interaction-smoke-tests)) |
-| `npm run console-scope [-- <base>]` | Prints what the console crawl has to open for the changes since `<base>` (see [Console crawl](#console-crawl)) |
+| `npm run test-scope [-- <base>]` | Prints what the console crawl and the smoke tests have to run for the changes since `<base>` (see [Console crawl](#console-crawl)) |
 | `npm run test:smoke:engines` / `test:console:engines` | The same suites in Chromium, Firefox and WebKit (see [Browser engines](#browser-engines)) |
 | `npm run lint:html [-- --all]` | Validates the HTML of every page with html-validate (see [Validating HTML](#validating-html)) |
 | `npm run check-configs [-- --strict]` | Compiles the working copy, every config and every reproduction, and lists Sass errors and warnings (see [Checking configs](#checking-configs)) |
@@ -481,14 +481,14 @@ Problems caused by an open upstream bug go in [`tests/console/known-issues.js`](
 
 Sass `@warn` output shows up in the build log, not in the browser, so the crawl doesn't see it. [`npm run check-configs`](#checking-configs) reports it.
 
-The full crawl loads about 5,000 pages, and every new config or page adds a round of them. Most changes only need part of it: a changed config on every page, and a changed page with every config. `npm run console-scope` lists what changed since `origin/main` (or `-- <base>`), committed or not, and prints a `CONSOLE_SCOPE` value that limits the crawl to it:
+The full crawl loads about 5,000 pages, and every new config or page adds a round of them. Most changes only need part of it: a changed config on every page, and a changed page with every config. `npm run test-scope` lists what changed since `origin/main` (or `-- <base>`), committed or not, and prints a `CONSOLE_SCOPE` value that limits the crawl to it, and a `SMOKE_SCOPE` value for the [smoke tests](#interaction-smoke-tests):
 
 ```sh
-npm run console-scope
+npm run test-scope
 CONSOLE_SCOPE='{"full":false,"configs":["pill"],"urls":["/pages/checkout.html"]}' npm run test:console
 ```
 
-The working copy and dist always open on every page. A shared change opens everything: Bootstrap, `postcss.config.js`, `vite.config.js`, `src/js/`, `public/`, `scripts/lib/`, `tests/console/` (so a `known-issues.js` edit is checked everywhere), and any file it doesn't recognize. Docs, the other suites and scripts outside `scripts/lib/` add nothing. The rules are in [`scripts/lib/console-scope.mjs`](scripts/lib/console-scope.mjs).
+The working copy and dist always open on every page. A shared change opens everything: Bootstrap, `postcss.config.js`, `vite.config.js`, `src/js/`, `public/`, `scripts/lib/`, the suite's own `tests/console/` (so a `known-issues.js` edit is checked everywhere) and workflow, and any file it doesn't recognize. Docs, the other suites and scripts outside `scripts/lib/` add nothing. The rules are in [`scripts/lib/test-scope.mjs`](scripts/lib/test-scope.mjs).
 
 [`.github/workflows/console.yml`](.github/workflows/console.yml) runs the scoped crawl on every pull request, and writes the scope to the job summary. The full crawl runs every night and on demand from the *Actions* tab, and the canary runs it on every Bootstrap update.
 
@@ -508,7 +508,13 @@ npm run test:smoke
 npm run test:smoke -- -g "shadcn menu"   # one config and component
 ```
 
-A scenario that fails because of an open upstream bug goes in [`tests/smoke/known-issues.js`](tests/smoke/known-issues.js) with its tracking issue. It's marked `test.fail()`, so the run fails as soon as it passes again, and the entry gets removed. NavOverflow has no kitchen sink example yet, so it has no scenario. [`.github/workflows/smoke.yml`](.github/workflows/smoke.yml) runs the suite in all three engines on every pull request and every push to `main`.
+A scenario that fails because of an open upstream bug goes in [`tests/smoke/known-issues.js`](tests/smoke/known-issues.js) with its tracking issue. It's marked `test.fail()`, so the run fails as soon as it passes again, and the entry gets removed. NavOverflow has no kitchen sink example yet, so it has no scenario.
+
+The full suite runs 19 scenarios with 39 variants, and every new config adds 19 tests per engine. [`.github/workflows/smoke.yml`](.github/workflows/smoke.yml) runs one job per engine. On pull requests, Chromium runs what [`npm run test-scope`](#console-crawl) finds, with the same rules as the console crawl: the working copy and dist on every scenario, the changed configs on every scenario, and a scenario with every config when its kitchen sink page changes (`PAGES` in the spec). A change to `tests/smoke/` runs everything. Firefox and WebKit run the working copy and dist only, since engine differences seldom depend on the config. Every variant runs in all three engines every night, on demand from the *Actions* tab, and in the canary on every Bootstrap update. Locally, limit a run the same way:
+
+```sh
+SMOKE_SCOPE='{"full":false,"configs":["pill"],"urls":[]}' npm run test:smoke
+```
 
 ## Browser engines
 
@@ -526,7 +532,7 @@ Failures are reported per project, so an engine-only failure stands out. It's us
 
 Visual baselines are per engine, since fonts and native controls render differently: Chromium's in `tests/visual/screenshots/<platform>/`, the others' in `tests/visual/screenshots/<platform>/visual-firefox/` and `visual-webkit/`. The `update-baselines` label records all three.
 
-In CI, pull requests run the smoke tests in all three engines ([`smoke.yml`](.github/workflows/smoke.yml)), and the visual suite ([`visual.yml`](.github/workflows/visual.yml)) and the console crawl, scoped to what they change ([`console.yml`](.github/workflows/console.yml)), in Chromium. `console.yml` also crawls everything in Chromium every night. [`engines.yml`](.github/workflows/engines.yml) runs the console crawl and the visual suite in Firefox and WebKit every night, and on demand from the *Actions* tab.
+In CI, pull requests run the smoke tests in all three engines, scoped to what they change in Chromium and on the working copy and dist in Firefox and WebKit ([`smoke.yml`](.github/workflows/smoke.yml)). They run the visual suite ([`visual.yml`](.github/workflows/visual.yml)) and the console crawl, scoped to what they change ([`console.yml`](.github/workflows/console.yml)), in Chromium. `smoke.yml` also runs every variant in all three engines every night, and `console.yml` crawls everything in Chromium. [`engines.yml`](.github/workflows/engines.yml) runs the console crawl and the visual suite in Firefox and WebKit every night, and on demand from the *Actions* tab.
 
 A baseline records whatever an engine renders, bugs included, so it's worth comparing engines before trusting one. Comparing every kitchen sink example across the three, with text hidden, found one engine-only difference that isn't font metrics or native controls: WebKit leaves a `<legend>` in a `fieldset.row` above the row ([#169](https://github.com/julien-deramond/bootstrap-test-playground/issues/169)).
 

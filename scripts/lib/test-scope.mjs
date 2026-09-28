@@ -1,23 +1,25 @@
-// What the console crawl has to open for a set of changed files. A pull
-// request that changes a config needs every page with that config, and one
-// that changes a page needs that page with every config. Anything shared, or
-// not recognized, needs everything. Used by scripts/console-scope.mjs.
+// What the console crawl and the smoke tests have to run for a set of changed
+// files. A pull request that changes a config needs every page with that
+// config, and one that changes a page needs that page with every config.
+// Anything shared, or not recognized, needs everything. Used by
+// scripts/test-scope.mjs.
 import fs from 'node:fs'
 import path from 'node:path'
 import { configsDir, root } from './configs.mjs'
 import { findHtmlFiles, PAGE_GROUPS } from './pages.mjs'
 
-// Files the crawl can't see: docs, the other suites and workflows, and the
-// scripts and allowlists that the build doesn't import (scripts/lib/ is).
-const NO_EFFECT = [
+// Files a suite (`console` or `smoke`) can't see: docs, the other suites and
+// workflows, and the scripts and allowlists that the build doesn't import
+// (scripts/lib/ is). A suite's own tests/<suite>/ and workflow are shared.
+const noEffect = suite => [
   /\.md$/,
   /^LICENSE$/,
-  /^\.(claude|github)\/(?!workflows\/console\.yml$)/,
+  new RegExp(`^\\.(claude|github)/(?!workflows/${suite}\\.yml$)`),
   /^\.(editorconfig|env\.example|gitignore)$/,
   /^reports\//,
   /^scripts\/[^/]+\.mjs$/,
   /^scripts\/templates\//,
-  /^tests\/(smoke|visual)\//,
+  new RegExp(`^tests/(?!${suite}/)`),
   // The working copy: every page opens with it anyway.
   /^src\/styles\//
 ]
@@ -45,12 +47,13 @@ function pagesUsing(file) {
 // prints them. Resolves to `{ full: true, reason }` or `{ full: false,
 // configs, urls }`: the configs to open on every page, and the pages to open
 // with every config.
-export function consoleScope(files) {
+export function testScope(files, suite) {
   const configs = new Set()
   const urls = new Set()
+  const ignored = noEffect(suite)
 
   for (const file of files) {
-    if (NO_EFFECT.some(pattern => pattern.test(file))) {
+    if (ignored.some(pattern => pattern.test(file))) {
       continue
     }
 

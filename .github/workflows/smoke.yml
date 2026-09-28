@@ -4,10 +4,19 @@ name: Smoke tests
 # sink page, with the working copy and every config, in Chromium, Firefox and
 # WebKit, and fails on a missing event or a stuck state. Known upstream bugs
 # are listed in tests/smoke/known-issues.js.
+#
+# One job per engine. Pull requests run what they change (`npm run
+# test-scope`) in Chromium: the working copy and dist on every scenario, the
+# changed configs on every scenario and the scenarios whose page changed with
+# every config, or everything after a shared change. Firefox and WebKit run
+# the working copy and dist only: engine differences seldom depend on the
+# config. Every variant runs in every engine each night and on demand, and in
+# the canary on every Bootstrap update.
 on:
   pull_request:
-  push:
-    branches: [main]
+  schedule:
+    - cron: '17 2 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -19,8 +28,21 @@ concurrency:
 jobs:
   smoke:
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - engine: chromium
+            project: smoke
+          - engine: firefox
+            project: smoke-firefox
+          - engine: webkit
+            project: smoke-webkit
     steps:
+      # Two commits: a pull request's merge commit and its base, HEAD^1.
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
 
       - uses: actions/setup-node@v7
         with:
@@ -29,14 +51,20 @@ jobs:
 
       - run: npm ci
 
-      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npx playwright install --with-deps ${{ matrix.engine }}
 
-      - run: npm run test:smoke:engines
+      - run: npm run test-scope -- HEAD^1
+        if: ${{ github.event_name == 'pull_request' }}
 
-      # One project per engine in the report, so an engine-only failure stands out.
+      # Firefox and WebKit: the working copy and dist only.
+      - run: echo 'SMOKE_SCOPE={"full":false,"configs":[],"urls":[]}' >> "$GITHUB_ENV"
+        if: ${{ github.event_name == 'pull_request' && matrix.engine != 'chromium' }}
+
+      - run: npx playwright test --project ${{ matrix.project }}
+
       - uses: actions/upload-artifact@v7
         if: ${{ failure() }}
         with:
-          name: smoke-report
+          name: smoke-report-${{ matrix.engine }}
           path: tests/report/
           retention-days: 14

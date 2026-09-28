@@ -6,7 +6,7 @@
 //
 // Problems caused by an open upstream bug are listed in known-issues.js.
 //
-// CONSOLE_SCOPE, which `npm run console-scope` prints and console.yml sets on
+// CONSOLE_SCOPE, which `npm run test-scope` prints and console.yml sets on
 // pull requests, limits the crawl to what changed: the working copy and dist
 // on every page, the changed configs on every page and the changed pages with
 // every config. Without it, the crawl opens everything.

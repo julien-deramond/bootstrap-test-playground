@@ -6,7 +6,7 @@ name: Console crawl
 # motion emulated, and with transitions compiled out, and fails on motion,
 # and checks the documented cascade layer overrides on issues/pg-27/.
 #
-# Pull requests crawl what they change (`npm run console-scope`): the working
+# Pull requests crawl what they change (`npm run test-scope`): the working
 # copy and dist on every page, the changed configs on every page and the
 # changed pages with every config, or everything after a shared change. The
 # full crawl runs every night and on demand; engines.yml does the same in
@@ -42,7 +42,7 @@ jobs:
 
       - run: npx playwright install --with-deps chromium
 
-      - run: npm run console-scope -- HEAD^1
+      - run: npm run test-scope -- HEAD^1
         if: ${{ github.event_name == 'pull_request' }}
 
       - run: npm run test:console
