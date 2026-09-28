@@ -27,6 +27,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run check-dist` | Checks that the default config compiles to Bootstrap's `dist/css/bootstrap.css` (see [Checking the dist](#checking-the-dist)) |
 | `npm run check-size [-- --record]` | Measures each config's CSS, the dist files and the JS bundle (minified, gzip, brotli) and compares them with `sizes/history.json` (see [Sizes](#sizes)) |
 | `npm run compile-matrix` | Compiles Bootstrap under combinations of its `$enable-*` options and reports failures and options that do nothing (see [Option combinations](#option-combinations)) |
+| `npm run matrix -- <page>[#<example>]` | Renders a page or a kitchen sink example under several configs, themes and directions, and writes the grid as one image with a pixel diff against the first column (see [Matrix](#matrix)) |
 | `npm run audit-rtl [-- --all \| --render]` | Lists declarations that use the physical left or right, and with `--render` the kitchen sink examples whose RTL rendering isn't the mirror image of the LTR one (see [Auditing RTL](#auditing-rtl)) |
 | `npm run audit-motion [-- --all \| --render]` | Lists transitions and animations that ignore `prefers-reduced-motion` or survive `$enable-transitions: false`, and with `--render` what still moves in the browser (see [Auditing motion](#auditing-motion)) |
 | `npm run audit-partials [-- --all]` | Compiles every Sass partial alone after `root`, the docs' Option B, maps what each needs from the others, and checks `with (…)` on the entry points (see [Auditing partial imports](#auditing-partial-imports)) |
@@ -355,6 +356,7 @@ pages/                   Starter screens (dashboard, checkout and sign-in forms,
 screens/                 Real app screens ported from shadcn/ui (dashboard, tasks, authentication, playground, cards, login and signup blocks)
 kitchen-sink/            One page per component or form doc, with all of its docs examples (generated)
 compare.html             Side-by-side comparison of any page
+matrix.html              One page or example under several configs, themes and directions
 issues/<name>/           Issue reproductions (index.html + the three config files)
 src/styles/              Working copy of the styles (see Customizing)
 configs/<name>/          Saved configs; configs/default/ is Bootstrap's defaults
@@ -483,6 +485,12 @@ Mark playground UI on a new page with `data-playground-chrome` so `?chrome=0` hi
 ### Compare
 
 [`/compare.html`](compare.html) shows any page twice, side by side, with separate theme, direction, primary, config and source (CSS and JS, `src` or `dist`) settings, and keeps the two panes' scroll positions in sync. Presets cover Light / Dark, LTR / RTL, Working / Default and Source / Dist, plus Commit A / B under [`diff-bootstrap --serve`](#comparing-two-commits). The whole setup lives in the URL, so a comparison can be shared as a link.
+
+### Matrix
+
+[`/matrix.html`](matrix.html) renders one page, or one kitchen sink example, in a grid: a column per config, a row per theme and direction. Pick the configs by category, the themes and directions, the cell width and the zoom. *Diff against first column* blends the first column over every cell of its row with `mix-blend-mode: difference`, so what a config doesn't change turns black. The toolbar's *Matrix* link opens it on the current page, and the whole setup lives in the URL: `/matrix.html?page=/kitchen-sink/components-button.html&section=sizes&configs=default,square,pill`.
+
+`npm run matrix -- components-button#sizes` writes the same grid as one image, `reports/page-matrix/components-button--sizes.png`, and prints how many pixels of each cell differ from the first column of its row. `--diff` shows the differences in magenta instead of the screenshots. `--configs=`, `--themes=`, `--dirs=` and `--width=` pick the grid; a page is a kitchen sink page's name or a path, like `/pages/dashboard.html`. It runs its own dev server, so `BOOTSTRAP_PATH` applies.
 
 ## Visual regression tests
 

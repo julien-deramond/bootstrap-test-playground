@@ -24,10 +24,12 @@ const noEffect = suite => [
   /^src\/styles\//
 ]
 
-// Pages outside PAGE_GROUPS, and the data they read.
+// Pages outside PAGE_GROUPS, and the data and scripts only they read.
 const ROOT_PAGES = {
   'index.html': '/',
   'compare.html': '/compare.html',
+  'matrix.html': '/matrix.html',
+  'src/js/matrix.js': '/matrix.html',
   'sizes.html': '/sizes.html',
   'sizes/history.json': '/sizes.html'
 }

@@ -4,7 +4,7 @@
 // id, an unknown element) can hide or fake a Bootstrap bug.
 // Usage: npm run lint:html [-- --all]
 //
-// Checks the source files: the home page, compare.html, sizes.html, every page of every
+// Checks the source files: the home page, compare.html, matrix.html, sizes.html, every page of every
 // group (pages/, screens/, kitchen-sink/, issues/) and the reproduction
 // template. The toolbar is added at runtime, so it isn't part of them.
 //
@@ -37,6 +37,7 @@ const validator = new HtmlValidate({
 const files = [
   path.join(root, 'index.html'),
   path.join(root, 'compare.html'),
+  path.join(root, 'matrix.html'),
   path.join(root, 'sizes.html'),
   ...collectPages('/').flatMap(({ dir }) => findHtmlFiles(path.join(root, dir))),
   path.join(root, 'scripts/templates/issue/index.html')

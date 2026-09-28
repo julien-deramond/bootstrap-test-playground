@@ -1,3 +1,9 @@
+// Stand-in for remote images (the docs examples use https://github.com/mdo.png
+// as an avatar), so a changed or unreachable image never shows up as a diff.
+export const PLACEHOLDER_IMAGE = `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256">
+  <rect width="256" height="256" fill="#6f42c1"/><circle cx="128" cy="100" r="48" fill="#e9d8fd"/>
+  <rect x="48" y="164" width="160" height="92" rx="46" fill="#e9d8fd"/></svg>`
+
 // Runs in the browser, through `page.evaluate(compareImages, [a, b, mirror])`,
 // with two image URLs. Compares `b` (mirrored first, with `mirror`) with `a`
 // pixel by pixel and draws the three side by side, differences in magenta.
