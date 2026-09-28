@@ -15,15 +15,11 @@ import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { root } from './lib/configs.mjs'
+import { lockedSha, upstreamCommits } from './lib/upstream.mjs'
 
 const arg = name => {
   const index = process.argv.indexOf(`--${name}`)
   return index === -1 ? undefined : process.argv[index + 1]
-}
-
-const lockedSha = () => {
-  const lock = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json'), 'utf8'))
-  return lock.packages?.['node_modules/bootstrap']?.resolved?.split('#')[1] ?? ''
 }
 
 const to = arg('to') ?? lockedSha()
@@ -84,11 +80,7 @@ for (const check of CHECKS) {
 }
 
 // Upstream commits, through the GitHub CLI when it's there.
-let commits = []
-if (from !== to) {
-  const compare = spawnSync('gh', ['api', `repos/twbs/bootstrap/compare/${from}...${to}`, '--jq', '.commits[] | "\\(.sha[0:7]) \\(.commit.message | split("\\n")[0])"'], { encoding: 'utf8' })
-  commits = compare.status === 0 ? compare.stdout.trim().split('\n').filter(Boolean) : []
-}
+const commits = from === to ? [] : upstreamCommits(from, to) ?? []
 
 const changedPages = spawnSync('git', ['status', '--porcelain', '--', 'kitchen-sink'], { cwd: root, encoding: 'utf8' }).stdout
   .split('\n').filter(Boolean).map(line => line.slice(3))
@@ -112,7 +104,7 @@ const report = [
     '',
     // `#123` in code, not linked: a link would add a cross-reference to the
     // upstream PR's timeline every night.
-    ...(commits.length ? commits.map(commit => `- ${commit.replace(/^(\w{7})/, `[\`$1\`](https://github.com/twbs/bootstrap/commit/$1)`).replace(/\(#(\d+)\)/g, '(`#$1`)')}`) : [`See ${range}.`]),
+    ...(commits.length ? commits.map(({ sha, subject }) => `- [\`${short(sha)}\`](https://github.com/twbs/bootstrap/commit/${sha}) ${subject.replace(/\(#(\d+)\)/g, '(`#$1`)')}`) : [`See ${range}.`]),
     ''
   ]),
   '### Checks',

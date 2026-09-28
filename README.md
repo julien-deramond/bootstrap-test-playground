@@ -36,7 +36,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run save-config <name> [-- "Description"] [--category <id>]` | Saves the working copy (`src/styles/`) as `configs/<name>/`, filed under a category |
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
 | `npm run configs-table [-- --check]` | Regenerates the table of configs in `configs/README.md` from their READMEs, or with `--check` fails when it's stale (see [Configs](#configs)) |
-| `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs`, `check-dist`, `audit-tokens`, `compile-matrix`, `audit-rtl`, `audit-motion`, `audit-layers` and `audit-partials` against it, and records its sizes |
+| `npm run update-bootstrap [-- --to <ref> \| --pr <n>]` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, another commit, or an upstream pull request's head, then lists the upstream commits, resyncs the kitchen sink, runs the checks that need no browser, records the sizes and prints a commit message (see [Updating Bootstrap](#updating-bootstrap)) |
 | `npm run sync-kitchen-sink -- ../twbs/bootstrap` | Regenerates `kitchen-sink/` from a Bootstrap checkout's docs |
 | `npm run diff-bootstrap -- <from> <to> [--serve]` | Compares two Bootstrap commits: CSS diff, tokens, sizes and kitchen sink screenshots, or with `--serve` both in the compare view (see [Comparing two commits](#comparing-two-commits)) |
 | `npm run canary-report [-- --only <checks>]` | Runs every check and writes the nightly canary's report to `reports/canary/report.md` (see [Nightly canary](#nightly-canary)) |
@@ -44,6 +44,22 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 ## Where Bootstrap comes from
 
 By default, Bootstrap is installed from GitHub (`github:twbs/bootstrap#v6-dev`), and `package-lock.json` pins the commit. Run `npm run update-bootstrap` to move to the latest commit. The toolbar and home page show which commit is in use.
+
+### Updating Bootstrap
+
+`npm run update-bootstrap` moves to the latest `v6-dev` commit and does what follows every update:
+
+1. installs it: `package.json` keeps `#v6-dev`, and the lockfile pins the commit;
+2. lists the upstream commits since the one committed, from the `BOOTSTRAP_PATH` checkout when it has both commits, or the GitHub CLI;
+3. resyncs the kitchen sink from that commit's docs, fetched into `.cache/bootstrap/<sha>/` like [`diff-bootstrap`](#comparing-two-commits) does, so no checkout is needed;
+4. runs the checks that need no browser through [`canary-report`](#nightly-canary), against `node_modules` whatever `BOOTSTRAP_PATH` says: `check-configs`, `check-dist`, the static audits, `compile-matrix`, `lint:html` and `check-size`. The report, with the end of each failing check's output and the allowlist entries that no longer match, goes to `reports/canary/report.md`;
+5. records the commit's sizes in `sizes/history.json`;
+6. writes `reports/last-update.json` and prints the commit message, `chore(deps): update bootstrap to v6-dev@<sha>`, with the files to add.
+
+It exits with an error when a check fails. The console crawl, the smoke tests and the visual suite aren't part of it: `npm run canary-report` runs everything.
+
+- `-- --to <ref>` pins a commit (full or short), branch or tag instead, for example to go back after a bad update.
+- `-- --pr <n>` installs the head of twbs/bootstrap#<n>, from a fork too, to test an upstream pull request in the playground. Its sizes aren't recorded, and it says how far the branch is behind `v6-dev`, since a check can fail for what the branch misses. Don't commit it: `npm run update-bootstrap` goes back.
 
 Dependabot updates the playground's other dependencies and its GitHub Actions every week, but never `bootstrap`. Bootstrap updates come from the [nightly canary](#nightly-canary), or from a deliberate `npm run update-bootstrap`.
 
