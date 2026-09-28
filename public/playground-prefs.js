@@ -1,6 +1,7 @@
 // Applies the playground preferences (color mode, direction, primary hue,
-// styles config and Bootstrap source) before first paint. Loaded as a classic, render-blocking
-// script in the <head> of every page. The toolbar in src/js/toolbar.js drives it.
+// styles config and Bootstrap source) before first paint. Every page's <head>
+// loads it first, as a classic script that vite.config.js inlines (see #240).
+// The toolbar in src/js/toolbar.js drives it.
 //
 // Saved preferences live in localStorage. URL parameters override them for the
 // current view only, without saving: ?theme=dark&dir=rtl&primary=teal&config=name
