@@ -4,21 +4,24 @@ name: Visual tests
 # in Chromium; engines.yml compares Firefox and WebKit every night. To create or
 # refresh them after an intended change, add the `update-baselines` label to the
 # pull request: the `update` job records them for all three engines, commits them
-# to the pull request's branch and removes the label. While the label is on,
-# `compare` skips the comparison, which could only fail on the changes being
-# recorded.
+# to the pull request's branch, removes the label and starts `compare` on that
+# commit. While the label is on, `compare` fails without comparing, so the pull
+# request can't look ready before the baselines are on its branch.
 on:
   pull_request:
-    types: [opened, synchronize, reopened, labeled]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
   push:
     branches: [main]
+  # How the `update` job starts `compare` after its push: a push made with
+  # GITHUB_TOKEN starts no workflow, a dispatch does.
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
   compare:
-    if: ${{ github.event.action != 'labeled' }}
+    if: ${{ (github.event.action != 'labeled' && github.event.action != 'unlabeled') || github.event.label.name == 'update-baselines' }}
     # Pinned, so the fonts that baselines are recorded with don't change under them.
     runs-on: ubuntu-24.04
     concurrency:
@@ -34,35 +37,32 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           if gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name' | grep -qx update-baselines; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo 'The `update-baselines` label is on: the `update` job records new baselines, so this run skips the comparison.' >> "$GITHUB_STEP_SUMMARY"
+            message="The \`update-baselines\` label is on: the \`update\` job is recording new baselines. Wait for it, and don't merge before then. It pushes them to this branch, removes the label and runs this comparison again on its commit."
+            echo "::error title=Baselines are being recorded::$message"
+            echo "$message" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
           fi
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
 
       - uses: actions/checkout@v7
-        if: ${{ steps.labels.outputs.skip != 'true' }}
 
       - uses: actions/setup-node@v7
-        if: ${{ steps.labels.outputs.skip != 'true' }}
         with:
           node-version-file: .nvmrc
           cache: npm
 
       - run: npm ci
-        if: ${{ steps.labels.outputs.skip != 'true' }}
 
       - run: npx playwright install --with-deps chromium
-        if: ${{ steps.labels.outputs.skip != 'true' }}
 
       - run: npm run test:visual
-        if: ${{ steps.labels.outputs.skip != 'true' }}
 
       # Expected, actual and diff for each failure: download it and open
       # index.html, or run `npx playwright show-report <folder>`.
       - uses: actions/upload-artifact@v7
-        if: ${{ !cancelled() && steps.labels.outputs.skip != 'true' }}
+        if: ${{ !cancelled() && steps.labels.outcome != 'failure' }}
         with:
           name: visual-report
           path: tests/report/
@@ -73,8 +73,13 @@ jobs:
     if: ${{ github.event.action == 'labeled' && github.event.label.name == 'update-baselines' }}
     runs-on: ubuntu-24.04
     permissions:
+      actions: write
       contents: write
       pull-requests: write
+    env:
+      BRANCH: ${{ github.head_ref }}
+      GH_TOKEN: ${{ github.token }}
+      PR: ${{ github.event.pull_request.number }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -96,20 +101,60 @@ jobs:
           rm -rf tests/visual/screenshots/linux
           npm run test:visual:engines -- --update-snapshots=all
 
-      # A push made with GITHUB_TOKEN doesn't start workflows, so the `compare`
-      # job runs again on the next push to the branch, or after the merge.
-      - run: |
+      # Pushes only to the open pull request's branch, and only while it still
+      # points to the commit the baselines were recorded from: a plain push
+      # would recreate a branch deleted by the merge. When nothing changed, an
+      # empty commit gives `compare` a commit of its own, since its run on the
+      # current one failed on the label.
+      - id: push
+        run: |
+          recorded_from=$(git rev-parse HEAD)
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add tests/visual/screenshots/linux
           if git diff --cached --quiet; then
-            echo "The baselines are up to date."
+            changed=false
+            git commit --allow-empty -m "test: the Linux visual baselines are up to date"
           else
+            changed=true
             git commit -m "test: update the Linux visual baselines"
-            git push
           fi
 
+          fail() {
+            echo "::error title=Baselines not pushed::$1"
+            echo "$1" >> "$GITHUB_STEP_SUMMARY"
+            gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body "**Visual baselines not pushed.** $1 ([run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID))"
+            exit 1
+          }
+          # Nothing is lost when the baselines didn't change.
+          check_state() {
+            state=$(gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json state --jq .state)
+            if [ "$state" != OPEN ] && [ "$changed" = false ]; then
+              echo "#$PR is ${state,,} and its baselines were up to date: nothing to push."
+              exit 0
+            fi
+            case $state in
+              MERGED) fail "#$PR was merged before its new baselines were pushed, so \`main\` is missing them and its visual tests fail. This run's *visual-baselines* artifact holds them: copy it over \`tests/visual/screenshots/linux/\` in a new pull request." ;;
+              CLOSED) fail "#$PR was closed before its new baselines were pushed. To record them, reopen it and add the \`update-baselines\` label again." ;;
+            esac
+          }
+
+          check_state
+          if ! git push --force-with-lease="refs/heads/$BRANCH:$recorded_from" origin "HEAD:refs/heads/$BRANCH"; then
+            check_state
+            fail "\`$BRANCH\` moved while the baselines were being recorded. Add the \`update-baselines\` label again to record them from its new commit."
+          fi
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ failure() && steps.push.outcome == 'failure' }}
+        with:
+          name: visual-baselines
+          path: tests/visual/screenshots/linux/
+          retention-days: 14
+
       - if: ${{ always() }}
-        run: gh pr edit "${{ github.event.pull_request.number }}" --remove-label update-baselines
-        env:
-          GH_TOKEN: ${{ github.token }}
+        run: gh pr edit "$PR" --repo "$GITHUB_REPOSITORY" --remove-label update-baselines
+
+      - if: ${{ steps.push.outputs.pushed == 'true' }}
+        run: gh workflow run visual.yml --repo "$GITHUB_REPOSITORY" --ref "$BRANCH"
