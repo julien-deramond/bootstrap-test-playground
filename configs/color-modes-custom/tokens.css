@@ -1,0 +1,89 @@
+/*
+ * Three custom color modes, next to Bootstrap's light and dark. Pick them in
+ * the toolbar's color mode control, or with ?theme=sepia, which sets
+ * `data-bs-theme` on <html>. They also work on any element.
+ *
+ * This file goes through the same PostCSS step as Bootstrap, so write tokens
+ * unprefixed like the Sass docs (`--border-radius`) or prefixed like
+ * `dist/css/bootstrap.css` (`--bs-border-radius`). Both end up as `--bs-*`.
+ * See https://getbootstrap.com/docs/6.0/customize/color-modes/#custom-color-modes
+ */
+
+/*
+ * `blue`: the docs' example, copied as is from `site/src/scss/_content.scss`
+ * (`custom-color-mode`), with its nesting written out. It doesn't set
+ * `color-scheme`, so every token it doesn't override still follows the
+ * system, and it sets two button tokens that nothing reads.
+ */
+[data-bs-theme="blue"] {
+  --bs-fg-body: var(--bs-white);
+  --bs-bg-body: var(--bs-blue-500);
+  --bs-bg-3: var(--bs-blue-600);
+  --bs-hr-border-color: var(--bs-blue-400);
+}
+
+[data-bs-theme="blue"] .menu {
+  --bs-menu-bg: color-mix(in lab, var(--bs-blue-600), var(--bs-blue-700));
+  --bs-menu-item-hover-bg: var(--bs-blue-700);
+  --bs-menu-item-active-bg: var(--bs-blue-800);
+}
+
+[data-bs-theme="blue"] .btn-solid {
+  --bs-btn-bg: color-mix(in lab, var(--bs-gray-600), var(--bs-blue-400));
+  --bs-btn-border-color: color-mix(in lab, var(--bs-fg-body) 25%, transparent);
+  --bs-btn-hover-bg: color-mix(in lab, var(--bs-gray-600), var(--bs-blue-400));
+  --bs-btn-hover-border-color: color-mix(in lab, var(--bs-fg-body) 25%, transparent);
+  --bs-btn-active-bg: color-mix(in lab, color-mix(in lab, var(--bs-gray-600), var(--bs-blue-400)), var(--bs-black) 10%);
+  --bs-btn-active-border-color: color-mix(in lab, var(--bs-fg-body), transparent);
+  --bs-btn-focus-border-color: color-mix(in lab, var(--bs-fg-body), transparent);
+  --bs-btn-focus-box-shadow: 0 0 0 .25rem rgb(255 255 255 / .2);
+}
+
+/*
+ * `sepia`: a light mode on warm paper. It sets `color-scheme: light`, so the
+ * `light-dark()` tokens it doesn't override resolve to their light value
+ * whatever the system prefers, and overrides the surface, text and border
+ * tokens. Theme colors keep their light values.
+ */
+[data-bs-theme="sepia"] {
+  color-scheme: light;
+  --shadow-strength: 1;
+  --bg-body: oklch(96% .03 85);
+  --bg-1: oklch(94% .035 85);
+  --bg-2: oklch(92% .04 85);
+  --bg-3: oklch(89% .045 85);
+  --bg-4: oklch(85% .05 85);
+  --fg-body: oklch(30% .04 60);
+  --fg-1: oklch(35% .04 60);
+  --fg-2: oklch(42% .04 60);
+  --fg-3: oklch(50% .035 60);
+  --fg-4: oklch(60% .03 60);
+  --border-color: oklch(84% .04 80);
+  --border-subtle: oklch(88% .035 80);
+  --border-muted: oklch(86% .04 80);
+  --border-emphasized: oklch(70% .04 70);
+}
+
+/*
+ * `dim`: a dark mode with less contrast, on a blue-gray surface. Like
+ * `[data-bs-theme="dark"]`, it sets `color-scheme: dark` and deepens shadows,
+ * since `--shadow-strength` is a number `light-dark()` can't switch.
+ */
+[data-bs-theme="dim"] {
+  color-scheme: dark;
+  --shadow-strength: 2.4;
+  --bg-body: oklch(30% .02 250);
+  --bg-1: oklch(32% .02 250);
+  --bg-2: oklch(35% .02 250);
+  --bg-3: oklch(39% .02 250);
+  --bg-4: oklch(44% .02 250);
+  --fg-body: oklch(88% .01 250);
+  --fg-1: oklch(84% .01 250);
+  --fg-2: oklch(78% .015 250);
+  --fg-3: oklch(68% .015 250);
+  --fg-4: oklch(58% .015 250);
+  --border-color: oklch(44% .02 250);
+  --border-subtle: oklch(38% .02 250);
+  --border-muted: oklch(40% .02 250);
+  --border-emphasized: oklch(55% .02 250);
+}

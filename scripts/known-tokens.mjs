@@ -55,6 +55,7 @@ export default [
   { kind: 'unused', reason: 'generated from the color maps and the theme API, for users', tokens: ['--bg-inherit', '--fg-inherit', '--theme-base'] },
   { kind: 'unused', reason: 'the shadcn config sets --btn-font-weight directly', tokens: ['--btn-input-font-weight'] },
   { kind: 'unused', issue: 4, tokens: ['--check-border-radius'] },
+  { kind: 'unused', issue: 202, configs: ['color-modes-custom'], tokens: ['--btn-focus-border-color', '--btn-focus-box-shadow'] },
   {
     kind: 'unused',
     configs: ['no-transitions'],

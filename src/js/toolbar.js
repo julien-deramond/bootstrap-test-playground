@@ -6,7 +6,7 @@
 // before first paint.
 //
 // Keyboard shortcuts (Alt+Shift, Option+Shift on macOS):
-//   T  cycle color mode (auto, light, dark)
+//   T  cycle color mode (auto, light, dark, then the config's own modes)
 //   D  toggle direction (LTR, RTL)
 // Ctrl+K (⌘K on macOS) opens the page switcher, see palette.js.
 
@@ -78,6 +78,15 @@ export function mountToolbar({ source, configs, swappable }) {
     return
   }
 
+  // Auto, Light and Dark, the custom color modes of the current config
+  // (configs/color-modes-custom/), and the current one if it's another, set
+  // with ?theme=.
+  const colorModes = current => [...new Set([
+    ...COLOR_MODES,
+    ...(configs.find(({ name }) => name === current.config)?.colorModes ?? []),
+    current.colorMode
+  ])]
+
   // Keyboard shortcuts work even when the toolbar is hidden or embedded.
   document.addEventListener('keydown', event => {
     if (!event.altKey || !event.shiftKey || event.ctrlKey || event.metaKey) {
@@ -86,7 +95,8 @@ export function mountToolbar({ source, configs, swappable }) {
 
     const current = prefs.effective()
     if (event.code === 'KeyT') {
-      render(prefs.save({ colorMode: COLOR_MODES[(COLOR_MODES.indexOf(current.colorMode) + 1) % COLOR_MODES.length] }))
+      const modes = colorModes(current)
+      render(prefs.save({ colorMode: modes[(modes.indexOf(current.colorMode) + 1) % modes.length] }))
     } else if (event.code === 'KeyD') {
       render(prefs.save({ dir: current.dir === 'rtl' ? 'ltr' : 'rtl' }))
     } else {
@@ -114,10 +124,12 @@ export function mountToolbar({ source, configs, swappable }) {
   host.id = 'playground-toolbar'
   const shadow = host.attachShadow({ mode: 'open' })
 
+  const buttons = (name, options) => options.map(([value, text]) => `<button type="button" data-pref="${name}" value="${escapeHtml(value)}">${escapeHtml(text)}</button>`).join('')
   const segmented = (name, label, options) => `
-    <span class="group" role="group" aria-label="${label}">
-      ${options.map(([value, text]) => `<button type="button" data-pref="${name}" value="${value}">${text}</button>`).join('')}
+    <span class="group" role="group" aria-label="${label}" data-group="${name}">
+      ${buttons(name, options)}
     </span>`
+  const modeOption = mode => [mode, mode.charAt(0).toUpperCase() + mode.slice(1)]
 
   const configOptions = [
     ['working', 'Styles: src/styles (working)', 'The working copy in src/styles/'],
@@ -147,7 +159,7 @@ export function mountToolbar({ source, configs, swappable }) {
     <div class="bar" role="toolbar" aria-label="Playground settings">
       <a href="${import.meta.env.BASE_URL}" title="All pages">Playground</a>${pagerHtml}
       <button type="button" class="search" title="Go to another page">Search <kbd>${paletteShortcut}</kbd></button>
-      ${segmented('colorMode', 'Color mode (Alt+Shift+T)', [['auto', 'Auto'], ['light', 'Light'], ['dark', 'Dark']])}
+      ${segmented('colorMode', 'Color mode (Alt+Shift+T)', COLOR_MODES.map(modeOption))}
       ${segmented('dir', 'Direction (Alt+Shift+D)', [['ltr', 'LTR'], ['rtl', 'RTL']])}
       <select data-pref="primary" aria-label="Primary color" title="Remaps the --bs-primary-* tokens at runtime">
         ${HUES.map(hue => `<option value="${hue}">Primary: ${hue}</option>`).join('')}
@@ -163,6 +175,7 @@ export function mountToolbar({ source, configs, swappable }) {
     </div>`
 
   const bar = shadow.querySelector('.bar')
+  const modeGroup = shadow.querySelector('[data-group="colorMode"]')
   const toggle = shadow.querySelector('.toggle')
 
   // The Source switch sets `css` and `js` together. Mixed URL overrides
@@ -179,6 +192,13 @@ export function mountToolbar({ source, configs, swappable }) {
   }
 
   render = current => {
+    // The config's own color modes come and go with the config.
+    const modes = colorModes(current)
+    if (modeGroup.dataset.modes !== modes.join()) {
+      modeGroup.innerHTML = buttons('colorMode', modes.map(modeOption))
+      modeGroup.dataset.modes = modes.join()
+    }
+
     for (const button of shadow.querySelectorAll('button[data-pref]')) {
       button.setAttribute('aria-pressed', String(valueOf(current, button.dataset.pref) === button.value))
     }

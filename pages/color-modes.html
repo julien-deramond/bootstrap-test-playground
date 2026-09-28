@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Color modes</title>
+    <meta name="description" content="Color modes: checks the color-mode() mixin with both $color-mode-type values against the page's actual color mode, and that each custom color mode (blue, sepia, dim from the color-modes-custom config) sets color-scheme and reaches menus, tooltips, popovers, dialogs, drawers, toasts and the datepicker, with a pass or fail marker.">
+    <meta name="playground-tags" content="components">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <link rel="stylesheet" href="/pages/color-modes-media-query.scss">
+    <link rel="stylesheet" href="/pages/color-modes-data.scss">
+    <style>
+      /* No Bootstrap tokens here, so the checks don't depend on the prefix. */
+      .pg-probe {
+        display: block;
+        padding: .25rem .5rem;
+        border: 1px dashed;
+        /* Resolves to the element's used color scheme: rgb(0, 0, 1) in light,
+           rgb(0, 0, 2) in dark. Invisible without columns. */
+        column-rule-color: light-dark(rgb(0, 0, 1), rgb(0, 0, 2));
+      }
+
+      .pg-context {
+        padding: .5rem;
+        background-color: Canvas;
+        color: CanvasText;
+      }
+    </style>
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Pages</p>
+        <h1>Color modes</h1>
+        <p class="fs-lg fg-2">
+          The <code>color-mode()</code> mixin with both <code>$color-mode-type</code> values, and custom color modes, checked against the color mode each element is actually in.
+        </p>
+        <p class="fg-2">
+          Upstream: <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/201">#201</a> (the mixin can't follow the color mode), <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/202">#202</a> (the docs' blue color mode) and <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/181">#181</a> (the datepicker's <code>color-scheme</code>), not reported yet
+        </p>
+      </header>
+
+      <section class="mb-5">
+        <h2 class="h5" data-playground-chrome>The <code>color-mode()</code> mixin</h2>
+        <p data-playground-chrome>v6 resolves color modes with <code>color-scheme</code>: the system preference, overridden by the nearest <code>data-bs-theme</code>. The mixin emits either a <code>prefers-color-scheme</code> media query or a <code>[data-bs-theme="dark"]</code> ancestor selector. Each probe gets an outline when the mixin's dark rule applies, and passes when that matches its own color mode. Change the toolbar's color mode, or the system's, to see the other cases.</p>
+        <table class="table" id="mixin-checks">
+          <thead>
+            <tr>
+              <th scope="col">Context</th>
+              <th scope="col" data-issue="201"><code>media-query</code> (default)</th>
+              <th scope="col" data-issue="201"><code>data</code></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-context="page">
+              <th scope="row">The page, as the toolbar and the system set it</th>
+              <td><span class="pg-probe pg-probe-media-query">Probe</span></td>
+              <td><span class="pg-probe pg-probe-data">Probe</span></td>
+            </tr>
+            <tr data-context="dark">
+              <th scope="row"><code>data-bs-theme="dark"</code></th>
+              <td><div class="pg-context" data-bs-theme="dark"><span class="pg-probe pg-probe-media-query">Probe</span></div></td>
+              <td><div class="pg-context" data-bs-theme="dark"><span class="pg-probe pg-probe-data">Probe</span></div></td>
+            </tr>
+            <tr data-context="light">
+              <th scope="row"><code>data-bs-theme="light"</code></th>
+              <td><div class="pg-context" data-bs-theme="light"><span class="pg-probe pg-probe-media-query">Probe</span></div></td>
+              <td><div class="pg-context" data-bs-theme="light"><span class="pg-probe pg-probe-data">Probe</span></div></td>
+            </tr>
+            <tr data-context="light-in-dark">
+              <th scope="row"><code>light</code> inside <code>dark</code></th>
+              <td><div class="pg-context" data-bs-theme="dark"><div class="pg-context" data-bs-theme="light"><span class="pg-probe pg-probe-media-query">Probe</span></div></div></td>
+              <td><div class="pg-context" data-bs-theme="dark"><div class="pg-context" data-bs-theme="light"><span class="pg-probe pg-probe-data">Probe</span></div></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="mb-5">
+        <h2 class="h5" data-playground-chrome>Custom color modes</h2>
+        <p data-playground-chrome>Each color mode these styles define, Bootstrap's <code>dark</code> first as a reference, is set on <code>&lt;html&gt;</code> in turn, as the toolbar does. It passes <em>color-scheme</em> when its rule sets <code>color-scheme</code>, so the <code>light-dark()</code> tokens it doesn't override stop following the system. Each overlay passes when it opens with the page's <code>color-scheme</code> and <code>--bs-bg-body</code>. <a href="?config=color-modes-custom">configs/color-modes-custom</a> defines <code>blue</code> (the docs' example), <code>sepia</code> and <code>dim</code>.</p>
+        <table class="table" id="mode-checks">
+          <thead>
+            <tr>
+              <th scope="col">Mode</th>
+              <th scope="col" data-issue="202"><code>color-scheme</code></th>
+              <th scope="col">Menu</th>
+              <th scope="col">Tooltip</th>
+              <th scope="col">Popover</th>
+              <th scope="col">Dialog</th>
+              <th scope="col">Drawer</th>
+              <th scope="col">Toast</th>
+              <th scope="col" data-issue="181">Datepicker</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <p class="fg-2" id="no-custom-modes" hidden>These styles define no custom color mode. Try <a href="?config=color-modes-custom">configs/color-modes-custom</a>.</p>
+      </section>
+
+      <section class="mb-5">
+        <h2 class="h5" data-playground-chrome>Overlays</h2>
+        <div class="hstack flex-wrap gap-2">
+          <div>
+            <button type="button" class="btn-outline theme-secondary" id="overlay-menu" data-bs-toggle="menu" aria-expanded="false">Menu</button>
+            <div class="menu">
+              <a class="menu-item" href="#overlay-menu">Action</a>
+              <a class="menu-item" href="#overlay-menu">Another action</a>
+            </div>
+          </div>
+          <button type="button" class="btn-outline theme-secondary" id="overlay-tooltip" data-bs-title="Tooltip">Tooltip</button>
+          <button type="button" class="btn-outline theme-secondary" id="overlay-popover" data-bs-title="Popover" data-bs-content="Popover body">Popover</button>
+          <button type="button" class="btn-outline theme-secondary" id="overlay-dialog-toggle">Dialog</button>
+          <button type="button" class="btn-outline theme-secondary" id="overlay-drawer-toggle">Drawer</button>
+          <button type="button" class="btn-outline theme-secondary" id="overlay-toast-toggle">Toast</button>
+          <div>
+            <label for="overlay-datepicker" class="visually-hidden">Date</label>
+            <input type="text" class="form-control" id="overlay-datepicker" autocomplete="off" placeholder="Datepicker">
+          </div>
+        </div>
+
+        <dialog class="dialog" id="overlay-dialog" aria-labelledby="overlay-dialog-title">
+          <div class="dialog-header">
+            <h3 class="dialog-title h5" id="overlay-dialog-title">Dialog</h3>
+            <button type="button" class="btn-close" data-bs-dismiss="dialog" aria-label="Close"></button>
+          </div>
+          <div class="dialog-body">In the page's color mode.</div>
+        </dialog>
+
+        <dialog class="drawer drawer-end" id="overlay-drawer" aria-labelledby="overlay-drawer-title">
+          <div class="drawer-header">
+            <h3 class="drawer-title h5" id="overlay-drawer-title">Drawer</h3>
+            <button type="button" class="btn-close" data-bs-dismiss="drawer" aria-label="Close"></button>
+          </div>
+          <div class="drawer-body">In the page's color mode.</div>
+        </dialog>
+
+        <div class="toast" id="overlay-toast" role="status" aria-live="polite" aria-atomic="true">
+          <div class="toast-body">Toast, in the page's color mode.</div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // The mixin checks compare each probe's outline with its used color
+      // scheme. The mode checks set each color mode on <html>, open every
+      // overlay, and compare it with <html>. Each cell gets data-result="pass"
+      // or "fail", and <html> data-color-mode-checks="done" at the end.
+      const html = document.documentElement
+      // The visual suite waits for this to go before its screenshot.
+      html.dataset.playgroundBusy = ''
+      const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
+      // Resolves on a Bootstrap event (`shown.bs.menu`), or after a timeout.
+      const once = (element, type, timeout = 2000) => new Promise(resolve => {
+        const timer = setTimeout(resolve, timeout)
+        element.addEventListener(type, () => {
+          clearTimeout(timer)
+          resolve()
+        }, { once: true })
+      })
+
+      // A failure links the tracking issue of its column, if any.
+      const mark = (cell, pass, note = '') => {
+        cell.dataset.result = pass ? 'pass' : 'fail'
+        const badge = document.createElement('span')
+        badge.className = `badge ${pass ? 'theme-success' : 'theme-danger'} ms-2`
+        badge.textContent = pass ? 'Pass' : 'Fail'
+        badge.title = note
+        cell.append(badge)
+
+        const issue = cell.closest('table').tHead.rows[0].cells[cell.cellIndex].dataset.issue
+        if (!pass && issue) {
+          cell.insertAdjacentHTML('beforeend', ` <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/${issue}">#${issue}</a>`)
+        }
+      }
+
+      // Every style rule of the page's same-origin stylesheets.
+      const styleRules = () => {
+        const found = []
+        const walk = list => {
+          for (const rule of list) {
+            if (rule instanceof CSSStyleRule) {
+              found.push(rule)
+            }
+
+            if (rule.cssRules) {
+              walk(rule.cssRules)
+            }
+          }
+        }
+
+        for (const sheet of document.styleSheets) {
+          try {
+            walk(sheet.cssRules)
+          } catch {
+            // Cross-origin stylesheets can't be read.
+          }
+        }
+
+        return found
+      }
+
+      const checkMixin = () => {
+        for (const probe of document.querySelectorAll('#mixin-checks .pg-probe')) {
+          const style = getComputedStyle(probe)
+          const dark = style.columnRuleColor === 'rgb(0, 0, 2)'
+          const applied = style.outlineStyle !== 'none'
+          mark(probe.closest('td'), applied === dark, `${dark ? 'Dark' : 'Light'}, and the dark rule ${applied ? 'applies' : 'doesn\'t apply'}`)
+        }
+      }
+
+      // The custom property prefix of the page's styles, from the rule that
+      // defines the body background on :root.
+      const prefix = () => {
+        for (const rule of styleRules()) {
+          if (rule.selectorText.split(',').some(selector => selector.trim() === ':root')) {
+            const name = [...rule.style].find(property => /^--[a-z0-9-]*bg-body$/.test(property))
+            if (name) {
+              return name.slice(2, -'bg-body'.length)
+            }
+          }
+        }
+
+        return 'bs-'
+      }
+
+      // Bootstrap's `dark`, then every other `[data-bs-theme="…"]` of the styles.
+      const modes = () => {
+        const found = new Set(['dark'])
+        for (const rule of styleRules()) {
+          for (const [, mode] of rule.selectorText.matchAll(/\[data-bs-theme="?([\w-]+)"?\]/g)) {
+            if (mode !== 'light') {
+              found.add(mode)
+            }
+          }
+        }
+
+        return [...found]
+      }
+
+      const setsColorScheme = mode => styleRules().some(rule =>
+        new RegExp(`\\[data-bs-theme="?${mode}"?\\]$`).test(rule.selectorText.trim()) && rule.style.colorScheme !== '')
+
+      const checkModes = async ({ Datepicker, Dialog, Drawer, Menu, Popover, Toast, Tooltip }) => {
+        const bgBody = `--${prefix()}bg-body`
+        const signature = element => {
+          const style = getComputedStyle(element)
+          return `${style.colorScheme} ${style.getPropertyValue(bgBody).trim()}`
+        }
+
+        const visible = element => Boolean(element) && element.getClientRects().length > 0
+        const byId = id => document.getElementById(id)
+        const describedTip = id => () => document.getElementById(byId(id).getAttribute('aria-describedby') ?? '')
+        const calendar = () => [...document.querySelectorAll('[data-vc="calendar"]')].find(visible)
+
+        const OVERLAYS = [
+          ['menu', Menu.getOrCreateInstance(byId('overlay-menu')), () => byId('overlay-menu').nextElementSibling],
+          ['tooltip', Tooltip.getOrCreateInstance(byId('overlay-tooltip')), describedTip('overlay-tooltip')],
+          ['popover', Popover.getOrCreateInstance(byId('overlay-popover')), describedTip('overlay-popover')],
+          ['dialog', Dialog.getOrCreateInstance(byId('overlay-dialog')), () => byId('overlay-dialog')],
+          ['drawer', Drawer.getOrCreateInstance(byId('overlay-drawer')), () => byId('overlay-drawer')],
+          ['toast', Toast.getOrCreateInstance(byId('overlay-toast'), { autohide: false }), () => byId('overlay-toast')],
+          ['datepicker', Datepicker.getOrCreateInstance(byId('overlay-datepicker')), calendar]
+        ]
+
+        const found = modes()
+        byId('no-custom-modes').hidden = found.length > 1
+        const saved = html.getAttribute('data-bs-theme')
+        const body = document.querySelector('#mode-checks tbody')
+
+        for (const mode of found) {
+          const row = body.insertRow()
+          row.dataset.mode = mode
+          row.innerHTML = `<th scope="row"><code>${mode}</code></th>`
+          mark(row.insertCell(), setsColorScheme(mode))
+
+          html.setAttribute('data-bs-theme', mode)
+          await wait(50)
+          const expected = signature(html)
+
+          // A component ignores hide() until it's done showing.
+          for (const [name, instance, element] of OVERLAYS) {
+            const cell = row.insertCell()
+            cell.dataset.overlay = name
+            const shown = once(instance._element, `shown.bs.${name}`)
+            instance.show()
+            await shown
+            const actual = visible(element()) ? signature(element()) : 'not shown'
+            mark(cell, actual === expected, `Expected ${expected}, got ${actual}`)
+            const hidden = once(instance._element, `hidden.bs.${name}`)
+            instance.hide()
+            await hidden
+          }
+        }
+
+        if (saved === null) {
+          html.removeAttribute('data-bs-theme')
+        } else {
+          html.setAttribute('data-bs-theme', saved)
+        }
+      }
+
+      // Bootstrap is on `window.bootstrap` once src/js/main.js has imported
+      // it, which may come after `load`, and a config picked with ?config= is
+      // in once `#playground-config-pending` is gone. Timers rather than
+      // requestAnimationFrame, which stops in hidden tabs.
+      const start = async () => {
+        if (!window.bootstrap || document.readyState !== 'complete' || document.getElementById('playground-config-pending')) {
+          setTimeout(start, 50)
+          return
+        }
+
+        checkMixin()
+        await checkModes(window.bootstrap)
+        html.dataset.colorModeChecks = 'done'
+        delete html.dataset.playgroundBusy
+      }
+
+      start()
+
+      // Plain buttons for the overlays that aren't opened from a toggle.
+      document.getElementById('overlay-dialog-toggle').addEventListener('click', () => window.bootstrap.Dialog.getOrCreateInstance('#overlay-dialog').show())
+      document.getElementById('overlay-drawer-toggle').addEventListener('click', () => window.bootstrap.Drawer.getOrCreateInstance('#overlay-drawer').show())
+      document.getElementById('overlay-toast-toggle').addEventListener('click', () => window.bootstrap.Toast.getOrCreateInstance('#overlay-toast').show())
+    </script>
+  </body>
+</html>

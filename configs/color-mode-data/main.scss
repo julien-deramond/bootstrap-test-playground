@@ -1,0 +1,11 @@
+// `$color-mode-type: "data"`: the `color-mode()` mixin scopes its rules to
+// `[data-bs-theme="…"]` instead of `@media (prefers-color-scheme: …)`.
+// Bootstrap itself never calls the mixin, so its CSS is byte for byte the same
+// as the default's. Only `_custom.scss`, which does, changes.
+
+@use "bootstrap/scss/bootstrap" with (
+  $color-mode-type: "data"
+);
+
+// Your own Sass, with access to Bootstrap's mixins and functions.
+@use "custom";

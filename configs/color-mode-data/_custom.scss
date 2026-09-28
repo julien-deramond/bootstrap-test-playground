@@ -1,0 +1,15 @@
+// A dark mode rule that no token expresses, scoped with the `color-mode()`
+// mixin as the color modes docs suggest. With `$color-mode-type: "data"`, it
+// compiles to `[data-bs-theme="dark"] img, …`: it follows the attribute, not
+// the page's color scheme.
+@use "bootstrap/scss/mixins" as *;
+
+@layer custom {
+  @include color-mode(dark) {
+    // Photos and placeholders glare on a dark page: tone them down.
+    img,
+    .bd-placeholder-img {
+      filter: brightness(.7);
+    }
+  }
+}
