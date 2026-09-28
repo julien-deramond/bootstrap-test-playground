@@ -298,7 +298,7 @@ document.addEventListener('keydown', event => {
 
 render()
 
-// Configs: applying one saves the toolbar's Styles preference, which every
+// Configs: applying one saves the toolbar's Config preference, which every
 // example page opened next uses. This page itself doesn't change.
 const prefs = window.playgroundPrefs
 const configList = document.getElementById('config-list')

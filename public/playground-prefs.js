@@ -192,6 +192,7 @@
 
   window.playgroundPrefs = {
     DEFAULTS,
+    URL_PARAMS,
     embedded: params.has('embed') || chromeless,
     fixed,
     frozen,

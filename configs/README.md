@@ -21,7 +21,7 @@ npm run save-config rounded-dark -- "Large radii and a dark-first palette" --cat
 # Regenerate the table below after editing a README (save-config does it too)
 npm run configs-table
 
-# Preview any config live: pick it in the toolbar's "Styles" menu or the home page's "Configs" section,
+# Preview any config live: pick it in the toolbar's "Config" list or the home page's "Configs" section,
 # or add ?config=rounded-dark to the URL
 
 # Start an issue reproduction from a config (default: `default`)
