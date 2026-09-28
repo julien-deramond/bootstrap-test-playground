@@ -1,0 +1,10 @@
+// Pill: `$radius: 2rem`, so `--radius-5` is 2rem and the scale runs from
+// .5rem (`--radius-1`) to 4rem (`--radius-9`). Controls turn into pills, and
+// large radii show where nested and joined corners (input groups, button
+// groups, cards with images, list groups, tabs) don't follow.
+
+@use "bootstrap/scss/bootstrap" with (
+  $radius: 2rem,
+);
+
+@use "custom";
