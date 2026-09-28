@@ -1,0 +1,13 @@
+// 16-column grid with 2rem gutters: `.col-1` to `.col-16`, offsets up to 15,
+// `.g-col-*` up to 16 in the CSS grid, and wider gutters in rows, the CSS
+// grid's gap and the containers' padding.
+//
+// Markup written for 12 columns keeps working but changes its proportions:
+// `.col-6` is now 37.5%, not half.
+
+@use "bootstrap/scss/bootstrap" with (
+  $grid-columns: 16,
+  $grid-gutter-x: 2rem,
+);
+
+@use "custom";

@@ -1,0 +1,18 @@
+// Fluid containers: no `$container-max-widths`, so `.container` is as wide as
+// the viewport at every size, like `.container-fluid`, and the responsive
+// `sm:container` to `2xl:container` classes aren't generated.
+//
+// `$container-max-widths: ()` would change nothing, since the map is merged
+// over its defaults: every key is removed with `null` instead.
+
+@use "bootstrap/scss/bootstrap" with (
+  $container-max-widths: (
+    sm: null,
+    md: null,
+    lg: null,
+    xl: null,
+    2xl: null,
+  ),
+);
+
+@use "custom";

@@ -1,7 +1,7 @@
 [
   {
     "commit": "bd0a4f63ce5cc444063c28a6946bdae3dacdce20",
-    "date": "2026-09-28T06:49:01.183Z",
+    "date": "2026-09-28T07:06:41.024Z",
     "sizes": {
       "css/default": {
         "min": 378944,
@@ -13,10 +13,20 @@
         "gzip": 51019,
         "brotli": 36260
       },
+      "css/breakpoints-custom": {
+        "min": 381024,
+        "gzip": 51046,
+        "brotli": 38425
+      },
       "css/compact": {
         "min": 382069,
         "gzip": 51241,
         "brotli": 36413
+      },
+      "css/containers-fluid": {
+        "min": 378262,
+        "gzip": 50897,
+        "brotli": 36140
       },
       "css/dark-first": {
         "min": 378944,
@@ -32,6 +42,11 @@
         "min": 378931,
         "gzip": 51005,
         "brotli": 36226
+      },
+      "css/grid-16": {
+        "min": 382354,
+        "gzip": 51466,
+        "brotli": 36412
       },
       "css/grid-css-only": {
         "min": 364876,
@@ -117,6 +132,11 @@
         "min": 379026,
         "gzip": 51046,
         "brotli": 36308
+      },
+      "css/spacers-extended": {
+        "min": 419910,
+        "gzip": 56778,
+        "brotli": 38236
       },
       "css/spacious": {
         "min": 380751,
