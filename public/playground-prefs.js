@@ -9,6 +9,10 @@
 // and TypeScript (the default), or `dist`, the prebuilt files the package ships
 // (dist/css/bootstrap.css, js/dist/). ?css=dist&js=dist tests what users get.
 //
+// A page marked `<html data-playground-fixed>`, like the home page, keeps
+// Bootstrap's defaults: none of the preferences apply to it, but it can still
+// read and save them for the example pages.
+//
 // View flags, for screenshots and embeds:
 // - `embed` hides the toolbar, as used by /compare.html
 // - `chrome=0` also hides the page's own playground UI, marked with
@@ -56,12 +60,18 @@
 
   const effective = () => ({ ...read(), ...overrides })
 
+  const fixed = document.documentElement.hasAttribute('data-playground-fixed')
+
   // Swapping the stylesheets needs the list of configs and the dist stylesheet's
   // URL, which only the module script (src/js/configs.js) has. It registers
   // itself here, and gets the whole preferences (`config` and `css`).
   let configHandler = null
 
   const apply = prefs => {
+    if (fixed) {
+      return
+    }
+
     const html = document.documentElement
 
     if (prefs.colorMode === 'auto') {
@@ -125,7 +135,7 @@
   // Hide the page until a non-default config's stylesheets, or the dist
   // stylesheet, are swapped in, so it doesn't flash with the working styles
   // first. Failsafe after 3 seconds.
-  if (effective().config !== 'working' || effective().css === 'dist') {
+  if (!fixed && (effective().config !== 'working' || effective().css === 'dist')) {
     const style = addStyle('playground-config-pending', 'html { visibility: hidden !important; }')
     setTimeout(() => style.remove(), 3000)
   }
@@ -183,6 +193,7 @@
   window.playgroundPrefs = {
     DEFAULTS,
     embedded: params.has('embed') || chromeless,
+    fixed,
     frozen,
     read,
     effective,
