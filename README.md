@@ -109,7 +109,7 @@ The playground builds Bootstrap from **source**, the way Bootstrap's own build d
 - **CSS** is compiled from `scss/`, then `postcss.config.js` applies the same PostCSS step as Bootstrap's `build/postcss.config.mjs`. That step adds the `--bs-` prefix to every custom property and runs Autoprefixer with Bootstrap's `.browserslistrc`. The output matches `dist/css/bootstrap.css` (see [Checking the dist](#checking-the-dist)), and the builds keep `light-dark()` intact.
 - **JavaScript** is imported from `js/src/index.ts`, so the playground runs the branch's current code even when the committed `js/dist/` hasn't been rebuilt yet.
 
-Users install the package and get its prebuilt files, though, and a stale or broken `dist` is its own kind of bug (#1). The toolbar's **Source / Dist** switch, or `?css=dist` and `?js=dist` in the URL, loads those instead:
+Users install the package and get its prebuilt files, though, and a stale or broken `dist` is its own kind of bug (#1). The toolbar's **CSS** and **JavaScript** switches, or `?css=dist` and `?js=dist` in the URL, loads those instead:
 
 - **`css=dist`** replaces the compiled `main.scss` with `dist/css/bootstrap.css`. `tokens.css` still applies on top, from the working copy or the selected config, but a config's Sass options can't reach a prebuilt file. Issue reproductions compile their own styles, so they keep them.
 - **`js=dist`** loads `js/dist/index.js`, what `import 'bootstrap'` gives users, instead of `js/src/index.ts`. Only one of the two ever loads. The JavaScript can't be swapped live, so the switch reloads the page.
@@ -293,11 +293,11 @@ Its `README.md` starts from [the template](scripts/templates/config/README.md). 
 
 Then:
 
-- **Preview it on any example page** with the toolbar's *Styles* menu, the *Configs* section at the bottom of the home page (which saves the choice for the example pages, and keeps its own default styles), or `?config=rounded-dark` in the URL. The shared stylesheets are swapped live, and the page doesn't need a reload.
+- **Preview it on any example page** with the toolbar's *Config* list, the *Configs* section at the bottom of the home page (which saves the choice for the example pages, and keeps its own default styles), or `?config=rounded-dark` in the URL. The shared stylesheets are swapped live, and the page doesn't need a reload.
 - **Start a reproduction from it**: `npm run new-issue 42928 -- --config rounded-dark`
 - **Make it the working copy**: `npm run use-config rounded-dark`. This refuses to run if `src/styles/` has uncommitted changes, unless you pass `-- --force`.
 
-`configs/default/` holds Bootstrap's defaults. Keep it pristine; `npm run use-config default` resets the working copy. `configs/shadcn/` recreates shadcn/ui's default theme (see [Real screens](#real-screens)). Every `$enable-*` option that changes the CSS has a config that flips it, like `configs/no-rounded/` or `configs/grid-css-only/`. `configs/square/`, `configs/pill/`, `configs/compact/` and `configs/spacious/` push the radius, spacing and control size tokens to their extremes. `configs/gray-warm/`, `configs/gray-cool/`, `configs/hue-shift/`, `configs/mono/`, `configs/brand/` and `configs/dark-first/` do the same with the palette, the theme colors and the color scheme. `configs/web-font/`, `configs/serif/`, `configs/large-type/`, `configs/root-62-5/` and `configs/weights/` do it with fonts, text sizes and weights. `configs/breakpoints-custom/`, `configs/containers-fluid/`, `configs/grid-16/` and `configs/spacers-extended/` change the breakpoints, the containers, the grid and the spacing scale. `configs/utilities-custom/` uses every option of the utility API, and [`pages/utility-api.html`](pages/utility-api.html) checks each of its utilities. `configs/prefix-x/` and `configs/prefix-none/` compile the custom properties with the `x-` prefix and with none, and [`pages/custom-property-prefix.html`](pages/custom-property-prefix.html) checks what Bootstrap's JavaScript reads and writes under each. `postcss.config.js` applies `bs-` everywhere, so a stylesheet picks another prefix with a `/*! playground-prefix: "x-" */` comment, which Sass keeps. `configs/color-mode-data/` sets `$color-mode-type: "data"` and uses the `color-mode()` mixin, and `configs/color-modes-custom/` adds three custom color modes, `blue` (the docs' example), `sepia` and `dim`. A config's own `[data-bs-theme="…"]` modes show up in the toolbar's color mode control. [`pages/color-modes.html`](pages/color-modes.html) checks the mixin with both types, and each mode's `color-scheme` and overlays. `configs/high-contrast/` pushes the tokens toward WCAG AAA and lists what it can't reach. `configs/mixins/` uses every documented Sass mixin and function and checks what the functions return, and [`pages/sass-api.html`](pages/sass-api.html) shows what it builds. `configs/partial/` is the Sass docs' Option B, root and a few partials, so most pages show unstyled components on purpose (see [Auditing partial imports](#auditing-partial-imports)). `configs/no-transitions/` and `configs/no-reduced-motion/` are also used by [Auditing motion](#auditing-motion). [`configs/README.md`](configs/README.md#saved-configs) lists them all.
+`configs/default/` holds Bootstrap's defaults. Keep it pristine; `npm run use-config default` resets the working copy. `configs/shadcn/` recreates shadcn/ui's default theme (see [Real screens](#real-screens)). Every `$enable-*` option that changes the CSS has a config that flips it, like `configs/no-rounded/` or `configs/grid-css-only/`. `configs/square/`, `configs/pill/`, `configs/compact/` and `configs/spacious/` push the radius, spacing and control size tokens to their extremes. `configs/gray-warm/`, `configs/gray-cool/`, `configs/hue-shift/`, `configs/mono/`, `configs/brand/` and `configs/dark-first/` do the same with the palette, the theme colors and the color scheme. `configs/web-font/`, `configs/serif/`, `configs/large-type/`, `configs/root-62-5/` and `configs/weights/` do it with fonts, text sizes and weights. `configs/breakpoints-custom/`, `configs/containers-fluid/`, `configs/grid-16/` and `configs/spacers-extended/` change the breakpoints, the containers, the grid and the spacing scale. `configs/utilities-custom/` uses every option of the utility API, and [`pages/utility-api.html`](pages/utility-api.html) checks each of its utilities. `configs/prefix-x/` and `configs/prefix-none/` compile the custom properties with the `x-` prefix and with none, and [`pages/custom-property-prefix.html`](pages/custom-property-prefix.html) checks what Bootstrap's JavaScript reads and writes under each. `postcss.config.js` applies `bs-` everywhere, so a stylesheet picks another prefix with a `/*! playground-prefix: "x-" */` comment, which Sass keeps. `configs/color-mode-data/` sets `$color-mode-type: "data"` and uses the `color-mode()` mixin, and `configs/color-modes-custom/` adds three custom color modes, `blue` (the docs' example), `sepia` and `dim`. A config's own `[data-bs-theme="…"]` modes show up in the toolbar's *Color mode* control. [`pages/color-modes.html`](pages/color-modes.html) checks the mixin with both types, and each mode's `color-scheme` and overlays. `configs/high-contrast/` pushes the tokens toward WCAG AAA and lists what it can't reach. `configs/mixins/` uses every documented Sass mixin and function and checks what the functions return, and [`pages/sass-api.html`](pages/sass-api.html) shows what it builds. `configs/partial/` is the Sass docs' Option B, root and a few partials, so most pages show unstyled components on purpose (see [Auditing partial imports](#auditing-partial-imports)). `configs/no-transitions/` and `configs/no-reduced-motion/` are also used by [Auditing motion](#auditing-motion). [`configs/README.md`](configs/README.md#saved-configs) lists them all.
 
 ### Checking configs
 
@@ -367,7 +367,7 @@ Modern application screens ported from [shadcn/ui](https://github.com/shadcn-ui/
 
 They're meant as realistic test beds: the places where a screen needs custom CSS point to what Bootstrap is missing.
 
-To see how close Bootstrap can get to the originals, open them with the `shadcn` config (*Styles* in the toolbar, or `?config=shadcn`). It configures Bootstrap with shadcn/ui's default theme: neutral palette, near-black primary, `.625rem` radius, Geist, 36px controls and outer focus rings. See [`configs/shadcn/`](configs/shadcn/).
+To see how close Bootstrap can get to the originals, open them with the `shadcn` config (*Config* in the toolbar, or `?config=shadcn`). It configures Bootstrap with shadcn/ui's default theme: neutral palette, near-black primary, `.625rem` radius, Geist, 36px controls and outer focus rings. See [`configs/shadcn/`](configs/shadcn/).
 
 Each screen credits its source with a `<meta name="playground-source" content="…" data-url="…" data-license="…">` tag in its `<head>`. The toolbar then shows "Adapted from …" with a permalink to the shadcn/ui commit it was ported from, even when collapsed, and the home page lists it next to the page. Any other page adapted from elsewhere can use the same tag.
 
@@ -395,23 +395,31 @@ npm run new-issue pg-3 -- --config rounded-dark  # from a saved config
 npm run new-issue pg-4 -- --config working       # from the working copy
 ```
 
-This creates `issues/<name>/` with an `index.html` and a copy of the config's three files, served at `/issues/<name>/`. A numeric name links to `twbs/bootstrap#<name>`. Each reproduction **compiles its own copy of Bootstrap**, so its styles stay isolated from the shared files, from other reproductions, and from the toolbar's *Styles* menu.
+This creates `issues/<name>/` with an `index.html` and a copy of the config's three files, served at `/issues/<name>/`. A numeric name links to `twbs/bootstrap#<name>`. Each reproduction **compiles its own copy of Bootstrap**, so its styles stay isolated from the shared files, from other reproductions, and from the toolbar's *Config* list.
 
 To share a reproduction, push the repository and link to the folder on GitHub, or open it in StackBlitz: `https://stackblitz.com/github/julien-deramond/bootstrap-test-playground`.
 
 ## Toolbar
 
-Each example page has a small floating toolbar. It renders in a shadow root, so it doesn't pick up or leak any styles. The home page, the compare view and the sizes page have none, and keep Bootstrap's defaults.
+Each example page has a small floating toolbar at its bottom end, a pill that sums up the current state, like `shadcn · dark · RTL · pink · dist`. It renders in a shadow root, so it doesn't pick up or leak any styles, and its contents stay left to right on RTL pages. The home page, the compare view and the sizes page have none, and keep Bootstrap's defaults.
 
-| Control | Effect | Shortcut | URL override |
+| Pill | Effect | Shortcut |
+| --- | --- | --- |
+| Home | Back to the home page | |
+| ‹ › | Previous and next page in the same group | |
+| Summary | Opens the settings panel | <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> toggles |
+| Search | Opens the page switcher | <kbd>Ctrl</kbd>+<kbd>K</kbd> (<kbd>⌘</kbd>+<kbd>K</kbd>) |
+
+The settings panel is a modal dialog, a bottom sheet on small screens. It closes on <kbd>Esc</kbd> and on a click outside it, and stays open from page to page until it's closed, for the browser session.
+
+| Panel | Effect | Shortcut | URL override |
 | --- | --- | --- | --- |
 | Color mode | Auto (system), Light or Dark, through `data-bs-theme` on `<html>`, plus the custom modes of the current config, like *Sepia* with `configs/color-modes-custom/` | <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd> cycles | `?theme=dark`, `?theme=sepia` |
 | Direction | LTR or RTL, through `dir` on `<html>` | <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> toggles | `?dir=rtl` |
+| CSS, JavaScript | *Source* compiles Bootstrap from `scss/` or `js/src/`, *Dist* loads the prebuilt `dist/css/bootstrap.css` or `js/dist/` (see [Where Bootstrap comes from](#where-bootstrap-comes-from)) | | `?css=dist`, `?js=dist` |
 | Primary | Remaps the `--bs-primary-*` tokens to another hue at runtime | | `?primary=teal` |
-| Styles | Swaps the working copy for a saved config | | `?config=<name>` |
-| Source / Dist | Compiles Bootstrap from `scss/` and `js/src/`, or loads the prebuilt `dist/css/bootstrap.css` and `js/dist/` (see [Where Bootstrap comes from](#where-bootstrap-comes-from)) | | `?css=dist`, `?js=dist` |
-| ‹ › | Previous and next page in the same group | | |
-| Search | Opens the page switcher | <kbd>Ctrl</kbd>+<kbd>K</kbd> (<kbd>⌘</kbd>+<kbd>K</kbd>) | |
+| Config | Swaps the working copy for a saved config. Configs are grouped by category, with a filter, their description, a *tokens only* badge and their known gaps (see [`configs/README.md`](configs/README.md#saved-configs)) | | `?config=<name>` |
+| Copy link | Copies the page's URL with the current choices as URL overrides | | |
 | Compare | Opens the current page in the compare view | | |
 | Reset | Back to Bootstrap's defaults | | |
 

@@ -84,4 +84,4 @@ updateConfigsReadme()
 
 console.log(`Saved src/styles/ to configs/${name}/`)
 console.log(`Describe it in configs/${name}/README.md: the configs table in configs/README.md is generated from it`)
-console.log(`Preview it with the toolbar's "Styles" menu or ?config=${name}`)
+console.log(`Preview it with the toolbar's "Config" list or ?config=${name}`)

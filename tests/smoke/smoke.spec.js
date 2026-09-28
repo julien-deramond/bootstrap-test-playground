@@ -469,3 +469,44 @@ for (const { name: variant, params } of VARIANTS) {
     }
   })
 }
+
+// The playground's own configurator, once per engine and whatever the scope:
+// open the panel, pick a config from a category, the stylesheets swap, then
+// close it, reopen it with its shortcut and reset. Builds hash the
+// stylesheets' URLs, so the swap shows in `pill`'s radius token.
+test.describe('playground', () => {
+  test('toolbar', async ({ page }) => {
+    await page.goto('/kitchen-sink/components-button.html?freeze')
+    await page.waitForFunction(() => window.bootstrap)
+
+    const toolbar = page.locator('#playground-toolbar')
+    const summary = toolbar.getByRole('button', { name: /^Playground settings/ })
+    const panel = toolbar.getByRole('dialog', { name: 'Playground settings' })
+    const styles = () => page.evaluate(() => [...document.querySelectorAll('link[data-playground-styles]')].map(link => link.href))
+    const radius = () => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--bs-radius-5'))
+    const working = await styles()
+
+    await summary.click()
+    await expect(panel).toBeVisible()
+    await panel.getByRole('searchbox', { name: 'Filter configs' }).fill('radius')
+    await expect(panel.getByRole('group', { name: /^Typography/ })).toBeHidden()
+    // The radios are visually hidden: click the label, as a user would.
+    const shape = panel.getByRole('group', { name: /^Shape/ })
+    const pill = shape.getByRole('radio', { name: /^pill/ })
+    await shape.locator('label', { has: page.getByRole('radio', { name: /^pill/ }) }).click()
+    await expect(pill).toBeChecked()
+    await expect.poll(radius).toBe('2rem')
+    expect(await styles()).not.toEqual(working)
+    await expect(summary).toHaveAccessibleName(/pill/)
+
+    await page.keyboard.press('Escape')
+    await expect(panel).toBeHidden()
+    await page.keyboard.press('Alt+Shift+P')
+    await expect(panel).toBeVisible()
+
+    await panel.getByRole('button', { name: 'Reset' }).click()
+    await expect.poll(styles).toEqual(working)
+    await expect.poll(radius).not.toBe('2rem')
+    await expect(summary).toHaveAccessibleName('Playground settings: src/styles')
+  })
+})
