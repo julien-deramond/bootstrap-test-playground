@@ -20,6 +20,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run test:visual [-- -u]` | Screenshots every page and compares with the baselines (see [Visual regression tests](#visual-regression-tests)) |
 | `npm run test:console` | Opens every page and fails on errors, warnings and failed requests (see [Console crawl](#console-crawl)) |
 | `npm run test:smoke` | Opens, drives and closes every JavaScript component and checks its state and events (see [Interaction smoke tests](#interaction-smoke-tests)) |
+| `npm run console-scope [-- <base>]` | Prints what the console crawl has to open for the changes since `<base>` (see [Console crawl](#console-crawl)) |
 | `npm run test:smoke:engines` / `test:console:engines` | The same suites in Chromium, Firefox and WebKit (see [Browser engines](#browser-engines)) |
 | `npm run lint:html [-- --all]` | Validates the HTML of every page with html-validate (see [Validating HTML](#validating-html)) |
 | `npm run check-configs [-- --strict]` | Compiles the working copy, every config and every reproduction, and lists Sass errors and warnings (see [Checking configs](#checking-configs)) |
@@ -480,7 +481,16 @@ Problems caused by an open upstream bug go in [`tests/console/known-issues.js`](
 
 Sass `@warn` output shows up in the build log, not in the browser, so the crawl doesn't see it. [`npm run check-configs`](#checking-configs) reports it.
 
-[`.github/workflows/console.yml`](.github/workflows/console.yml) runs the crawl on every pull request and every push to `main`.
+The full crawl loads about 5,000 pages, and every new config or page adds a round of them. Most changes only need part of it: a changed config on every page, and a changed page with every config. `npm run console-scope` lists what changed since `origin/main` (or `-- <base>`), committed or not, and prints a `CONSOLE_SCOPE` value that limits the crawl to it:
+
+```sh
+npm run console-scope
+CONSOLE_SCOPE='{"full":false,"configs":["pill"],"urls":["/pages/checkout.html"]}' npm run test:console
+```
+
+The working copy and dist always open on every page. A shared change opens everything: Bootstrap, `postcss.config.js`, `vite.config.js`, `src/js/`, `public/`, `scripts/lib/`, `tests/console/` (so a `known-issues.js` edit is checked everywhere), and any file it doesn't recognize. Docs, the other suites and scripts outside `scripts/lib/` add nothing. The rules are in [`scripts/lib/console-scope.mjs`](scripts/lib/console-scope.mjs).
+
+[`.github/workflows/console.yml`](.github/workflows/console.yml) runs the scoped crawl on every pull request, and writes the scope to the job summary. The full crawl runs every night and on demand from the *Actions* tab, and the canary runs it on every Bootstrap update.
 
 ## Interaction smoke tests
 
@@ -516,7 +526,7 @@ Failures are reported per project, so an engine-only failure stands out. It's us
 
 Visual baselines are per engine, since fonts and native controls render differently: Chromium's in `tests/visual/screenshots/<platform>/`, the others' in `tests/visual/screenshots/<platform>/visual-firefox/` and `visual-webkit/`. The `update-baselines` label records all three.
 
-In CI, pull requests run the smoke tests in all three engines ([`smoke.yml`](.github/workflows/smoke.yml)) and the console crawl and visual suite in Chromium ([`console.yml`](.github/workflows/console.yml), [`visual.yml`](.github/workflows/visual.yml)). [`engines.yml`](.github/workflows/engines.yml) runs the console crawl and the visual suite in Firefox and WebKit every night, and on demand from the *Actions* tab.
+In CI, pull requests run the smoke tests in all three engines ([`smoke.yml`](.github/workflows/smoke.yml)), and the visual suite ([`visual.yml`](.github/workflows/visual.yml)) and the console crawl, scoped to what they change ([`console.yml`](.github/workflows/console.yml)), in Chromium. `console.yml` also crawls everything in Chromium every night. [`engines.yml`](.github/workflows/engines.yml) runs the console crawl and the visual suite in Firefox and WebKit every night, and on demand from the *Actions* tab.
 
 A baseline records whatever an engine renders, bugs included, so it's worth comparing engines before trusting one. Comparing every kitchen sink example across the three, with text hidden, found one engine-only difference that isn't font metrics or native controls: WebKit leaves a `<legend>` in a `fieldset.row` above the row ([#169](https://github.com/julien-deramond/bootstrap-test-playground/issues/169)).
 

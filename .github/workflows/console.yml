@@ -5,10 +5,17 @@ name: Console crawl
 # tests/console/known-issues.js. Then opens every component with reduced
 # motion emulated, and with transitions compiled out, and fails on motion,
 # and checks the documented cascade layer overrides on issues/pg-27/.
+#
+# Pull requests crawl what they change (`npm run console-scope`): the working
+# copy and dist on every page, the changed configs on every page and the
+# changed pages with every config, or everything after a shared change. The
+# full crawl runs every night and on demand; engines.yml does the same in
+# Firefox and WebKit, and the canary on every Bootstrap update.
 on:
   pull_request:
-  push:
-    branches: [main]
+  schedule:
+    - cron: '47 2 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -21,7 +28,10 @@ jobs:
   crawl:
     runs-on: ubuntu-24.04
     steps:
+      # Two commits: a pull request's merge commit and its base, HEAD^1.
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
 
       - uses: actions/setup-node@v7
         with:
@@ -31,6 +41,9 @@ jobs:
       - run: npm ci
 
       - run: npx playwright install --with-deps chromium
+
+      - run: npm run console-scope -- HEAD^1
+        if: ${{ github.event_name == 'pull_request' }}
 
       - run: npm run test:console
 

@@ -5,6 +5,11 @@
 // requests that fail or return an error status.
 //
 // Problems caused by an open upstream bug are listed in known-issues.js.
+//
+// CONSOLE_SCOPE, which `npm run console-scope` prints and console.yml sets on
+// pull requests, limits the crawl to what changed: the working copy and dist
+// on every page, the changed configs on every page and the changed pages with
+// every config. Without it, the crawl opens everything.
 import { expect, test } from '@playwright/test'
 import { listConfigs } from '../../scripts/lib/configs.mjs'
 import { collectPages } from '../../scripts/lib/pages.mjs'
@@ -30,12 +35,16 @@ const VARIANTS = [
 
 const urls = ['/', '/compare.html', '/sizes.html', ...collectPages('/').flatMap(({ pages }) => pages.map(({ url }) => url))]
 
+const scope = process.env.CONSOLE_SCOPE ? JSON.parse(process.env.CONSOLE_SCOPE) : { full: true }
+const inScope = (variant, url) => scope.full || ['working', 'dist'].includes(variant) ||
+  scope.configs.includes(variant) || scope.urls.includes(url)
+
 for (const theme of THEMES) {
   for (const { name, params: variant } of VARIANTS) {
     test.describe(`${theme}-${name}`, () => {
       test.use({ colorScheme: theme })
 
-      for (const url of urls) {
+      for (const url of urls.filter(url => inScope(name, url))) {
         test(url, async ({ page, baseURL, browserName }) => {
           const { origin } = new URL(baseURL)
           const problems = []
