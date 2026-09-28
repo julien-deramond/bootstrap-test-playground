@@ -458,7 +458,7 @@ Baselines live in `tests/visual/screenshots/<platform>/`. Fonts and anti-aliasin
 
 [`.github/workflows/visual.yml`](.github/workflows/visual.yml) runs the suite on every pull request and every push to `main`, against the committed Linux baselines. When it fails, the *visual-report* artifact of the run holds the report: download it and open `index.html`.
 
-When a pull request changes the rendering on purpose, such as a Bootstrap update, add the `update-baselines` label to it. CI then records new Linux baselines, commits them to the pull request's branch as `test: update the Linux visual baselines`, and removes the label. Review that commit's images before merging. This works for branches of this repository, not for forks. A push made by CI doesn't start other workflows, so the comparison runs again on the next push, or on `main` after the merge.
+When a pull request changes the rendering on purpose, such as a Bootstrap update, add the `update-baselines` label to it. CI then records new Linux baselines, commits them to the pull request's branch as `test: update the Linux visual baselines`, and removes the label. Review that commit's images before merging. This works for branches of this repository, not for forks. While the label is on, the comparison is skipped: it could only fail on the changes being recorded, so a pull request opened with the label, like one that adds a page, gets no failure for nothing. A push made by CI doesn't start other workflows, so the comparison runs again on the next push, or on `main` after the merge.
 
 ## Console crawl
 

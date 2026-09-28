@@ -4,7 +4,9 @@ name: Visual tests
 # in Chromium; engines.yml compares Firefox and WebKit every night. To create or
 # refresh them after an intended change, add the `update-baselines` label to the
 # pull request: the `update` job records them for all three engines, commits them
-# to the pull request's branch and removes the label.
+# to the pull request's branch and removes the label. While the label is on,
+# `compare` skips the comparison, which could only fail on the changes being
+# recorded.
 on:
   pull_request:
     types: [opened, synchronize, reopened, labeled]
@@ -22,24 +24,45 @@ jobs:
     concurrency:
       group: visual-${{ github.ref }}
       cancel-in-progress: true
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
+      # The labels as they are now, not in the event: `gh pr create --label`
+      # adds them just after `opened`.
+      - id: labels
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          if gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name' | grep -qx update-baselines; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo 'The `update-baselines` label is on: the `update` job records new baselines, so this run skips the comparison.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+
       - uses: actions/checkout@v7
+        if: ${{ steps.labels.outputs.skip != 'true' }}
 
       - uses: actions/setup-node@v7
+        if: ${{ steps.labels.outputs.skip != 'true' }}
         with:
           node-version-file: .nvmrc
           cache: npm
 
       - run: npm ci
+        if: ${{ steps.labels.outputs.skip != 'true' }}
 
       - run: npx playwright install --with-deps chromium
+        if: ${{ steps.labels.outputs.skip != 'true' }}
 
       - run: npm run test:visual
+        if: ${{ steps.labels.outputs.skip != 'true' }}
 
       # Expected, actual and diff for each failure: download it and open
       # index.html, or run `npx playwright show-report <folder>`.
       - uses: actions/upload-artifact@v7
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.labels.outputs.skip != 'true' }}
         with:
           name: visual-report
           path: tests/report/
