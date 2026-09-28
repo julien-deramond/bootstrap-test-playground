@@ -14,6 +14,8 @@ export default [
   { kind: 'undefined', issue: 9, tokens: ['--nav-link-font-weight', '--range-track-box-shadow'] },
   { kind: 'undefined', issue: 182, configs: ['brand'], tokens: ['--info-bg', '--secondary-fg'] },
   { kind: 'undefined', issue: 187, configs: ['weights'], tokens: ['--font-weight-semibold'] },
+  { kind: 'undefined', issue: 216, configs: ['partial'], tokens: ['--tooltip-arrow-height', '--tooltip-border-radius', '--tooltip-padding-x', '--tooltip-padding-y'] },
+  { kind: 'undefined', configs: ['partial'], reason: '`.card-header-tabs` is a nav, and the config leaves the nav partial out', tokens: ['--nav-tabs-border-width'] },
   {
     kind: 'undefined',
     reason: 'opt-in hook: while it’s unset, the property falls back to its inherited or initial value',
@@ -50,6 +52,7 @@ export default [
   { kind: 'unused', reason: 'scale step, for users and utilities', pattern: /^--(spacer|radius|z|font-size|line-height)-(n?\d+|\d*x[sl])$/ },
   { kind: 'unused', reason: 'scale step, for users and utilities', tokens: ['--box-shadow-xs', '--font-weight-light', '--font-weight-lighter'] },
   { kind: 'unused', configs: ['utilities-custom'], reason: 'the config’s `variables` list exposes each .text-shadow-* value, for users', tokens: ['--text-shadow'] },
+  { kind: 'unused', configs: ['partial'], reason: 'global tokens for the components the config leaves out', tokens: ['--box-shadow', '--box-shadow-xl', '--z-dialog', '--z-drawer', '--z-popover', '--z-toast', '--z-tooltip'] },
   { kind: 'unused', configs: ['weights'], reason: 'the weight the config adds to $font-weights, for users (the .fw-black utility uses the raw value)', tokens: ['--font-weight-black'] },
   { kind: 'unused', reason: 'read by Bootstrap’s JavaScript (NavOverflow)', pattern: /^--breakpoint-/ },
   { kind: 'unused', reason: 'generated from the color maps and the theme API, for users', tokens: ['--bg-inherit', '--fg-inherit', '--theme-base'] },

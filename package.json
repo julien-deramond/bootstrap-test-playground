@@ -27,6 +27,7 @@
     "audit-rtl": "node scripts/audit-rtl.mjs",
     "audit-motion": "node scripts/audit-motion.mjs",
     "audit-layers": "node scripts/audit-layers.mjs",
+    "audit-partials": "node scripts/audit-partials.mjs",
     "new-issue": "node scripts/new-issue.mjs",
     "save-config": "node scripts/save-config.mjs",
     "use-config": "node scripts/use-config.mjs",
@@ -34,7 +35,7 @@
     "sync-kitchen-sink": "node scripts/sync-kitchen-sink.mjs",
     "canary-report": "node scripts/canary-report.mjs",
     "diff-bootstrap": "node scripts/diff-bootstrap.mjs",
-    "update-bootstrap": "npm install bootstrap@github:twbs/bootstrap#v6-dev && BOOTSTRAP_PATH= npm run check-configs && BOOTSTRAP_PATH= npm run check-dist && BOOTSTRAP_PATH= npm run audit-tokens && BOOTSTRAP_PATH= npm run compile-matrix && BOOTSTRAP_PATH= npm run audit-rtl && BOOTSTRAP_PATH= npm run audit-motion && BOOTSTRAP_PATH= npm run audit-layers && BOOTSTRAP_PATH= npm run check-size -- --record"
+    "update-bootstrap": "npm install bootstrap@github:twbs/bootstrap#v6-dev && BOOTSTRAP_PATH= npm run check-configs && BOOTSTRAP_PATH= npm run check-dist && BOOTSTRAP_PATH= npm run audit-tokens && BOOTSTRAP_PATH= npm run compile-matrix && BOOTSTRAP_PATH= npm run audit-rtl && BOOTSTRAP_PATH= npm run audit-motion && BOOTSTRAP_PATH= npm run audit-layers && BOOTSTRAP_PATH= npm run audit-partials && BOOTSTRAP_PATH= npm run check-size -- --record"
   },
   "engines": {
     "node": ">=20.19"

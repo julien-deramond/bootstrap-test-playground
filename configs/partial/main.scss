@@ -1,0 +1,27 @@
+// The docs' "Option B: Include parts of Bootstrap" (customize/sass), as
+// written, plus the menu: root first, then only some partials. Every other
+// component is left out on purpose, so most pages show it unstyled. The point
+// is what the included partials need from the ones left out:
+// `npm run audit-partials` compiles each partial alone after root and maps
+// those dependencies.
+
+// 1. Include root first (configuration, colors, tokens, and CSS layers)
+@use "bootstrap/scss/root";
+
+// 2. Include any other partials as needed
+@use "bootstrap/scss/content";
+@use "bootstrap/scss/layout";
+@use "bootstrap/scss/forms";
+@use "bootstrap/scss/buttons";
+
+// 3. Components
+@use "bootstrap/scss/alert";
+@use "bootstrap/scss/card";
+@use "bootstrap/scss/menu";
+
+// 4. Helpers and utilities
+@use "bootstrap/scss/helpers";
+@use "bootstrap/scss/utilities/api";
+
+// 5. Add additional custom code here
+@use "custom";
