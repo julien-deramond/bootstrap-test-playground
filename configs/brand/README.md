@@ -2,6 +2,8 @@
 
 Two theme colors added, `brand` (teal) and `tertiary` (pink), and two removed with `null`, `info` and `secondary`. Use it to check that Bootstrap generates everything for a new theme and that nothing still points to a removed one.
 
+Category: color
+
 ## What it stresses
 
 - Adding themes: `.theme-brand` and `.theme-tertiary`, their `--brand-*` and `--tertiary-*` root tokens, and the theme utilities (`.bg-brand`, `.fg-brand`, `.border-brand`, `.bg-subtle-brand`, `.shadow-brand`, `.underline-brand` and the rest). `brand` uses the `600` step for its `bg`, where Bootstrap's themes use `500`.

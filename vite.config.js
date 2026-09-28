@@ -3,7 +3,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig, loadEnv } from 'vite'
 import { bootstrapSource } from './scripts/lib/bootstrap.mjs'
-import { listConfigs, readKnownGaps } from './scripts/lib/configs.mjs'
+import { CATEGORIES, listConfigs, readKnownGaps } from './scripts/lib/configs.mjs'
 import { collectPages, findHtmlFiles, PAGE_GROUPS } from './scripts/lib/pages.mjs'
 
 const root = path.dirname(fileURLToPath(import.meta.url))
@@ -49,9 +49,10 @@ function keepStyleMarkers() {
 // Exposes two virtual modules:
 // - `virtual:playground-pages`: every page, for the home and compare pages
 // - `virtual:playground-configs`: every saved config in configs/, with its
-//   description, known gaps and whether it's tokens only (from its README.md
-//   and files), and the URLs of its compiled `main.scss` and `tokens.css`
-//   (hashed assets in builds)
+//   description, category, known gaps and whether it's tokens only (from its
+//   README.md and files), and the URLs of its compiled `main.scss` and
+//   `tokens.css` (hashed assets in builds). `categories` lists the categories
+//   in order.
 function playgroundData(base) {
   const modules = {
     'virtual:playground-pages': () => `export default ${JSON.stringify(collectPages(base))}`,
@@ -63,7 +64,7 @@ function playgroundData(base) {
       ].join('\n')).join('\n')
       const entries = configs.map(({ name, ...data }, index) =>
         `{ ...${JSON.stringify({ name, ...data, gaps: readKnownGaps(path.join(root, 'configs', name)) })}, main: main${index}, tokens: tokens${index} }`)
-      return `${imports}\nexport default [${entries.join(', ')}]`
+      return `${imports}\nexport const categories = ${JSON.stringify(CATEGORIES)}\nexport default [${entries.join(', ')}]`
     }
   }
 

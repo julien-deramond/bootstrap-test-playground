@@ -33,7 +33,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run audit-layers [-- --all \| --render]` | Lists rules outside Bootstrap's cascade layers, undeclared layers and every `!important`, and with `--render` checks the documented override rules in the browser (see [Auditing cascade layers](#auditing-cascade-layers)) |
 | `npm run audit-tokens [-- --all \| --render]` | Lists `--bs-*` tokens that are read but never defined, or defined but never read, and with `--render` the ones overriding doesn't change (see [Auditing tokens](#auditing-tokens)) |
 | `npm run new-issue 42928 [-- --config <name>]` | Creates `issues/42928/` from the reproduction template and a config |
-| `npm run save-config <name> [-- "Description"]` | Saves the working copy (`src/styles/`) as `configs/<name>/` |
+| `npm run save-config <name> [-- "Description"] [--category <id>]` | Saves the working copy (`src/styles/`) as `configs/<name>/`, filed under a category |
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
 | `npm run configs-table [-- --check]` | Regenerates the table of configs in `configs/README.md` from their READMEs, or with `--check` fails when it's stale (see [Configs](#configs)) |
 | `npm run update-bootstrap` | Moves `node_modules/bootstrap` to the latest `v6-dev` commit, then runs `check-configs`, `check-dist`, `audit-tokens`, `compile-matrix`, `audit-rtl`, `audit-motion`, `audit-layers` and `audit-partials` against it, and records its sizes |
@@ -289,7 +289,7 @@ Once the working copy holds a good test case, save it as a **config**, a folder 
 npm run save-config rounded-dark -- "Large radii and a dark-first palette"
 ```
 
-Its `README.md` starts from [the template](scripts/templates/config/README.md). The first paragraph describes the config, and the toolbar and the home page show it. Then come *What it stresses*, *Pages to check*, and *Known gaps*, which links the tracking issues. [`configs/README.md`](configs/README.md#saved-configs) has a table of every config, generated from those READMEs by `npm run configs-table`. `save-config` updates it, and the *Configs* workflow fails when it's stale.
+Its `README.md` starts from [the template](scripts/templates/config/README.md). The first paragraph describes the config, and the toolbar and the home page show it. A `Category:` line then files it under *Shape*, *Color*, *Typography*, *Layout and density*, *Options*, *Sass API and build* or *Themes* (see [`configs/README.md`](configs/README.md#saved-configs)). Then come *What it stresses*, *Pages to check*, and *Known gaps*, which links the tracking issues. [`configs/README.md`](configs/README.md#saved-configs) has a table of every config, generated from those READMEs by `npm run configs-table`. `save-config` updates it, and the *Configs* workflow fails when it's stale.
 
 Then:
 

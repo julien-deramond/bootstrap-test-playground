@@ -1,7 +1,7 @@
 /*
- * Home page layout. Built on Bootstrap's tokens, so it follows the color mode,
- * the direction, the Primary hue and the configs like any other page. Kept in
- * the `custom` layer so utilities still apply.
+ * Home page layout. Built on Bootstrap's tokens, and kept in the `custom`
+ * layer so utilities still apply. The page itself always renders with
+ * Bootstrap's defaults (`data-playground-fixed`, see playground-prefs.js).
  */
 
 @layer custom {
@@ -530,6 +530,16 @@
     padding-block: 1rem 3rem;
     /* Clear the sticky filters when jumping to #configs. */
     scroll-margin-block-start: 10rem;
+  }
+
+  .config-group {
+    margin-block-start: 2rem;
+  }
+
+  .config-group-title {
+    margin: 0;
+    font-size: var(--bs-font-size-lg);
+    font-weight: var(--bs-font-weight-semibold);
   }
 
   .config-card {

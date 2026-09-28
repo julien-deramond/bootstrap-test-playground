@@ -2,6 +2,8 @@
 
 Dark by default: without `data-bs-theme`, the page is `color-scheme: dark` whatever the OS prefers, and `data-bs-theme="light"` is the way back to light. Use it with the OS in light mode to find what follows the OS or the `data-bs-theme` attribute instead of the page's color scheme.
 
+Category: color
+
 ## What it stresses
 
 - Every `light-dark()` pair, which should pick its dark side on the whole page with the toolbar on **Auto**.

@@ -1,18 +1,30 @@
 #!/usr/bin/env node
 // Snapshots the working copy (src/styles/) into configs/<name>/, starts its
 // README.md from scripts/templates/config/, and updates the configs table.
-// Usage: npm run save-config <name> [-- "Description"] [--force]
+// Usage: npm run save-config <name> [-- "Description"] [--category <id>] [--force]
+// Without --category, a new config asks for one in a terminal, and lands in
+// `other` elsewhere.
 
 import fs from 'node:fs'
 import path from 'node:path'
-import { NAME_PATTERN, configDir, copyStyles, fail, root, updateConfigsReadme, workingDir } from './lib/configs.mjs'
+import { createInterface } from 'node:readline/promises'
+import { CATEGORIES, NAME_PATTERN, configDir, copyStyles, fail, isMetaBlock, root, updateConfigsReadme, workingDir, writeCategory } from './lib/configs.mjs'
+
+const USAGE = 'Usage: npm run save-config <name> [-- "Description"] [--category <id>] [--force]   (name: lowercase letters, digits, dashes)'
 
 const args = process.argv.slice(2)
 const force = args.includes('--force')
-const [name, ...descriptionWords] = args.filter(arg => arg !== '--force')
+const categoryIndex = args.indexOf('--category')
+let category = categoryIndex === -1 ? '' : args[categoryIndex + 1] ?? ''
+const [name, ...descriptionWords] = args.filter((arg, index) => arg !== '--force' && (categoryIndex === -1 || (index !== categoryIndex && index !== categoryIndex + 1)))
 
 if (!name || !NAME_PATTERN.test(name)) {
-  fail('Usage: npm run save-config <name> [-- "Description"] [--force]   (name: lowercase letters, digits, dashes)')
+  fail(USAGE)
+}
+
+const categoryIds = CATEGORIES.map(({ id }) => id)
+if (categoryIndex !== -1 && !categoryIds.includes(category)) {
+  fail(`Unknown category \`${category}\`. Pick one of: ${categoryIds.join(', ')}`)
 }
 
 if (name === 'default') {
@@ -30,15 +42,30 @@ copyStyles(workingDir, target)
 // description given on the command line replaces only its first paragraph.
 const description = descriptionWords.join(' ').trim()
 const readme = path.join(target, 'README.md')
-if (!fs.existsSync(readme)) {
+const isNew = !fs.existsSync(readme)
+
+if (isNew && !category && process.stdin.isTTY) {
+  console.log('What does this config customize?')
+  for (const [index, { id, description }] of CATEGORIES.entries()) {
+    console.log(`  ${index + 1}. ${id.padEnd(12)} ${description}`)
+  }
+
+  const prompt = createInterface({ input: process.stdin, output: process.stdout })
+  const answer = (await prompt.question(`Category (1-${CATEGORIES.length} or id, Enter for other): `)).trim()
+  prompt.close()
+  category = CATEGORIES[Number(answer) - 1]?.id ?? (categoryIds.includes(answer) ? answer : 'other')
+}
+
+if (isNew) {
   const template = fs.readFileSync(path.join(root, 'scripts/templates/config/README.md'), 'utf8')
   fs.writeFileSync(readme, template
     .replaceAll('__NAME__', name)
+    .replaceAll('__CATEGORY__', category || 'other')
     .replaceAll('__DESCRIPTION__', description || 'Describe what this config tests, in one paragraph. The toolbar, the home page and the configs table show it.'))
 } else if (description) {
   // Blocks and the blank lines between them, so the rest stays byte for byte.
   const parts = fs.readFileSync(readme, 'utf8').split(/(\n\s*\n)/)
-  const index = parts.findIndex((part, i) => i % 2 === 0 && part.trim() && !/^(#|<!--)/.test(part.trim()))
+  const index = parts.findIndex((part, i) => i % 2 === 0 && part.trim() && !isMetaBlock(part))
   if (index === -1) {
     parts.splice(1, 0, '\n\n', description)
   } else {
@@ -46,6 +73,11 @@ if (!fs.existsSync(readme)) {
   }
 
   fs.writeFileSync(readme, parts.join(''))
+}
+
+// An existing config keeps its category unless --category changes it.
+if (!isNew && category) {
+  writeCategory(readme, category)
 }
 
 updateConfigsReadme()

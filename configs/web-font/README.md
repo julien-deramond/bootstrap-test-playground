@@ -2,6 +2,8 @@
 
 Inter for text and JetBrains Mono for code, both variable fonts from Google Fonts, with tabular numbers on the whole page. Use it to find what depends on the system font's metrics: line heights, control heights, icon and text alignment.
 
+Category: typography
+
 ## What it stresses
 
 - `--body-font-family` and `--font-mono`, set at runtime in `tokens.css`. Tokens only, so it also applies on top of the prebuilt dist (`?css=dist`).

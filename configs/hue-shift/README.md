@@ -2,6 +2,8 @@
 
 Every hue of `$colors` rotated 180°, lightness and chroma kept: blue turns orange, green magenta, yellow blue-violet. What keeps its original hue doesn't read the color scale.
 
+Category: color
+
 ## What it stresses
 
 - The 14 hues of `$colors` (`$gray` and `$pewter` stay: `gray-warm` and `gray-cool` cover them), their `025…975` scales, and every theme color built from them.

@@ -2,6 +2,8 @@
 
 Three custom color modes in `tokens.css`, next to light and dark: `blue`, the docs' example copied as is, `sepia`, a light mode on warm paper, and `dim`, a low-contrast dark mode. The toolbar offers them next to *Auto*, *Light* and *Dark* while this config is on, and `?theme=sepia` works on any page. [`pages/color-modes.html`](../../pages/color-modes.html) checks that each one sets `color-scheme` and reaches every overlay.
 
+Category: color
+
 ## What it stresses
 
 - `color-scheme`. `sepia` and `dim` set it, so the `light-dark()` tokens they don't override, like theme colors, resolve to their light or dark value whatever the system prefers. `blue` doesn't, as in the docs: on a dark system, its cards and form controls turn dark on the blue page.

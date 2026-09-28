@@ -2,6 +2,8 @@
 
 `$radius: 0` and `--radius-pill: 0`: every radius token is 0, so everything should be square. Unlike `no-rounded`, components keep their `border-radius` declarations, so use it to find radii that don't read the tokens.
 
+Category: shape
+
 ## What it stresses
 
 - The `$radii` scale: `$radius: 0` sets every `--radius-*` step to 0, and every component that reads one turns square: buttons, form controls, input groups, cards, alerts, badges, menus, dialogs, drawers, popovers, tooltips, list groups, pagination, the datepicker.

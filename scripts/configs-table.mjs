@@ -1,13 +1,24 @@
 #!/usr/bin/env node
 // Writes the table of saved configs into configs/README.md, from each
-// config's README.md: its description, the tracking issues under "Known gaps",
-// and whether it only changes tokens.css. `save-config` runs it too.
+// config's README.md: grouped by its `Category:` line, its description, the
+// tracking issues under "Known gaps", and whether it only changes tokens.css.
+// `save-config` runs it too.
 // Usage: npm run configs-table [-- --check]
 // --check writes nothing and fails when the table is stale, for CI.
 
-import { updateConfigsReadme } from './lib/configs.mjs'
+import { CATEGORIES, unknownCategories, updateConfigsReadme } from './lib/configs.mjs'
 
 const check = process.argv.includes('--check')
+
+const unknown = unknownCategories()
+if (unknown.length > 0) {
+  for (const { name, id } of unknown) {
+    console.error(`✗ configs/${name}/README.md: unknown category \`${id}\``)
+  }
+
+  console.error(`  Categories: ${CATEGORIES.map(({ id }) => id).join(', ')} (scripts/lib/configs.mjs)`)
+  process.exit(1)
+}
 const stale = updateConfigsReadme({ check })
 
 if (check && stale) {

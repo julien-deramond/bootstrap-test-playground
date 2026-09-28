@@ -2,6 +2,8 @@
 
 `$enable-shadows: false`: components lose their `box-shadow` declarations, so nothing should cast a shadow but focus rings and opt-in utilities. Use it to find shadows that skip the `box-shadow()` mixin.
 
+Category: options
+
 ## What it stresses
 
 - Every `box-shadow()` mixin call: cards, menus, dialogs, drawers, popovers, form controls, range, progress, thumbnails, the buttons' active state and `.hover-lift`.

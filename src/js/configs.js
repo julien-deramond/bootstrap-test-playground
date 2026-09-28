@@ -5,9 +5,16 @@
 // dist; its Sass options can't. Pages without those links, like issue
 // reproductions, keep their own styles.
 import distCss from 'bootstrap/dist/css/bootstrap.css?url'
-import configs from 'virtual:playground-configs'
+import configs, { categories } from 'virtual:playground-configs'
 
-export { configs }
+export { categories, configs }
+
+// The categories that have configs, in order, each with its configs.
+export function groupConfigs(items = configs) {
+  return categories
+    .map(category => ({ ...category, configs: items.filter(config => config.category === category.id) }))
+    .filter(category => category.configs.length > 0)
+}
 
 export function initConfigs(prefs) {
   let links = Object.fromEntries(

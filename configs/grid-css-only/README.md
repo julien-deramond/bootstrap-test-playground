@@ -2,6 +2,8 @@
 
 `$enable-grid-classes: false`: no flexbox grid (`.row`, `.col-*`, `.offset-*`, gutters), only the CSS grid. Pages built on `.row` stack their columns; that's expected, not a bug.
 
+Category: layout
+
 ## What it stresses
 
 - That no component depends on `.row` or `.col-*`, and that the CSS grid still works on its own.

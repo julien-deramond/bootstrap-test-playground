@@ -10,6 +10,7 @@
 //   D  toggle direction (LTR, RTL)
 // Ctrl+K (⌘K on macOS) opens the page switcher, see palette.js.
 
+import { groupConfigs } from './configs.js'
 import { mountPalette, paletteShortcut } from './palette.js'
 import { siblings } from './page-index.js'
 
@@ -131,10 +132,14 @@ export function mountToolbar({ source, configs, swappable }) {
     </span>`
   const modeOption = mode => [mode, mode.charAt(0).toUpperCase() + mode.slice(1)]
 
+  const configOption = (value, label, description) => `<option value="${escapeHtml(value)}" title="${escapeHtml(description)}">${escapeHtml(label)}</option>`
   const configOptions = [
-    ['working', 'Styles: src/styles (working)', 'The working copy in src/styles/'],
-    ...configs.map(({ name, description }) => [name, `Styles: ${name}`, description || `configs/${name}/`])
-  ]
+    configOption('working', 'Styles: src/styles (working)', 'The working copy in src/styles/'),
+    ...groupConfigs(configs).map(({ label, configs }) => `
+        <optgroup label="${escapeHtml(label)}">
+          ${configs.map(({ name, description }) => configOption(name, `Styles: ${name}`, description || `configs/${name}/`)).join('')}
+        </optgroup>`)
+  ].join('')
 
   const compareUrl = `${import.meta.env.BASE_URL}compare.html?page=${encodeURIComponent(location.pathname)}`
   const palette = mountPalette()
@@ -166,7 +171,7 @@ export function mountToolbar({ source, configs, swappable }) {
       </select>
       <span title="Source compiles Bootstrap from scss/ and js/src/. Dist loads the prebuilt dist/css/bootstrap.css and js/dist/ the package ships.">${segmented('source', 'Bootstrap source', [['src', 'Source'], ['dist', 'Dist']])}</span>
       <select data-pref="config" aria-label="Styles config" ${swappable ? 'title="Swap src/styles/ for a saved config from configs/"' : 'disabled title="This page compiles its own styles"'}>
-        ${configOptions.map(([value, label, description]) => `<option value="${escapeHtml(value)}" title="${escapeHtml(description)}">${escapeHtml(label)}</option>`).join('')}
+        ${configOptions}
       </select>
       <a href="${compareUrl}" title="Compare this page side by side">Compare</a>
       <button type="button" class="reset" title="Back to Bootstrap defaults">Reset</button>

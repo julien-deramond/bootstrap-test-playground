@@ -2,6 +2,8 @@
 
 `$enable-cssgrid: false`: no CSS grid (`.grid`, `.g-col-*`, `.g-start-*`), only the flexbox grid. Pages built on `.grid` fall back to stacked blocks; that's expected, not a bug.
 
+Category: layout
+
 ## What it stresses
 
 - That nothing outside `.grid` depends on the CSS grid classes, and that the flexbox grid still works on its own.

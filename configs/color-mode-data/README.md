@@ -2,6 +2,8 @@
 
 `$color-mode-type: "data"`, with a `color-mode(dark)` rule in `_custom.scss` that dims images and placeholders in dark mode. The option only changes what the `color-mode()` mixin emits, `[data-bs-theme="dark"] img` instead of a `prefers-color-scheme` query: Bootstrap never calls the mixin, so its own CSS is byte for byte the default's. [`pages/color-modes.html`](../../pages/color-modes.html) checks the mixin with both types.
 
+Category: color
+
 ## What it stresses
 
 - The `data` type against v6's color modes, which follow the system unless a `data-bs-theme` says otherwise. With the toolbar on *Auto* and the system in dark mode, the page is dark but the images aren't dimmed. On *Dark*, they are.

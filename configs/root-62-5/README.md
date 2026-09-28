@@ -2,6 +2,8 @@
 
 `html { font-size: 62.5% }`, the classic 1rem = 10px trick, with every global `rem` value Bootstrap exposes scaled by 1.6 to get its default look back. What's still 62.5% too small sizes itself with its own `rem` value, and a site using the trick has to override it component by component.
 
+Category: typography
+
 ## What it stresses
 
 - The global knobs, all ×1.6: `--body-font-size`, `$font-sizes` (fluid steps included), `$spacer`, `$radius`, `$grid-gutter-x` and the `--btn-input-*` tokens. Text, spacing, radii, buttons, inputs, selects, pagination and the grid are back to their default sizes.

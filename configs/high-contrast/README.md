@@ -2,6 +2,8 @@
 
 Toward WCAG AAA, as accessibility teams customize Bootstrap: black and white body text, every text token at 7:1 or more, 2px borders at 3:1, a 4px focus ring in the text color with a 2px offset, darker theme fills, solid disabled controls and no translucent borders. All 152 token pairings it sets reach AAA in both modes, against 75 below AAA with the defaults. What still falls short is hard-coded in Bootstrap.
 
+Category: themes
+
 ## What it stresses
 
 - **The global tokens and theme maps:**

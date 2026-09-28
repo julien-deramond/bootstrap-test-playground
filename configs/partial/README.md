@@ -2,6 +2,8 @@
 
 The Sass docs' "Option B: Include parts of Bootstrap", as written, plus the menu: `root`, then `content`, `layout`, `forms`, `buttons`, `alert`, `card`, `menu`, `helpers` and `utilities/api`. Every other component is left out, so most pages show it unstyled. That's expected. `npm run audit-partials` compiles every partial alone after `root` and maps what each one needs from the others.
 
+Category: sass
+
 ## What it stresses
 
 - **Option B as the docs write it.** It compiles, but `forms` reads the tooltip's tokens for validation tooltips and the range's value bubble, which reuse the `.tooltip` markup, and the example leaves `tooltip` out.

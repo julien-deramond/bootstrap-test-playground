@@ -2,6 +2,8 @@
 
 18px body text and a type scale one step larger, as for a large-type accessibility preference, with every other size left as it is. Use it to find what clips, overflows or misaligns because it was sized for 16px text.
 
+Category: typography
+
 ## What it stresses
 
 - `--body-font-size: 1.125rem` and `$font-sizes`: `xs` to `md` become 14px, 16px and 18px, and the fluid steps grow with them.

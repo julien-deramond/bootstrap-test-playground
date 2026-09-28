@@ -2,6 +2,8 @@
 
 One color, `--mono-base` in `tokens.css`, drives the whole palette at runtime: every hue of `$colors` is that color, and the grays are it with almost no chroma. Use it to see how far Bootstrap's `color-mix()` derivations carry, and change `--bs-mono-base` in the browser's devtools to repaint everything without recompiling.
 
+Category: typography
+
 ## What it stresses
 
 - `$colors` set to a `var()` and to relative colors (`oklch(from var(--mono-base) 60% .02 h)`) instead of color values: Bootstrap compiles them without a warning, as it only interpolates them into `color-mix()`.

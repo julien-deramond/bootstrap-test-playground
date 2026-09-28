@@ -2,6 +2,8 @@
 
 `$enable-smooth-scroll: true`: `:root` gets `scroll-behavior: smooth` unless the reader prefers reduced motion. Use it to check in-page navigation and scrollspy with smooth scrolling on.
 
+Category: options
+
 ## What it stresses
 
 - The `scroll-behavior` rule, which has to stay under `prefers-reduced-motion: no-preference`.

@@ -2,6 +2,8 @@
 
 A custom `$font-weights` map: `semibold` removed with `null`, `black` (900) added, and `medium` at 550, a weight only variable fonts have. Use it to find components that hard-code a weight, and what breaks when a weight they read is removed.
 
+Category: typography
+
 ## What it stresses
 
 - Adding a weight: `--font-weight-black` and `.fw-black` exist. The `.fw-*` utilities output the raw value, so the token isn't read by Bootstrap.

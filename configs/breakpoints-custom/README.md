@@ -2,6 +2,8 @@
 
 Breakpoints `xs`, `sm`, `tablet`, `lg`, `xl` and `3xl`: `md` renamed to `tablet`, `2xl` removed and `3xl: 1920px` added. Use it to see what follows `$breakpoints` and what hard-codes the default names. Every `md:` and `2xl:` class in the pages stops responding, which is expected.
 
+Category: layout
+
 ## What it stresses
 
 - `$breakpoints` isn't merged over its defaults, unlike the other layout maps: the map passed replaces it, so the config lists every tier. Upstream chose this on purpose ([twbs/bootstrap#42850](https://github.com/twbs/bootstrap/pull/42850)).
