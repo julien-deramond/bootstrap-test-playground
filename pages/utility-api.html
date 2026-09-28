@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Utilities: utility API</title>
+    <meta name="description" content="Utility API: checks each utility of the utilities-custom config (state, responsive, print and dark variants, child-selector, variables, enabled: false, removal and a token-scoping utility) with a pass or fail marker.">
+    <meta name="playground-tags" content="utilities">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- Always the utilities-custom config: the toolbar's config switch doesn't
+         apply, since the checks need its utilities. -->
+    <link rel="stylesheet" href="/configs/utilities-custom/main.scss">
+    <link rel="stylesheet" href="/configs/utilities-custom/tokens.css">
+    <style>
+      .pg-sample {
+        padding: .5rem .75rem;
+        border: 1px dashed var(--bs-border-color);
+      }
+
+      .pg-ref-danger {
+        color: var(--bs-danger-base);
+      }
+    </style>
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Pages</p>
+        <h1>Utility API</h1>
+        <p class="fs-lg fg-2">
+          Each utility that <a href="https://github.com/julien-deramond/bootstrap-test-playground/tree/main/configs/utilities-custom"><code>configs/utilities-custom/</code></a> adds, modifies, disables or removes, checked with computed styles and the stylesheet's rules.
+        </p>
+        <p class="fg-2">
+          Upstream: <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/193">#193</a> (<code>dark:</code> variants) and <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/194">#194</a> (<code>@property</code> registration), not reported yet
+        </p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">What this checks</h2>
+        <p>The config merges its changes into <code>$utilities</code> before it loads Bootstrap. This page always uses that config, whatever the toolbar's <em>Styles</em> menu says. Each marker compares a computed style with what the <a href="https://getbootstrap.com/docs/6.0/utilities/api/">utility API docs</a> promise. States and print can't be triggered reliably from a script, so their checks look for the generated rules and check that nothing applies at rest. Hover or focus the button and use print preview to see them.</p>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Checks</h2>
+        <ol class="list-unstyled vstack gap-4" id="utility-cases">
+          <li data-utility-case="cursor" data-expect="New utility: .cursor-pointer sets cursor: pointer">
+            <div class="pg-marker"></div>
+            <div class="pg-sample cursor-pointer" id="case-cursor">.cursor-pointer</div>
+          </li>
+
+          <li data-utility-case="state" data-expect="state: hover focus generates .hover:cursor-grab:hover and .focus:cursor-not-allowed:focus, which don't apply at rest">
+            <div class="pg-marker"></div>
+            <button type="button" class="btn-outline theme-secondary hover:cursor-grab focus:cursor-not-allowed" id="case-state">.hover:cursor-grab .focus:cursor-not-allowed, hover or focus me</button>
+          </li>
+
+          <li data-utility-case="responsive" data-expect="responsive: true makes .md:opacity-75 apply from the md breakpoint, over .opacity-25">
+            <div class="pg-marker"></div>
+            <div class="pg-sample opacity-25 md:opacity-75" id="case-responsive">.opacity-25 .md:opacity-75</div>
+          </li>
+
+          <li data-utility-case="print" data-expect="print: true generates .print:opacity-50 in @media print only">
+            <div class="pg-marker"></div>
+            <div class="pg-sample print:opacity-50" id="case-print">.print:opacity-50, faded in print preview</div>
+          </li>
+
+          <li data-utility-case="dark-media" data-expect="dark: true makes .dark:bg-primary apply when the system prefers dark">
+            <div class="pg-marker"></div>
+            <div class="pg-sample bg-2 dark:bg-primary" id="case-dark-media">.bg-2 .dark:bg-primary</div>
+          </li>
+
+          <li data-utility-case="dark-forced" data-expect="dark: variants follow data-bs-theme=&quot;dark&quot;, which forces dark mode" data-issue="193">
+            <div class="pg-marker"></div>
+            <div data-bs-theme="dark">
+              <div class="pg-sample bg-2 dark:bg-primary" id="case-dark-forced">data-bs-theme="dark": .bg-2 .dark:bg-primary</div>
+            </div>
+          </li>
+
+          <li data-utility-case="light-forced" data-expect="dark: variants don't apply under data-bs-theme=&quot;light&quot;, which forces light mode" data-issue="193">
+            <div class="pg-marker"></div>
+            <div data-bs-theme="light">
+              <div class="pg-sample bg-2 dark:bg-primary" id="case-light-forced">data-bs-theme="light": .bg-2 .dark:bg-primary</div>
+            </div>
+          </li>
+
+          <li data-utility-case="disabled" data-expect="enabled: false removes .float-end from the CSS">
+            <div class="pg-marker"></div>
+            <div class="clearfix">
+              <div class="pg-sample float-end" id="case-disabled">.float-end, not floated</div>
+            </div>
+          </li>
+
+          <li data-utility-case="removed" data-expect="A null group removes .object-fit-cover from the CSS">
+            <div class="pg-marker"></div>
+            <div class="pg-sample object-fit-cover" id="case-removed">.object-fit-cover</div>
+          </li>
+
+          <li data-utility-case="child-selector" data-expect="child-selector: .striped sets the odd children's background, and a child's own utility wins over it">
+            <div class="pg-marker"></div>
+            <div class="striped border" id="case-child-selector">
+              <div class="px-3 py-2">Odd child, striped</div>
+              <div class="px-3 py-2">Even child</div>
+              <div class="px-3 py-2 bg-subtle-primary">Odd child with .bg-subtle-primary</div>
+            </div>
+          </li>
+
+          <li data-utility-case="variables-list" data-expect="variables as a list: .text-shadow-lg sets --text-shadow to its value, which children don't inherit">
+            <div class="pg-marker"></div>
+            <div class="pg-sample text-shadow-lg fs-3" id="case-variables-list">.text-shadow-lg <span>and a child</span></div>
+          </li>
+
+          <li data-utility-case="variables-map" data-expect="variables as a map: .ring-danger sets --ring-width: 3px next to its property map">
+            <div class="pg-marker"></div>
+            <div class="pg-sample ring-danger" id="case-variables-map">.ring-danger</div>
+          </li>
+
+          <li data-utility-case="token-self" data-expect="A utility that sets a token works on the element itself: .card.radius-lg is 1.5rem round">
+            <div class="pg-marker"></div>
+            <div class="card card-body radius-lg" id="case-token-self">.card.radius-lg</div>
+          </li>
+
+          <li data-utility-case="token-subtree" data-expect="A utility that sets a token reaches the subtree: a card in .radius-lg is 1.5rem round" data-issue="194">
+            <div class="pg-marker"></div>
+            <div class="radius-lg">
+              <div class="card card-body" id="case-token-subtree">.card in .radius-lg</div>
+            </div>
+          </li>
+
+          <li data-utility-case="token-elsewhere" data-expect="A utility that sets a token leaves other elements alone: a plain card keeps its default radius" data-issue="194">
+            <div class="pg-marker"></div>
+            <div class="card card-body" id="case-token-elsewhere">.card</div>
+          </li>
+
+          <li data-utility-case="important" data-expect="No utility rule uses !important: important stays off by default">
+            <div class="pg-marker"></div>
+          </li>
+        </ol>
+      </section>
+
+      <!-- References for the expected colors and radius. -->
+      <div class="visually-hidden" aria-hidden="true">
+        <div class="bg-2" id="ref-bg-2"></div>
+        <div class="bg-primary" id="ref-bg-primary"></div>
+        <div class="bg-2" data-bs-theme="dark" id="ref-bg-2-dark"></div>
+        <div class="bg-primary" data-bs-theme="dark" id="ref-bg-primary-dark"></div>
+        <div class="bg-2" data-bs-theme="light" id="ref-bg-2-light"></div>
+        <div class="pg-ref-danger" id="ref-danger"></div>
+      </div>
+    </main>
+
+    <script type="module">
+      // Each check reads computed styles or the stylesheet's rules once the
+      // page's styles are in, and writes data-result="pass" or "fail" on its
+      // <li>.
+      const html = document.documentElement
+      const element = id => document.getElementById(`case-${id}`)
+      const style = id => getComputedStyle(element(id))
+      const ref = id => getComputedStyle(document.getElementById(`ref-${id}`))
+      const token = (node, name) => getComputedStyle(node).getPropertyValue(name).trim()
+      const media = query => matchMedia(query).matches
+      const rootFontSize = () => Number.parseFloat(getComputedStyle(html).fontSize)
+
+      // Every style rule of the page's same-origin stylesheets, with the
+      // media and layer rules it sits in.
+      const rules = () => {
+        const found = []
+        const walk = (list, context) => {
+          for (const rule of list) {
+            if (rule instanceof CSSStyleRule) {
+              found.push({ rule, ...context })
+            } else if (rule instanceof CSSMediaRule) {
+              walk(rule.cssRules, { ...context, media: rule.media.mediaText })
+            } else if (rule instanceof CSSLayerBlockRule) {
+              walk(rule.cssRules, { ...context, layer: [context.layer, rule.name].filter(Boolean).join('.') })
+            } else if (rule.cssRules) {
+              walk(rule.cssRules, context)
+            }
+          }
+        }
+
+        for (const sheet of document.styleSheets) {
+          try {
+            walk(sheet.cssRules, {})
+          } catch {
+            // Cross-origin stylesheets can't be read.
+          }
+        }
+
+        return found
+      }
+
+      const findRule = selector => rules().find(({ rule }) => rule.selectorText === selector)
+
+      const CHECKS = {
+        cursor: () => style('cursor').cursor === 'pointer',
+        state: () => Boolean(findRule('.hover\\:cursor-grab:hover')) && Boolean(findRule('.focus\\:cursor-not-allowed:focus')) &&
+          !['grab', 'not-allowed'].includes(style('state').cursor),
+        responsive: () => style('responsive').opacity === (media('(min-width: 768px)') ? '0.75' : '0.25'),
+        print: () => findRule('.print\\:opacity-50')?.media === 'print' && style('print').opacity === '1',
+        'dark-media': () => style('dark-media').backgroundColor === (media('(prefers-color-scheme: dark)') ? ref('bg-primary') : ref('bg-2')).backgroundColor,
+        'dark-forced': () => style('dark-forced').backgroundColor === ref('bg-primary-dark').backgroundColor,
+        'light-forced': () => style('light-forced').backgroundColor === ref('bg-2-light').backgroundColor,
+        disabled: () => !findRule('.float-end') && style('disabled').float === 'none',
+        removed: () => !findRule('.object-fit-cover'),
+        'child-selector': () => {
+          const [odd, even, own] = element('child-selector').children
+          const bg = node => getComputedStyle(node).backgroundColor
+          return bg(odd) === ref('bg-2').backgroundColor && bg(even) === 'rgba(0, 0, 0, 0)' && bg(own) !== bg(odd)
+        },
+        'variables-list': () => {
+          const node = element('variables-list')
+          return token(node, '--bs-text-shadow') !== '' && style('variables-list').textShadow !== 'none' &&
+            token(node.firstElementChild, '--bs-text-shadow') === ''
+        },
+        'variables-map': () => token(element('variables-map'), '--bs-ring-width') === '3px' &&
+          style('variables-map').boxShadow === `${ref('danger').color} 0px 0px 0px 3px`,
+        'token-self': () => Number.parseFloat(style('token-self').borderTopLeftRadius) === 1.5 * rootFontSize(),
+        'token-subtree': () => Number.parseFloat(style('token-subtree').borderTopLeftRadius) === 1.5 * rootFontSize(),
+        'token-elsewhere': () => Number.parseFloat(style('token-elsewhere').borderTopLeftRadius) > 0,
+        important: () => !rules().some(({ rule, layer }) => layer === 'utilities' &&
+          [...rule.style].some(property => rule.style.getPropertyPriority(property) === 'important'))
+      }
+
+      const run = () => {
+        for (const item of document.querySelectorAll('[data-utility-case]')) {
+          const pass = CHECKS[item.dataset.utilityCase]()
+          item.dataset.result = pass ? 'pass' : 'fail'
+          const issue = item.dataset.issue
+          const marker = item.querySelector('.pg-marker')
+          marker.className = 'pg-marker hstack gap-2 mb-2'
+          marker.innerHTML = `<span class="badge ${pass ? 'theme-success' : 'theme-danger'}">${pass ? 'Pass' : 'Fail'}</span>
+            <span>${item.dataset.expect}</span>
+            ${issue ? `<a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/${issue}">#${issue}</a>` : ''}`
+        }
+
+        html.dataset.utilityCases = 'done'
+      }
+
+      // In a build, this script runs after src/js/main.js, which may be after
+      // `load`: check the ready state rather than only waiting for the event.
+      if (document.readyState === 'complete') {
+        requestAnimationFrame(run)
+      } else {
+        window.addEventListener('load', () => requestAnimationFrame(run), { once: true })
+      }
+    </script>
+  </body>
+</html>
