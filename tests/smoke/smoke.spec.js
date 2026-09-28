@@ -8,6 +8,11 @@
 // Bootstrap's prebuilt files (`?css=dist&js=dist`), what users install. Pages load with `?chrome=0&freeze`, so
 // transitions are off and `shown`/`hidden` fire right away.
 //
+// SMOKE_SCOPE, which `npm run test-scope` prints and smoke.yml sets on pull
+// requests, limits the run to what changed: the working copy and dist on every
+// scenario, the changed configs on every scenario, and the scenarios whose
+// page changed with every config. Without it, everything runs.
+//
 // Known upstream bugs are listed in known-issues.js: their scenario is marked
 // `test.fail()`, so Playwright reports it when it starts passing. The suite
 // runs in each engine (`smoke`, `smoke-firefox`, `smoke-webkit`), and an
@@ -86,9 +91,33 @@ async function pin(page, locator, name) {
 // The first element matching `selector` outside the playground's UI.
 const first = (page, selector) => page.locator(selector).filter({ visible: true }).first()
 
+// Each scenario's kitchen sink page, so a pull request that changes the page
+// runs the scenario with every config (SMOKE_SCOPE).
+const PAGES = {
+  dialog: '/kitchen-sink/components-dialog.html',
+  drawer: '/kitchen-sink/components-drawer.html',
+  menu: '/kitchen-sink/components-menu.html',
+  tooltip: '/kitchen-sink/components-tooltip.html',
+  popover: '/kitchen-sink/components-popover.html',
+  collapse: '/kitchen-sink/components-collapse.html',
+  tab: '/kitchen-sink/components-tab.html',
+  carousel: '/kitchen-sink/components-carousel.html',
+  toast: '/kitchen-sink/components-toasts.html',
+  alert: '/kitchen-sink/components-alert.html',
+  button: '/kitchen-sink/components-button.html',
+  toggler: '/kitchen-sink/components-toggler.html',
+  scrollspy: '/kitchen-sink/components-scrollspy.html',
+  combobox: '/kitchen-sink/forms-combobox.html',
+  datepicker: '/kitchen-sink/forms-datepicker.html',
+  otp: '/kitchen-sink/forms-otp-input.html',
+  chips: '/kitchen-sink/forms-chips.html',
+  strength: '/kitchen-sink/forms-password-strength.html',
+  range: '/kitchen-sink/forms-range.html'
+}
+
 const SCENARIOS = {
   async dialog(page) {
-    await load(page, '/kitchen-sink/components-dialog.html', page.config)
+    await load(page, PAGES.dialog, page.config)
     const trigger = first(page, '[data-bs-toggle="dialog"][data-bs-target]')
     const dialog = page.locator(await trigger.getAttribute('data-bs-target'))
     const before = await overlayState(page)
@@ -107,7 +136,7 @@ const SCENARIOS = {
   },
 
   async drawer(page) {
-    await load(page, '/kitchen-sink/components-drawer.html', page.config)
+    await load(page, PAGES.drawer, page.config)
     const trigger = first(page, '[data-bs-toggle="drawer"][data-bs-target]')
     const drawer = page.locator(await trigger.getAttribute('data-bs-target'))
     // The docs render some drawers open, and opening a drawer closes the one
@@ -134,7 +163,7 @@ const SCENARIOS = {
   },
 
   async menu(page) {
-    await load(page, '/kitchen-sink/components-menu.html', page.config)
+    await load(page, PAGES.menu, page.config)
     const toggle = first(page, '[data-bs-toggle="menu"]')
     const menu = toggle.locator('xpath=following-sibling::*[contains(concat(" ", @class, " "), " menu ")][1]')
 
@@ -163,7 +192,7 @@ const SCENARIOS = {
   },
 
   async tooltip(page) {
-    await load(page, '/kitchen-sink/components-tooltip.html', page.config)
+    await load(page, PAGES.tooltip, page.config)
     const trigger = first(page, '[data-bs-toggle="tooltip"]')
 
     await trigger.focus()
@@ -179,7 +208,7 @@ const SCENARIOS = {
   },
 
   async popover(page) {
-    await load(page, '/kitchen-sink/components-popover.html', page.config)
+    await load(page, PAGES.popover, page.config)
     const trigger = first(page, '[data-bs-toggle="popover"]')
 
     await trigger.click()
@@ -194,7 +223,7 @@ const SCENARIOS = {
   },
 
   async collapse(page) {
-    await load(page, '/kitchen-sink/components-collapse.html', page.config)
+    await load(page, PAGES.collapse, page.config)
     const toggle = first(page, '[data-bs-toggle="collapse"]')
     const target = page.locator(await toggle.getAttribute('data-bs-target') ?? await toggle.getAttribute('href'))
 
@@ -212,7 +241,7 @@ const SCENARIOS = {
   },
 
   async tab(page) {
-    await load(page, '/kitchen-sink/components-tab.html', page.config)
+    await load(page, PAGES.tab, page.config)
     const tablist = first(page, '[role="tablist"]:has([data-bs-toggle="tab"])')
     const tabs = tablist.locator('[data-bs-toggle="tab"]:not(.disabled, :disabled)')
     const selected = () => tabs.evaluateAll(list => list.findIndex(tab => tab.getAttribute('aria-selected') === 'true'))
@@ -233,7 +262,7 @@ const SCENARIOS = {
   },
 
   async carousel(page) {
-    await load(page, '/kitchen-sink/components-carousel.html', page.config)
+    await load(page, PAGES.carousel, page.config)
     const carousel = first(page, '.carousel:has([data-bs-slide="next"])')
     const active = () => carousel.locator('.carousel-item').evaluateAll(list => list.findIndex(item => item.classList.contains('active')))
     const before = await active()
@@ -249,7 +278,7 @@ const SCENARIOS = {
   },
 
   async toast(page) {
-    await load(page, '/kitchen-sink/components-toasts.html', page.config)
+    await load(page, PAGES.toast, page.config)
     const toast = page.locator('.toast:has([data-bs-dismiss="toast"])').first()
 
     await toast.evaluate(element => window.bootstrap.Toast.getOrCreateInstance(element, { autohide: false }).show())
@@ -263,7 +292,7 @@ const SCENARIOS = {
   },
 
   async alert(page) {
-    await load(page, '/kitchen-sink/components-alert.html', page.config)
+    await load(page, PAGES.alert, page.config)
     const alert = first(page, '.alert:has([data-bs-dismiss="alert"])')
     const count = await page.locator('.alert').count()
 
@@ -273,7 +302,7 @@ const SCENARIOS = {
   },
 
   async button(page) {
-    await load(page, '/kitchen-sink/components-button.html', page.config)
+    await load(page, PAGES.button, page.config)
     const button = await pin(page, first(page, '[data-bs-toggle="button"][aria-pressed="false"]'), 'button')
 
     await button.click()
@@ -285,7 +314,7 @@ const SCENARIOS = {
   },
 
   async toggler(page) {
-    await load(page, '/kitchen-sink/components-toggler.html', page.config)
+    await load(page, PAGES.toggler, page.config)
     const toggler = first(page, '[data-bs-toggle="toggler"][data-bs-attribute="class"]')
     const value = await toggler.getAttribute('data-bs-value')
 
@@ -297,7 +326,7 @@ const SCENARIOS = {
   },
 
   async scrollspy(page) {
-    await load(page, '/kitchen-sink/components-scrollspy.html', page.config)
+    await load(page, PAGES.scrollspy, page.config)
     const spy = first(page, '[data-bs-spy="scroll"]')
     const nav = page.locator(await spy.getAttribute('data-bs-target'))
 
@@ -308,7 +337,7 @@ const SCENARIOS = {
   },
 
   async combobox(page) {
-    await load(page, '/kitchen-sink/forms-combobox.html', page.config)
+    await load(page, PAGES.combobox, page.config)
     const toggle = first(page, '[data-bs-toggle="combobox"]')
     const value = toggle.locator('.combobox-value')
 
@@ -330,7 +359,7 @@ const SCENARIOS = {
   },
 
   async datepicker(page) {
-    await load(page, '/kitchen-sink/forms-datepicker.html', page.config)
+    await load(page, PAGES.datepicker, page.config)
     const input = first(page, 'input[data-bs-toggle="datepicker"]')
 
     await input.click()
@@ -344,7 +373,7 @@ const SCENARIOS = {
   },
 
   async otp(page) {
-    await load(page, '/kitchen-sink/forms-otp-input.html', page.config)
+    await load(page, PAGES.otp, page.config)
     const otp = first(page, '[data-bs-otp]')
     const length = await otp.locator('.otp-slot').count() || 6
 
@@ -354,7 +383,7 @@ const SCENARIOS = {
   },
 
   async chips(page) {
-    await load(page, '/kitchen-sink/forms-chips.html', page.config)
+    await load(page, PAGES.chips, page.config)
     const input = first(page, '[data-bs-chips]').locator('input').first()
     const chips = first(page, '[data-bs-chips]').locator('.chip')
     const count = await chips.count()
@@ -374,7 +403,7 @@ const SCENARIOS = {
   },
 
   async strength(page) {
-    await load(page, '/kitchen-sink/forms-password-strength.html', page.config)
+    await load(page, PAGES.strength, page.config)
     const input = first(page, '.bd-example:has([data-bs-strength]) input[type="password"]')
 
     await input.fill('a')
@@ -383,7 +412,7 @@ const SCENARIOS = {
   },
 
   async range(page) {
-    await load(page, '/kitchen-sink/forms-range.html', page.config)
+    await load(page, PAGES.range, page.config)
     const input = first(page, '.form-range-input')
     const fill = () => input.evaluate(element => element.closest('.form-range').style.getPropertyValue('--bs-range-fill') || element.style.getPropertyValue('--bs-range-fill'))
     const before = await fill()
@@ -395,9 +424,13 @@ const SCENARIOS = {
   }
 }
 
+const scope = process.env.SMOKE_SCOPE ? JSON.parse(process.env.SMOKE_SCOPE) : { full: true }
+const inScope = (variant, name) => scope.full || ['working', 'dist'].includes(variant) ||
+  scope.configs.includes(variant) || scope.urls.includes(PAGES[name])
+
 for (const { name: variant, params } of VARIANTS) {
   test.describe(variant, () => {
-    for (const [name, scenario] of Object.entries(SCENARIOS)) {
+    for (const [name, scenario] of Object.entries(SCENARIOS).filter(([name]) => inScope(variant, name))) {
       test(name, async ({ page, browserName }) => {
         const issue = known.find(entry => entry.scenario === name &&
           (!entry.configs || entry.configs.includes(variant)) &&

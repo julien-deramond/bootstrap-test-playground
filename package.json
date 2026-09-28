@@ -15,7 +15,7 @@
     "test:visual:engines": "playwright test --project \"visual*\"",
     "test:console": "playwright test --project console",
     "test:console:engines": "playwright test --project \"console*\"",
-    "console-scope": "node scripts/console-scope.mjs",
+    "test-scope": "node scripts/test-scope.mjs",
     "test:smoke": "playwright test --project smoke",
     "test:smoke:engines": "playwright test --project \"smoke*\"",
     "lint:html": "node scripts/lint-html.mjs",
