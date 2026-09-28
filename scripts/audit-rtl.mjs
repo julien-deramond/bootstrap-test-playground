@@ -31,7 +31,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { loadEnv } from 'vite'
-import { bootstrapSource } from './lib/bootstrap.mjs'
+import { bootstrapScssFiles, bootstrapSource } from './lib/bootstrap.mjs'
 import { compileConfig } from './lib/compile.mjs'
 import { root } from './lib/configs.mjs'
 import known from './known-rtl.mjs'
@@ -239,15 +239,11 @@ let tokenLines
 function tokenWhere(name) {
   if (!tokenLines) {
     tokenLines = new Map()
-    const dir = path.join(bootstrapDir, 'scss')
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true, recursive: true })) {
-      if (entry.isFile() && entry.name.endsWith('.scss')) {
-        const file = path.join(entry.parentPath, entry.name)
-        for (const [index, line] of fs.readFileSync(file, 'utf8').split('\n').entries()) {
-          const token = line.match(/^\s*(--[\w-]+)\s*:/)?.[1]
-          if (token && !tokenLines.has(token)) {
-            tokenLines.set(token, `bootstrap/${path.relative(bootstrapDir, file)}:${index + 1}`)
-          }
+    for (const file of bootstrapScssFiles(bootstrapDir)) {
+      for (const [index, line] of fs.readFileSync(file, 'utf8').split('\n').entries()) {
+        const token = line.match(/^\s*(--[\w-]+)\s*:/)?.[1]
+        if (token && !tokenLines.has(token)) {
+          tokenLines.set(token, `bootstrap/${path.relative(bootstrapDir, file)}:${index + 1}`)
         }
       }
     }

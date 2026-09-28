@@ -97,3 +97,14 @@ export function bootstrapSource(env) {
 
   return { dir: null, label, path: 'node_modules/bootstrap', url, dirty: false }
 }
+
+// Bootstrap's own `.scss` files under `scss/`, as absolute paths. A git
+// checkout also has the Sass unit tests (`scss/tests/**/*.test.scss`), which
+// the npm package doesn't ship: they aren't partials and are left out.
+export function bootstrapScssFiles(bootstrapDir) {
+  const scssDir = path.join(bootstrapDir, 'scss')
+  return fs.readdirSync(scssDir, { withFileTypes: true, recursive: true })
+    .filter(entry => entry.isFile() && entry.name.endsWith('.scss') && !entry.name.endsWith('.test.scss'))
+    .map(entry => path.join(entry.parentPath, entry.name))
+    .filter(file => !path.relative(scssDir, file).startsWith(`tests${path.sep}`))
+}

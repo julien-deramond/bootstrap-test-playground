@@ -16,11 +16,10 @@
 // shows the others, or all of them with --all. Exits non-zero on a new
 // finding or on a known entry that no longer matches anything.
 
-import fs from 'node:fs'
 import path from 'node:path'
 import * as sass from 'sass-embedded'
 import { loadEnv } from 'vite'
-import { bootstrapSource } from './lib/bootstrap.mjs'
+import { bootstrapScssFiles, bootstrapSource } from './lib/bootstrap.mjs'
 import { compileSource } from './lib/compile.mjs'
 import { root } from './lib/configs.mjs'
 import known from './known-partials.mjs'
@@ -41,9 +40,8 @@ const quiet = { warn() {}, debug() {} }
 // `_alert.scss` → alert, `forms/_check.scss` → forms/check, `forms/index.scss`
 // → forms. Mixins, vendored code, the entry points (bootstrap.scss…) and root
 // itself aren't partials to load after root.
-const partials = fs.readdirSync(scssDir, { withFileTypes: true, recursive: true })
-  .filter(entry => entry.isFile() && entry.name.endsWith('.scss'))
-  .map(entry => path.relative(scssDir, path.join(entry.parentPath, entry.name)).split(path.sep).join('/'))
+const partials = bootstrapScssFiles(bootstrapDir)
+  .map(file => path.relative(scssDir, file).split(path.sep).join('/'))
   .filter(file => !/^(mixins|vendor)\//.test(file) && !/^bootstrap(-[\w-]+)?\.scss$/.test(file))
   .map(file => file.replace(/(^|\/)_/, '$1').replace(/\.scss$/, '').replace(/\/index$/, ''))
   .filter(name => name !== 'root')
