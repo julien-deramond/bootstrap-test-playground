@@ -52,6 +52,7 @@ const styles = `
   .section { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: .75; }
   .group { flex-shrink: 0; margin-inline-start: auto; font-size: 12px; opacity: .5; }
   .current { font-size: 11px; opacity: .5; }
+  .match { flex-shrink: 0; padding: 0 5px; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; background: rgb(255 255 255 / .08); border-radius: 4px; opacity: .8; }
   .empty { padding: 24px; text-align: center; opacity: .6; }
   footer { display: flex; gap: 16px; padding: 8px 14px; font-size: 11px; border-block-start: 1px solid rgb(255 255 255 / .1); opacity: .55; }
   kbd { font: inherit; padding: 0 4px; border: 1px solid rgb(255 255 255 / .25); border-radius: 4px; }
@@ -68,7 +69,7 @@ export function mountPalette() {
   shadow.innerHTML = `
     <style>${styles}</style>
     <dialog aria-label="Go to page">
-      <input type="text" placeholder="Go to a page or an example…" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="palette-results" aria-autocomplete="list">
+      <input type="text" placeholder="Go to a page, an example, a class or a --token…" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="palette-results" aria-autocomplete="list">
       <ul id="palette-results" role="listbox" aria-label="Pages"></ul>
       <footer><span><kbd>↑</kbd> <kbd>↓</kbd> to move</span><span><kbd>Enter</kbd> to open</span><span><kbd>Esc</kbd> to close</span></footer>
     </dialog>`
@@ -87,6 +88,7 @@ export function mountPalette() {
         <a href="${escapeHtml(resultUrl(result))}" role="option" id="palette-option-${index}" data-index="${index}" aria-selected="${index === selected}">
           <span class="title">${escapeHtml(page.title)}</span>
           ${section ? `<span class="section">› ${escapeHtml(section.title)}</span>` : ''}
+          ${(result.matches ?? []).map(({ label }) => `<code class="match">${escapeHtml(label)}</code>`).join('')}
           ${current ? '<span class="current">(this page)</span>' : ''}
           <span class="group">${escapeHtml(page.groupLabel)}</span>
         </a>

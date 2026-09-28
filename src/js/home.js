@@ -7,7 +7,7 @@
 // main.js, so it has no toolbar, and `data-playground-fixed` keeps it on
 // Bootstrap's defaults whatever the preferences (see playground-prefs.js).
 import { configs, groupConfigs } from './configs.js'
-import { groups, pages, readRecent, resultUrl, search } from './page-index.js'
+import { groups, pages, queryText, readRecent, resultUrl, search } from './page-index.js'
 import { changeLabels, pageUrl, record } from './last-update.js'
 
 const VIEW_KEY = 'bootstrap-playground-home-view'
@@ -109,7 +109,7 @@ input.value = state.q
 
 // Wraps the parts of `text` that start a query word in <mark>.
 function highlight(text, query) {
-  const tokens = query.toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean)
+  const tokens = queryText(query).toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean)
   if (tokens.length === 0) {
     return escapeHtml(text)
   }
@@ -138,8 +138,16 @@ function highlight(text, query) {
   return html + (open ? '</mark>' : '')
 }
 
+// Classes and tokens the query found in the page: `.btn-subtle ×9`, or
+// `--alert-padding-x` on `.alert`.
+const matchesHtml = matches => (matches?.length ?
+  `<p class="page-card-matches">${matches.map(({ label, kind, classes }) => (kind === 'token' ?
+    `<code>${escapeHtml(label)}</code> on ${classes.slice(0, 3).map(name => `<code>.${escapeHtml(name)}</code>`).join(', ')}${classes.length > 3 ? '…' : ''}` :
+    classes.slice(0, 3).map(name => `<code>.${escapeHtml(name)}</code>`).join(', ') + (classes.length > 3 ? '…' : ''))).join(' · ')}</p>` :
+  '')
+
 function card(result, { showGroup }) {
-  const { page, section } = result
+  const { page, section, matches } = result
   const title = escapeHtml(page.title)
   return `
     <li class="page-card">
@@ -149,8 +157,12 @@ function card(result, { showGroup }) {
         <a class="page-card-action" href="${import.meta.env.BASE_URL}compare.html?page=${encodeURIComponent(page.url)}" title="Compare ${title} side by side" aria-label="Compare ${title} side by side">
           <svg width="16" height="16" aria-hidden="true"><use href="#icon-columns"/></svg>
         </a>
+        ${page.docs ? `<a class="page-card-action" href="${escapeHtml(page.docs)}" rel="noopener" title="${title} docs source" aria-label="${title} docs source">
+          <svg width="16" height="16" aria-hidden="true"><use href="#icon-book"/></svg>
+        </a>` : ''}
       </div>
       ${page.description ? `<p class="page-card-description">${highlight(page.description, state.q)}</p>` : ''}
+      ${matchesHtml(matches)}
       ${section ? `<a class="page-card-section" href="${escapeHtml(resultUrl(result))}"><svg width="14" height="14" aria-hidden="true"><use href="#icon-corner"/></svg><span>${highlight(section.title, state.q)}</span></a>` : ''}
       <div class="page-card-meta">
         ${page.tags.map(tag => `<button type="button" class="page-card-tag${tag === state.tag ? ' active' : ''}" data-tag="${escapeHtml(tag)}" title="Show pages tagged “${escapeHtml(tag)}”">${escapeHtml(tag)}</button>`).join('')}

@@ -374,6 +374,13 @@ Every `.html` file under `pages/`, `screens/`, `kitchen-sink/` and `issues/` is 
 - **Page switcher**: press <kbd>Ctrl</kbd>+<kbd>K</kbd> (<kbd>⌘</kbd>+<kbd>K</kbd> on macOS) on any example page, or use *Search* in the toolbar. On the home page, it focuses the search field. A search that matches an example heading jumps straight to it, like `tool place` for the tooltip *Placement* example.
 - **Previous and next**: the toolbar's <kbd>‹</kbd> <kbd>›</kbd> flip through the pages of the current group.
 
+Both searches also take **class names and tokens**, to find where something is used:
+
+- `btn-subtle` or `.btn-subtle` finds every page whose markup uses the class, the most uses first, and jumps to the first example that does. The start of a name works too while typing (`btn-sub`). A word without a dash matches a class (`btn`) only where it matches nothing else.
+- `--alert-padding-x`, with or without `bs-`, or its start (`--alert-`), finds the pages using the classes that declare it, here `.alert`.
+
+Each result lists what matched. The index keeps the Bootstrap classes, those named in Bootstrap's compiled `dist/css/bootstrap.css` (the `BOOTSTRAP_PATH` checkout's when set), and leaves out the playground's own chrome. A token maps to the classes whose rules declare it, so a global token like `--primary` finds nothing. On the home page, kitchen sink cards also link to their docs source.
+
 Each page describes itself in its `<head>`, and the index picks it up:
 
 ```html
@@ -383,7 +390,7 @@ Each page describes itself in its `<head>`, and the index picks it up:
 <meta name="playground-source" content="…" data-url="…">  <!-- see Real screens -->
 ```
 
-Without a description, the header's lead paragraph (`.fs-lg`) is used. Every `<h2 id="…">` becomes a searchable example heading. Kitchen sink pages are tagged `components` or `forms`. Give new pages a description and a few tags, reusing existing tags where they fit, so they stay easy to find.
+Without a description, the header's lead paragraph (`.fs-lg`) is used. Every `<h2 id="…">` becomes a searchable example heading, and the Bootstrap classes in the markup, outside `data-playground-chrome`, become searchable classes. Kitchen sink pages are tagged `components` or `forms`. Give new pages a description and a few tags, reusing existing tags where they fit, so they stay easy to find.
 
 ### Starter screens
 
