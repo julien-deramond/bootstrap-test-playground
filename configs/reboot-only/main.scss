@@ -1,0 +1,17 @@
+// `bootstrap-reboot.scss`, the entry point behind `dist/css/bootstrap-reboot.css`:
+// root (every global token and the layer order) and the reboot, with no
+// layout, components, helpers or utilities. Most pages look unstyled with it.
+// That's expected: pages/reboot-only.html checks what it covers.
+
+// The entry point forwards `root` and `content/reboot`, so `with` takes
+// `$root-tokens` and the reboot's token maps.
+@use "bootstrap/scss/bootstrap-reboot" with (
+  $root-tokens: (
+    --body-font-size: 1.0625rem,
+  ),
+  $reboot-mark-tokens: (
+    --mark-bg: light-dark(var(--cyan-100), var(--cyan-900)),
+  )
+);
+
+@use "custom";

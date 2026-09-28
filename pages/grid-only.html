@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Entry points: grid</title>
+    <meta name="description" content="Entry points: checks what bootstrap-grid.scss, the entry point behind bootstrap-grid.css, covers alone (containers, rows, columns, gutters, the CSS grid and the layout utilities) and what it leaves out, in the grid-only config.">
+    <meta name="playground-tags" content="layout, utilities">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- Always the grid-only config: the toolbar's config switch doesn't
+         apply, since the checks need its build. -->
+    <link rel="stylesheet" href="/configs/grid-only/main.scss">
+    <link rel="stylesheet" href="/configs/grid-only/tokens.css">
+    <link rel="stylesheet" href="/pages/entry-points.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="pg-page">
+      <header data-playground-chrome>
+        <p><a href="/">Playground</a> / Pages</p>
+        <h1>Entry points: grid</h1>
+        <p>
+          <a href="https://github.com/twbs/bootstrap/blob/v6-dev/scss/bootstrap-grid.scss"><code>scss/bootstrap-grid.scss</code></a> alone, the entry point behind <code>dist/css/bootstrap-grid.css</code>: containers, the grid and the layout utilities, with no root tokens and no reboot.
+          <a href="https://github.com/julien-deramond/bootstrap-test-playground/tree/main/configs/grid-only"><code>configs/grid-only/</code></a> sets <code>$grid-gutter-x: 2rem</code> on <code>config</code>, since the entry point doesn't forward it, and removes the padding utilities through <code>with ($utilities: …)</code>.
+          This page always uses that config, whatever the toolbar's <em>Styles</em> menu says.
+        </p>
+        <p>Upstream: <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/238">#238</a> (columns aren't <code>border-box</code> without reboot, so they wrap) and <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/236">#236</a> (<code>justify-self</code> left out), not reported yet</p>
+        <h2>Checks</h2>
+      </header>
+
+      <ol class="pg-checks">
+        <li data-entry-case="container" data-expect="A .container's padding is half the configured $grid-gutter-x (2rem)">
+          <div class="pg-marker"></div>
+          <div class="container" id="case-container">
+            <div class="pg-cell">.container</div>
+          </div>
+        </li>
+
+        <li data-entry-case="columns" data-expect="Two .col-6 each take half of the .row, with the configured gutter as padding" data-issue="238">
+          <div class="pg-marker"></div>
+          <div class="row" id="case-columns">
+            <div class="col-6"><div class="pg-cell">.col-6</div></div>
+            <div class="col-6"><div class="pg-cell">.col-6</div></div>
+          </div>
+        </li>
+
+        <li data-entry-case="responsive" data-expect=".col-12 .md:col-4 takes the full row, and a third from the md breakpoint" data-issue="238">
+          <div class="pg-marker"></div>
+          <div class="row" id="case-responsive">
+            <div class="col-12 md:col-4"><div class="pg-cell">.col-12 .md:col-4</div></div>
+            <div class="col-12 md:col-4"><div class="pg-cell">.col-12 .md:col-4</div></div>
+            <div class="col-12 md:col-4"><div class="pg-cell">.col-12 .md:col-4</div></div>
+          </div>
+        </li>
+
+        <li data-entry-case="row-cols" data-expect=".row-cols-3 gives each child a third of the row" data-issue="238">
+          <div class="pg-marker"></div>
+          <div class="row row-cols-3" id="case-row-cols">
+            <div><div class="pg-cell">child</div></div>
+            <div><div class="pg-cell">child</div></div>
+            <div><div class="pg-cell">child</div></div>
+          </div>
+        </li>
+
+        <li data-entry-case="offset" data-expect=".offset-4 pushes a .col-4 by a third of the row">
+          <div class="pg-marker"></div>
+          <div class="row" id="case-offset">
+            <div class="col-4 offset-4"><div class="pg-cell">.col-4 .offset-4</div></div>
+          </div>
+        </li>
+
+        <li data-entry-case="gutters" data-expect=".gx-0 removes the columns' horizontal padding">
+          <div class="pg-marker"></div>
+          <div class="row gx-0">
+            <div class="col-6" id="case-gutters"><div class="pg-cell">.gx-0 &gt; .col-6</div></div>
+            <div class="col-6"><div class="pg-cell">.gx-0 &gt; .col-6</div></div>
+          </div>
+        </li>
+
+        <li data-entry-case="css-grid" data-expect=".grid is a CSS grid, and three .g-col-4 share its width">
+          <div class="pg-marker"></div>
+          <div class="grid" id="case-css-grid">
+            <div class="g-col-4 pg-cell">.g-col-4</div>
+            <div class="g-col-4 pg-cell">.g-col-4</div>
+            <div class="g-col-4 pg-cell">.g-col-4</div>
+          </div>
+        </li>
+
+        <li data-entry-case="flex" data-expect=".d-flex .justify-content-between .align-items-center lays out a flex row">
+          <div class="pg-marker"></div>
+          <div class="d-flex justify-content-between align-items-center" id="case-flex">
+            <div class="pg-cell">first</div>
+            <div class="pg-cell">last</div>
+          </div>
+        </li>
+
+        <li data-entry-case="order" data-expect=".order-last moves an item to the end">
+          <div class="pg-marker"></div>
+          <div class="d-flex gap-3">
+            <div class="pg-cell order-last" id="case-order">.order-last, first in the markup</div>
+            <div class="pg-cell">second</div>
+          </div>
+        </li>
+
+        <li data-entry-case="margin" data-expect=".ms--1 applies a negative margin-inline-start, which v6 keeps in margin-start">
+          <div class="pg-marker"></div>
+          <div class="pg-cell ms--1" id="case-margin">.ms--1</div>
+        </li>
+
+        <li data-entry-case="padding-removed" data-expect="with ($utilities: …) removes the padding utilities: .p-3 has no rule">
+          <div class="pg-marker"></div>
+          <div class="pg-cell p-3" id="case-padding-removed">.p-3, no padding</div>
+        </li>
+
+        <li data-entry-case="breakpoints" data-expect="The entry point defines --bs-breakpoint-* on :root, which Bootstrap's JavaScript reads">
+          <div class="pg-marker"></div>
+        </li>
+
+        <li data-entry-case="justify-self" data-expect="The grid build includes .justify-self-* along with .justify-items-* and .align-self-*" data-issue="236">
+          <div class="pg-marker"></div>
+          <div class="grid">
+            <div class="g-col-4 justify-self-center pg-cell" id="case-justify-self">.g-col-4 .justify-self-center</div>
+          </div>
+        </li>
+
+        <li data-entry-case="no-root" data-expect="No root: the global tokens, such as --bs-body-font-size, aren't defined">
+          <div class="pg-marker"></div>
+        </li>
+
+        <li data-entry-case="no-reboot" data-expect="No reboot: the body keeps the browser's 8px margin">
+          <div class="pg-marker"></div>
+        </li>
+      </ol>
+    </main>
+
+    <script type="module">
+      import { element, findRule, html, media, rootFontSize, runChecks, style, token, width } from '/pages/entry-points.js'
+
+      const close = (a, b) => Math.abs(a - b) < 1
+      const children = id => [...element(id).children]
+
+      runChecks({
+        container: () => Number.parseFloat(style('container').paddingInlineStart) === rootFontSize(),
+        columns: () => {
+          const row = element('columns')
+          return children('columns').every(col => close(width(col) * 2, width(row)) &&
+            Number.parseFloat(getComputedStyle(col).paddingInlineStart) === rootFontSize())
+        },
+        responsive: () => children('responsive').every(col => close(width(col) * (media('(width >= 768px)') ? 3 : 1), width(element('responsive')))),
+        'row-cols': () => children('row-cols').every(child => close(width(child) * 3, width(element('row-cols')))),
+        offset: () => close(Number.parseFloat(getComputedStyle(element('offset').firstElementChild).marginInlineStart) * 3, width(element('offset'))),
+        gutters: () => style('gutters').paddingInlineStart === '0px',
+        'css-grid': () => style('css-grid').display === 'grid' && children('css-grid').every(cell => close(width(cell), width(children('css-grid')[0]))) &&
+          children('css-grid').every(cell => cell.offsetTop === children('css-grid')[0].offsetTop),
+        flex: () => style('flex').display === 'flex' && style('flex').justifyContent === 'space-between' && style('flex').alignItems === 'center',
+        order: () => style('order').order === '6',
+        margin: () => Number.parseFloat(style('margin').marginInlineStart) === -.25 * rootFontSize(),
+        'padding-removed': () => !findRule('.p-3') && style('padding-removed').paddingTop === '0px',
+        breakpoints: () => token(html, '--bs-breakpoint-md') === '768px',
+        'justify-self': () => style('justify-self').justifySelf === 'center',
+        'no-root': () => token(html, '--bs-body-font-size') === '',
+        'no-reboot': () => getComputedStyle(document.body).marginTop === '8px'
+      })
+    </script>
+  </body>
+</html>

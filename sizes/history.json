@@ -1,7 +1,7 @@
 [
   {
     "commit": "bd0a4f63ce5cc444063c28a6946bdae3dacdce20",
-    "date": "2026-09-28T14:19:55.054Z",
+    "date": "2026-09-28T19:26:08.308Z",
     "sizes": {
       "css/default": {
         "min": 378944,
@@ -67,6 +67,11 @@
         "min": 373564,
         "gzip": 50177,
         "brotli": 36055
+      },
+      "css/grid-only": {
+        "min": 64969,
+        "gzip": 8644,
+        "brotli": 4952
       },
       "css/high-contrast": {
         "min": 377598,
@@ -148,6 +153,11 @@
         "gzip": 50660,
         "brotli": 36129
       },
+      "css/reboot-only": {
+        "min": 35588,
+        "gzip": 5687,
+        "brotli": 4628
+      },
       "css/root-62-5": {
         "min": 378353,
         "gzip": 50955,
@@ -187,6 +197,11 @@
         "min": 380632,
         "gzip": 51338,
         "brotli": 36483
+      },
+      "css/utilities-only": {
+        "min": 146118,
+        "gzip": 20552,
+        "brotli": 12206
       },
       "css/web-font": {
         "min": 378944,

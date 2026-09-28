@@ -118,14 +118,15 @@
       const token = (node, name) => getComputedStyle(node).getPropertyValue(name).trim()
 
       // The prefix of the page's styles, from the `:root, :host` rule that
-      // defines the body background: `--bs-bg-body` → `bs-`, `--bg-body` → ''.
+      // defines the breakpoints, which every build has, the grid entry point
+      // included: `--bs-breakpoint-md` → `bs-`, `--breakpoint-md` → ''.
       const detectPrefix = () => {
         const walk = list => {
           for (const rule of list) {
             if (rule instanceof CSSStyleRule && rule.selectorText.split(',').some(selector => selector.trim() === ':root')) {
-              const name = [...rule.style].find(property => /^--[a-z0-9-]*bg-body$/.test(property))
-              if (name) {
-                return name.slice(2, -'bg-body'.length)
+              const match = [...rule.style].map(property => property.match(/^--([a-z0-9-]*?)breakpoint-[a-z0-9]+$/)).find(Boolean)
+              if (match) {
+                return match[1]
               }
             } else if (rule.cssRules) {
               const found = walk(rule.cssRules)
@@ -151,7 +152,7 @@
       const run = ({ Carousel, NavOverflow, Range, Strength }) => {
         const prefix = detectPrefix()
         if (prefix === undefined) {
-          throw new Error('No `:root` rule defines the body background: are Bootstrap\'s styles loaded?')
+          throw new Error('No `:root` rule defines the breakpoints: are Bootstrap\'s styles loaded?')
         }
 
         const p = name => `--${prefix}${name}`
