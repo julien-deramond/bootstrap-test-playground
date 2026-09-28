@@ -1,0 +1,21 @@
+{
+  "date": "2026-09-27T14:52:43+02:00",
+  "from": "624c7b98c631001b535ac75ca6825551ad8c8107",
+  "to": "bd0a4f63ce5cc444063c28a6946bdae3dacdce20",
+  "commits": [
+    {
+      "sha": "e2b18a61beda95baba768f7db481515ec735e07a",
+      "subject": "Fix OTP input truncation for formatted paste (#42953)"
+    },
+    {
+      "sha": "f9fb3a45cbbcbd0cacb51cd7a6c8b7130fe4db02",
+      "subject": "fix(docs): focus search after pointer opens (#42954)"
+    },
+    {
+      "sha": "bd0a4f63ce5cc444063c28a6946bdae3dacdce20",
+      "subject": "Remove unused `$enable-caret` and caret mixins (#42957)"
+    }
+  ],
+  "rendering": true,
+  "examples": []
+}

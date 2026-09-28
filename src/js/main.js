@@ -9,6 +9,7 @@
 // users. Only one of the two ever loads.
 import { configs, initConfigs } from './configs.js'
 import { initExamples } from './examples.js'
+import { markChangedSections } from './last-update.js'
 import { recordVisit } from './page-index.js'
 import { mountToolbar } from './toolbar.js'
 
@@ -51,6 +52,9 @@ if (fired.has('load')) {
 }
 
 mountToolbar({ source: __BOOTSTRAP_SOURCE__, configs, swappable })
+
+// Badges on the kitchen sink sections the last Bootstrap update changed.
+markChangedSections()
 
 // For "Recently viewed" on the home page and in the page switcher.
 if (!window.playgroundPrefs?.embedded) {

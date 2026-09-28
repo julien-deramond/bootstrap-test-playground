@@ -100,6 +100,79 @@
     box-shadow: 0 0 0 3px var(--bs-success-bg-subtle);
   }
 
+  /* The last Bootstrap update (updates/last-update.json), under the commit in use. */
+  .home-update {
+    max-width: 60rem;
+    margin-block-start: .75rem;
+    font-size: var(--bs-font-size-sm);
+
+    &[open] {
+      padding: .75rem 1rem 1rem;
+      background-color: var(--bs-bg-body);
+      border: var(--bs-border-width) solid var(--bs-border-subtle);
+      border-radius: var(--bs-radius-lg);
+    }
+  }
+
+  .home-update-summary {
+    width: fit-content;
+    color: var(--bs-fg-2);
+    cursor: pointer;
+
+    &:hover {
+      color: var(--bs-fg-body);
+    }
+
+    strong {
+      font-weight: var(--bs-font-weight-semibold);
+      color: var(--bs-fg-body);
+    }
+  }
+
+  .home-update-range {
+    margin-block: .5rem 1rem;
+    color: var(--bs-fg-3);
+  }
+
+  .home-update-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: 1rem 2rem;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .home-update-title {
+    margin-block-end: .5rem;
+    font-size: var(--bs-font-size-base);
+    font-weight: var(--bs-font-weight-semibold);
+  }
+
+  .home-update-commits,
+  .home-update-pages {
+    display: grid;
+    gap: .375rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    overflow-wrap: anywhere;
+
+    ul {
+      display: grid;
+      gap: .25rem;
+      padding-inline-start: 1rem;
+      margin-block-start: .25rem;
+      list-style: none;
+    }
+  }
+
+  .home-update-columns .home-update-note {
+    margin-block-start: .5rem;
+    color: var(--bs-fg-3);
+  }
+
   /* Search and filters: sticky, so they stay at hand in long lists. */
   .home-filters {
     position: sticky;
