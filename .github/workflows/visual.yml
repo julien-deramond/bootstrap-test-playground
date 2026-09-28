@@ -4,16 +4,15 @@ name: Visual tests
 # in Chromium; engines.yml compares Firefox and WebKit every night. To create or
 # refresh them after an intended change, add the `update-baselines` label to the
 # pull request: the `update` job records them for all three engines, commits them
-# to the pull request's branch, removes the label and starts `compare` on that
-# commit. While the label is on, `compare` fails without comparing, so the pull
-# request can't look ready before the baselines are on its branch.
+# to the pull request's branch and removes the label, and the checks run again
+# on that commit. While the label is on, `compare` fails without comparing, so
+# the pull request can't look ready before the baselines are on its branch.
 on:
   pull_request:
     types: [opened, synchronize, reopened, labeled, unlabeled]
   push:
     branches: [main]
-  # How the `update` job starts `compare` after its push: a push made with
-  # GITHUB_TOKEN starts no workflow, a dispatch does.
+  # The `update` job's fallback when no workflow starts on its commit.
   workflow_dispatch:
 
 permissions:
@@ -175,13 +174,13 @@ jobs:
                 gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body "**Visual baselines pushed.** $message"
                 exit 1
               fi
-              approved=$(printf '%s\n%s' "$approved" "$id")
+              approved="${approved:+$approved$'\n'}$id"
             done
             # Stop once the runs that were held are all approved.
             if [ -n "$approved" ] && [ -z "$new" ]; then break; fi
           done
           if [ -n "$approved" ]; then
-            echo "Approved the runs held on ${SHA:0:7}:$(echo "$approved" | tr '\n' ' ')"
+            echo "Approved the runs held on ${SHA:0:7}: $(echo "$approved" | paste -sd ' ' -)"
           elif [ -z "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$SHA&event=pull_request" --jq '.workflow_runs[].id')" ]; then
             echo "::warning title=Comparison in the Actions tab::No workflow started on ${SHA:0:7}, so \`compare\` runs from a dispatch, which the pull request doesn't show."
             gh workflow run visual.yml --repo "$GITHUB_REPOSITORY" --ref "$BRANCH"
