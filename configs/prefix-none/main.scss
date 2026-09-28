@@ -1,0 +1,10 @@
+// No custom property prefix: `--border-radius`, not `--bs-border-radius`.
+// That's what the docs' npm and webpack guides compile, since their PostCSS
+// setup runs Autoprefixer only. This marker, which Sass keeps as a loud
+// comment, tells the playground's postcss.config.js to skip the prefix here.
+// Bootstrap's JavaScript hard-codes a few `--bs-*` names, so the carousel,
+// the form range and nav overflow lose what they read or set.
+/*! playground-prefix: "" */
+
+@use "bootstrap/scss/bootstrap";
+@use "custom";

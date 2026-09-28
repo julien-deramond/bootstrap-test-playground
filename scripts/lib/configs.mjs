@@ -3,6 +3,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { readPrefix } from '../../postcss.config.js'
 
 export const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 export const configsDir = path.join(root, 'configs')
@@ -69,8 +70,13 @@ export function readKnownGaps(dir) {
 
 // A config whose main.scss and _custom.scss don't differ from the default's,
 // comments aside, only changes tokens.css: it also applies on top of the
-// prebuilt dist (?css=dist), where Sass can't reach.
+// prebuilt dist (?css=dist), where Sass can't reach. A config that changes the
+// custom property prefix doesn't: dist keeps `--bs-`.
 export function isTokensOnly(dir) {
+  if (readPrefix(fs.readFileSync(path.join(dir, 'main.scss'), 'utf8')) !== undefined) {
+    return false
+  }
+
   const code = file => (fs.existsSync(file) ?
     fs.readFileSync(file, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '').replace(/\s+/g, ' ').trim() :
     '')
