@@ -2,9 +2,10 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig, loadEnv } from 'vite'
-import { bootstrapSource } from './scripts/lib/bootstrap.mjs'
+import { bootstrapSource, gitDir } from './scripts/lib/bootstrap.mjs'
 import { readBootstrapIndex } from './scripts/lib/class-index.mjs'
 import { CATEGORIES, listConfigs, readKnownGaps } from './scripts/lib/configs.mjs'
+import { docsDir, SECTIONS, syncPage } from './scripts/lib/kitchen-sink.mjs'
 import { collectPages, findHtmlFiles, PAGE_GROUPS } from './scripts/lib/pages.mjs'
 
 const root = path.dirname(fileURLToPath(import.meta.url))
@@ -121,6 +122,109 @@ function playgroundData(base, bootstrapDir) {
   }
 }
 
+// `virtual:bootstrap-source` describes where Bootstrap comes from, for the
+// toolbar and the home page: `{ label, path, url, dirty }` (see
+// scripts/lib/bootstrap.mjs). Its `onChange(listener)` hears updates in dev.
+//
+// With a BOOTSTRAP_PATH checkout, the dev server also:
+// - reads the checkout's branch, commit and dirty state again when its git
+//   metadata or a file the playground uses changes, and pushes the new label to
+//   open pages, without a reload;
+// - resyncs a kitchen sink page when its docs MDX file changes, like
+//   `npm run sync-kitchen-sink` for that page only. Vite then reloads it.
+function bootstrapSourceData(env, initial) {
+  const id = 'virtual:bootstrap-source'
+  let source = initial
+  const code = () => `const source = ${JSON.stringify({ label: source.label, path: source.path, url: source.url, dirty: source.dirty })}
+const listeners = new Set()
+export const onChange = listener => listeners.add(listener)
+if (import.meta.hot) {
+  import.meta.hot.on('playground:bootstrap-source', data => {
+    Object.assign(source, data)
+    for (const listener of listeners) listener(source)
+  })
+}
+export default source`
+
+  return {
+    name: 'bootstrap-source',
+    resolveId: request => (request === id ? '\0' + id : null),
+    load: request => (request === '\0' + id ? code() : null),
+    configureServer(server) {
+      const dir = source.dir
+      if (!dir) {
+        return
+      }
+
+      let timer
+      const refresh = () => {
+        clearTimeout(timer)
+        timer = setTimeout(() => {
+          const next = bootstrapSource(env)
+          if (next.label === source.label && next.url === source.url && next.dirty === source.dirty) {
+            return
+          }
+
+          source = next
+          const mod = server.moduleGraph.getModuleById('\0' + id)
+          if (mod) {
+            server.moduleGraph.invalidateModule(mod)
+          }
+
+          server.config.logger.info(`Bootstrap source: ${source.label}`, { timestamp: true })
+          server.ws.send({ type: 'custom', event: 'playground:bootstrap-source', data: { label: source.label, url: source.url, dirty: source.dirty } })
+        }, 300)
+      }
+
+      // Vite's watcher ignores .git/, so git metadata (HEAD, index, refs
+      // written by checkout, commit, stash…) gets a watcher of its own.
+      const git = gitDir(dir)
+      if (git) {
+        const watcher = fs.watch(git, (event, file) => {
+          if (!file?.endsWith('.lock')) {
+            refresh()
+          }
+        })
+        server.httpServer?.on('close', () => watcher.close())
+      }
+
+      const docs = docsDir(dir)
+      const watchDocs = fs.existsSync(docs)
+      if (watchDocs) {
+        server.watcher.add(SECTIONS.map(({ dir: section }) => path.join(docs, section)))
+      }
+
+      const onFile = file => {
+        if (!file.startsWith(dir + path.sep)) {
+          return
+        }
+
+        refresh()
+        const mdx = path.relative(docs, file)
+        const [section, name, ...rest] = mdx.split(path.sep)
+        if (!watchDocs || rest.length > 0 || !name?.endsWith('.mdx') || !SECTIONS.some(entry => entry.dir === section)) {
+          return
+        }
+
+        try {
+          const { written, removed, skipped } = syncPage(dir, mdx)
+          const files = [...written, ...removed.map(entry => `${entry} (removed)`)].map(entry => path.relative(root, entry))
+          server.config.logger.info(`Kitchen sink: ${mdx} → ${files.length > 0 ? files.join(', ') : 'unchanged'}`, { timestamp: true })
+          for (const line of skipped) {
+            server.config.logger.warn(line, { timestamp: true })
+          }
+        } catch (error) {
+          server.config.logger.error(`Kitchen sink: could not sync ${mdx}: ${error.message}`, { timestamp: true })
+        }
+      }
+
+      server.watcher.on('add', onFile)
+      server.watcher.on('change', onFile)
+      server.watcher.on('unlink', onFile)
+    }
+  }
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, root, '')
   const bootstrap = bootstrapSource(env)
@@ -143,9 +247,6 @@ export default defineConfig(({ mode }) => {
   return {
     appType: 'mpa',
     base,
-    define: {
-      __BOOTSTRAP_SOURCE__: JSON.stringify(bootstrap.label)
-    },
     resolve: {
       alias: bootstrap.dir ?
         [
@@ -172,6 +273,6 @@ export default defineConfig(({ mode }) => {
       cssTarget,
       rolldownOptions: { input }
     },
-    plugins: [playgroundData(base, bootstrap.dir ?? undefined), keepStyleMarkers(), ...(base === '/' ? [] : [prefixRootUrls(base)])]
+    plugins: [playgroundData(base, bootstrap.dir ?? undefined), bootstrapSourceData(env, bootstrap), keepStyleMarkers(), ...(base === '/' ? [] : [prefixRootUrls(base)])]
   }
 })

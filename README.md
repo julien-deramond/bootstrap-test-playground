@@ -132,6 +132,8 @@ npm run dev
 
 Vite then resolves every `bootstrap/...` import (Sass and JS) to that folder, and edits there hot-reload too. Delete `.env.local` to go back to GitHub.
 
+The toolbar and the home page then show the checkout's branch, commit and state, like `local checkout: v6-dev@1a2b3c4 (dirty)`, linked to the branch on GitHub when it tracks a GitHub remote. On the home page, the dot turns amber while the checkout has uncommitted changes. In dev, the label follows git operations (checkout, commit, stash…) and edits to the files the playground uses, without reloading the page. Other files, like a new untracked one, show up at the next of those. Editing a docs MDX file also resyncs its [kitchen sink](#kitchen-sink) page.
+
 The playground builds Bootstrap from **source**, the way Bootstrap's own build does:
 
 - **CSS** is compiled from `scss/`, then `postcss.config.js` applies the same PostCSS step as Bootstrap's `build/postcss.config.mjs`. That step adds the `--bs-` prefix to every custom property and runs Autoprefixer with Bootstrap's `.browserslistrc`. The output matches `dist/css/bootstrap.css` (see [Checking the dist](#checking-the-dist)), and the builds keep `light-dark()` intact.
@@ -415,6 +417,8 @@ npm run sync-kitchen-sink -- ../twbs/bootstrap   # or rely on BOOTSTRAP_PATH in 
 ```
 
 Don't edit these files by hand. They're overwritten on every sync.
+
+With `BOOTSTRAP_PATH` set, `npm run dev` watches those MDX files: editing one resyncs its page only, and Vite reloads it. When the list of pages changes (a page added, removed or renamed), every page is rewritten, like a full sync. The server's log says which files it wrote. The generator lives in [`scripts/lib/kitchen-sink.mjs`](scripts/lib/kitchen-sink.mjs).
 
 ### Validating HTML
 

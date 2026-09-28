@@ -83,7 +83,17 @@
     border: var(--bs-border-width) solid var(--bs-border-subtle);
     border-radius: var(--bs-radius-pill);
 
+    a {
+      min-width: 0;
+      text-decoration: none;
+    }
+
+    a[href]:hover code {
+      text-decoration: underline;
+    }
+
     code {
+      display: block;
       overflow: hidden;
       color: var(--bs-fg-2);
       text-overflow: ellipsis;
@@ -98,6 +108,12 @@
     background-color: var(--bs-success-bg);
     border-radius: 50%;
     box-shadow: 0 0 0 3px var(--bs-success-bg-subtle);
+
+    /* A local checkout with uncommitted changes. */
+    [data-dirty] > & {
+      background-color: var(--bs-warning-bg);
+      box-shadow: 0 0 0 3px var(--bs-warning-bg-subtle);
+    }
   }
 
   /* The last Bootstrap update (updates/last-update.json), under the commit in use. */

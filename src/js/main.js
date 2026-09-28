@@ -7,6 +7,7 @@
 // With `?js=dist` (or the toolbar's Source switch), it loads the prebuilt
 // js/dist/ modules the package ships instead, what `import 'bootstrap'` gives
 // users. Only one of the two ever loads.
+import source, { onChange as onSourceChange } from 'virtual:bootstrap-source'
 import { configs, initConfigs } from './configs.js'
 import { initExamples } from './examples.js'
 import { markChangedSections } from './last-update.js'
@@ -51,7 +52,7 @@ if (fired.has('load')) {
   window.dispatchEvent(new Event('load'))
 }
 
-mountToolbar({ source: __BOOTSTRAP_SOURCE__, configs, swappable })
+mountToolbar({ source, onSourceChange, configs, swappable })
 
 // Badges on the kitchen sink sections the last Bootstrap update changed.
 markChangedSections()
