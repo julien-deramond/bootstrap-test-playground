@@ -285,7 +285,7 @@ Then:
 - **Start a reproduction from it**: `npm run new-issue 42928 -- --config rounded-dark`
 - **Make it the working copy**: `npm run use-config rounded-dark`. This refuses to run if `src/styles/` has uncommitted changes, unless you pass `-- --force`.
 
-`configs/default/` holds Bootstrap's defaults. Keep it pristine; `npm run use-config default` resets the working copy. `configs/shadcn/` recreates shadcn/ui's default theme (see [Real screens](#real-screens)). Every `$enable-*` option that changes the CSS has a config that flips it, like `configs/no-rounded/` or `configs/grid-css-only/`. `configs/square/`, `configs/pill/`, `configs/compact/` and `configs/spacious/` push the radius, spacing and control size tokens to their extremes. `configs/gray-warm/`, `configs/gray-cool/`, `configs/hue-shift/`, `configs/mono/`, `configs/brand/` and `configs/dark-first/` do the same with the palette, the theme colors and the color scheme. `configs/web-font/`, `configs/serif/`, `configs/large-type/`, `configs/root-62-5/` and `configs/weights/` do it with fonts, text sizes and weights. `configs/breakpoints-custom/`, `configs/containers-fluid/`, `configs/grid-16/` and `configs/spacers-extended/` change the breakpoints, the containers, the grid and the spacing scale. `configs/no-transitions/` and `configs/no-reduced-motion/` are also used by [Auditing motion](#auditing-motion). [`configs/README.md`](configs/README.md#saved-configs) lists them all.
+`configs/default/` holds Bootstrap's defaults. Keep it pristine; `npm run use-config default` resets the working copy. `configs/shadcn/` recreates shadcn/ui's default theme (see [Real screens](#real-screens)). Every `$enable-*` option that changes the CSS has a config that flips it, like `configs/no-rounded/` or `configs/grid-css-only/`. `configs/square/`, `configs/pill/`, `configs/compact/` and `configs/spacious/` push the radius, spacing and control size tokens to their extremes. `configs/gray-warm/`, `configs/gray-cool/`, `configs/hue-shift/`, `configs/mono/`, `configs/brand/` and `configs/dark-first/` do the same with the palette, the theme colors and the color scheme. `configs/web-font/`, `configs/serif/`, `configs/large-type/`, `configs/root-62-5/` and `configs/weights/` do it with fonts, text sizes and weights. `configs/breakpoints-custom/`, `configs/containers-fluid/`, `configs/grid-16/` and `configs/spacers-extended/` change the breakpoints, the containers, the grid and the spacing scale. `configs/utilities-custom/` uses every option of the utility API, and [`pages/utility-api.html`](pages/utility-api.html) checks each of its utilities. `configs/no-transitions/` and `configs/no-reduced-motion/` are also used by [Auditing motion](#auditing-motion). [`configs/README.md`](configs/README.md#saved-configs) lists them all.
 
 ### Checking configs
 
@@ -309,7 +309,7 @@ It exits with an error when a folder fails to compile, and with `-- --strict` wh
 
 ```text
 index.html               Home: every page, with search and filters
-pages/                   Starter screens (dashboard, checkout and sign-in forms, product and pricing marketing)
+pages/                   Starter screens (dashboard, checkout and sign-in forms, product and pricing marketing), utility API checks
 screens/                 Real app screens ported from shadcn/ui (dashboard, tasks, authentication, playground, cards, login and signup blocks)
 kitchen-sink/            One page per component or form doc, with all of its docs examples (generated)
 compare.html             Side-by-side comparison of any page

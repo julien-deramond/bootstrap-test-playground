@@ -49,6 +49,7 @@ export default [
   { kind: 'unused', reason: 'color scale, for users and utilities', pattern: /^--[a-z]+-\d{3}$/ },
   { kind: 'unused', reason: 'scale step, for users and utilities', pattern: /^--(spacer|radius|z|font-size|line-height)-(n?\d+|\d*x[sl])$/ },
   { kind: 'unused', reason: 'scale step, for users and utilities', tokens: ['--box-shadow-xs', '--font-weight-light', '--font-weight-lighter'] },
+  { kind: 'unused', configs: ['utilities-custom'], reason: 'the config’s `variables` list exposes each .text-shadow-* value, for users', tokens: ['--text-shadow'] },
   { kind: 'unused', configs: ['weights'], reason: 'the weight the config adds to $font-weights, for users (the .fw-black utility uses the raw value)', tokens: ['--font-weight-black'] },
   { kind: 'unused', reason: 'read by Bootstrap’s JavaScript (NavOverflow)', pattern: /^--breakpoint-/ },
   { kind: 'unused', reason: 'generated from the color maps and the theme API, for users', tokens: ['--bg-inherit', '--fg-inherit', '--theme-base'] },
