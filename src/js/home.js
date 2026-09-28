@@ -6,6 +6,7 @@
 // The home page is playground UI, not a page under test: it doesn't load
 // main.js, so it has no toolbar, and `data-playground-fixed` keeps it on
 // Bootstrap's defaults whatever the preferences (see playground-prefs.js).
+import source, { onChange as onSourceChange } from 'virtual:bootstrap-source'
 import { configs, groupConfigs } from './configs.js'
 import { groups, pages, queryText, readRecent, resultUrl, search } from './page-index.js'
 import { changeLabels, pageUrl, record } from './last-update.js'
@@ -21,7 +22,26 @@ const groupFilters = document.getElementById('group-filters')
 const tagFilters = document.getElementById('tag-filters')
 const resultCount = document.getElementById('result-count')
 
-document.getElementById('bootstrap-source').textContent = __BOOTSTRAP_SOURCE__
+// Where Bootstrap comes from, linked to its commit or branch on GitHub. The
+// dot turns amber when a local checkout has uncommitted changes.
+function renderSource({ label, path, url, dirty }) {
+  const pill = document.getElementById('bootstrap-source')
+  const link = pill.querySelector('a')
+  link.querySelector('code').textContent = label
+  link.title = `Bootstrap source: ${path}`
+  if (url) {
+    link.href = url
+    link.rel = 'noopener'
+  } else {
+    link.removeAttribute('href')
+    link.removeAttribute('rel')
+  }
+
+  pill.toggleAttribute('data-dirty', dirty)
+}
+
+renderSource(source)
+onSourceChange(renderSource)
 
 // --- Last update ------------------------------------------------------------
 

@@ -185,7 +185,7 @@ const styles = `
   footer { flex-wrap: wrap; }
   .action { padding: 4px 10px; font-weight: 600; border: 1px solid rgb(255 255 255 / .18); border-radius: 6px; }
   .action:hover { text-decoration: none; background: rgb(255 255 255 / .1); }
-  .source { flex-basis: 100%; font-size: 11px; opacity: .55; overflow-wrap: anywhere; }
+  .source { flex-basis: 100%; font-size: 11px; font-weight: 400; opacity: .55; overflow-wrap: anywhere; }
 `
 
 const escapeHtml = value => String(value).replace(/[&<>"]/g, char => `&#${char.charCodeAt(0)};`)
@@ -193,7 +193,8 @@ const escapeHtml = value => String(value).replace(/[&<>"]/g, char => `&#${char.c
 const inlineCode = text => escapeHtml(text).replace(/`([^`]+)`/g, '<code>$1</code>')
 const capitalize = text => text.charAt(0).toUpperCase() + text.slice(1)
 
-export function mountToolbar({ source, configs, swappable }) {
+// `source` is `virtual:bootstrap-source`, `onSourceChange` its `onChange`.
+export function mountToolbar({ source, onSourceChange, configs, swappable }) {
   const prefs = window.playgroundPrefs
   if (!prefs) {
     console.warn('[playground] playground-prefs.js is not loaded on this page; the toolbar is disabled.')
@@ -356,7 +357,7 @@ export function mountToolbar({ source, configs, swappable }) {
         <button type="button" class="action copy">Copy link</button>
         <a class="action" href="${compareUrl}">Compare</a>
         <button type="button" class="action reset" title="Back to Bootstrap's defaults">Reset</button>
-        <span class="source" title="Bootstrap source">${escapeHtml(source)}</span>
+        <a class="source"></a>
       </footer>
     </dialog>`
 
@@ -366,6 +367,24 @@ export function mountToolbar({ source, configs, swappable }) {
   const modeGroup = shadow.querySelector('[data-radios="colorMode"]')
   const filter = shadow.querySelector('.filter')
   const copy = shadow.querySelector('.copy')
+
+  // Where Bootstrap comes from, linked to its commit or branch on GitHub.
+  // A local checkout's label follows its branch and dirty state in dev.
+  const sourceLink = shadow.querySelector('.source')
+  const renderSource = ({ label, path, url }) => {
+    sourceLink.textContent = label
+    sourceLink.title = `Bootstrap source: ${path}`
+    if (url) {
+      sourceLink.href = url
+      sourceLink.rel = 'noopener'
+    } else {
+      sourceLink.removeAttribute('href')
+      sourceLink.removeAttribute('rel')
+    }
+  }
+
+  renderSource(source)
+  onSourceChange?.(renderSource)
 
   // What the pill shows, like `shadcn · dark · RTL · dist`.
   const describe = current => {
