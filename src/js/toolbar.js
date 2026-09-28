@@ -294,6 +294,7 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
     </fieldset>`).join('')
 
   const compareUrl = `${import.meta.env.BASE_URL}compare.html?page=${encodeURIComponent(location.pathname)}`
+  const matrixUrl = `${import.meta.env.BASE_URL}matrix.html?page=${encodeURIComponent(location.pathname)}`
   const palette = mountPalette()
 
   // Previous and next pages in the same folder, to flip through a group.
@@ -356,6 +357,7 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
       <footer>
         <button type="button" class="action copy">Copy link</button>
         <a class="action" href="${compareUrl}">Compare</a>
+        <a class="action" href="${matrixUrl}">Matrix</a>
         <button type="button" class="action reset" title="Back to Bootstrap's defaults">Reset</button>
         <a class="source"></a>
       </footer>

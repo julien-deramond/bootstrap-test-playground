@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Matrix</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/src/styles/main.scss">
+    <style>
+      body { display: flex; flex-direction: column; height: 100vh; margin: 0; }
+      .matrix-bar select { inline-size: auto; }
+      .matrix-bar input[type="number"] { inline-size: 6rem; }
+      .matrix-configs { position: relative; }
+      .matrix-configs > summary { cursor: pointer; }
+      .matrix-configs-panel { position: absolute; inset-block-start: calc(100% + .5rem); z-index: 10; display: grid; gap: 1rem; inline-size: max-content; max-inline-size: min(40rem, 90vw); max-block-size: 70vh; padding: 1rem; overflow: auto; background: var(--bs-bg-body); border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); box-shadow: var(--bs-box-shadow); }
+      .matrix-configs-panel fieldset { display: flex; flex-wrap: wrap; gap: .25rem 1rem; }
+      .matrix-configs-panel legend { font-size: var(--bs-font-size-sm); font-weight: var(--bs-font-weight-semibold); }
+      .matrix-scroll { flex: 1; min-height: 0; overflow: auto; background: var(--bs-bg-1); }
+      .matrix-grid { display: grid; gap: 1px; inline-size: max-content; background: var(--bs-border-color); }
+      .matrix-grid > * { background: var(--bs-bg-body); }
+      .matrix-head { position: sticky; inset-block-start: 0; z-index: 2; padding: .5rem .75rem; font-size: var(--bs-font-size-sm); font-weight: var(--bs-font-weight-semibold); }
+      .matrix-row-head { position: sticky; inset-inline-start: 0; z-index: 1; padding: .5rem .75rem; font-size: var(--bs-font-size-sm); font-weight: var(--bs-font-weight-semibold); white-space: nowrap; }
+      .matrix-corner { z-index: 3; inset-inline-start: 0; }
+      .matrix-cell { position: relative; overflow: hidden; }
+      .matrix-cell iframe { position: absolute; inset-block-start: 0; inset-inline-start: 0; display: block; border: 0; transform-origin: 0 0; }
+      [dir="rtl"] .matrix-cell iframe { transform-origin: 100% 0; }
+      .matrix-cell .matrix-diff { pointer-events: none; mix-blend-mode: difference; }
+    </style>
+    <script type="module" src="/src/js/matrix.js"></script>
+  </head>
+  <body>
+    <header class="matrix-bar d-flex flex-wrap gap-3 align-items-center p-2 border-bottom">
+      <a href="/" class="fw-bold">Playground</a>
+      <label class="d-flex gap-2 align-items-center">Page <select class="form-control form-control-sm" id="matrix-page"></select></label>
+      <label class="d-flex gap-2 align-items-center">Example <select class="form-control form-control-sm" id="matrix-section"></select></label>
+      <details class="matrix-configs" id="matrix-configs">
+        <summary class="btn-outline theme-secondary btn-sm">Configs <span id="matrix-config-count"></span></summary>
+        <div class="matrix-configs-panel" id="matrix-config-list"></div>
+      </details>
+      <span class="d-flex gap-2 align-items-center" role="group" aria-label="Themes">
+        Themes
+        <label class="d-flex gap-1 align-items-center"><input type="checkbox" class="check" data-row="theme" value="light"> light</label>
+        <label class="d-flex gap-1 align-items-center"><input type="checkbox" class="check" data-row="theme" value="dark"> dark</label>
+      </span>
+      <span class="d-flex gap-2 align-items-center" role="group" aria-label="Directions">
+        Dir
+        <label class="d-flex gap-1 align-items-center"><input type="checkbox" class="check" data-row="dir" value="ltr"> ltr</label>
+        <label class="d-flex gap-1 align-items-center"><input type="checkbox" class="check" data-row="dir" value="rtl"> rtl</label>
+      </span>
+      <label class="d-flex gap-2 align-items-center">Width <input type="number" class="form-control form-control-sm" id="matrix-width" min="240" max="1600" step="40"></label>
+      <label class="d-flex gap-2 align-items-center">Zoom
+        <select class="form-control form-control-sm" id="matrix-zoom">
+          <option value="0.5">50%</option>
+          <option value="0.75">75%</option>
+          <option value="1">100%</option>
+        </select>
+      </label>
+      <label class="d-flex gap-2 align-items-center"><input type="checkbox" class="check" id="matrix-freeze"> Freeze</label>
+      <label class="d-flex gap-2 align-items-center" title="Blends the first column over every cell of its row: what doesn't change turns black"><input type="checkbox" class="check" id="matrix-diff"> Diff against first column</label>
+      <a id="matrix-open" href="#" class="ms-auto">Open page</a>
+    </header>
+    <main class="matrix-scroll">
+      <div class="matrix-grid" id="matrix-grid"></div>
+    </main>
+  </body>
+</html>

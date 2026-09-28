@@ -33,7 +33,7 @@ const VARIANTS = [
   { name: 'dist', params: { config: 'working', css: 'dist', js: 'dist' } }
 ]
 
-const urls = ['/', '/compare.html', '/sizes.html', ...collectPages('/').flatMap(({ pages }) => pages.map(({ url }) => url))]
+const urls = ['/', '/compare.html', '/matrix.html', '/sizes.html', ...collectPages('/').flatMap(({ pages }) => pages.map(({ url }) => url))]
 
 const scope = process.env.CONSOLE_SCOPE ? JSON.parse(process.env.CONSOLE_SCOPE) : { full: true }
 const inScope = (variant, url) => scope.full || ['working', 'dist'].includes(variant) ||

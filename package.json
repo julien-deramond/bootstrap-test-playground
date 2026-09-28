@@ -23,6 +23,7 @@
     "check-dist": "node scripts/check-dist.mjs",
     "audit-tokens": "node scripts/audit-tokens.mjs",
     "compile-matrix": "node scripts/compile-matrix.mjs",
+    "matrix": "node scripts/matrix.mjs",
     "check-size": "node scripts/check-size.mjs",
     "audit-rtl": "node scripts/audit-rtl.mjs",
     "audit-motion": "node scripts/audit-motion.mjs",

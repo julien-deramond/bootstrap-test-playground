@@ -17,7 +17,7 @@ import path from 'node:path'
 import { chromium } from '@playwright/test'
 import { createServer } from 'vite'
 import { root } from './configs.mjs'
-import { compareImages } from './image-diff.mjs'
+import { compareImages, PLACEHOLDER_IMAGE } from './image-diff.mjs'
 import { collectPages } from './pages.mjs'
 
 // Differing pixels from which an example is listed: a count, not a share,
@@ -26,10 +26,6 @@ import { collectPages } from './pages.mjs'
 const MIN_PIXELS = Number(process.argv.find(arg => arg.startsWith('--min-pixels='))?.slice('--min-pixels='.length) ?? 10)
 
 // Same stand-in as the visual suite, for remote images.
-const PLACEHOLDER_IMAGE = `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256">
-  <rect width="256" height="256" fill="#6f42c1"/><circle cx="128" cy="100" r="48" fill="#e9d8fd"/>
-  <rect x="48" y="164" width="160" height="92" rx="46" fill="#e9d8fd"/></svg>`
-
 const HIDE_TEXT = `
   *, *::before, *::after {
     color: transparent !important;
