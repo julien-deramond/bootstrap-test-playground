@@ -18,7 +18,7 @@
 // runs in each engine (`smoke`, `smoke-firefox`, `smoke-webkit`), and an
 // entry can be limited to some of them.
 import { expect, test } from '@playwright/test'
-import { listConfigs } from '../../scripts/lib/configs.mjs'
+import { configDir, listConfigs, readPartials } from '../../scripts/lib/configs.mjs'
 import known from './known-issues.js'
 
 const VARIANTS = [
@@ -114,6 +114,32 @@ const PAGES = {
   strength: '/kitchen-sink/forms-password-strength.html',
   range: '/kitchen-sink/forms-range.html'
 }
+
+// The partial that styles each scenario's component. A config that loads only
+// some partials (configs/partial) leaves the others out on purpose, so their
+// scenarios are skipped there. Toggler and scrollspy only need JavaScript.
+const PARTIALS = {
+  dialog: 'dialog',
+  drawer: 'drawer',
+  menu: 'menu',
+  tooltip: 'tooltip',
+  popover: 'popover',
+  collapse: 'transitions',
+  tab: 'nav',
+  carousel: 'carousel',
+  toast: 'toasts',
+  alert: 'alert',
+  button: 'buttons',
+  combobox: 'forms',
+  datepicker: 'datepicker',
+  otp: 'forms',
+  chips: 'forms',
+  strength: 'forms',
+  range: 'forms'
+}
+
+const loadedPartials = Object.fromEntries(listConfigs().map(({ name }) => [name, readPartials(configDir(name))]))
+const leftOut = (variant, name) => Boolean(loadedPartials[variant] && PARTIALS[name] && !loadedPartials[variant].includes(PARTIALS[name]))
 
 const SCENARIOS = {
   async dialog(page) {
@@ -435,6 +461,7 @@ for (const { name: variant, params } of VARIANTS) {
         const issue = known.find(entry => entry.scenario === name &&
           (!entry.configs || entry.configs.includes(variant)) &&
           (!entry.engines || entry.engines.includes(browserName)))
+        test.skip(leftOut(variant, name), `${variant} doesn't load the ${PARTIALS[name]} partial`)
         test.fail(Boolean(issue), issue && `known upstream bug #${issue.issue}`)
         page.config = params
         await scenario(page)

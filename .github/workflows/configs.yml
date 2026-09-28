@@ -7,8 +7,8 @@ name: Configs
 # audits the tokens of every config for new undefined or unused ones,
 # compiles Bootstrap under combinations of its $enable-* options, audits the
 # default CSS for new physical left/right declarations, audits its motion
-# against prefers-reduced-motion and the two motion options, and audits its
-# cascade layers. Also validates the HTML of every page, and checks that the
+# against prefers-reduced-motion and the two motion options, audits its
+# cascade layers, and compiles every partial alone after root (Option B). Also validates the HTML of every page, and checks that the
 # configs table in configs/README.md matches the configs' READMEs.
 on:
   pull_request:
@@ -52,6 +52,9 @@ jobs:
         if: ${{ !cancelled() }}
 
       - run: npm run audit-layers
+        if: ${{ !cancelled() }}
+
+      - run: npm run audit-partials
         if: ${{ !cancelled() }}
 
       - run: npm run lint:html

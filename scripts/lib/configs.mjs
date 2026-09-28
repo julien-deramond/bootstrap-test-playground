@@ -91,6 +91,15 @@ export function readColorModes(dir) {
   return [...modes]
 }
 
+// The Bootstrap partials a config's main.scss loads (`root`, `forms`,
+// `utilities/api`…), or null when it loads all of Bootstrap through
+// `bootstrap/scss/bootstrap`, as most do. configs/partial/ loads a few.
+export function readPartials(dir) {
+  const code = fs.readFileSync(path.join(dir, 'main.scss'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
+  const partials = [...code.matchAll(/@use\s+["']bootstrap\/scss\/([\w/-]+)["']/g)].map(match => match[1])
+  return partials.includes('bootstrap') ? null : partials
+}
+
 // A config whose main.scss and _custom.scss don't differ from the default's,
 // comments aside, only changes tokens.css: it also applies on top of the
 // prebuilt dist (?css=dist), where Sass can't reach. A config that changes the
