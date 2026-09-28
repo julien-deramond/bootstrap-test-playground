@@ -25,6 +25,35 @@ function prefixRootUrls(base) {
   }
 }
 
+// Every page loads public/playground-prefs.js first in its <head>. This inlines
+// it: in WebKit, an external classic script there gives a page with a drop-down
+// `<select>` a `getComputedStyle(document.body)` that inherits nothing from
+// `<html>` (no tokens, default font and color), although the page renders fine,
+// so checks that read the body's style fail. An inline script doesn't. See #240.
+function inlinePrefsScript() {
+  const tag = '<script src="/playground-prefs.js"></script>'
+  const file = path.join(root, 'public/playground-prefs.js')
+
+  return {
+    name: 'inline-prefs-script',
+    transformIndexHtml: {
+      order: 'pre',
+      handler(html) {
+        if (!html.includes(tag)) {
+          return html
+        }
+
+        const code = fs.readFileSync(file, 'utf8')
+        if (/<\/script|<!--/i.test(code)) {
+          throw new Error('public/playground-prefs.js can\'t contain "</script" or "<!--" once inlined')
+        }
+
+        return html.replace(tag, () => `<script>\n${code}</script>`)
+      }
+    }
+  }
+}
+
 // Vite replaces `<link data-playground-styles="main" href="/src/styles/main.scss">`
 // with a bare link to the compiled asset, which breaks config switching in
 // builds. This puts the attribute back on the matching compiled link.
@@ -274,6 +303,6 @@ export default defineConfig(({ mode }) => {
       cssTarget,
       rolldownOptions: { input }
     },
-    plugins: [playgroundData(base, bootstrap.dir ?? undefined), bootstrapSourceData(env, bootstrap), keepStyleMarkers(), ...(base === '/' ? [] : [prefixRootUrls(base)])]
+    plugins: [inlinePrefsScript(), playgroundData(base, bootstrap.dir ?? undefined), bootstrapSourceData(env, bootstrap), keepStyleMarkers(), ...(base === '/' ? [] : [prefixRootUrls(base)])]
   }
 })
