@@ -1,0 +1,25 @@
+// Hue shift: every hue of `$colors` rotated 180°, lightness and chroma kept.
+// Blue turns orange, red teal, yellow blue-violet, and so on. What still shows
+// its original hue doesn't read the color scale. The contrast keys of the
+// theme colors are fixed per theme ("warning" and "info" pair with
+// --gray-900, the others with --white), so they don't follow the new hues.
+// `$gray` and `$pewter` keep their hue: gray-warm and gray-cool cover them.
+
+@use "bootstrap/scss/bootstrap" with (
+  $blue: oklch(60% .24 60),
+  $indigo: oklch(56% .26 108),
+  $violet: oklch(56% .24 120),
+  $purple: oklch(56% .24 140),
+  $pink: oklch(60% .22 184),
+  $red: oklch(60% .22 200),
+  $orange: oklch(70% .22 232),
+  $amber: oklch(79% .2 258),
+  $yellow: oklch(88% .24 268),
+  $lime: oklch(65% .24 315),
+  $green: oklch(64% .22 340),
+  $teal: oklch(68% .22 10),
+  $cyan: oklch(69% .22 40),
+  $brown: oklch(60% .12 234),
+);
+
+@use "custom";

@@ -1,0 +1,10 @@
+// Gray cool: `$gray: oklch(55% .03 250)`, a darker and more saturated blue-gray
+// than the default (`oklch(60% .02 245)`). Bootstrap tints and shades it into
+// --gray-025…975, which every neutral surface, text and border reads. Next to
+// gray-warm, it shows which neutrals follow `$gray` and which don't.
+
+@use "bootstrap/scss/bootstrap" with (
+  $gray: oklch(55% .03 250),
+);
+
+@use "custom";

@@ -1,0 +1,11 @@
+// Gray warm: `$gray: oklch(55% .03 60)`, a brownish gray instead of the
+// default blue-gray (`oklch(60% .02 245)`). Bootstrap tints and shades it into
+// --gray-025…975, which every neutral surface, text and border reads: bodies,
+// `bg-1…4`, `fg-1…4`, borders, secondary and inverse themes, disabled states.
+// What still looks blue-gray next to it doesn't read the gray scale.
+
+@use "bootstrap/scss/bootstrap" with (
+  $gray: oklch(55% .03 60),
+);
+
+@use "custom";

@@ -1,17 +1,37 @@
 [
   {
     "commit": "bd0a4f63ce5cc444063c28a6946bdae3dacdce20",
-    "date": "2026-09-28T05:56:40.303Z",
+    "date": "2026-09-28T06:24:23.106Z",
     "sizes": {
       "css/default": {
         "min": 378944,
         "gzip": 50997,
         "brotli": 36238
       },
+      "css/brand": {
+        "min": 378923,
+        "gzip": 51019,
+        "brotli": 36260
+      },
       "css/compact": {
         "min": 382069,
         "gzip": 51241,
         "brotli": 36413
+      },
+      "css/dark-first": {
+        "min": 378944,
+        "gzip": 50997,
+        "brotli": 36238
+      },
+      "css/gray-cool": {
+        "min": 378944,
+        "gzip": 51006,
+        "brotli": 36500
+      },
+      "css/gray-warm": {
+        "min": 378931,
+        "gzip": 51005,
+        "brotli": 36226
       },
       "css/grid-css-only": {
         "min": 364876,
@@ -22,6 +42,16 @@
         "min": 373564,
         "gzip": 50177,
         "brotli": 36055
+      },
+      "css/hue-shift": {
+        "min": 378996,
+        "gzip": 51000,
+        "brotli": 36443
+      },
+      "css/mono": {
+        "min": 379828,
+        "gzip": 50889,
+        "brotli": 36123
       },
       "css/no-button-pointers": {
         "min": 378806,
