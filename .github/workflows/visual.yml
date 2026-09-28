@@ -145,6 +145,7 @@ jobs:
             fail "\`$BRANCH\` moved while the baselines were being recorded. Add the \`update-baselines\` label again to record them from its new commit."
           fi
           echo "pushed=true" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-artifact@v7
         if: ${{ failure() && steps.push.outcome == 'failure' }}
@@ -156,5 +157,34 @@ jobs:
       - if: ${{ always() }}
         run: gh pr edit "$PR" --repo "$GITHUB_REPOSITORY" --remove-label update-baselines
 
+      # A push made with GITHUB_TOKEN starts the pull request's workflows, but
+      # GitHub holds them for approval (action required): github-actions[bot]
+      # is a first-time contributor here. Approving them runs `compare` and the
+      # other checks on the new commit, where the pull request shows them. If
+      # none show up, `compare` still runs, but only in the Actions tab.
       - if: ${{ steps.push.outputs.pushed == 'true' }}
-        run: gh workflow run visual.yml --repo "$GITHUB_REPOSITORY" --ref "$BRANCH"
+        run: |
+          approved=""
+          for _ in $(seq 1 12); do
+            sleep 5
+            new=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$SHA&status=action_required" --jq '.workflow_runs[].id' | grep -vxF -e "${approved:-none}" || true)
+            for id in $new; do
+              if ! gh api -X POST "repos/$GITHUB_REPOSITORY/actions/runs/$id/approve" > /dev/null; then
+                message="The workflows on the new commit are waiting for approval, and CI couldn't approve them. Approve them on the pull request to run \`compare\` there."
+                echo "::error title=Checks not started::$message"
+                gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body "**Visual baselines pushed.** $message"
+                exit 1
+              fi
+              approved=$(printf '%s\n%s' "$approved" "$id")
+            done
+            # Stop once the runs that were held are all approved.
+            if [ -n "$approved" ] && [ -z "$new" ]; then break; fi
+          done
+          if [ -n "$approved" ]; then
+            echo "Approved the runs held on ${SHA:0:7}:$(echo "$approved" | tr '\n' ' ')"
+          elif [ -z "$(gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$SHA&event=pull_request" --jq '.workflow_runs[].id')" ]; then
+            echo "::warning title=Comparison in the Actions tab::No workflow started on ${SHA:0:7}, so \`compare\` runs from a dispatch, which the pull request doesn't show."
+            gh workflow run visual.yml --repo "$GITHUB_REPOSITORY" --ref "$BRANCH"
+          fi
+        env:
+          SHA: ${{ steps.push.outputs.sha }}
