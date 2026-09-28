@@ -1,7 +1,7 @@
 [
   {
     "commit": "bd0a4f63ce5cc444063c28a6946bdae3dacdce20",
-    "date": "2026-09-28T13:48:44.492Z",
+    "date": "2026-09-28T14:19:55.054Z",
     "sizes": {
       "css/default": {
         "min": 378944,
@@ -82,6 +82,11 @@
         "min": 379017,
         "gzip": 51020,
         "brotli": 36280
+      },
+      "css/mixins": {
+        "min": 388596,
+        "gzip": 52220,
+        "brotli": 36877
       },
       "css/mono": {
         "min": 379828,

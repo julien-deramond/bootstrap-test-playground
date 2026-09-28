@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sass API</title>
+    <meta name="description" content="Sass API: a custom callout component, the docs' grid, row-cols and breakpoint examples, container queries and three custom utilities, all built from Bootstrap's documented mixins and functions in the mixins config.">
+    <meta name="playground-tags" content="components, layout, utilities">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- Always the mixins config: the toolbar's config switch doesn't apply,
+         since the page shows what its _custom.scss builds. -->
+    <link rel="stylesheet" href="/configs/mixins/main.scss">
+    <link rel="stylesheet" href="/configs/mixins/tokens.css">
+    <style>
+      .pg-cell {
+        padding: .5rem;
+        text-align: center;
+        border: 1px dashed;
+      }
+
+      .pg-query {
+        padding: .5rem;
+        border: 1px dashed;
+      }
+    </style>
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#sass-api-main">Skip to the examples (visually-hidden-focusable)</a>
+    <main class="container py-5" id="sass-api-main">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Pages</p>
+        <h1>Sass API</h1>
+        <p class="fs-lg fg-2">
+          Everything here comes from <a href="https://github.com/julien-deramond/bootstrap-test-playground/tree/main/configs/mixins"><code>configs/mixins/</code></a>, built with Bootstrap's documented mixins and functions. Its Sass checks what each function returns, so a rename or a changed result fails the build.
+        </p>
+        <p class="fg-2">
+          Upstream: <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/218">#218</a> (<code>color-contrast()</code> doesn't compile), <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/219">#219</a> (where to load the mixins from) and <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/220">#220</a> (breakpoint values in the docs), not reported yet
+        </p>
+      </header>
+
+      <section class="mb-5" aria-labelledby="callouts">
+        <h2 class="h5" id="callouts" data-playground-chrome>A custom component: <code>.callout</code></h2>
+        <p data-playground-chrome><code>tokens()</code> with a <code>defaults()</code> map, <code>--theme-*</code> with fallbacks, <code>border-radius()</code>, <code>transition()</code>, <code>focus-ring()</code> (tab to one), <code>media-breakpoint-up()</code> for the padding, <code>color-mode(dark)</code> for a dashed edge, <code>color-scheme(dark)</code> for the icon, <code>mask-icon()</code> with <code>escape-svg()</code>, and <code>visually-hidden()</code> for the label.</p>
+        <div class="vstack gap-3">
+          <div class="callout" tabindex="0">
+            <span class="callout-icon"></span>
+            <p class="mb-0"><span class="callout-label">Note: </span>Without a theme class, the callout falls back to <code>--bg-1</code> and <code>--border-color</code>.</p>
+          </div>
+          <div class="callout theme-primary" tabindex="0">
+            <span class="callout-icon"></span>
+            <p class="mb-0"><span class="callout-label">Note: </span>With <code>.theme-primary</code>, it reads the theme's subtle background, border and emphasis text.</p>
+          </div>
+          <div class="callout theme-warning" tabindex="0">
+            <span class="callout-icon"></span>
+            <p class="mb-0"><span class="callout-label">Warning: </span>Any theme works, <code>.theme-warning</code> here.</p>
+          </div>
+          <div class="sass-api-themes">
+            <div class="callout theme-danger" tabindex="0">
+              <span class="callout-icon"></span>
+              <p class="mb-0"><span class="callout-label">Danger: </span>Inside <code>.sass-api-themes</code>, the theme class comes from <code>generate-theme-classes()</code>, included again there.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mb-5" aria-labelledby="grid-example">
+        <h2 class="h5" id="grid-example" data-playground-chrome>The grid mixins</h2>
+        <p data-playground-chrome>The grid docs' <em>Example usage</em> as written (<code>make-container()</code>, <code>make-row()</code>, <code>make-col-ready()</code>, <code>make-col()</code>), then <code>row-cols()</code> (three columns, five from <code>md</code>) and <code>make-col-offset()</code>.</p>
+        <div class="example-container mb-3">
+          <div class="example-row">
+            <div class="example-content-main"><div class="pg-cell">Main content</div></div>
+            <div class="example-content-secondary"><div class="pg-cell">Secondary content</div></div>
+          </div>
+        </div>
+        <div class="example-row-cols mb-3">
+          <div class="col"><div class="pg-cell">1</div></div>
+          <div class="col"><div class="pg-cell">2</div></div>
+          <div class="col"><div class="pg-cell">3</div></div>
+          <div class="col"><div class="pg-cell">4</div></div>
+          <div class="col"><div class="pg-cell">5</div></div>
+        </div>
+        <div class="example-row">
+          <div class="example-offset"><div class="pg-cell">4 columns, offset by 4</div></div>
+        </div>
+      </section>
+
+      <section class="mb-5" aria-labelledby="breakpoints">
+        <h2 class="h5" id="breakpoints" data-playground-chrome>Breakpoints and container queries</h2>
+        <p data-playground-chrome><code>media-breakpoint-down()</code>, <code>-only()</code>, <code>-between()</code> and <code>-up()</code> show one label for the viewport. Below, <code>set-container()</code> names each box a container, and the <code>container-breakpoint-*()</code> mixins show one label for its width.</p>
+        <p class="pg-query mb-3">
+          Viewport:
+          <span class="breakpoint-label breakpoint-label-down-md">below md</span>
+          <span class="breakpoint-label breakpoint-label-only-md">md only</span>
+          <span class="breakpoint-label breakpoint-label-between-lg-xl">between lg and 2xl</span>
+          <span class="breakpoint-label breakpoint-label-up-2xl">2xl and up</span>
+        </p>
+        <div class="vstack gap-2">
+          <div class="example-query-container" style="max-inline-size: 30rem">
+            <p class="pg-query mb-0">
+              30rem box:
+              <span class="container-label container-label-down-md">below md</span>
+              <span class="container-label container-label-only-md">md only</span>
+              <span class="container-label container-label-between-lg-xl">between lg and 2xl</span>
+              <span class="container-label container-label-up-2xl">2xl and up</span>
+            </p>
+          </div>
+          <div class="example-query-container" style="max-inline-size: 55rem">
+            <p class="pg-query mb-0">
+              55rem box:
+              <span class="container-label container-label-down-md">below md</span>
+              <span class="container-label container-label-only-md">md only</span>
+              <span class="container-label container-label-between-lg-xl">between lg and 2xl</span>
+              <span class="container-label container-label-up-2xl">2xl and up</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="mb-5" aria-labelledby="utilities">
+        <h2 class="h5" id="utilities" data-playground-chrome>Utilities built with the map functions</h2>
+        <p data-playground-chrome><code>.pull-*</code> from <code>map-merge-multiple()</code> and <code>negativify-map()</code>, <code>.type-*</code> from <code>map-get-nested()</code>, <code>.tint-*</code> from <code>map-get-multiple()</code> and <code>theme-opacity-values()</code>.</p>
+        <div class="hstack flex-wrap gap-3 align-items-start mb-3">
+          <div class="pg-cell">Baseline</div>
+          <div class="pg-cell pull-3">.pull-3</div>
+          <div class="pg-cell pull-n2">.pull-n2</div>
+        </div>
+        <p class="type-xs mb-1">.type-xs</p>
+        <p class="type-lg mb-1">.type-lg</p>
+        <p class="type-2xl mb-3">.type-2xl</p>
+        <div class="hstack flex-wrap gap-2">
+          <div class="pg-cell tint-10">.tint-10</div>
+          <div class="pg-cell tint-30">.tint-30</div>
+          <div class="pg-cell tint-50">.tint-50</div>
+          <div class="pg-cell theme-success tint-10">.theme-success .tint-10</div>
+          <div class="pg-cell theme-success tint-30">.theme-success .tint-30</div>
+          <div class="pg-cell theme-success tint-50">.theme-success .tint-50</div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
