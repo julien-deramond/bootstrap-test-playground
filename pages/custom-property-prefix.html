@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Custom property prefix</title>
+    <meta name="description" content="Custom property prefix: checks that Bootstrap's JavaScript reads and writes the custom properties the CSS uses (carousel, form range, nav overflow, password strength) under the default, x- and empty prefixes, with a pass or fail marker.">
+    <meta name="playground-tags" content="components, forms">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <style>
+      /* No Bootstrap tokens here: their prefix is what this page checks. */
+      .pg-narrow {
+        max-inline-size: 20rem;
+      }
+
+      .pg-slide {
+        block-size: 4rem;
+        background-color: #777;
+      }
+
+      .pg-slide:nth-child(even) {
+        background-color: #555;
+      }
+    </style>
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Pages</p>
+        <h1>Custom property prefix</h1>
+        <p class="fs-lg fg-2">
+          Every place where Bootstrap's JavaScript reads or writes a custom property that the CSS also uses, checked under the prefix the page's styles were compiled with.
+        </p>
+        <p class="fg-2">
+          Upstream: <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/196">#196</a> (the JavaScript hard-codes <code>--bs-</code>) and <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/197">#197</a> (the strength text never takes its color), not reported yet
+        </p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">What this checks</h2>
+        <p>The docs say the <code>bs-</code> prefix comes from PostCSS and can be changed with its <code>prefix</code> option, and their npm and webpack guides don't add the prefix at all. Bootstrap's JavaScript, though, uses the <code>--bs-*</code> names. These styles define <code id="prefix-detected">…</code>. Compare with <a href="?config=prefix-x">configs/prefix-x</a> (<code>--x-*</code>), <a href="?config=prefix-none">configs/prefix-none</a> (no prefix) and <a href="?config=default">the defaults</a>, or use the toolbar's <em>Styles</em> menu.</p>
+        <p>The prefix doesn't touch <code>data-bs-*</code> attributes or the <code>.bs-popover-*</code> and <code>.bs-tooltip-auto</code> classes, which aren't custom properties. Responsive placement hard-codes the breakpoints whatever the prefix (<a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/191">#191</a>).</p>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Checks</h2>
+        <ol class="list-unstyled vstack gap-5" id="prefix-cases">
+          <li data-prefix-case="range" data-expect="Range writes the fill ratio to {p}range-fill, which the track's gradient reads" data-issue="196">
+            <div class="pg-marker"></div>
+            <div class="form-range pg-narrow" id="case-range">
+              <input type="range" class="form-range-input" min="0" max="100" value="30" aria-label="Range at 30%">
+            </div>
+          </li>
+
+          <li data-prefix-case="carousel-interval" data-expect="Carousel autoplay writes its interval to {p}carousel-interval, which times the active indicator's fill" data-issue="196">
+            <div class="pg-marker"></div>
+            <div class="carousel slide pg-narrow" id="case-carousel-interval" data-bs-interval="1234">
+              <div class="carousel-inner">
+                <div class="carousel-item active"><div class="pg-slide"></div></div>
+                <div class="carousel-item"><div class="pg-slide"></div></div>
+              </div>
+            </div>
+          </li>
+
+          <li data-prefix-case="carousel-loop" data-expect="With {p}carousel-items: 3, a carousel with ends: loop falls back to wrap, since seamless looping only supports one item at a time" data-issue="196">
+            <div class="pg-marker"></div>
+            <div class="carousel slide pg-narrow" id="case-carousel-loop" data-bs-ends="loop">
+              <div class="carousel-inner">
+                <div class="carousel-item active"><div class="pg-slide"></div></div>
+                <div class="carousel-item"><div class="pg-slide"></div></div>
+                <div class="carousel-item"><div class="pg-slide"></div></div>
+                <div class="carousel-item"><div class="pg-slide"></div></div>
+                <div class="carousel-item"><div class="pg-slide"></div></div>
+              </div>
+            </div>
+          </li>
+
+          <li data-prefix-case="nav-overflow" data-expect="Nav overflow with collapseBelow: '2xl' reads {p}breakpoint-2xl and moves every item into its menu, since the nav is narrower" data-issue="196">
+            <div class="pg-marker"></div>
+            <div class="nav-overflow pg-narrow" id="case-nav-overflow" data-bs-collapse-below="2xl">
+              <ul class="nav nav-pills">
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="#case-nav-overflow">One</a></li>
+                <li class="nav-item"><a class="nav-link" href="#case-nav-overflow">Two</a></li>
+              </ul>
+            </div>
+          </li>
+
+          <li data-prefix-case="strength" data-expect="Password strength colors its text feedback like the meter, with {p}strength-strong-color for a strong password" data-issue="197">
+            <div class="pg-marker"></div>
+            <div class="pg-narrow">
+              <label for="case-strength-input" class="form-label">Password</label>
+              <input type="password" class="form-control" id="case-strength-input" value="Correct-Horse-Battery-9" autocomplete="off">
+              <div class="strength" id="case-strength">
+                <div class="strength-segment"></div>
+                <div class="strength-segment"></div>
+                <div class="strength-segment"></div>
+                <div class="strength-segment"></div>
+              </div>
+              <span class="strength-text" id="case-strength-text"></span>
+            </div>
+          </li>
+        </ol>
+      </section>
+    </main>
+
+    <script type="module">
+      // Each check gets its component from Bootstrap's JavaScript (options come
+      // from data attributes, since carousels initialize on `load`), then
+      // compares what the JavaScript wrote or read with the custom properties
+      // the compiled CSS actually uses, and writes data-result="pass" or
+      // "fail" on its <li>.
+      const html = document.documentElement
+      const element = id => document.getElementById(`case-${id}`)
+      const token = (node, name) => getComputedStyle(node).getPropertyValue(name).trim()
+
+      // The prefix of the page's styles, from the `:root, :host` rule that
+      // defines the body background: `--bs-bg-body` → `bs-`, `--bg-body` → ''.
+      const detectPrefix = () => {
+        const walk = list => {
+          for (const rule of list) {
+            if (rule instanceof CSSStyleRule && rule.selectorText.split(',').some(selector => selector.trim() === ':root')) {
+              const name = [...rule.style].find(property => /^--[a-z0-9-]*bg-body$/.test(property))
+              if (name) {
+                return name.slice(2, -'bg-body'.length)
+              }
+            } else if (rule.cssRules) {
+              const found = walk(rule.cssRules)
+              if (found !== undefined) {
+                return found
+              }
+            }
+          }
+        }
+
+        for (const sheet of document.styleSheets) {
+          try {
+            const found = walk(sheet.cssRules)
+            if (found !== undefined) {
+              return found
+            }
+          } catch {
+            // Cross-origin stylesheets can't be read.
+          }
+        }
+      }
+
+      const run = ({ Carousel, NavOverflow, Range, Strength }) => {
+        const prefix = detectPrefix()
+        if (prefix === undefined) {
+          throw new Error('No `:root` rule defines the body background: are Bootstrap\'s styles loaded?')
+        }
+
+        const p = name => `--${prefix}${name}`
+        document.getElementById('prefix-detected').textContent = prefix ? `--${prefix}*` : 'unprefixed custom properties'
+
+        const CHECKS = {
+          range: () => {
+            Range.getOrCreateInstance(element('range'))
+            return token(element('range'), p('range-fill')) === '0.3'
+          },
+          'carousel-interval': () => {
+            const carousel = Carousel.getOrCreateInstance(element('carousel-interval'))
+            carousel.cycle()
+            carousel.pause()
+            return token(element('carousel-interval'), p('carousel-interval')) === '1234ms'
+          },
+          'carousel-loop': () => {
+            element('carousel-loop').style.setProperty(p('carousel-items'), '3')
+            // `_canLoop()` decides between the seamless loop and the `wrap` jump.
+            return Carousel.getOrCreateInstance(element('carousel-loop'))._canLoop() === false
+          },
+          'nav-overflow': () => {
+            NavOverflow.getOrCreateInstance(element('nav-overflow'))
+            const items = element('nav-overflow').querySelectorAll('.nav > .nav-item:not(:has(.nav-overflow-toggle))')
+            return items.length === 2 && [...items].every(item => item.dataset.bsNavOverflow === 'true')
+          },
+          strength: () => {
+            Strength.getOrCreateInstance(element('strength'))
+            const meter = element('strength')
+            const active = meter.querySelector('.strength-segment.active')
+            return meter.dataset.bsStrength === 'strong' && Boolean(active) &&
+              getComputedStyle(element('strength-text')).color === getComputedStyle(active).backgroundColor
+          }
+        }
+
+        for (const item of document.querySelectorAll('[data-prefix-case]')) {
+          let pass = false
+          try {
+            pass = CHECKS[item.dataset.prefixCase]()
+          } catch (error) {
+            console.error(error)
+          }
+
+          item.dataset.result = pass ? 'pass' : 'fail'
+          const issue = item.dataset.issue
+          const marker = item.querySelector('.pg-marker')
+          marker.className = 'pg-marker hstack gap-2 mb-2'
+          marker.innerHTML = `<span class="badge ${pass ? 'theme-success' : 'theme-danger'}">${pass ? 'Pass' : 'Fail'}</span>
+            <span>${item.dataset.expect.replaceAll('{p}', `--${prefix}`)}</span>
+            ${issue ? `<a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/${issue}">#${issue}</a>` : ''}`
+        }
+
+        html.dataset.prefixCases = 'done'
+      }
+
+      // src/js/main.js exposes Bootstrap as `window.bootstrap` once its dynamic
+      // import resolves, which may come after `load`, and a config picked with
+      // ?config= or the toolbar is in once `#playground-config-pending` is
+      // gone. Timers rather than requestAnimationFrame, which stops in hidden
+      // tabs.
+      const start = () => {
+        if (window.bootstrap && document.readyState === 'complete' && !document.getElementById('playground-config-pending')) {
+          setTimeout(() => run(window.bootstrap), 50)
+        } else {
+          setTimeout(start, 50)
+        }
+      }
+
+      start()
+    </script>
+  </body>
+</html>

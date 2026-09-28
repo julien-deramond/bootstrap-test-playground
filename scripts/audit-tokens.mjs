@@ -28,6 +28,7 @@ import { bootstrapSource } from './lib/bootstrap.mjs'
 import { compileConfig, processCss } from './lib/compile.mjs'
 import { root, styleFolders } from './lib/configs.mjs'
 import known from './known-tokens.mjs'
+import { DEFAULT_PREFIX, readPrefix } from '../postcss.config.js'
 import { renderTokens } from './lib/render-tokens.mjs'
 
 // Bugs are tracked, intended findings explained: see "Upstream issue tracking" in CLAUDE.md.
@@ -50,6 +51,9 @@ const KINDS = {
 }
 
 const unprefix = name => name.replace(/^--bs-/, '--')
+
+// A config can compile with another prefix (configs/prefix-x/): strip that one.
+const unprefixWith = prefix => name => (prefix && name.startsWith(`--${prefix}`) ? `--${name.slice(prefix.length + 2)}` : name)
 
 // `node_modules/bootstrap/scss/_chip.scss:42` → `bootstrap/scss/_chip.scss:42`
 function where(node) {
@@ -104,7 +108,7 @@ const GLOBAL_SELECTOR = /:root|:host|\[data-bs-theme|\.theme-|^html|^body|^\*|@p
 const familiesOf = selector => [...selector.replace(/\\[\da-f]{1,6} ?/gi, '0').replace(/\\:/g, '|').matchAll(/\.([\w|-]+)/g)]
   .map(match => match[1].replace(/^.*\|/, '').split('-')[0])
 
-function analyze(roots) {
+function analyze(roots, unprefix) {
   const defined = new Map()
   const reads = new Map()
   const add = (map, name, entry) => map.set(name, [...(map.get(name) ?? []), entry])
@@ -167,7 +171,7 @@ async function audit(folder) {
     roots.push((await processCss(fs.readFileSync(tokensFile, 'utf8'), tokensFile)).root)
   }
 
-  return analyze(roots)
+  return analyze(roots, unprefixWith(readPrefix(fs.readFileSync(path.join(folder, 'main.scss'), 'utf8')) ?? DEFAULT_PREFIX))
 }
 
 function printFinding({ token, places, definedOn }, reason) {
