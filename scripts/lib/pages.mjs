@@ -3,6 +3,7 @@
 // suites in tests/.
 import fs from 'node:fs'
 import path from 'node:path'
+import { pageClasses } from './class-index.mjs'
 import { root } from './configs.mjs'
 
 // Folders scanned for pages. Every `.html` file inside becomes a Vite entry.
@@ -41,7 +42,9 @@ const plainText = html => decodeEntities(html.replace(/<[^>]*>/g, '')).replace(/
 // - <meta name="playground-tags" content="forms, auth">
 // - <meta name="playground-source">, see the toolbar
 // - every <h2 id="…">, so a search can jump straight to an example
-function readPage(file) {
+// - the "Docs source" link of kitchen sink pages
+// - with `bootstrapClasses`, the Bootstrap classes its markup uses (see class-index.mjs)
+function readPage(file, bootstrapClasses) {
   const html = fs.readFileSync(file, 'utf8')
   const head = html.match(/<head[\s\S]*?<\/head>/i)?.[0] ?? ''
   const meta = name => head.match(new RegExp(`<meta name="${name}"[^>]*>`, 'i'))?.[0]
@@ -50,24 +53,27 @@ function readPage(file) {
   const title = plainText(head.match(/<title>([^<]*)<\/title>/i)?.[1] ?? '') || path.basename(file, '.html')
   const lead = html.match(/<p class="[^"]*\bfs-lg\b[^"]*">([\s\S]*?)<\/p>/i)?.[1]
   const sourceTag = meta('playground-source')
+  const docs = html.match(/<a href="([^"]*)">Docs source<\/a>/)?.[1]
 
   return {
     title: title.replace(TITLE_PREFIX, '').replace(TITLE_SUFFIX, ''),
     description: decodeEntities(attribute(meta('description'), 'content') ?? '') || (lead ? plainText(lead) : ''),
     tags: [...new Set((attribute(meta('playground-tags'), 'content') ?? '').split(',').map(tag => tag.trim().toLowerCase()).filter(Boolean))],
     source: sourceTag ? { label: decodeEntities(attribute(sourceTag, 'content')), url: attribute(sourceTag, 'data-url') } : undefined,
-    sections: [...html.matchAll(/<h2[^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/gi)].map(([, id, heading]) => ({ id, title: plainText(heading) }))
+    sections: [...html.matchAll(/<h2[^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/gi)].map(([, id, heading]) => ({ id, title: plainText(heading) })),
+    ...(docs ? { docs } : {}),
+    ...(bootstrapClasses ? { classes: pageClasses(html, bootstrapClasses) } : {})
   }
 }
 
-export function collectPages(base) {
+export function collectPages(base, { bootstrapClasses } = {}) {
   return PAGE_GROUPS.map(({ dir, label, description, tags }) => ({
     label,
     dir,
     description,
     pages: findHtmlFiles(path.join(root, dir)).map(file => {
       const url = base + path.relative(root, file).split(path.sep).join('/')
-      const page = readPage(file)
+      const page = readPage(file, bootstrapClasses)
       return { url: url.replace(/index\.html$/, ''), ...page, tags: [...new Set([...page.tags, ...(tags?.(file) ?? [])])] }
     })
   }))

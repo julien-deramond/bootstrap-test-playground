@@ -510,6 +510,24 @@ test.describe('playground', () => {
     await expect(summary).toHaveAccessibleName('Playground settings: src/styles')
   })
 
+  // Class names and tokens find the pages whose markup uses them, on the home
+  // page and in the page switcher.
+  test('search by class and token', async ({ page }) => {
+    await page.goto('/?q=btn-subtle')
+    const first = page.locator('#results .page-card').first()
+    await expect(first.getByRole('heading')).toHaveText('Button')
+    await expect(first.locator('.page-card-matches')).toHaveText('.btn-subtle')
+    await expect(first.locator('.page-card-section')).toHaveText('Variants')
+
+    await page.goto('/kitchen-sink/components-button.html?freeze')
+    await page.waitForFunction(() => window.bootstrap)
+    await page.keyboard.press('ControlOrMeta+K')
+    const palette = page.locator('#playground-palette').getByRole('dialog', { name: 'Go to page' })
+    await palette.getByRole('combobox').fill('--alert-padding-x')
+    await expect(palette.getByRole('option').first()).toContainText('Alert')
+    await expect(palette.getByRole('option').first()).toContainText('--alert-padding-x')
+  })
+
   // The first-visit hint hides under automation: pretend to be a person.
   test('toolbar hint', async ({ page }) => {
     await page.addInitScript(() => Object.defineProperty(Navigator.prototype, 'webdriver', { get: () => false }))

@@ -453,6 +453,17 @@
     }
   }
 
+  .page-card-action + .page-card-action {
+    margin-inline-start: 0;
+  }
+
+  .page-card-matches {
+    margin: 0;
+    font-size: var(--bs-font-size-xs);
+    color: var(--bs-fg-3);
+    overflow-wrap: anywhere;
+  }
+
   .page-card-description {
     display: -webkit-box;
     margin: 0;

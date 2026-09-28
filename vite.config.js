@@ -3,6 +3,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig, loadEnv } from 'vite'
 import { bootstrapSource } from './scripts/lib/bootstrap.mjs'
+import { readBootstrapIndex } from './scripts/lib/class-index.mjs'
 import { CATEGORIES, listConfigs, readKnownGaps } from './scripts/lib/configs.mjs'
 import { collectPages, findHtmlFiles, PAGE_GROUPS } from './scripts/lib/pages.mjs'
 
@@ -47,15 +48,26 @@ function keepStyleMarkers() {
 }
 
 // Exposes two virtual modules:
-// - `virtual:playground-pages`: every page, for the home and compare pages
+// - `virtual:playground-pages`: every page, for the home and compare pages and
+//   the page switcher, with the Bootstrap classes its markup uses. `tokens`
+//   maps each component token (`alert-padding-x`) to the classes declaring it,
+//   the ones pages use, so a search for the token finds them.
 // - `virtual:playground-configs`: every saved config in configs/, with its
 //   description, category, known gaps and whether it's tokens only (from its
 //   README.md and files), and the URLs of its compiled `main.scss` and
 //   `tokens.css` (hashed assets in builds). `categories` lists the categories
 //   in order.
-function playgroundData(base) {
+function playgroundData(base, bootstrapDir) {
   const modules = {
-    'virtual:playground-pages': () => `export default ${JSON.stringify(collectPages(base))}`,
+    'virtual:playground-pages': () => {
+      const { classes, tokens } = readBootstrapIndex(bootstrapDir)
+      const groups = collectPages(base, { bootstrapClasses: classes })
+      const used = new Set(groups.flatMap(({ pages }) => pages.flatMap(page => page.classes.map(([name]) => name))))
+      const tokenClasses = Object.fromEntries([...tokens]
+        .map(([name, owners]) => [name, [...owners].filter(owner => used.has(owner))])
+        .filter(([, owners]) => owners.length > 0))
+      return `export const tokens = ${JSON.stringify(tokenClasses)}\nexport default ${JSON.stringify(groups)}`
+    },
     'virtual:playground-configs': () => {
       const configs = listConfigs()
       const imports = configs.map(({ name }, index) => [
@@ -160,6 +172,6 @@ export default defineConfig(({ mode }) => {
       cssTarget,
       rolldownOptions: { input }
     },
-    plugins: [playgroundData(base), keepStyleMarkers(), ...(base === '/' ? [] : [prefixRootUrls(base)])]
+    plugins: [playgroundData(base, bootstrap.dir ?? undefined), keepStyleMarkers(), ...(base === '/' ? [] : [prefixRootUrls(base)])]
   }
 })
