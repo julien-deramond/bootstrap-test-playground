@@ -1,0 +1,13 @@
+// The color-mode() mixin with `$color-mode-type: "data"`, compiled on its own
+// so pages/color-modes.html can compare both types under any config. The
+// probe gets an outline when the mixin's dark rule applies.
+@use "bootstrap/scss/config" with (
+  $color-mode-type: "data"
+);
+@use "bootstrap/scss/mixins/color-mode" as *;
+
+@include color-mode(dark) {
+  .pg-probe-data {
+    outline: 3px solid currentcolor;
+  }
+}

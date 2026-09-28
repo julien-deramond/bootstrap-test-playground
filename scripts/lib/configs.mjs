@@ -25,7 +25,7 @@ export function listConfigs() {
     .filter(entry => entry.isDirectory() && fs.existsSync(path.join(configsDir, entry.name, 'main.scss')))
     .map(entry => {
       const dir = path.join(configsDir, entry.name)
-      return { name: entry.name, description: readDescription(dir), tokensOnly: isTokensOnly(dir) }
+      return { name: entry.name, description: readDescription(dir), tokensOnly: isTokensOnly(dir), colorModes: readColorModes(dir) }
     })
     .sort((a, b) => (a.name === 'default' ? -1 : b.name === 'default' ? 1 : a.name.localeCompare(b.name)))
 }
@@ -66,6 +66,29 @@ export function readSection(dir, heading) {
 export function readKnownGaps(dir) {
   const pattern = new RegExp(`${REPOSITORY_URL}/issues/(\\d+)`, 'g')
   return [...new Set([...readSection(dir, 'Known gaps').matchAll(pattern)].map(match => Number(match[1])))]
+}
+
+// Custom color modes a config defines, besides light and dark: the names in
+// its `[data-bs-theme="…"]` selectors and `color-mode(…)` calls, comments
+// aside. The toolbar offers them next to Auto, Light and Dark.
+export function readColorModes(dir) {
+  const modes = new Set()
+  for (const file of STYLE_FILES) {
+    const source = path.join(dir, file)
+    if (!fs.existsSync(source)) {
+      continue
+    }
+
+    const code = fs.readFileSync(source, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
+    for (const [, attribute, mixin] of code.matchAll(/data-bs-theme="([\w-]+)"|color-mode\(\s*"?([\w-]+)/g)) {
+      const name = attribute ?? mixin
+      if (!['light', 'dark'].includes(name)) {
+        modes.add(name)
+      }
+    }
+  }
+
+  return [...modes]
 }
 
 // A config whose main.scss and _custom.scss don't differ from the default's,

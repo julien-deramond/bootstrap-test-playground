@@ -12,7 +12,8 @@ const COMMITS = import.meta.env.VITE_BOOTSTRAP_B ? { a: import.meta.env.VITE_BOO
 
 const FIELDS = {
   ...(COMMITS ? { bootstrap: { label: 'Bootstrap', options: ['a', 'b'], labels: COMMITS } } : {}),
-  theme: { label: 'Theme', options: ['auto', 'light', 'dark'] },
+  // The configs' own color modes too, like `sepia` from configs/color-modes-custom/.
+  theme: { label: 'Theme', options: [...new Set(['auto', 'light', 'dark', ...configs.flatMap(config => config.colorModes)])] },
   dir: { label: 'Dir', options: ['ltr', 'rtl'] },
   primary: { label: 'Primary', options: ['default', 'indigo', 'violet', 'purple', 'pink', 'red', 'orange', 'amber', 'lime', 'green', 'teal', 'cyan', 'brown', 'gray'] },
   config: { label: 'Styles', options: ['working', ...configs.map(config => config.name)] },

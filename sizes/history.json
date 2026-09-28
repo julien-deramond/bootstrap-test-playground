@@ -1,7 +1,7 @@
 [
   {
     "commit": "bd0a4f63ce5cc444063c28a6946bdae3dacdce20",
-    "date": "2026-09-28T09:16:13.538Z",
+    "date": "2026-09-28T11:01:35.046Z",
     "sizes": {
       "css/default": {
         "min": 378944,
@@ -17,6 +17,16 @@
         "min": 381024,
         "gzip": 51046,
         "brotli": 38425
+      },
+      "css/color-mode-data": {
+        "min": 379033,
+        "gzip": 51034,
+        "brotli": 36280
+      },
+      "css/color-modes-custom": {
+        "min": 378944,
+        "gzip": 50997,
+        "brotli": 36238
       },
       "css/compact": {
         "min": 382069,
