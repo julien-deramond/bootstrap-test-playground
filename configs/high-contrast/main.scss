@@ -1,0 +1,169 @@
+// Toward WCAG AAA, as accessibility teams customize Bootstrap: 7:1 text, 2px
+// borders that stand out at 3:1, a 4px focus ring in the text color with an
+// offset, solid disabled controls and no translucent borders. Every theme
+// color gets darker text and fills, so white on a fill and colored text on
+// the page both reach 7:1. Theme maps replace whole sub-maps: a theme passed
+// here keeps none of the default's keys.
+
+@use "bootstrap/scss/bootstrap" with (
+  $border-width: 2px,
+
+  $root-tokens: (
+    --border-color: light-dark(var(--gray-600), var(--gray-400)),
+    --border-color-translucent: var(--border-color),
+    --link-color: var(--primary-fg),
+    --link-hover-color: var(--primary-fg-emphasis),
+    --code-color: var(--fg-1),
+    --focus-ring-width: 4px,
+    --focus-ring-offset: 2px,
+    --focus-ring-color: var(--fg-body),
+    --control-disabled-bg: var(--bg-3),
+    --control-disabled-opacity: 1,
+  ),
+
+  $theme-colors: (
+    "primary": (
+      "base": var(--blue-700),
+      "fg": light-dark(var(--blue-800), var(--blue-300)),
+      "fg-emphasis": light-dark(var(--blue-900), var(--blue-200)),
+      "bg": var(--blue-700),
+      "bg-subtle": light-dark(var(--blue-050), var(--blue-950)),
+      "bg-muted": light-dark(var(--blue-100), var(--blue-900)),
+      "border": light-dark(var(--blue-700), var(--blue-300)),
+      "focus-ring": var(--fg-body),
+      "contrast": var(--white)
+    ),
+    "accent": (
+      "base": var(--indigo-700),
+      "fg": light-dark(var(--indigo-800), var(--indigo-300)),
+      "fg-emphasis": light-dark(var(--indigo-900), var(--indigo-200)),
+      "bg": var(--indigo-700),
+      "bg-subtle": light-dark(var(--indigo-050), var(--indigo-950)),
+      "bg-muted": light-dark(var(--indigo-100), var(--indigo-900)),
+      "border": light-dark(var(--indigo-700), var(--indigo-300)),
+      "focus-ring": var(--fg-body),
+      "contrast": var(--white)
+    ),
+    "success": (
+      "base": var(--green-800),
+      "fg": light-dark(var(--green-800), var(--green-300)),
+      "fg-emphasis": light-dark(var(--green-900), var(--green-200)),
+      "bg": var(--green-800),
+      "bg-subtle": light-dark(var(--green-050), var(--green-950)),
+      "bg-muted": light-dark(var(--green-100), var(--green-900)),
+      "border": light-dark(var(--green-700), var(--green-300)),
+      "focus-ring": var(--fg-body),
+      "contrast": var(--white)
+    ),
+    "danger": (
+      "base": var(--red-700),
+      "fg": light-dark(var(--red-800), var(--red-300)),
+      "fg-emphasis": light-dark(var(--red-900), var(--red-200)),
+      "bg": var(--red-700),
+      "bg-subtle": light-dark(var(--red-050), var(--red-950)),
+      "bg-muted": light-dark(var(--red-100), var(--red-900)),
+      "border": light-dark(var(--red-700), var(--red-300)),
+      "focus-ring": var(--fg-body),
+      "contrast": var(--white)
+    ),
+    "warning": (
+      "base": var(--yellow-400),
+      "fg": light-dark(var(--yellow-800), var(--yellow-300)),
+      "fg-emphasis": light-dark(var(--yellow-900), var(--yellow-200)),
+      "bg": var(--yellow-400),
+      "bg-subtle": light-dark(var(--yellow-050), var(--yellow-950)),
+      "bg-muted": light-dark(var(--yellow-100), var(--yellow-900)),
+      "border": light-dark(var(--yellow-700), var(--yellow-300)),
+      "focus-ring": var(--fg-body),
+      "contrast": var(--black)
+    ),
+    "info": (
+      "base": var(--cyan-400),
+      "fg": light-dark(var(--cyan-800), var(--cyan-300)),
+      "fg-emphasis": light-dark(var(--cyan-900), var(--cyan-200)),
+      "bg": var(--cyan-400),
+      "bg-subtle": light-dark(var(--cyan-050), var(--cyan-950)),
+      "bg-muted": light-dark(var(--cyan-100), var(--cyan-900)),
+      "border": light-dark(var(--cyan-700), var(--cyan-300)),
+      "focus-ring": var(--fg-body),
+      "contrast": var(--black)
+    ),
+    "inverse": (
+      "base": var(--gray-975),
+      "fg": light-dark(var(--black), var(--white)),
+      "fg-emphasis": light-dark(var(--black), var(--white)),
+      "bg": light-dark(var(--gray-975), var(--gray-025)),
+      "bg-subtle": light-dark(var(--gray-100), var(--gray-900)),
+      "bg-muted": light-dark(var(--gray-200), var(--gray-800)),
+      "border": light-dark(var(--gray-900), var(--gray-100)),
+      "focus-ring": var(--fg-body),
+      "contrast": light-dark(var(--white), var(--black))
+    ),
+    "secondary": (
+      "base": var(--gray-700),
+      "fg": light-dark(var(--gray-800), var(--gray-200)),
+      "fg-emphasis": light-dark(var(--gray-900), var(--gray-100)),
+      "bg": light-dark(var(--gray-100), var(--gray-800)),
+      "bg-subtle": light-dark(var(--gray-050), var(--gray-950)),
+      "bg-muted": light-dark(var(--gray-100), var(--gray-900)),
+      "border": light-dark(var(--gray-700), var(--gray-300)),
+      "focus-ring": var(--fg-body),
+      "contrast": light-dark(var(--black), var(--white))
+    )
+  ),
+
+  $theme-bgs: (
+    "body": light-dark(var(--white), var(--black)),
+    "1": light-dark(var(--gray-025), var(--gray-975)),
+    "2": light-dark(var(--gray-050), var(--gray-950)),
+    "3": light-dark(var(--gray-100), var(--gray-900)),
+    "4": light-dark(var(--gray-200), var(--gray-800)),
+  ),
+
+  $theme-fgs: (
+    "body": light-dark(var(--black), var(--white)),
+    "1": light-dark(var(--gray-975), var(--gray-025)),
+    "2": light-dark(var(--gray-900), var(--gray-050)),
+    "3": light-dark(var(--gray-800), var(--gray-100)),
+    "4": light-dark(var(--gray-700), var(--gray-200)),
+  ),
+
+  $theme-borders: (
+    "body": light-dark(var(--gray-600), var(--gray-400)),
+    "muted": light-dark(var(--gray-600), var(--gray-400)),
+    "subtle": light-dark(var(--gray-600), var(--gray-400)),
+    "emphasized": light-dark(var(--gray-800), var(--gray-200)),
+  ),
+
+  // Translucency the global tokens don't reach, component by component.
+  // Switches, chips, the combobox toggle, menu item descriptions and the
+  // datepicker hard-code theirs (#208, #209).
+  $button-tokens: (
+    --btn-disabled-opacity: 1,
+  ),
+  $btn-close-tokens: (
+    --btn-close-opacity: 1,
+    --btn-close-hover-opacity: 1,
+    --btn-close-focus-opacity: 1,
+  ),
+  $chip-tokens: (
+    --chip-dismiss-opacity: 1,
+  ),
+  $tooltip-tokens: (
+    --tooltip-opacity: 1,
+  ),
+  // A percentage: the default `.65` isn't valid in `color-mix()`, so it's
+  // ignored (#210).
+  $form-floating-tokens: (
+    --form-floating-label-opacity: 100%,
+  ),
+  $navbar-dark-tokens: (
+    --navbar-color: var(--white),
+    --navbar-hover-color: var(--white),
+    --navbar-disabled-color: var(--gray-400),
+    --navbar-toggler-border-color: var(--white),
+  )
+);
+
+// Your own Sass, with access to Bootstrap's mixins and functions.
+@use "custom";
