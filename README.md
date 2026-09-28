@@ -490,7 +490,7 @@ CONSOLE_SCOPE='{"full":false,"configs":["pill"],"urls":["/pages/checkout.html"]}
 
 The working copy and dist always open on every page. A shared change opens everything: Bootstrap, `postcss.config.js`, `vite.config.js`, `src/js/`, `public/`, `scripts/lib/`, the suite's own `tests/console/` (so a `known-issues.js` edit is checked everywhere) and workflow, and any file it doesn't recognize. Docs, the other suites and scripts outside `scripts/lib/` add nothing. The rules are in [`scripts/lib/test-scope.mjs`](scripts/lib/test-scope.mjs).
 
-[`.github/workflows/console.yml`](.github/workflows/console.yml) runs the scoped crawl on every pull request, and writes the scope to the job summary. The full crawl runs every night and on demand from the *Actions* tab, and the canary runs it on every Bootstrap update.
+[`.github/workflows/console.yml`](.github/workflows/console.yml) runs the scoped crawl on every pull request, and writes the scope to the job summary. The full crawl runs every night and on demand from the *Actions* tab, and the canary runs it on every Bootstrap update. The crawl uses 4 workers, one per vCPU of the runner, and a full crawl is split across four parallel jobs with Playwright's `--shard`, so a shared change doesn't wait for 5,000 pages in a row.
 
 ## Interaction smoke tests
 

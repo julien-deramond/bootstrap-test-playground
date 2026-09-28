@@ -10,7 +10,8 @@ name: Console crawl
 # copy and dist on every page, the changed configs on every page and the
 # changed pages with every config, or everything after a shared change. The
 # full crawl runs every night and on demand; engines.yml does the same in
-# Firefox and WebKit, and the canary on every Bootstrap update.
+# Firefox and WebKit, and the canary on every Bootstrap update. A full crawl
+# is split across four parallel jobs.
 on:
   pull_request:
   schedule:
@@ -25,8 +26,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  crawl:
+  # What to crawl, and in how many shards: one for a scoped pull request, four
+  # for everything.
+  scope:
     runs-on: ubuntu-24.04
+    outputs:
+      scope: ${{ steps.shards.outputs.scope }}
+      shards: ${{ steps.shards.outputs.shards }}
     steps:
       # Two commits: a pull request's merge commit and its base, HEAD^1.
       - uses: actions/checkout@v7
@@ -40,15 +46,53 @@ jobs:
 
       - run: npm ci
 
-      - run: npx playwright install --with-deps chromium
-
       - run: npm run test-scope -- HEAD^1
         if: ${{ github.event_name == 'pull_request' }}
 
-      - run: npm run test:console
+      # Without CONSOLE_SCOPE (nightly, on demand), the crawl opens everything.
+      - id: shards
+        run: |
+          echo "scope=$CONSOLE_SCOPE" >> "$GITHUB_OUTPUT"
+          if [ -z "$CONSOLE_SCOPE" ] || [ "$(jq -r .full <<< "$CONSOLE_SCOPE")" = true ]; then
+            echo 'shards=[1, 2, 3, 4]' >> "$GITHUB_OUTPUT"
+          else
+            echo 'shards=[1]' >> "$GITHUB_OUTPUT"
+          fi
+
+  crawl:
+    needs: scope
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.scope.outputs.shards) }}
+    env:
+      CONSOLE_SCOPE: ${{ needs.scope.outputs.scope }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: npx playwright install --with-deps chromium
+
+      # Four workers, one per vCPU: the crawl takes no screenshots, so
+      # parallelism can't make it flaky. Playwright's default is half the cores.
+      - run: npm run test:console -- --workers=4 --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
       - run: npm run audit-motion -- --render
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && matrix.shard == 1 }}
 
       - run: npm run audit-layers -- --render
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && matrix.shard == 1 }}
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ failure() }}
+        with:
+          name: console-report-${{ matrix.shard }}
+          path: tests/report/
+          retention-days: 14
