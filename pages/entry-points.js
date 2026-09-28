@@ -13,6 +13,12 @@ export const media = query => matchMedia(query).matches
 export const rootFontSize = () => Number.parseFloat(getComputedStyle(html).fontSize)
 export const width = node => node.getBoundingClientRect().width
 
+// The visual suite waits for this to go before its screenshot. The page's own
+// module imports src/js/main.js, whose top-level await can keep runChecks()
+// from running until after `load`, in Firefox often. This module doesn't
+// import it, so this line runs before `load`.
+html.dataset.playgroundBusy = ''
+
 // Every style rule of the page's same-origin stylesheets, with the layer it
 // sits in.
 export function rules() {
@@ -54,6 +60,7 @@ export function runChecks(checks) {
     }
 
     html.dataset.entryCases = 'done'
+    delete html.dataset.playgroundBusy
   }
 
   // In a build, this script runs after src/js/main.js, which may be after
