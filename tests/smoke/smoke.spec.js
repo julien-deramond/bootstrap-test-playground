@@ -509,4 +509,31 @@ test.describe('playground', () => {
     await expect.poll(radius).not.toBe('2rem')
     await expect(summary).toHaveAccessibleName('Playground settings: src/styles')
   })
+
+  // The first-visit hint hides under automation: pretend to be a person.
+  test('toolbar hint', async ({ page }) => {
+    await page.addInitScript(() => Object.defineProperty(Navigator.prototype, 'webdriver', { get: () => false }))
+    await page.goto('/kitchen-sink/components-button.html?freeze')
+
+    const toolbar = page.locator('#playground-toolbar')
+    const hint = toolbar.getByRole('note', { name: 'Playground settings' })
+    const summary = toolbar.getByRole('button', { name: /^Playground settings/ })
+    await expect(hint).toBeVisible()
+    await expect(summary).toHaveAccessibleDescription(/Switch the config/)
+
+    await hint.getByRole('button', { name: 'Dismiss' }).click()
+    await expect(hint).toBeHidden()
+    await expect(summary).not.toHaveAccessibleDescription(/Switch the config/)
+    await page.reload()
+    await expect(summary).toBeVisible()
+    await expect(hint).toBeHidden()
+
+    // Opening the panel counts as having seen it too.
+    await page.evaluate(() => localStorage.clear())
+    await page.reload()
+    await expect(hint).toBeVisible()
+    await page.keyboard.press('Alt+Shift+P')
+    await expect(toolbar.getByRole('dialog', { name: 'Playground settings' })).toBeVisible()
+    await expect(hint).toBeHidden()
+  })
 })

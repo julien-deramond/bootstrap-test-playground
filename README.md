@@ -410,6 +410,8 @@ Each example page has a small floating toolbar at its bottom end, a pill that su
 | Summary | Opens the settings panel | <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> toggles |
 | Search | Opens the page switcher | <kbd>Ctrl</kbd>+<kbd>K</kbd> (<kbd>⌘</kbd>+<kbd>K</kbd>) |
 
+On a first visit, a hint above the pill says what it does. It goes away for good (`localStorage`) once the panel opens, a shortcut is used or it's dismissed, and never shows under automation (`navigator.webdriver`), so tests and screenshots don't see it.
+
 The settings panel is a modal dialog, a bottom sheet on small screens. It closes on <kbd>Esc</kbd> and on a click outside it, and stays open from page to page until it's closed, for the browser session.
 
 | Panel | Effect | Shortcut | URL override |
