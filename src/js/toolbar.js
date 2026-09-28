@@ -14,6 +14,10 @@
 //
 // The panel is a modal <dialog>: it traps focus, and closes on Escape and on
 // a click outside it. Its sections leave room for more axes later.
+//
+// On a first visit, a hint above the pill says what it does. It goes away for
+// good once the panel opens, a shortcut is used or it's dismissed, and never
+// shows under automation, so tests and screenshots don't see it.
 
 import { groupConfigs } from './configs.js'
 import { mountPalette, paletteShortcut } from './palette.js'
@@ -22,6 +26,7 @@ import { siblings } from './page-index.js'
 const HUES = ['default', 'indigo', 'violet', 'purple', 'pink', 'red', 'orange', 'amber', 'lime', 'green', 'teal', 'cyan', 'brown', 'gray']
 const COLOR_MODES = ['auto', 'light', 'dark']
 const OPEN_KEY = 'bootstrap-playground-toolbar-open'
+const HINT_KEY = 'bootstrap-playground-toolbar-hint'
 const REPOSITORY_URL = 'https://github.com/julien-deramond/bootstrap-test-playground'
 
 // Lucide (ISC License), https://lucide.dev
@@ -84,6 +89,28 @@ const styles = `
   }
   .summary-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .search { display: inline-flex; gap: 4px; align-items: center; }
+
+  .hint {
+    position: relative;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    max-inline-size: 280px;
+    padding: 10px 10px 10px 12px;
+    background: rgb(24 24 27);
+    border: 1px solid #7aa7ff;
+    border-radius: 10px;
+    box-shadow: 0 6px 24px rgb(0 0 0 / .3);
+  }
+  .hint p { margin: 0; }
+  .hint strong { display: block; margin-block-end: 2px; }
+  .hint kbd { font-size: 11px; opacity: .75; }
+  .hint .dismiss { flex: none; margin: -4px -4px 0 0; }
+  .summary[aria-describedby] { border-color: #7aa7ff; box-shadow: 0 0 0 2px rgb(122 167 255 / .35); }
+  @media (prefers-reduced-motion: no-preference) {
+    .hint { animation: hint-in .3s ease-out; }
+    @keyframes hint-in { from { opacity: 0; transform: translateY(6px); } }
+  }
 
   dialog {
     position: fixed;
@@ -186,6 +213,7 @@ export function mountToolbar({ source, configs, swappable }) {
 
   let render = () => {}
   let togglePanel = () => {}
+  let dismissHint = () => {}
 
   // Keyboard shortcuts work even when the toolbar is hidden or embedded.
   document.addEventListener('keydown', event => {
@@ -206,6 +234,7 @@ export function mountToolbar({ source, configs, swappable }) {
     }
 
     event.preventDefault()
+    dismissHint()
   })
 
   // Keep tabs in sync.
@@ -284,6 +313,10 @@ export function mountToolbar({ source, configs, swappable }) {
   shadow.innerHTML = `
     <style>${styles}</style>
     <div class="dock">${originHtml}
+      <div class="hint" role="note" aria-labelledby="hint-title" hidden>
+        <p><strong id="hint-title">Playground settings</strong><span id="hint-text">Switch the config, color mode, direction, primary color and dist from here.</span> <kbd>Alt+Shift+P</kbd></p>
+        <button type="button" class="icon dismiss" aria-label="Dismiss" title="Dismiss">${ICONS.close}</button>
+      </div>
       <div class="pill" role="group" aria-label="Playground">
         <a class="icon" href="${import.meta.env.BASE_URL}" title="All pages" aria-label="All pages">${ICONS.home}</a>${pagerHtml}
         <button type="button" class="summary" aria-haspopup="dialog" aria-expanded="false" aria-controls="panel" aria-keyshortcuts="Alt+Shift+P" title="Playground settings (Alt+Shift+P)">
@@ -414,7 +447,21 @@ export function mountToolbar({ source, configs, swappable }) {
     } catch {}
   }
 
+  const hint = shadow.querySelector('.hint')
+  dismissHint = () => {
+    if (hint.hidden) {
+      return
+    }
+
+    hint.hidden = true
+    summary.removeAttribute('aria-describedby')
+    try {
+      localStorage.setItem(HINT_KEY, 'seen')
+    } catch {}
+  }
+
   const openPanel = () => {
+    dismissHint()
     if (panel.open) {
       return
     }
@@ -450,6 +497,8 @@ export function mountToolbar({ source, configs, swappable }) {
       openPanel()
     } else if (button.classList.contains('close')) {
       panel.close()
+    } else if (button.classList.contains('dismiss')) {
+      dismissHint()
     } else if (button.classList.contains('search')) {
       palette.open()
     } else if (button === copy) {
@@ -493,5 +542,16 @@ export function mountToolbar({ source, configs, swappable }) {
 
   if (open) {
     openPanel()
+    return
+  }
+
+  let seen = true
+  try {
+    seen = localStorage.getItem(HINT_KEY) === 'seen'
+  } catch {}
+
+  if (!seen && !navigator.webdriver) {
+    hint.hidden = false
+    summary.setAttribute('aria-describedby', 'hint-text')
   }
 }
