@@ -1,7 +1,7 @@
 [
   {
     "commit": "bd0a4f63ce5cc444063c28a6946bdae3dacdce20",
-    "date": "2026-09-28T11:01:35.046Z",
+    "date": "2026-09-28T12:14:56.836Z",
     "sizes": {
       "css/default": {
         "min": 378944,
@@ -67,6 +67,11 @@
         "min": 373564,
         "gzip": 50177,
         "brotli": 36055
+      },
+      "css/high-contrast": {
+        "min": 377598,
+        "gzip": 50815,
+        "brotli": 36085
       },
       "css/hue-shift": {
         "min": 378996,
