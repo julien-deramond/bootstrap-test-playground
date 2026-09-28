@@ -16,8 +16,9 @@
 //   - the sizes check-size measures
 //   - every kitchen sink example: screenshotted on a dev server per commit and
 //     compared pixel by pixel (skip with --no-screens, narrow with --page=)
-// Writes reports/diff/<from>-<to>/index.html, a browsable report, and
-// summary.md, which the nightly canary adds to its pull request.
+// Writes reports/diff/<from>-<to>/index.html, a browsable report,
+// summary.md, which the nightly canary adds to its pull request, and
+// changes.json, the examples record-update lists as rendering differently.
 
 import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
@@ -259,6 +260,8 @@ const summary = [
   ...(shots.length ? ['', 'Most changed examples:', ...shots.slice(0, 10).map(shot => `- ${shot.page}: ${shot.example} (${shot.pixels} px)`)] : [])
 ].join('\n')
 fs.writeFileSync(path.join(reportDir, 'summary.md'), `${summary}\n`)
+// What record-update puts in updates/last-update.json.
+fs.writeFileSync(path.join(reportDir, 'changes.json'), `${JSON.stringify({ from, to, screens, shots: shots.map(({ url, id, pixels }) => ({ url, id, pixels })) }, null, 2)}\n`)
 
 console.log(`\n${commits ? `${commits.length} upstream commits. ` : ''}CSS diff +${added} −${removed} lines. Tokens: ${tokenChanges.added.length} added, ${tokenChanges.removed.length} removed, ${tokenChanges.changed.length} changed.`)
 for (const row of sizeRows.filter(row => !row.brotli.endsWith('±0'))) {

@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 // Moves node_modules/bootstrap to another twbs/bootstrap commit, then does
 // what follows every update.
-// Usage: npm run update-bootstrap [-- --to <ref> | --pr <number>]
+// Usage: npm run update-bootstrap [-- --to <ref> | --pr <number>] [--no-diff]
 //   (none)       the latest v6-dev commit
 //   --to <ref>   a commit (full or short), branch or tag, to pin or go back
 //   --pr <n>     the head of twbs/bootstrap#<n>, forks included, to test it
+//   --no-diff    skips diff-bootstrap's screenshots, a minute or two
 //
 // package.json keeps `#v6-dev` and the lockfile pins the commit, whichever it
 // is. After the install, it:
@@ -15,7 +16,8 @@
 //   - runs the static checks through canary-report, against node_modules
 //     (BOOTSTRAP_PATH unset), which writes reports/canary/report.md
 //   - records the commit's sizes in sizes/history.json (not with --pr)
-//   - writes reports/last-update.json and prints a commit message
+//   - compares the kitchen sink's rendering with diff-bootstrap
+//   - writes updates/last-update.json (record-update) and prints a commit message
 // Exits with an error when a check fails.
 
 import { spawnSync } from 'node:child_process'
@@ -23,6 +25,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { loadEnv } from 'vite'
 import { root } from './lib/configs.mjs'
+import { LAST_UPDATE_FILE, writeLastUpdate } from './lib/last-update.mjs'
 import { fetchCommit, lockedSha, resolveRef, upstreamCommits } from './lib/upstream.mjs'
 
 const SPEC = 'github:twbs/bootstrap#v6-dev'
@@ -31,18 +34,20 @@ const CHECKS = ['check-configs', 'check-dist', 'audit-tokens', 'compile-matrix',
 
 const args = process.argv.slice(2)
 const options = {}
-for (let index = 0; index < args.length; index += 2) {
+for (let index = 0; index < args.length; index++) {
   const name = args[index].match(/^--(to|pr)$/)?.[1]
-  if (!name || !args[index + 1]) {
+  if (args[index] === '--no-diff') {
+    options.noDiff = true
+  } else if (name && args[index + 1]) {
+    options[name] = args[++index]
+  } else {
     options.invalid = true
   }
-
-  options[name] = args[index + 1]
 }
 
-const { to: toRef, pr: prNumber } = options
+const { to: toRef, pr: prNumber, noDiff } = options
 if (options.invalid || (toRef && prNumber) || (prNumber && !/^\d+$/.test(prNumber))) {
-  console.error('Usage: npm run update-bootstrap [-- --to <ref> | --pr <number>]')
+  console.error('Usage: npm run update-bootstrap [-- --to <ref> | --pr <number>] [--no-diff]')
   process.exit(1)
 }
 
@@ -149,17 +154,25 @@ if (!pr && to !== from) {
   console.log(record.stdout.trim().split('\n').at(-1))
 }
 
-fs.mkdirSync(path.join(root, 'reports'), { recursive: true })
-writeJson('reports/last-update.json', {
-  date: new Date().toISOString(),
-  from,
-  to,
-  ...(pr ? { pr: { number: pr.number, title: pr.title, url: pr.url, behind: pr.behind } } : {}),
-  commits,
-  changedPages,
-  failed: summary.failed,
-  stale: summary.stale
-})
+// --- What changed ---------------------------------------------------------------
+
+const lastUpdate = path.relative(root, LAST_UPDATE_FILE)
+if (to === from) {
+  // Back where HEAD is: so is its record.
+  spawnSync('git', ['checkout', 'HEAD', '--', lastUpdate], { cwd: root })
+} else {
+  if (!noDiff) {
+    console.log('\nComparing the rendering of both commits…')
+    const diff = spawnSync('node', ['scripts/diff-bootstrap.mjs', from, to], { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
+    // Only its summary: the examples are in the report and the record.
+    console.log(diff.status === 0 ?
+      diff.stdout.split('\n').filter(line => /^(\d+ upstream|CSS diff|\d+ kitchen sink|Report:)/.test(line)).join('\n') :
+      `diff-bootstrap failed, so the record lists markup changes only:\n${diff.stderr.trim().split('\n').slice(-5).join('\n')}`)
+  }
+
+  const record = writeLastUpdate({ from, to, commits, pr: pr && { number: pr.number, title: pr.title, url: pr.url, behind: pr.behind } })
+  console.log(`\n${lastUpdate}: ${record.examples.length} ${record.examples.length === 1 ? 'example' : 'examples'} changed${record.rendering ? '' : ' (markup only)'}. The home page lists them.`)
+}
 
 // --- Summary --------------------------------------------------------------------
 
@@ -174,7 +187,7 @@ if (pr) {
 } else {
   const count = commits ? ` (${commits.length} upstream ${commits.length === 1 ? 'commit' : 'commits'})` : ''
   console.log('Commit it with:\n')
-  console.log(`  git add package.json package-lock.json sizes${changedPages.length ? ' kitchen-sink' : ''}`)
+  console.log(`  git add package.json package-lock.json sizes updates${changedPages.length ? ' kitchen-sink' : ''}`)
   console.log(`  git commit -m "chore(deps): update bootstrap to v6-dev@${short(to)}" -m "From ${short(from)} to ${short(to)}${count}${changedPages.length ? ', and resyncs the kitchen sink' : ''}: ${compareUrl}"`)
 }
 

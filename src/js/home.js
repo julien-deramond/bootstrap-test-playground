@@ -8,6 +8,7 @@
 // Bootstrap's defaults whatever the preferences (see playground-prefs.js).
 import { configs, groupConfigs } from './configs.js'
 import { groups, pages, readRecent, resultUrl, search } from './page-index.js'
+import { changeLabels, pageUrl, record } from './last-update.js'
 
 const VIEW_KEY = 'bootstrap-playground-home-view'
 
@@ -21,6 +22,73 @@ const tagFilters = document.getElementById('tag-filters')
 const resultCount = document.getElementById('result-count')
 
 document.getElementById('bootstrap-source').textContent = __BOOTSTRAP_SOURCE__
+
+// --- Last update ------------------------------------------------------------
+
+const short = sha => sha.slice(0, 7)
+const commitUrl = sha => `https://github.com/twbs/bootstrap/commit/${sha}`
+// `(#123)` in a commit subject links to the upstream pull request.
+const linkPulls = subject => escapeHtml(subject).replace(/\(#(\d+)\)/g, '(<a href="https://github.com/twbs/bootstrap/pull/$1" rel="noopener">#$1</a>)')
+
+function renderLastUpdate() {
+  const panel = document.getElementById('last-update')
+  const { from, to, pr, commits, rendering, examples } = record
+  const date = new Date(record.date).toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' })
+  const compareUrl = `https://github.com/twbs/bootstrap/compare/${from}...${to}`
+
+  panel.querySelector('summary').innerHTML = [
+    pr ? `<strong>Testing twbs/bootstrap#${pr.number}</strong>` : '<strong>Last update</strong>',
+    escapeHtml(date),
+    commits ? plural(commits.length, 'upstream commit') : `${short(from)} → ${short(to)}`,
+    `${plural(examples.length, 'changed example')}${rendering ? '' : ' (markup only)'}`
+  ].join(' <span aria-hidden="true">·</span> ')
+
+  // Changed examples, grouped by page.
+  const byPage = new Map()
+  for (const example of examples) {
+    byPage.set(example.url, [...(byPage.get(example.url) ?? []), example])
+  }
+
+  const examplesHtml = byPage.size ?
+    `<ul class="home-update-pages">${[...byPage].map(([url, list]) => `
+      <li><a href="${escapeHtml(pageUrl(url))}">${escapeHtml(list[0].page ?? url)}</a>
+        <ul>${list.map(example => `
+          <li><a href="${escapeHtml(pageUrl(`${url}#${example.id}`))}">${escapeHtml(example.example ?? example.id)}</a>
+            ${changeLabels(example).map(({ text, title }) => `<span class="badge badge-subtle theme-warning" title="${escapeHtml(title)}">${escapeHtml(text)}</span>`).join(' ')}</li>`).join('')}
+        </ul></li>`).join('')}</ul>` :
+    `<p>${rendering ? 'No kitchen sink example changed: same markup, same rendering.' : 'No kitchen sink markup changed.'}</p>`
+
+  panel.querySelector('.home-update-body').innerHTML = `
+    <p class="home-update-range">
+      <a href="${compareUrl}" rel="noopener"><code>${short(from)}</code> → <code>${short(to)}</code></a>
+      ${pr ? `· <a href="${escapeHtml(pr.url)}" rel="noopener">${escapeHtml(pr.title)}</a>${pr.behind ? `, ${plural(pr.behind, 'commit')} behind <code>v6-dev</code>` : ''}` : ''}
+    </p>
+    <div class="home-update-columns">
+      <section aria-labelledby="last-update-commits">
+        <h2 class="home-update-title" id="last-update-commits">Upstream commits${commits ? ` <span class="home-group-count">${commits.length}</span>` : ''}</h2>
+        ${commits ?
+          `<ol class="home-update-commits">${commits.map(({ sha, subject }) => `<li><a href="${commitUrl(sha)}" rel="noopener"><code>${short(sha)}</code></a> ${linkPulls(subject)}</li>`).join('')}</ol>` :
+          `<p><a href="${compareUrl}" rel="noopener">See them on GitHub</a>.</p>`}
+      </section>
+      <section aria-labelledby="last-update-examples">
+        <h2 class="home-update-title" id="last-update-examples">Changed examples <span class="home-group-count">${examples.length}</span></h2>
+        ${examplesHtml}
+        ${rendering ? '' : '<p class="home-update-note">Rendering wasn\'t compared (<code>--no-diff</code>): only the markup changes are listed.</p>'}
+      </section>
+    </div>`
+
+  // Kitchen sink pages link their change badges here.
+  const openFromHash = () => {
+    if (location.hash === '#last-update') {
+      panel.open = true
+    }
+  }
+
+  openFromHash()
+  window.addEventListener('hashchange', openFromHash)
+}
+
+renderLastUpdate()
 if (/Mac|iPhone|iPad/.test(navigator.platform)) {
   document.getElementById('palette-key').textContent = '⌘ K'
 }
