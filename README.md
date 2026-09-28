@@ -293,7 +293,7 @@ Its `README.md` starts from [the template](scripts/templates/config/README.md). 
 
 Then:
 
-- **Preview it on any page** with the toolbar's *Styles* menu, the *Configs* section at the bottom of the home page, or `?config=rounded-dark` in the URL. The shared stylesheets are swapped live, and the page doesn't need a reload.
+- **Preview it on any example page** with the toolbar's *Styles* menu, the *Configs* section at the bottom of the home page (which saves the choice for the example pages, and keeps its own default styles), or `?config=rounded-dark` in the URL. The shared stylesheets are swapped live, and the page doesn't need a reload.
 - **Start a reproduction from it**: `npm run new-issue 42928 -- --config rounded-dark`
 - **Make it the working copy**: `npm run use-config rounded-dark`. This refuses to run if `src/styles/` has uncommitted changes, unless you pass `-- --force`.
 
@@ -328,7 +328,8 @@ compare.html             Side-by-side comparison of any page
 issues/<name>/           Issue reproductions (index.html + the three config files)
 src/styles/              Working copy of the styles (see Customizing)
 configs/<name>/          Saved configs; configs/default/ is Bootstrap's defaults
-src/js/main.js           Shared entry: Bootstrap JS, demo wiring, config switcher, toolbar
+src/js/main.js           Example pages' entry: Bootstrap JS, demo wiring, config switcher, toolbar
+src/js/home.js           Home page: page search and the Configs section, without the toolbar
 src/js/page-index.js     Page list and search, shared by the home page and the page switcher
 public/                  Favicon and the early preferences script
 scripts/                 new-issue, save-config, use-config, sync-kitchen-sink, issue template
@@ -341,8 +342,8 @@ Every `.html` file under `pages/`, `screens/`, `kitchen-sink/` and `issues/` is 
 
 ### Finding pages
 
-- **Home page**: search by title, description, tag, source or example heading, then narrow down by group and tag. Press <kbd>/</kbd> to focus the search, <kbd>Enter</kbd> to open the first result and the arrow keys to move through them. Filters live in the URL (`/?q=menu&tag=forms`), so a filtered list can be shared. Switch between the grid and a denser list, and find recently viewed pages at the top.
-- **Page switcher**: press <kbd>Ctrl</kbd>+<kbd>K</kbd> (<kbd>⌘</kbd>+<kbd>K</kbd> on macOS) on any page, or use *Search* in the toolbar. A search that matches an example heading jumps straight to it, like `tool place` for the tooltip *Placement* example.
+- **Home page**: search by title, description, tag, source or example heading, then narrow down by group and tag. Press <kbd>/</kbd> to focus the search, <kbd>Enter</kbd> to open the first result and the arrow keys to move through them. Filters live in the URL (`/?q=menu&tag=forms`), so a filtered list can be shared. Switch between the grid and a denser list, and find recently viewed pages at the top. The home page is playground UI, not a page under test: it has no toolbar and always renders with Bootstrap's defaults, following the system's color mode, whatever the toolbar preferences or URL parameters.
+- **Page switcher**: press <kbd>Ctrl</kbd>+<kbd>K</kbd> (<kbd>⌘</kbd>+<kbd>K</kbd> on macOS) on any example page, or use *Search* in the toolbar. On the home page, it focuses the search field. A search that matches an example heading jumps straight to it, like `tool place` for the tooltip *Placement* example.
 - **Previous and next**: the toolbar's <kbd>‹</kbd> <kbd>›</kbd> flip through the pages of the current group.
 
 Each page describes itself in its `<head>`, and the index picks it up:
@@ -400,7 +401,7 @@ To share a reproduction, push the repository and link to the folder on GitHub, o
 
 ## Toolbar
 
-Each page has a small floating toolbar. It renders in a shadow root, so it doesn't pick up or leak any styles.
+Each example page has a small floating toolbar. It renders in a shadow root, so it doesn't pick up or leak any styles. The home page, the compare view and the sizes page have none, and keep Bootstrap's defaults.
 
 | Control | Effect | Shortcut | URL override |
 | --- | --- | --- | --- |

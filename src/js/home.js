@@ -2,6 +2,10 @@
 // filters, and recently viewed pages. The filters live in the URL
 // (?q=menu&group=kitchen-sink&tag=forms), so a filtered list can be shared.
 // Below them, the saved configs, applied in one click.
+//
+// The home page is playground UI, not a page under test: it doesn't load
+// main.js, so it has no toolbar, and `data-playground-fixed` keeps it on
+// Bootstrap's defaults whatever the preferences (see playground-prefs.js).
 import { configs } from './configs.js'
 import { groups, pages, readRecent, resultUrl, search } from './page-index.js'
 
@@ -294,8 +298,8 @@ document.addEventListener('keydown', event => {
 
 render()
 
-// Configs: applying one saves the toolbar's Styles preference, so it applies
-// here right away and on every page opened next.
+// Configs: applying one saves the toolbar's Styles preference, which every
+// example page opened next uses. This page itself doesn't change.
 const prefs = window.playgroundPrefs
 const configList = document.getElementById('config-list')
 const issueUrl = issue => `https://github.com/julien-deramond/bootstrap-test-playground/issues/${issue}`
@@ -303,9 +307,10 @@ const issueUrl = issue => `https://github.com/julien-deramond/bootstrap-test-pla
 const inlineCode = text => escapeHtml(text).replace(/`([^`]+)`/g, '<code>$1</code>')
 
 function renderConfigs() {
-  const current = prefs?.effective().config
+  // The saved choice: URL overrides don't apply to this page.
+  const current = prefs?.read().config
   const items = [
-    { name: 'working', label: 'src/styles', description: 'The working copy, what every page uses until a config is applied. Save it as a config with `npm run save-config <name>`.', gaps: [] },
+    { name: 'working', label: 'src/styles', description: 'The working copy, what every example page uses until a config is applied. Save it as a config with `npm run save-config <name>`.', gaps: [] },
     ...configs
   ]
 
@@ -335,7 +340,7 @@ configList.addEventListener('click', event => {
   }
 })
 
-// Saves from the toolbar, here or in another tab.
+// Saves from here, or from the toolbar in another tab.
 window.addEventListener('playground-prefs', renderConfigs)
 window.addEventListener('storage', renderConfigs)
 
