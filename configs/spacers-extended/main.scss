@@ -1,0 +1,37 @@
+// Extended spacers: the scale goes up to 20 (8rem) and the negative spacers
+// down to -12 (-3rem). New keys reach the margin, padding and gap utilities,
+// the grid's `.g-*` gutters and the `--spacer-*` tokens.
+//
+// Negative spacers only reach `ms-*` and `me-*`. The docs still list
+// `$enable-negative-margins`, but `_config.scss` no longer has it: negative
+// margins are always generated.
+
+$spacer: 1rem;
+
+@use "bootstrap/scss/bootstrap" with (
+  $spacers: (
+    13: $spacer * 3.5,
+    14: $spacer * 4,
+    15: $spacer * 4.5,
+    16: $spacer * 5,
+    17: $spacer * 5.5,
+    18: $spacer * 6,
+    19: $spacer * 7,
+    20: $spacer * 8,
+  ),
+
+  $negative-spacers: (
+    "-3": $spacer * -.75,
+    "-4": $spacer * -1,
+    "-5": $spacer * -1.25,
+    "-6": $spacer * -1.5,
+    "-7": $spacer * -1.75,
+    "-8": $spacer * -2,
+    "-9": $spacer * -2.25,
+    "-10": $spacer * -2.5,
+    "-11": $spacer * -2.75,
+    "-12": $spacer * -3,
+  ),
+);
+
+@use "custom";

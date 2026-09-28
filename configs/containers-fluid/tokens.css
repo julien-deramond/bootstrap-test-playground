@@ -1,0 +1,31 @@
+/*
+ * Runtime customization with CSS custom properties, no Sass needed.
+ * Empty by default, so the playground renders Bootstrap's defaults.
+ *
+ * This file goes through the same PostCSS step as Bootstrap, so write tokens
+ * unprefixed like the Sass docs (`--border-radius`) or prefixed like
+ * `dist/css/bootstrap.css` (`--bs-border-radius`). Both end up as `--bs-*`.
+ * See https://getbootstrap.com/docs/6.0/getting-started/css-variables/
+ */
+
+/*
+ * Global tokens. Bootstrap outputs them unlayered on `:root`, so these
+ * overrides stay unlayered too. They win because this file loads after
+ * Bootstrap.
+ */
+:root {
+  /* --border-radius: .25rem; */
+  /* --primary-base: oklch(55% .25 260); */
+  /* --bg-body: #f8f9fa; */
+}
+
+/*
+ * Component tokens and custom rules go in Bootstrap's `custom` layer. It comes
+ * after `components`, so these override component tokens, and helpers and
+ * utilities still win.
+ */
+@layer custom {
+  /* .alert { */
+  /*   --alert-padding-x: 2rem; */
+  /* } */
+}
