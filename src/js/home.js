@@ -1,12 +1,12 @@
 // Home page: every page found by vite.config.js, with search, group and tag
 // filters, and recently viewed pages. The filters live in the URL
 // (?q=menu&group=kitchen-sink&tag=forms), so a filtered list can be shared.
-// Below them, the saved configs, applied in one click.
+// Below them, the saved configs by category, applied in one click.
 //
 // The home page is playground UI, not a page under test: it doesn't load
 // main.js, so it has no toolbar, and `data-playground-fixed` keeps it on
 // Bootstrap's defaults whatever the preferences (see playground-prefs.js).
-import { configs } from './configs.js'
+import { configs, groupConfigs } from './configs.js'
 import { groups, pages, readRecent, resultUrl, search } from './page-index.js'
 
 const VIEW_KEY = 'bootstrap-playground-home-view'
@@ -306,21 +306,18 @@ const issueUrl = issue => `https://github.com/julien-deramond/bootstrap-test-pla
 // READMEs write code in backticks.
 const inlineCode = text => escapeHtml(text).replace(/`([^`]+)`/g, '<code>$1</code>')
 
+// The working copy leads the first category, next to `default`.
+const working = { name: 'working', label: 'src/styles', category: 'baseline', description: 'The working copy, what every example page uses until a config is applied. Save it as a config with `npm run save-config <name>`.', gaps: [] }
+
 function renderConfigs() {
   // The saved choice: URL overrides don't apply to this page.
   const current = prefs?.read().config
-  const items = [
-    { name: 'working', label: 'src/styles', description: 'The working copy, what every example page uses until a config is applied. Save it as a config with `npm run save-config <name>`.', gaps: [] },
-    ...configs
-  ]
-
-  document.getElementById('configs-count').textContent = configs.length
-  configList.innerHTML = items.map(({ name, label, description, gaps, tokensOnly }) => {
+  const configCard = ({ name, label, description, gaps, tokensOnly }) => {
     const active = name === current || (name === 'working' && !configs.some(config => config.name === current))
     return `
       <li class="page-card config-card${active ? ' active' : ''}">
         <div class="page-card-head">
-          <h3 class="page-card-title"><code>${escapeHtml(label ?? name)}</code></h3>
+          <h4 class="page-card-title"><code>${escapeHtml(label ?? name)}</code></h4>
           <button type="button" class="btn-sm ${active ? 'btn-solid' : 'btn-outline'} theme-primary ms-auto" data-config="${escapeHtml(name)}" aria-pressed="${active}" ${prefs ? '' : 'disabled'}>${active ? 'Applied' : 'Apply'}</button>
         </div>
         <p class="page-card-description" title="${escapeHtml(description)}">${inlineCode(description || `configs/${name}/`)}</p>
@@ -330,7 +327,18 @@ function renderConfigs() {
           <code class="config-card-path">${name === 'working' ? 'src/styles/' : `configs/${escapeHtml(name)}/`}</code>
         </div>
       </li>`
-  }).join('')
+  }
+
+  document.getElementById('configs-count').textContent = configs.length
+  configList.innerHTML = groupConfigs([working, ...configs]).map(({ id, label, description, configs }) => `
+    <section class="config-group" aria-labelledby="config-group-${id}">
+      <div class="home-group-head">
+        <h3 class="config-group-title" id="config-group-${id}">${escapeHtml(label)}</h3>
+        <span class="home-group-count">${configs.filter(config => config !== working).length}</span>
+        <p class="home-group-description">${inlineCode(description)}</p>
+      </div>
+      <ul class="page-list">${configs.map(configCard).join('')}</ul>
+    </section>`).join('')
 }
 
 configList.addEventListener('click', event => {

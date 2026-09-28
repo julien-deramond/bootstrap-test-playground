@@ -2,6 +2,8 @@
 
 __DESCRIPTION__
 
+Category: __CATEGORY__
+
 ## What it stresses
 
 <!-- The options, tokens or rules this config pushes, and what each should change or break. -->

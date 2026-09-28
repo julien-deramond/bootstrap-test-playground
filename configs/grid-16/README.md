@@ -2,6 +2,8 @@
 
 A 16-column grid with 2rem gutters: `$grid-columns: 16` and `$grid-gutter-x: 2rem`. Markup written for 12 columns keeps working but changes its proportions: `.col-6` is 37.5% wide instead of half, and a row of `.col-4`s leaves a quarter empty. That's expected.
 
+Category: layout
+
 ## What it stresses
 
 - The flex grid: `.col-1` to `.col-16` and offsets up to 15, at every breakpoint.

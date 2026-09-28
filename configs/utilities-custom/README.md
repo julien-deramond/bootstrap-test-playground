@@ -2,6 +2,8 @@
 
 Every option of the utility API: new utilities with `state`, `child-selector`, `variables` and a property map, default ones made `responsive`, `print` and `dark:`, `float` disabled with `enabled: false` and `object-fit` removed with `null`. Changing a default utility means reading its definition, so `main.scss` merges into `$utilities` before it loads Bootstrap instead of passing it through `with (...)`. [`pages/utility-api.html`](../../pages/utility-api.html) always uses this config and checks each utility.
 
+Category: sass
+
 ## What it stresses
 
 - The two ways of merging from the docs. It modifies the defaults with `map.merge()` after loading `bootstrap/scss/config` and `bootstrap/scss/utilities`, all in one file, so no extra partial is needed.

@@ -2,6 +2,8 @@
 
 Custom properties prefixed with `x-` instead of `bs-`, the way the [CSS variables docs](https://getbootstrap.com/docs/6.0/getting-started/css-variables/) say to change it: the `prefix` option of `postcss-prefix-custom-properties`. The CSS works on its own, but Bootstrap's JavaScript hard-codes four `--bs-*` names, so the form range, the carousel and nav overflow lose what they read or write. [`pages/custom-property-prefix.html`](../../pages/custom-property-prefix.html) checks each of them.
 
+Category: sass
+
 ## What it stresses
 
 - The prefix option. PostCSS runs for the whole project, so `main.scss` and `tokens.css` start with `/*! playground-prefix: "x-" */`, which the playground's `postcss.config.js` reads and removes. Bootstrap has no Sass `$prefix` anymore.

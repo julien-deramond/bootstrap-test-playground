@@ -2,6 +2,8 @@
 
 A serif body stack (`ui-serif, Georgia, Cambria, "Times New Roman", Times, serif`): taller ascenders, a smaller x-height and another baseline than the sans-serif default. Use it to find what's aligned by eye for one font rather than by the line box.
 
+Category: typography
+
 ## What it stresses
 
 - `--body-font-family`, set at runtime in `tokens.css`. Tokens only, so it also applies on top of the prebuilt dist (`?css=dist`).

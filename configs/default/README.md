@@ -2,6 +2,8 @@
 
 Bootstrap's defaults: nothing configured, only commented examples. New issue reproductions start from this config, and `npm run use-config default` resets `src/styles/`.
 
+Category: baseline
+
 ## What it stresses
 
 - Nothing on purpose. It's the reference every other config is compared against, and what `check-dist`, `audit-tokens`, `audit-rtl`, `audit-motion` and `audit-layers` audit.

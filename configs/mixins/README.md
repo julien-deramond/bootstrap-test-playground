@@ -2,6 +2,8 @@
 
 Every documented Sass mixin and function, used from `_custom.scss` the way the docs show: a custom `.callout` component, the docs' grid, row-cols and breakpoint examples as written, container queries, and three utilities built with the map functions in `main.scss`. `_custom.scss` also checks what each function returns and fails the build when it changes, so a rename or a changed result upstream fails `npm run check-configs`. [`pages/sass-api.html`](../../pages/sass-api.html) always uses this config.
 
+Category: sass
+
 ## What it stresses
 
 The documented API, each from the module that defines it (`bootstrap/scss/mixins` doesn't forward them all, [#219](https://github.com/julien-deramond/bootstrap-test-playground/issues/219)):

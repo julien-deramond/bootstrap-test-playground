@@ -2,6 +2,8 @@
 
 Unprefixed custom properties, `--border-radius` rather than `--bs-border-radius`. That's what the docs' [npm](https://getbootstrap.com/docs/6.0/guides/npm/) and [webpack](https://getbootstrap.com/docs/6.0/guides/webpack/) guides compile, since their PostCSS setup runs Autoprefixer only. The CSS works on its own, but Bootstrap's JavaScript hard-codes four `--bs-*` names, so the form range, the carousel and nav overflow lose what they read or write. [`pages/custom-property-prefix.html`](../../pages/custom-property-prefix.html) checks each of them.
 
+Category: sass
+
 ## What it stresses
 
 - An empty prefix. PostCSS runs for the whole project, so `main.scss` and `tokens.css` start with `/*! playground-prefix: "" */`, which the playground's `postcss.config.js` reads and removes.

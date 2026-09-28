@@ -2,6 +2,8 @@
 
 `$radius: 2rem`: controls turn into pills and the radius scale runs from .5rem to 4rem. Use it to check nested and joined corners, which small radii hide.
 
+Category: shape
+
 ## What it stresses
 
 - The `$radii` scale: `--radius-5` is 2rem, `--radius-7` (large controls, cards) 3rem, `--radius-9` 4rem.

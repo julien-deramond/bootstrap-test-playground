@@ -2,6 +2,8 @@
 
 `$enable-rounded: false`: components and form controls lose their `border-radius` declarations, so everything should be square. Use it to find what hard-codes a radius or skips the `border-radius()` mixin.
 
+Category: shape
+
 ## What it stresses
 
 - Every `border-radius()` mixin call: buttons, form controls, input groups, cards, alerts, badges, menus, dialogs, drawers, popovers, tooltips, list groups, pagination, progress, range, OTP slots, avatars, chips.

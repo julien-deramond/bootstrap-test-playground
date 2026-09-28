@@ -12,6 +12,21 @@ export const STYLE_FILES = ['main.scss', '_custom.scss', 'tokens.css']
 export const NAME_PATTERN = /^[a-z0-9][a-z0-9-]*$/
 export const REPOSITORY_URL = 'https://github.com/julien-deramond/bootstrap-test-playground'
 
+// What a config customizes, in the order the toolbar, the home page and the
+// configs table list them. A config picks one with a `Category: <id>` line
+// in its README.md; without one, it lands in `other`.
+export const CATEGORIES = [
+  { id: 'baseline', label: 'Baseline', description: 'Bootstrap\'s defaults, the reference for every other config.' },
+  { id: 'shape', label: 'Shape', description: 'Radii, from square corners to pills.' },
+  { id: 'color', label: 'Color', description: 'Palettes, theme colors and color modes.' },
+  { id: 'typography', label: 'Typography', description: 'Font families, the type scale, weights and the root font size.' },
+  { id: 'layout', label: 'Layout and density', description: 'Breakpoints, containers, grids, spacing and control sizes.' },
+  { id: 'options', label: 'Options', description: 'The `$enable-*` flags for shadows, motion, pointers and scrolling.' },
+  { id: 'sass', label: 'Sass API and build', description: 'The custom property prefix, the utility API, mixins and functions, and partial imports.' },
+  { id: 'themes', label: 'Themes', description: 'Complete looks that combine all of the above.' },
+  { id: 'other', label: 'Other', description: 'Configs without a `Category:` line in their README.md.' }
+]
+
 export function configDir(name) {
   return path.join(configsDir, name)
 }
@@ -25,7 +40,7 @@ export function listConfigs() {
     .filter(entry => entry.isDirectory() && fs.existsSync(path.join(configsDir, entry.name, 'main.scss')))
     .map(entry => {
       const dir = path.join(configsDir, entry.name)
-      return { name: entry.name, description: readDescription(dir), tokensOnly: isTokensOnly(dir), colorModes: readColorModes(dir) }
+      return { name: entry.name, description: readDescription(dir), category: readCategory(dir), tokensOnly: isTokensOnly(dir), colorModes: readColorModes(dir) }
     })
     .sort((a, b) => (a.name === 'default' ? -1 : b.name === 'default' ? 1 : a.name.localeCompare(b.name)))
 }
@@ -49,10 +64,50 @@ function readReadme(dir) {
   return fs.existsSync(readme) ? fs.readFileSync(readme, 'utf8') : ''
 }
 
+// A README block that isn't the description: a heading, a comment or the
+// `Category:` line.
+export const isMetaBlock = block => /^(#|<!--|Category:)/.test(block.trim())
+
 // First paragraph of the config's README.md, if any.
 export function readDescription(dir) {
-  const paragraph = readReadme(dir).split(/\n\s*\n/).find(block => block.trim() && !/^(#|<!--)/.test(block.trim()))
+  const paragraph = readReadme(dir).split(/\n\s*\n/).find(block => block.trim() && !isMetaBlock(block))
   return paragraph ? paragraph.replace(/\s+/g, ' ').trim() : ''
+}
+
+const CATEGORY_LINE = /^Category:[ \t]*(\S*)[ \t]*$/m
+
+// The id on the README's `Category:` line, as written: it may not be one of
+// CATEGORIES (see unknownCategories). Empty when there's no such line.
+export function readCategoryLine(dir) {
+  return readReadme(dir).match(CATEGORY_LINE)?.[1] ?? ''
+}
+
+// The config's category id, `other` when it has none or an unknown one.
+export function readCategory(dir) {
+  const id = readCategoryLine(dir)
+  return CATEGORIES.some(category => category.id === id) ? id : 'other'
+}
+
+// Configs whose `Category:` line names no category, for configs-table.
+export function unknownCategories() {
+  return listConfigs()
+    .map(({ name }) => ({ name, id: readCategoryLine(configDir(name)) }))
+    .filter(({ id }) => id && !CATEGORIES.some(category => category.id === id))
+}
+
+// Sets the README's `Category:` line, or adds it after the description.
+export function writeCategory(readme, id) {
+  const content = fs.readFileSync(readme, 'utf8')
+  if (CATEGORY_LINE.test(content)) {
+    fs.writeFileSync(readme, content.replace(CATEGORY_LINE, `Category: ${id}`))
+    return
+  }
+
+  // Blocks and the blank lines between them, so the rest stays byte for byte.
+  const parts = content.split(/(\n\s*\n)/)
+  const index = parts.findIndex((part, i) => i % 2 === 0 && part.trim() && !isMetaBlock(part))
+  parts.splice(index === -1 ? 1 : index + 1, 0, '\n\n', `Category: ${id}`)
+  fs.writeFileSync(readme, parts.join(''))
 }
 
 // Body of a `## <heading>` section of the config's README.md, comments removed.
@@ -123,21 +178,28 @@ const END = '<!-- configs-table:end -->'
 // Escapes what would break a table cell.
 const tableCell = text => text.replace(/\|/g, '\\|')
 
+// One table per category, in CATEGORIES order.
 function configsTable() {
-  const rows = listConfigs().map(({ name, description, tokensOnly }) => {
+  const configs = listConfigs()
+  const row = ({ name, description, tokensOnly }) => {
     const gaps = readKnownGaps(configDir(name)).map(issue => `[#${issue}](${REPOSITORY_URL}/issues/${issue})`).join(', ')
     return `| [\`${name}\`](${name}/) | ${tableCell(description)} | ${gaps || '–'} | ${tokensOnly ? 'Yes' : 'No'} |`
-  })
+  }
 
-  return [
-    START,
-    '',
-    '| Config | Description | Known gaps | Tokens only |',
-    '| --- | --- | --- | --- |',
-    ...rows,
-    '',
-    END
-  ].join('\n')
+  const sections = CATEGORIES.map(category => ({ ...category, configs: configs.filter(config => config.category === category.id) }))
+    .filter(category => category.configs.length > 0)
+    .flatMap(({ label, description, configs }) => [
+      `### ${label}`,
+      '',
+      description,
+      '',
+      '| Config | Description | Known gaps | Tokens only |',
+      '| --- | --- | --- | --- |',
+      ...configs.map(row),
+      ''
+    ])
+
+  return [START, '', ...sections, END].join('\n')
 }
 
 // Replaces the generated block of configs/README.md, or appends it.

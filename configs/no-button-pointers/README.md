@@ -2,6 +2,8 @@
 
 `$enable-button-pointers: false`: buttons keep the default arrow cursor instead of `cursor: pointer`. Nothing changes in screenshots; hover buttons to check it.
 
+Category: options
+
 ## What it stresses
 
 - Reboot's `cursor: pointer` on `button` and `[type=button|reset|submit]`, and the one on `.btn`. Close buttons are `<button>`s, so they lose it too.

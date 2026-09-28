@@ -2,6 +2,8 @@
 
 Spacers up to 20 (8rem) and negative spacers down to -12 (-3rem), merged over the defaults. Use it to check that new keys reach every utility and token built from the scale.
 
+Category: layout
+
 ## What it stresses
 
 - `$spacers` 13 to 20: `m-*`, `p-*`, `gap-*`, the grid's `.g-*`, `.gx-*` and `.gy-*` gutters (`$gutters` defaults to `$spacers`), their responsive variants, and the `--spacer-13` to `--spacer-20` tokens.

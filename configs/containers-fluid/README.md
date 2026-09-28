@@ -2,6 +2,8 @@
 
 No `$container-max-widths`: `.container` is as wide as the viewport at every size, like `.container-fluid`, and the responsive `sm:container` to `2xl:container` classes aren't generated. Unlike `no-containers`, containers keep their padding and centering.
 
+Category: layout
+
 ## What it stresses
 
 - Removing every key of a map merged over its defaults: `$container-max-widths: ()` changes nothing, so each key is set to `null`.

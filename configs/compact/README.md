@@ -2,6 +2,8 @@
 
 A dense UI: `$spacer: .75rem`, .875rem body text and 30px controls (26px small, 36px large). Use it to find heights, paddings and icon sizes that ignore `$spacer` and the `--btn-input-*` tokens.
 
+Category: layout
+
 ## What it stresses
 
 - `$spacer`: every `--spacer-*` step, gutter, spacing utility and `$sizes` step shrinks by a quarter.

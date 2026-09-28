@@ -2,6 +2,8 @@
 
 `$enable-transitions: false`: no transitions, no progress bar stripes or carousel progress indicator; spinners and placeholders still animate. Use it to check that turning transitions off removes every one of them (`npm run audit-motion`), and that components still open and close without them.
 
+Category: options
+
 ## What it stresses
 
 - Every `transition()` and `transition-props()` mixin: none may emit a transition. `npm run audit-motion` fails on one that survives, and its `--render` run on one the browser sees.

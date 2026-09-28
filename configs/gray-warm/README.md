@@ -2,6 +2,8 @@
 
 `$gray: oklch(55% .03 60)`: a warm, brownish gray instead of the default blue-gray. Every neutral surface, text and border should turn warm; what stays blue-gray doesn't read the gray scale.
 
+Category: color
+
 ## What it stresses
 
 - `$gray`, tinted and shaded into `--gray-025…975` by `$color-tints` and `$color-shades`.

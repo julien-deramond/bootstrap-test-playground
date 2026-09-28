@@ -2,6 +2,8 @@
 
 `$gray: oklch(55% .03 250)`: a darker and more saturated blue-gray than the default (`oklch(60% .02 245)`). Next to `gray-warm`, it shows which neutrals follow `$gray` and which don't.
 
+Category: color
+
 ## What it stresses
 
 - The same as [`gray-warm`](../gray-warm/), in the other direction: `$gray` and everything that reads `--gray-025…975`.
