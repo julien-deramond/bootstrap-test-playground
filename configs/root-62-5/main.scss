@@ -1,0 +1,55 @@
+// Root 62.5%: `html { font-size: 62.5% }` in _custom.scss, the classic trick
+// that makes 1rem = 10px so that 1.6rem = 16px. Everything in `rem` shrinks to
+// 62.5%, so this config scales every global `rem` value Bootstrap exposes by
+// 1.6 to get the default look back: the body size, `$font-sizes`, `$spacer`,
+// `$radius`, the grid gutter and the `--btn-input-*` tokens.
+//
+// What still looks 62.5% too small has its own `rem` value in a component and
+// needs overriding one component at a time. What looks too large next to it
+// is in `px`, which the trick doesn't touch.
+
+$scale: 1.6;
+
+@use "bootstrap/scss/bootstrap" with (
+  $spacer: 1rem * $scale,
+  $radius: .5rem * $scale,
+  $grid-gutter-x: 1.5rem * $scale,
+
+  $font-sizes: (
+    "xs": ("font-size": .75rem * $scale, "line-height": 1.25),
+    "sm": ("font-size": .875rem * $scale, "line-height": 1.5),
+    "md": ("font-size": 1rem * $scale, "line-height": 1.5),
+    "lg": ("font-size": clamp(1.125rem * $scale, 1rem * $scale + .625vw, 1.25rem * $scale), "line-height": 1.5),
+    "xl": ("font-size": clamp(1.5rem * $scale, 1.1rem * $scale + .75vw, 1.75rem * $scale), "line-height": calc(2.5 / 1.75)),
+    "2xl": ("font-size": clamp(1.75rem * $scale, 1.3rem * $scale + 1vw, 2rem * $scale), "line-height": calc(3 / 2.25)),
+    "3xl": ("font-size": clamp(2rem * $scale, 1.5rem * $scale + 1.875vw, 2.5rem * $scale), "line-height": 1.2),
+    "4xl": ("font-size": clamp(2.25rem * $scale, 1.75rem * $scale + 2.5vw, 3rem * $scale), "line-height": 1.1),
+    "5xl": ("font-size": clamp(3rem * $scale, 2rem * $scale + 5vw, 4rem * $scale), "line-height": 1.1),
+    "6xl": ("font-size": clamp(3.75rem * $scale, 2.5rem * $scale + 6.25vw, 5rem * $scale), "line-height": 1),
+  ),
+
+  $root-tokens: (
+    --body-font-size: 1rem * $scale,
+
+    --btn-input-gap: .375rem * $scale,
+    --btn-input-min-height: 2.375rem * $scale,
+    --btn-input-padding-y: .375rem * $scale,
+    --btn-input-padding-x: .75rem * $scale,
+
+    --btn-input-xs-min-height: 1.5rem * $scale,
+    --btn-input-xs-padding-y: .125rem * $scale,
+    --btn-input-xs-padding-x: .5rem * $scale,
+
+    --btn-input-sm-gap: .375rem * $scale,
+    --btn-input-sm-min-height: 2rem * $scale,
+    --btn-input-sm-padding-y: .25rem * $scale,
+    --btn-input-sm-padding-x: .625rem * $scale,
+
+    --btn-input-lg-gap: .375rem * $scale,
+    --btn-input-lg-min-height: 2.75rem * $scale,
+    --btn-input-lg-padding-y: .5rem * $scale,
+    --btn-input-lg-padding-x: 1rem * $scale,
+  ),
+);
+
+@use "custom";
