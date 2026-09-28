@@ -12,6 +12,7 @@ export default [
 
   { kind: 'undefined', issue: 8, tokens: ['--font-weight-base'] },
   { kind: 'undefined', issue: 9, tokens: ['--nav-link-font-weight', '--range-track-box-shadow'] },
+  { kind: 'undefined', issue: 182, configs: ['brand'], tokens: ['--info-bg', '--secondary-fg'] },
   {
     kind: 'undefined',
     reason: 'opt-in hook: while it’s unset, the property falls back to its inherited or initial value',

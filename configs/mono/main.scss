@@ -1,0 +1,31 @@
+// Mono: one base color, `--mono-base` in tokens.css, drives the whole palette
+// at runtime. Every hue of `$colors` is that color, and `$gray` and `$pewter`
+// are it with almost no chroma, so every theme, surface, text and border is a
+// color-mix() of it. Change `--mono-base` in tokens.css, or `--bs-mono-base` in
+// the browser's devtools, and everything follows without recompiling.
+//
+// Themes can't be told apart by hue any more: that's the point. What keeps its
+// own hue doesn't derive from the palette.
+
+$base: var(--mono-base);
+
+@use "bootstrap/scss/bootstrap" with (
+  $blue: $base,
+  $indigo: $base,
+  $violet: $base,
+  $purple: $base,
+  $pink: $base,
+  $red: $base,
+  $orange: $base,
+  $amber: $base,
+  $yellow: $base,
+  $lime: $base,
+  $green: $base,
+  $teal: $base,
+  $cyan: $base,
+  $brown: $base,
+  $gray: oklch(from $base 60% .02 h),
+  $pewter: oklch(from $base 65% .01 h),
+);
+
+@use "custom";
