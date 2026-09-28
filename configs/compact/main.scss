@@ -1,0 +1,36 @@
+// Compact: a dense UI. `$spacer: .75rem` scales every spacer, gutter and
+// size, the body text drops to .875rem, and controls shrink from 38px to 30px
+// (small 26px, large 36px). The paddings leave `min-height` in charge, so
+// every control of a size is exactly as tall as its `--btn-input-*` token.
+// Use it to find heights, paddings and icon sizes that don't follow.
+
+@use "bootstrap/scss/bootstrap" with (
+  $spacer: .75rem,
+
+  $root-tokens: (
+    --body-font-size: .875rem,
+
+    --btn-input-gap: .25rem,
+    --btn-input-min-height: 1.875rem,
+    --btn-input-padding-y: .1875rem,
+    --btn-input-padding-x: .5rem,
+
+    --btn-input-xs-min-height: 1.25rem,
+    --btn-input-xs-padding-y: 0,
+    --btn-input-xs-padding-x: .375rem,
+
+    // The body text is already .875rem, so small controls step down to .75rem.
+    --btn-input-sm-gap: .25rem,
+    --btn-input-sm-min-height: 1.625rem,
+    --btn-input-sm-padding-y: .125rem,
+    --btn-input-sm-padding-x: .375rem,
+    --btn-input-sm-font-size: var(--font-size-xs),
+
+    --btn-input-lg-gap: .25rem,
+    --btn-input-lg-min-height: 2.25rem,
+    --btn-input-lg-padding-y: .3125rem,
+    --btn-input-lg-padding-x: .75rem,
+  ),
+);
+
+@use "custom";

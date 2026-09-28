@@ -1,0 +1,39 @@
+// Spacious: a roomy UI. `$spacer: 1.5rem` scales every spacer, gutter and
+// size, the body text grows to 1.125rem, the grid gutter doubles and controls
+// grow from 38px to 48px (small 40px, large 56px). The paddings leave
+// `min-height` in charge, so every control of a size is exactly as tall as its
+// `--btn-input-*` token. Use it to find heights, paddings and icon sizes that
+// don't follow.
+
+@use "bootstrap/scss/bootstrap" with (
+  $spacer: 1.5rem,
+  $grid-gutter-x: 3rem,
+
+  $root-tokens: (
+    --body-font-size: 1.125rem,
+
+    --btn-input-gap: .5rem,
+    --btn-input-min-height: 3rem,
+    --btn-input-padding-y: .5625rem,
+    --btn-input-padding-x: 1.25rem,
+
+    --btn-input-xs-min-height: 2rem,
+    --btn-input-xs-padding-y: .25rem,
+    --btn-input-xs-padding-x: .75rem,
+
+    --btn-input-sm-gap: .5rem,
+    --btn-input-sm-min-height: 2.5rem,
+    --btn-input-sm-padding-y: .375rem,
+    --btn-input-sm-padding-x: 1rem,
+
+    // The body text is already 1.125rem, so large controls step up to the lg size.
+    --btn-input-lg-gap: .5rem,
+    --btn-input-lg-min-height: 3.5rem,
+    --btn-input-lg-padding-y: .75rem,
+    --btn-input-lg-padding-x: 1.5rem,
+    --btn-input-lg-font-size: var(--font-size-lg),
+    --btn-input-lg-line-height: var(--line-height-lg),
+  ),
+);
+
+@use "custom";

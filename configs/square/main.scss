@@ -1,0 +1,11 @@
+// Square: `$radius: 0` makes every `--radius-*` step 0, and tokens.css sets
+// `--radius-pill: 0` (Sass can't: #176). Unlike `no-rounded`, the
+// `border-radius` declarations stay and read the tokens, so what still looks
+// rounded hard-codes its radius: nav pills and ranges (#177) and the checkbox
+// (#4). Radios, switches, spinners and avatars stay round on purpose.
+
+@use "bootstrap/scss/bootstrap" with (
+  $radius: 0,
+);
+
+@use "custom";
