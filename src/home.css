@@ -5,6 +5,13 @@
  * defaults (`data-playground-fixed`, see playground-prefs.js).
  */
 
+/*
+ * Bootstrap's layer order (scss/_root.scss). The first stylesheet to name a
+ * layer sets its place, and the build links this file before Bootstrap's
+ * shared one: without this statement `custom` would come first, below reboot.
+ */
+@layer colors, config, root, reboot, layout, content, forms, components, custom, helpers, utilities;
+
 @layer custom {
   .home {
     display: grid;
