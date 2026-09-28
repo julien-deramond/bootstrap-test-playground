@@ -1,0 +1,23 @@
+// `bootstrap-utilities.scss`, the entry point behind
+// `dist/css/bootstrap-utilities.css`: root (every global token and the layer
+// order), the helpers and the utilities, with no reboot, layout or components.
+// Most pages look unstyled with it. That's expected: pages/utilities-only.html
+// checks what it covers.
+
+// The entry point forwards `root` and `utilities`, so `with` takes
+// `$root-tokens` and `$utilities`, as the utility API docs show on
+// `bootstrap/scss/bootstrap`.
+@use "bootstrap/scss/bootstrap-utilities" with (
+  $root-tokens: (
+    --border-width: 2px,
+  ),
+  $utilities: (
+    "cursor": (
+      property: cursor,
+      class: cursor,
+      values: auto pointer not-allowed,
+    ),
+  )
+);
+
+@use "custom";

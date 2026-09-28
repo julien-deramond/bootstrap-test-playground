@@ -25,6 +25,7 @@ export default [
   // Read with a fallback, never defined
 
   { kind: 'hook', reason: 'set inline by Bootstrap’s JavaScript', tokens: ['--carousel-interval', '--range-fill'] },
+  { kind: 'hook', configs: ['reboot-only'], reason: 'set by the `.theme-*` helpers and the shadow utilities, which bootstrap-reboot leaves out, so the fallback applies', tokens: ['--sc', '--so', '--theme-fg', '--theme-fg-emphasis'] },
   {
     kind: 'hook',
     reason: 'customization hook with a default',
@@ -53,6 +54,7 @@ export default [
   { kind: 'unused', reason: 'scale step, for users and utilities', tokens: ['--box-shadow-xs', '--font-weight-light', '--font-weight-lighter'] },
   { kind: 'unused', configs: ['utilities-custom'], reason: 'the config’s `variables` list exposes each .text-shadow-* value, for users', tokens: ['--text-shadow'] },
   { kind: 'unused', configs: ['partial'], reason: 'global tokens for the components the config leaves out', tokens: ['--box-shadow', '--box-shadow-xl', '--z-dialog', '--z-drawer', '--z-popover', '--z-toast', '--z-tooltip'] },
+  { kind: 'unused', configs: ['reboot-only', 'utilities-only'], reason: 'root defines every global token, and the entry point leaves out the components that read them', pattern: /^--/ },
   { kind: 'unused', configs: ['weights'], reason: 'the weight the config adds to $font-weights, for users (the .fw-black utility uses the raw value)', tokens: ['--font-weight-black'] },
   { kind: 'unused', reason: 'read by Bootstrap’s JavaScript (NavOverflow)', pattern: /^--breakpoint-/ },
   { kind: 'unused', reason: 'generated from the color maps and the theme API, for users', tokens: ['--bg-inherit', '--fg-inherit', '--theme-base'] },

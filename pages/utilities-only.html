@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Entry points: utilities</title>
+    <meta name="description" content="Entry points: checks what bootstrap-utilities.scss, the entry point behind bootstrap-utilities.css, covers alone (root tokens, helpers, theme classes and utilities, a custom one through the utility API) and what it leaves out, in the utilities-only config.">
+    <meta name="playground-tags" content="utilities">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- Always the utilities-only config: the toolbar's config switch doesn't
+         apply, since the checks need its build. -->
+    <link rel="stylesheet" href="/configs/utilities-only/main.scss">
+    <link rel="stylesheet" href="/configs/utilities-only/tokens.css">
+    <link rel="stylesheet" href="/pages/entry-points.css">
+    <style>
+      .pg-ref-primary-bg {
+        background-color: var(--bs-primary-bg);
+      }
+    </style>
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="pg-page">
+      <header data-playground-chrome>
+        <p><a href="/">Playground</a> / Pages</p>
+        <h1>Entry points: utilities</h1>
+        <p>
+          <a href="https://github.com/twbs/bootstrap/blob/v6-dev/scss/bootstrap-utilities.scss"><code>scss/bootstrap-utilities.scss</code></a> alone, the entry point behind <code>dist/css/bootstrap-utilities.css</code>: root (every global token, the color modes and the layer order), the helpers and the utilities, with no reboot, layout or components.
+          <a href="https://github.com/julien-deramond/bootstrap-test-playground/tree/main/configs/utilities-only"><code>configs/utilities-only/</code></a> passes <code>$root-tokens</code> and a new <code>cursor</code> utility through <code>with (…)</code>.
+          This page always uses that config, whatever the toolbar's <em>Styles</em> menu says.
+        </p>
+        <p>
+          The utility API docs' <em>utility-only build</em> loads <code>utilities</code> and <code>utilities/api</code> without root, so its utilities read tokens nothing defines: <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/237">#237</a>, not reported yet. This entry point doesn't have that problem.
+        </p>
+        <h2>Checks</h2>
+      </header>
+
+      <ol class="pg-checks">
+        <li data-entry-case="root-tokens" data-expect="with ($root-tokens: …) sets --bs-border-width: 2px, which .border uses">
+          <div class="pg-marker"></div>
+          <div class="p-3 border" id="case-root-tokens">.border</div>
+        </li>
+
+        <li data-entry-case="new-utility" data-expect="with ($utilities: …) adds .cursor-pointer">
+          <div class="pg-marker"></div>
+          <div class="pg-sample cursor-pointer" id="case-new-utility">.cursor-pointer</div>
+        </li>
+
+        <li data-entry-case="spacing" data-expect=".p-4 and .mt-3 apply their spacers">
+          <div class="pg-marker"></div>
+          <div class="p-4 mt-3 border" id="case-spacing">.p-4 .mt-3</div>
+        </li>
+
+        <li data-entry-case="colors" data-expect=".bg-primary reads --bs-primary-bg, which root defines">
+          <div class="pg-marker"></div>
+          <div class="p-3 bg-primary" id="case-colors">.bg-primary</div>
+          <div class="pg-ref-primary-bg" id="ref-primary-bg"></div>
+        </li>
+
+        <li data-entry-case="theme" data-expect="The .theme-primary helper and .theme-contrast give the same background as .bg-primary">
+          <div class="pg-marker"></div>
+          <div class="p-3 theme-primary theme-contrast" id="case-theme">.theme-primary .theme-contrast</div>
+        </li>
+
+        <li data-entry-case="shadow" data-expect=".shadow builds its shadow from --bs-shadow-color and --bs-shadow-strength">
+          <div class="pg-marker"></div>
+          <div class="p-3 shadow" id="case-shadow">.shadow</div>
+        </li>
+
+        <li data-entry-case="responsive" data-expect=".d-none .md:d-block hides the element, and shows it from the md breakpoint">
+          <div class="pg-marker"></div>
+          <div class="pg-sample d-none md:d-block" id="case-responsive">.d-none .md:d-block</div>
+        </li>
+
+        <li data-entry-case="flex" data-expect=".d-flex .gap-3 .justify-content-center lays out a flex row with a gap">
+          <div class="pg-marker"></div>
+          <div class="d-flex gap-3 justify-content-center" id="case-flex">
+            <div class="pg-sample">first</div>
+            <div class="pg-sample">second</div>
+          </div>
+        </li>
+
+        <li data-entry-case="ratio" data-expect="The .ratio-16x9 helper sets a 16 / 9 aspect ratio">
+          <div class="pg-marker"></div>
+          <div class="ratio-16x9 w-25 pg-cell" id="case-ratio"></div>
+        </li>
+
+        <li data-entry-case="visually-hidden" data-expect="The .visually-hidden helper shrinks its element to 1px">
+          <div class="pg-marker"></div>
+          <p>A hidden label follows: <span class="visually-hidden" id="case-visually-hidden">read by screen readers only</span></p>
+        </li>
+
+        <li data-entry-case="layers" data-expect="Helpers are in the helpers cascade layer, utilities in the utilities layer">
+          <div class="pg-marker"></div>
+        </li>
+
+        <li data-entry-case="no-reboot" data-expect="No reboot: the body keeps the browser's 8px margin">
+          <div class="pg-marker"></div>
+        </li>
+
+        <li data-entry-case="no-layout" data-expect="No layout: .row has no rule">
+          <div class="pg-marker"></div>
+        </li>
+      </ol>
+    </main>
+
+    <script type="module">
+      import { element, findRule, media, rules, runChecks, style, width } from '/pages/entry-points.js'
+
+      runChecks({
+        'root-tokens': () => style('root-tokens').borderTopWidth === '2px',
+        'new-utility': () => style('new-utility').cursor === 'pointer',
+        spacing: () => Number.parseFloat(style('spacing').paddingTop) > 0 && Number.parseFloat(style('spacing').marginTop) > 0,
+        colors: () => style('colors').backgroundColor !== 'rgba(0, 0, 0, 0)' &&
+          style('colors').backgroundColor === getComputedStyle(document.getElementById('ref-primary-bg')).backgroundColor,
+        theme: () => style('theme').backgroundColor === style('colors').backgroundColor,
+        shadow: () => style('shadow').boxShadow !== 'none' && !style('shadow').boxShadow.includes('rgba(0, 0, 0, 0)'),
+        responsive: () => style('responsive').display === (media('(width >= 768px)') ? 'block' : 'none'),
+        flex: () => style('flex').display === 'flex' && Number.parseFloat(style('flex').columnGap) > 0,
+        ratio: () => Math.abs(element('ratio').getBoundingClientRect().height - width(element('ratio')) * 9 / 16) < 1,
+        'visually-hidden': () => width(element('visually-hidden')) <= 1,
+        layers: () => rules().some(({ rule, layer }) => layer === 'helpers' && rule.selectorText.includes('.visually-hidden')) &&
+          rules().some(({ rule, layer }) => layer === 'utilities' && rule.selectorText === '.cursor-pointer'),
+        'no-reboot': () => getComputedStyle(document.body).marginTop === '8px',
+        'no-layout': () => !findRule('.row')
+      })
+    </script>
+  </body>
+</html>

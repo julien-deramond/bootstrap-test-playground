@@ -1,0 +1,27 @@
+// `bootstrap-grid.scss`, the entry point behind `dist/css/bootstrap-grid.css`:
+// containers, the grid and the layout utilities (display, flex, grid, gap,
+// order, margin, padding), with no root tokens and no reboot. Most pages look
+// unstyled with it. That's expected: pages/grid-only.html checks what it covers.
+
+// Grid options live in `config`, which the entry point doesn't forward: set
+// them on `config` before loading it.
+@use "bootstrap/scss/config" with (
+  $grid-gutter-x: 2rem
+);
+
+// The entry point forwards `utilities`, so `with` takes `$utilities`. It keeps
+// only the groups it lists, so a new group is dropped, but a listed group can
+// be changed or removed: this build leaves out the padding utilities.
+@use "bootstrap/scss/bootstrap-grid" with (
+  $utilities: (
+    "padding": null,
+    "padding-x": null,
+    "padding-y": null,
+    "padding-top": null,
+    "padding-end": null,
+    "padding-bottom": null,
+    "padding-start": null,
+  )
+);
+
+@use "custom";

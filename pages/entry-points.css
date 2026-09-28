@@ -1,0 +1,69 @@
+/*
+ * The playground's own UI on the standalone entry point pages. Each build
+ * leaves out most of Bootstrap, and none of them styles the page around the
+ * markup under test, so this file does, in plain CSS. It only targets the
+ * page's own classes and `[data-playground-chrome]`: the markup under test
+ * keeps what the build gives it, the browser's defaults included.
+ */
+
+.pg-page {
+  max-width: 64rem;
+  padding: 2.5rem 1.5rem;
+  margin-inline: auto;
+}
+
+[data-playground-chrome],
+.pg-marker {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.5;
+}
+
+[data-playground-chrome] code,
+.pg-marker code {
+  font-size: .875em;
+}
+
+.pg-checks {
+  display: grid;
+  gap: 1.5rem;
+  padding: 0;
+  margin: 0 0 3rem;
+  list-style: none;
+}
+
+.pg-marker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  align-items: baseline;
+  margin-block-end: .5rem;
+  font-size: .9375rem;
+}
+
+.pg-result {
+  padding: .125rem .5rem;
+  font-size: .8125rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #6c757d;
+  border-radius: .25rem;
+}
+
+[data-result="pass"] .pg-result {
+  background-color: #198754;
+}
+
+[data-result="fail"] .pg-result {
+  background-color: #dc3545;
+}
+
+.pg-sample {
+  padding: .5rem .75rem;
+  border: 1px dashed #adb5bd;
+}
+
+.pg-cell {
+  min-height: 2.5rem;
+  background-color: rgb(111 66 193 / .15);
+  outline: 1px solid rgb(111 66 193 / .5);
+}
