@@ -288,7 +288,7 @@ Known findings are listed in [`scripts/known-layers.mjs`](scripts/known-layers.m
 
 ### Auditing partial imports
 
-The Sass docs offer two ways in: all of Bootstrap, or "Option B", `root` first and then only the partials a site needs. [`configs/partial/`](configs/partial/) is Option B as the docs write it. `npm run audit-partials` compiles every partial alone after `root` (`alert`, `forms`, `forms/check`…) and reports:
+The Sass docs offer two ways in: all of Bootstrap, or "Option B", `root` first and then only the partials a site needs. [`configs/partial/`](configs/partial/) is Option B as the docs write it. `npm run audit-partials` compiles every partial alone after `root` (`alert`, `forms`, `forms/check`…), leaving out the mixins, the vendored code, the entry points and, in a `BOOTSTRAP_PATH` checkout, Bootstrap's Sass unit tests (`scss/tests/`), and reports:
 
 - **error:** a partial that doesn't compile that way
 - **needs:** a partial that reads, without a fallback, tokens that only another partial defines, so leaving that one out drops the declaration. Tokens no partial defines are [`audit-tokens`](#auditing-tokens)' findings.

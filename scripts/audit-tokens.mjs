@@ -24,7 +24,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { loadEnv } from 'vite'
-import { bootstrapSource } from './lib/bootstrap.mjs'
+import { bootstrapScssFiles, bootstrapSource } from './lib/bootstrap.mjs'
 import { compileConfig, processCss } from './lib/compile.mjs'
 import { root, styleFolders } from './lib/configs.mjs'
 import known from './known-tokens.mjs'
@@ -75,18 +75,14 @@ function where(node) {
 // Token maps are written out by one mixin, so a definition's source map points
 // to `mixins/_tokens.scss`. Point to the map entry (`--chip-bg: …,`) instead.
 const declarations = new Map()
-for (const dir of [path.join(bootstrapDir, 'scss'), ...styleFolders()]) {
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true, recursive: true })) {
-    if (!entry.isFile() || !/\.(scss|css)$/.test(entry.name)) {
-      continue
-    }
-
-    const file = path.join(entry.parentPath, entry.name)
-    for (const [index, line] of fs.readFileSync(file, 'utf8').split('\n').entries()) {
-      const name = line.match(/^\s*(--[\w-]+)\s*:/)?.[1]
-      if (name && !declarations.has(unprefix(name))) {
-        declarations.set(unprefix(name), where({ source: { start: { line: index + 1 }, input: { file } } }))
-      }
+const configFiles = styleFolders().flatMap(dir => fs.readdirSync(dir, { withFileTypes: true, recursive: true })
+  .filter(entry => entry.isFile() && /\.(scss|css)$/.test(entry.name))
+  .map(entry => path.join(entry.parentPath, entry.name)))
+for (const file of [...bootstrapScssFiles(bootstrapDir), ...configFiles]) {
+  for (const [index, line] of fs.readFileSync(file, 'utf8').split('\n').entries()) {
+    const name = line.match(/^\s*(--[\w-]+)\s*:/)?.[1]
+    if (name && !declarations.has(unprefix(name))) {
+      declarations.set(unprefix(name), where({ source: { start: { line: index + 1 }, input: { file } } }))
     }
   }
 }
