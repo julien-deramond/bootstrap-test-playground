@@ -22,15 +22,44 @@
       <symbol id="icon-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></symbol>
       <symbol id="icon-palette" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
       <symbol id="icon-git" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="3" x2="9" y1="12" y2="12"/><line x1="15" x2="21" y1="12" y2="12"/></symbol>
+      <symbol id="icon-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></symbol>
+      <symbol id="icon-pages" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="7" x="3" y="3" rx="1"/><rect width="9" height="7" x="3" y="14" rx="1"/><rect width="5" height="7" x="16" y="14" rx="1"/></symbol>
+      <symbol id="icon-screens" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M10 4v4"/><path d="M2 8h20"/><path d="M6 4v4"/></symbol>
+      <symbol id="icon-kitchen-sink" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="14" y="3" rx="1"/><path d="M10 21V8a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H3"/></symbol>
+      <symbol id="icon-issues" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 2 1.88 1.88"/><path d="M14.12 3.88 16 2"/><path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6"/><path d="M12 20v-9"/><path d="M6.53 9C4.6 8.8 3 7.1 3 5"/><path d="M6 13H2"/><path d="M3 21c0-2.1 1.7-3.9 3.8-4"/><path d="M20.97 5c0 2.1-1.6 3.8-3.5 4"/><path d="M22 13h-4"/><path d="M17.2 17c2.1.1 3.8 1.9 3.8 4"/></symbol>
+      <symbol id="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+      <symbol id="icon-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol>
     </svg>
 
-    <header class="home-hero">
-      <div class="container">
-        <div class="home-hero-top">
-          <a class="home-brand" href="/">
-            <img src="/favicon.svg" alt="" width="32" height="32">
-            <span>Bootstrap playground</span>
-          </a>
+    <div class="home">
+      <aside class="home-sidebar">
+        <a class="home-brand" href="/">
+          <img src="/bootstrap-logo.svg" alt="" width="30" height="24">
+          <span>Bootstrap <span class="home-brand-sub">playground</span></span>
+        </a>
+
+        <label class="form-control form-adorn home-search">
+          <span class="form-adorn-icon" aria-hidden="true">
+            <svg width="16" height="16"><use href="#icon-search"/></svg>
+          </span>
+          <input type="search" class="form-ghost" id="page-search" placeholder="Search…" aria-label="Search pages, examples, tags, classes and --tokens" autocomplete="off" spellcheck="false" aria-describedby="result-count" aria-controls="results">
+          <span class="form-adorn-text"><kbd>/</kbd></span>
+        </label>
+
+        <nav class="home-nav" id="group-filters" aria-label="Groups"></nav>
+
+        <div class="home-tags" id="tag-filters" role="group" aria-labelledby="tags-heading"></div>
+
+        <div class="home-sidebar-foot">
+          <p>The settings pill on every page switches the config, color mode, direction and more (<kbd>Alt Shift P</kbd>).</p>
+          <p><kbd id="palette-key">Ctrl K</kbd> on any page jumps to another one.</p>
+        </div>
+      </aside>
+
+      <main class="home-main">
+        <div class="home-bar">
+          <p class="home-source" id="bootstrap-source"><span class="home-source-dot" aria-hidden="true"></span> <a><code></code></a></p>
           <nav class="home-links" aria-label="Tools">
             <a href="/compare.html">
               <svg width="16" height="16" aria-hidden="true"><use href="#icon-columns"/></svg>
@@ -40,68 +69,38 @@
               <svg width="16" height="16" aria-hidden="true"><use href="#icon-chart"/></svg>
               Sizes
             </a>
-            <a href="#configs">
-              <svg width="16" height="16" aria-hidden="true"><use href="#icon-palette"/></svg>
-              Configs
-            </a>
             <a href="https://github.com/twbs/bootstrap/tree/v6-dev" rel="noopener">
               <svg width="16" height="16" aria-hidden="true"><use href="#icon-git"/></svg>
               v6-dev
             </a>
           </nav>
+          <details class="home-update" id="last-update">
+            <summary class="home-update-summary"></summary>
+            <div class="home-update-body"></div>
+          </details>
         </div>
-        <h1 class="home-title">Test Bootstrap v6 on real pages</h1>
-        <p class="home-lead">Starter screens, real app screens, every docs example and issue reproductions, all compiled from <code>v6-dev</code> source. On each of them, the settings pill in the bottom corner switches the config, color mode, direction and more (<kbd>Alt Shift P</kbd>).</p>
-        <p class="home-source" id="bootstrap-source"><span class="home-source-dot" aria-hidden="true"></span> <a><code></code></a></p>
-        <details class="home-update" id="last-update">
-          <summary class="home-update-summary"></summary>
-          <div class="home-update-body"></div>
-        </details>
-      </div>
-    </header>
 
-    <div class="home-filters" id="filters">
-      <div class="container">
-        <div class="home-search-row">
-          <label class="form-control form-adorn home-search">
-            <span class="form-adorn-icon" aria-hidden="true">
-              <svg width="16" height="16"><use href="#icon-search"/></svg>
-            </span>
-            <input type="search" class="form-ghost" id="page-search" placeholder="Search pages, examples, tags, classes, --tokens…" autocomplete="off" spellcheck="false" aria-describedby="result-count" aria-controls="results">
-            <span class="form-adorn-text"><kbd>/</kbd></span>
-          </label>
+        <div class="home-head">
+          <div class="home-head-text">
+            <h1 class="home-title" id="view-title">All pages</h1>
+            <p class="home-description" id="view-description"></p>
+          </div>
           <div class="btn-group home-view" role="group" aria-label="Layout">
-            <button type="button" class="btn-outline theme-secondary btn-icon" data-view="grid" aria-pressed="true" title="Grid">
+            <button type="button" class="btn-outline theme-secondary btn-icon btn-sm" data-view="grid" aria-pressed="true" title="Grid">
               <svg width="16" height="16" aria-hidden="true"><use href="#icon-grid"/></svg>
               <span class="visually-hidden">Grid</span>
             </button>
-            <button type="button" class="btn-outline theme-secondary btn-icon" data-view="list" aria-pressed="false" title="List">
+            <button type="button" class="btn-outline theme-secondary btn-icon btn-sm" data-view="list" aria-pressed="false" title="List">
               <svg width="16" height="16" aria-hidden="true"><use href="#icon-list"/></svg>
               <span class="visually-hidden">List</span>
             </button>
           </div>
         </div>
-        <div class="home-chips" id="group-filters" role="group" aria-label="Filter by group"></div>
-        <div class="home-chips home-tags" id="tag-filters" role="group" aria-label="Filter by tag"></div>
-      </div>
+
+        <p class="visually-hidden" id="result-count" aria-live="polite"></p>
+        <div id="results"></div>
+        <div id="configs" hidden></div>
+      </main>
     </div>
-
-    <main class="container home-main">
-      <p class="visually-hidden" id="result-count" aria-live="polite"></p>
-      <div id="results"></div>
-    </main>
-
-    <section class="container home-configs" id="configs" aria-labelledby="configs-heading">
-      <div class="home-group-head">
-        <h2 class="home-group-title" id="configs-heading">Configs</h2>
-        <span class="home-group-count" id="configs-count"></span>
-        <p class="home-group-description">Saved styles from <code>configs/</code>. The one you apply is used by every example page, like the toolbar's <em>Config</em> list; this page keeps Bootstrap's defaults. <a href="https://github.com/julien-deramond/bootstrap-test-playground/tree/main/configs#saved-configs" rel="noopener">What each one stresses</a></p>
-      </div>
-      <div id="config-list"></div>
-    </section>
-
-    <footer class="container home-footer">
-      <p>Press <kbd>/</kbd> to search here, or <kbd id="palette-key">Ctrl K</kbd> on any page to jump to another one.</p>
-    </footer>
   </body>
 </html>
