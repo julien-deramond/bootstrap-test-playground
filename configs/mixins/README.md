@@ -38,4 +38,3 @@ The documented API, each from the module that defines it (`bootstrap/scss/mixins
 
 - `color-contrast()` and `contrast-ratio()` don't compile for any color, so the config leaves them out: [#218](https://github.com/julien-deramond/bootstrap-test-playground/issues/218).
 - `bootstrap/scss/mixins` doesn't forward `focus-ring()`, the grid or the breakpoint mixins, and the docs don't say where to load mixins from: [#219](https://github.com/julien-deramond/bootstrap-test-playground/issues/219).
-- The breakpoints docs show v5's 992px and 1200px for `media-breakpoint-only()` and `-between()`: [#220](https://github.com/julien-deramond/bootstrap-test-playground/issues/220).
