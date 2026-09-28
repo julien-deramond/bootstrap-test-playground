@@ -1,0 +1,26 @@
+// Large type: 1.125rem (18px) body text and a type scale one step larger, as
+// for a large-type accessibility preference. Only text sizes change: control
+// heights (`--btn-input-*-min-height`), spacers and component sizes keep their
+// defaults. Controls should grow with their text, since their heights are
+// minimums. What clips, overflows or misaligns sizes itself in fixed units.
+
+@use "bootstrap/scss/bootstrap" with (
+  $font-sizes: (
+    "xs": ("font-size": .875rem, "line-height": 1.25),
+    "sm": ("font-size": 1rem, "line-height": 1.5),
+    "md": ("font-size": 1.125rem, "line-height": 1.5),
+    "lg": ("font-size": clamp(1.25rem, 1.125rem + .625vw, 1.375rem), "line-height": 1.5),
+    "xl": ("font-size": clamp(1.75rem, 1.3rem + .75vw, 2rem), "line-height": calc(2.5 / 1.75)),
+    "2xl": ("font-size": clamp(2rem, 1.5rem + 1vw, 2.25rem), "line-height": calc(3 / 2.25)),
+    "3xl": ("font-size": clamp(2.25rem, 1.75rem + 1.875vw, 2.75rem), "line-height": 1.2),
+    "4xl": ("font-size": clamp(2.5rem, 2rem + 2.5vw, 3.375rem), "line-height": 1.1),
+    "5xl": ("font-size": clamp(3.375rem, 2.25rem + 5vw, 4.5rem), "line-height": 1.1),
+    "6xl": ("font-size": clamp(4.25rem, 2.75rem + 6.25vw, 5.625rem), "line-height": 1),
+  ),
+
+  $root-tokens: (
+    --body-font-size: 1.125rem,
+  ),
+);
+
+@use "custom";

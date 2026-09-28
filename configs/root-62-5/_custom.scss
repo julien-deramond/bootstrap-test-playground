@@ -1,0 +1,9 @@
+// Custom Sass rules, compiled after Bootstrap into the `custom` cascade layer
+// (after components, before helpers and utilities).
+
+@layer custom {
+  // 1rem = 10px. Bootstrap sets no font size on the root, so this applies as is.
+  html {
+    font-size: 62.5%;
+  }
+}
