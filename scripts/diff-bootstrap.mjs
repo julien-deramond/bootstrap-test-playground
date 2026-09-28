@@ -31,6 +31,7 @@ import { compareImages } from './lib/image-diff.mjs'
 import { normalizeCss } from './lib/normalize-css.mjs'
 import { collectPages } from './lib/pages.mjs'
 import { measureSizes } from './lib/sizes.mjs'
+import { fetchCommit, resolveRef, upstreamCommits } from './lib/upstream.mjs'
 
 const [fromRef, toRef] = process.argv.slice(2).filter(arg => !arg.startsWith('--'))
 if (!fromRef || !toRef) {
@@ -42,55 +43,15 @@ const screens = !process.argv.includes('--no-screens')
 const serve = process.argv.includes('--serve')
 const pageFilter = process.argv.find(arg => arg.startsWith('--page='))?.slice('--page='.length)
 const MIN_PIXELS = 10
-const REPO = 'https://github.com/twbs/bootstrap.git'
 const quiet = { warn() {}, debug() {} }
 const run = (command, args, options = {}) => spawnSync(command, args, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, ...options })
 
-// --- Commits ----------------------------------------------------------------
-
-function resolve(ref) {
-  if (/^[\da-f]{40}$/.test(ref)) {
-    return ref
-  }
-
-  const api = run('gh', ['api', `repos/twbs/bootstrap/commits/${ref}`, '--jq', '.sha'])
-  if (api.status === 0 && /^[\da-f]{40}$/.test(api.stdout.trim())) {
-    return api.stdout.trim()
-  }
-
-  const remote = run('git', ['ls-remote', REPO, ref]).stdout.split('\t')[0]
-  if (/^[\da-f]{40}$/.test(remote)) {
-    return remote
-  }
-
-  throw new Error(`Can't resolve "${ref}" in twbs/bootstrap. Use a full commit, or install the GitHub CLI for short ones.`)
-}
-
-// A shallow fetch of exactly that commit, reused on later runs.
-function checkout(sha) {
-  const dir = path.join(root, '.cache/bootstrap', sha)
-  if (fs.existsSync(path.join(dir, 'scss/bootstrap.scss'))) {
-    return dir
-  }
-
-  fs.mkdirSync(dir, { recursive: true })
-  for (const args of [['init', '-q'], ['fetch', '-q', '--depth', '1', REPO, sha], ['checkout', '-q', 'FETCH_HEAD']]) {
-    const result = run('git', args, { cwd: dir })
-    if (result.status !== 0) {
-      fs.rmSync(dir, { recursive: true, force: true })
-      throw new Error(`git ${args.join(' ')} failed for ${sha}: ${result.stderr}`)
-    }
-  }
-
-  return dir
-}
-
-const from = resolve(fromRef)
-const to = resolve(toRef)
+const from = resolveRef(fromRef)
+const to = resolveRef(toRef)
 const short = sha => sha.slice(0, 7)
 console.log(`Comparing ${short(from)} (${fromRef}) with ${short(to)} (${toRef})`)
 
-const dirs = { from: checkout(from), to: checkout(to) }
+const dirs = { from: fetchCommit(from), to: fetchCommit(to) }
 
 // --- --serve: both commits in the compare view --------------------------------
 
@@ -122,8 +83,7 @@ const reportDir = path.join(root, 'reports/diff', `${short(from)}-${short(to)}`)
 fs.rmSync(reportDir, { recursive: true, force: true })
 fs.mkdirSync(path.join(reportDir, 'images'), { recursive: true })
 
-const compare = run('gh', ['api', `repos/twbs/bootstrap/compare/${from}...${to}`, '--jq', '.commits[] | "\\(.sha)\\t\\(.commit.message | split("\\n")[0])"'])
-const commits = compare.status === 0 ? compare.stdout.trim().split('\n').filter(Boolean).map(line => line.split('\t')) : null
+const commits = upstreamCommits(from, to)
 
 // --- CSS and tokens ---------------------------------------------------------
 
@@ -269,7 +229,7 @@ const html = `<!doctype html>
 <p>${commits ? `${commits.length} upstream commits` : `<a href="${rangeUrl}">Upstream commits</a>`} · CSS diff <span class="add">+${added}</span> <span class="del">−${removed}</span> lines · ${tokenCount} token changes · ${screens ? `${shots.length} kitchen sink examples render differently` : 'screenshots skipped'}</p>
 
 <h2>Upstream commits</h2>
-${commits ? list(commits, ([sha, subject]) => `<a href="${commitUrl(sha)}"><code>${short(sha)}</code></a> ${escapeHtml(subject)}`) : `<p><a href="${rangeUrl}">${rangeUrl}</a></p>`}
+${commits ? list(commits, ({ sha, subject }) => `<a href="${commitUrl(sha)}"><code>${short(sha)}</code></a> ${escapeHtml(subject)}`) : `<p><a href="${rangeUrl}">${rangeUrl}</a></p>`}
 
 <h2>Sizes</h2>
 <table><thead><tr><th>File</th><th>Minified</th><th>Brotli</th></tr></thead><tbody>
