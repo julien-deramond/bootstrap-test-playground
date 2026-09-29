@@ -44,6 +44,7 @@ const CHECKS = [
   { name: 'audit-layers --render', command: 'npm run -s audit-layers -- --render' },
   { name: 'test:console', command: 'npm run -s test:console -- --reporter=line' },
   { name: 'test:smoke', command: 'npm run -s test:smoke:engines -- --reporter=line' },
+  { name: 'test:a11y', command: 'npm run -s test:a11y -- --reporter=line' },
   { name: 'test:visual', command: 'npm run -s test:visual -- --reporter=line', informational: true }
 ].filter(({ name }) => !only || only.includes(name))
 

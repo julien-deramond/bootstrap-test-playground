@@ -1,0 +1,46 @@
+name: Accessibility scan
+
+# Scans every page with axe-core at WCAG 2.2 AA, in light and dark, with
+# Bootstrap's default config, and fails on a violation that isn't listed in
+# tests/a11y/known-issues.js, or on an entry that no longer happens. The scan
+# takes about two minutes, so pull requests run all of it. It runs every night and
+# on demand too, and the canary runs it on every Bootstrap update. Each page's
+# violations, known ones included, are in the a11y-report artifact.
+on:
+  pull_request:
+  schedule:
+    - cron: '37 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: a11y-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: npx playwright install --with-deps chromium
+
+      - run: npm run test:a11y -- --workers=4
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: a11y-report
+          path: |
+            reports/a11y/
+            tests/report/
+          retention-days: 14

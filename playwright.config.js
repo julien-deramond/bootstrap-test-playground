@@ -43,7 +43,11 @@ export default defineConfig({
     testDir: `tests/${suite}`,
     use: { ...device },
     ...(suite === 'visual' && engine !== 'chromium' ? { snapshotPathTemplate: '{testDir}/screenshots/{platform}/{projectName}/{arg}{ext}' } : {})
-  }))),
+  }))).concat(
+    // axe-core checks the DOM and computed styles, which don't depend on the
+    // engine, so the accessibility scan runs in Chromium only.
+    { name: 'a11y', testDir: 'tests/a11y', use: { ...ENGINES.chromium } }
+  ),
   webServer: {
     command: `npm run build && npm run preview -- --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}`,

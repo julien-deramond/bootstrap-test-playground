@@ -15,6 +15,7 @@
     "test:visual:engines": "playwright test --project \"visual*\"",
     "test:console": "playwright test --project console",
     "test:console:engines": "playwright test --project \"console*\"",
+    "test:a11y": "playwright test --project a11y",
     "test-scope": "node scripts/test-scope.mjs",
     "test:smoke": "playwright test --project smoke",
     "test:smoke:engines": "playwright test --project \"smoke*\"",
@@ -48,6 +49,7 @@
     "vanilla-calendar-pro": "^3.4.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.63.0",
     "autoprefixer": "^10.6.1",
     "html-validate": "^11.16.0",
