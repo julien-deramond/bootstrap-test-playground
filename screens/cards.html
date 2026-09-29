@@ -487,7 +487,7 @@
                 <svg class="bi" aria-hidden="true"><use href="#rotate-cw"/></svg>
               </button>
             </div>
-            <div class="card-body gap-6 overflow-y-auto" role="log" aria-relevant="additions">
+            <div class="card-body gap-6 overflow-y-auto" role="log" aria-relevant="additions" aria-label="Conversation" tabindex="0">
               <p class="align-self-end ms-12 bg-2 rounded-7 px-4 py-2">I’m building a chat for our app and the scroll behavior is driving me nuts. Every time the AI streams a reply, the whole thread jumps around.</p>
               <div class="d-flex flex-column gap-3">
                 <p>That’s the classic streaming scroll problem. Wrap your message list in <code>MessageScroller</code> and turn on <code>autoScroll</code> — the viewport pins to the bottom as tokens arrive, so users always see the latest text land in place.</p>

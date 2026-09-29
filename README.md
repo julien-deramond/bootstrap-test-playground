@@ -20,6 +20,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run test:visual [-- -u]` | Screenshots every page and compares with the baselines (see [Visual regression tests](#visual-regression-tests)) |
 | `npm run test:console` | Opens every page and fails on errors, warnings and failed requests (see [Console crawl](#console-crawl)) |
 | `npm run test:smoke` | Opens, drives and closes every JavaScript component and checks its state and events (see [Interaction smoke tests](#interaction-smoke-tests)) |
+| `npm run test:a11y` | Scans every page with axe-core at WCAG 2.2 AA, in light and dark with the default config (see [Accessibility scan](#accessibility-scan)) |
 | `npm run test-scope [-- <base>]` | Prints what the console crawl and the smoke tests have to run for the changes since `<base>` (see [Console crawl](#console-crawl)) |
 | `npm run test:smoke:engines` / `test:console:engines` | The same suites in Chromium, Firefox and WebKit (see [Browser engines](#browser-engines)) |
 | `npm run lint:html [-- --all]` | Validates the HTML of every page with html-validate (see [Validating HTML](#validating-html)) |
@@ -593,9 +594,26 @@ The full suite runs 19 scenarios with 39 variants, and every new config adds 19 
 SMOKE_SCOPE='{"full":false,"configs":["pill"],"urls":[]}' npm run test:smoke
 ```
 
+## Accessibility scan
+
+[`tests/a11y/`](tests/a11y/a11y.spec.js) runs [axe-core](https://github.com/dequelabs/axe-core) on every page with Bootstrap's default config ([`configs/default/`](configs/default/)), in light and dark, with the WCAG 2.0, 2.1 and 2.2 A and AA rules. It fails on any violation, like text under 4.5:1, a control without a name or a target under 24×24px.
+
+It checks Bootstrap's markup and styles, not the playground: pages load with `?chrome=0`, and whatever is still marked `data-playground-chrome` is left out of the scan. The home, compare, matrix and sizes pages and the reproductions (`issues/`) are skipped. Reduced motion is emulated so no transition is caught halfway, and `?freeze` keeps the datepicker's labels the same. axe-core reads the DOM and computed styles, which don't depend on the engine, so the scan runs in Chromium only:
+
+```sh
+npm run test:a11y
+npm run test:a11y -- -g "dark-default /kitchen-sink/components-alert"
+```
+
+Each failure names the page, the rule, the element's selector and, for contrast, the colors axe measured. Every page's violations, known ones included, go to `reports/a11y/<theme>/<page>.json` and are attached to the test in the Playwright report.
+
+Violations caused by an open upstream bug go in [`tests/a11y/known-issues.js`](tests/a11y/known-issues.js), with the axe rule, the exact pages, the colors (`#ffffff on #0087fe`) or a `target` pattern for the selector, and the tracking issue. An intended one, like a disabled control that axe can't tell is disabled, gets a `reason` instead. When a listed violation stops happening on a page, the run fails, so the entry gets removed and the tracking issue moves to `upstream-fixed` (see [Upstream issues](#upstream-issues)).
+
+The scan takes under a minute, so [`.github/workflows/a11y.yml`](.github/workflows/a11y.yml) runs all of it on every pull request, every night and on demand, and uploads `reports/a11y/` as an artifact. The canary runs it on every Bootstrap update.
+
 ## Browser engines
 
-v6 leans on features whose support differs between engines at the floors of Bootstrap's `.browserslistrc` (Chrome 130, Firefox 132, Safari 18): `light-dark()`, `color-mix()`, `oklch()`, `:has()`, `@layer`, `<dialog>`. Every suite runs in each of Playwright's engines, as one project per engine: `visual`, `visual-firefox`, `visual-webkit`, `console`, `console-firefox` and so on. The unsuffixed projects are Chromium, and `npm run test:visual`, `test:console` and `test:smoke` run only those, for speed:
+v6 leans on features whose support differs between engines at the floors of Bootstrap's `.browserslistrc` (Chrome 130, Firefox 132, Safari 18): `light-dark()`, `color-mix()`, `oklch()`, `:has()`, `@layer`, `<dialog>`. Every suite but the [accessibility scan](#accessibility-scan) runs in each of Playwright's engines, as one project per engine: `visual`, `visual-firefox`, `visual-webkit`, `console`, `console-firefox` and so on. The unsuffixed projects are Chromium, and `npm run test:visual`, `test:console` and `test:smoke` run only those, for speed:
 
 ```sh
 npx playwright install firefox webkit   # once
@@ -628,7 +646,7 @@ npx vite preview --base /bootstrap-test-playground/
 
 Potential Bootstrap bugs found here are tracked as issues in this repository. Each one carries one of three labels as it moves through the process: `upstream` (not reported yet), then `upstream-reported`, then `upstream-fixed`, when the issue is closed. The workflow is in [CLAUDE.md](CLAUDE.md).
 
-This includes the bugs the checks find: console errors, Sass warnings from Bootstrap's files, a stale dist and token findings. Each one gets a tracking issue before it's allowlisted in [`tests/console/known-issues.js`](tests/console/known-issues.js) or [`scripts/known-tokens.mjs`](scripts/known-tokens.mjs), and the allowlist entry carries the issue number. When a check reports that a known entry is gone, the fix has landed: move the issue to `upstream-fixed` and close it.
+This includes the bugs the checks find: console errors, accessibility violations, Sass warnings from Bootstrap's files, a stale dist and token findings. Each one gets a tracking issue before it's allowlisted in [`tests/console/known-issues.js`](tests/console/known-issues.js), [`tests/a11y/known-issues.js`](tests/a11y/known-issues.js) or [`scripts/known-tokens.mjs`](scripts/known-tokens.mjs), and the allowlist entry carries the issue number. When a check reports that a known entry is gone, the fix has landed: move the issue to `upstream-fixed` and close it.
 
 ## License
 

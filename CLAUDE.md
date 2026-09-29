@@ -22,7 +22,8 @@ A Vite multi-page playground for Bootstrap v6 (`twbs/bootstrap`, branch `v6-dev`
 - To see what a change does to the rendering, record baselines with `npm run test:visual -- -u` before it and run `npm run test:visual` after it. See "Visual regression tests" in the README.
 - `npm run test:console` must stay green. When an open upstream bug makes a page log errors, allowlist it in `tests/console/known-issues.js` with its tracking issue number. See "Console crawl" in the README. Pull requests only crawl what they change (`npm run test-scope` shows it), so run the scoped crawl locally, and the full one after a shared change.
 - `npm run test:smoke` must stay green. When an open upstream bug breaks a component's scenario, list it in `tests/smoke/known-issues.js` with its tracking issue number. See "Interaction smoke tests" in the README. Pull requests run a scoped subset too (`SMOKE_SCOPE` from `npm run test-scope`), and Firefox and WebKit only the working copy and dist.
-- Every suite also runs in Firefox and WebKit (`npm run test:smoke:engines`, `test:console:engines`, `test:visual:engines`). The `update-baselines` label records visual baselines for all three. Never merge before its `update` job has pushed them: `compare` fails until then, and turns green on the job's commit. An engine-only failure gets a tracking issue too, and its known-issues entry takes `engines` (for example `['webkit']`). See "Browser engines" in the README.
+- `npm run test:a11y` must stay green. It scans every page with axe-core, default config, light and dark. When an open upstream bug causes a violation, allowlist it in `tests/a11y/known-issues.js` with its tracking issue number, or a `reason` when intended. See "Accessibility scan" in the README.
+- Every suite but `test:a11y` also runs in Firefox and WebKit (`npm run test:smoke:engines`, `test:console:engines`, `test:visual:engines`). The `update-baselines` label records visual baselines for all three. Never merge before its `update` job has pushed them: `compare` fails until then, and turns green on the job's commit. An engine-only failure gets a tracking issue too, and its known-issues entry takes `engines` (for example `['webkit']`). See "Browser engines" in the README.
 - Mark a page's own playground UI (headers, navigation, notes around the markup under test) with `data-playground-chrome`, so `?chrome=0` hides it for screenshots.
 - Reproductions go in `issues/<name>/` (`npm run new-issue <name> -- --config <config>`). Name them after the upstream issue number when one exists, or `pg-<number>` after the issue in this repository.
 
@@ -36,9 +37,10 @@ A Vite multi-page playground for Bootstrap v6 (`twbs/bootstrap`, branch `v6-dev`
 
 Whenever you find a potential bug in Bootstrap itself (not in this playground), record it as an issue in **this repository** (`julien-deramond/bootstrap-test-playground`), then keep its label in sync with what happens upstream. Never open issues or PRs on `twbs/bootstrap`, and never comment there, unless the user explicitly asks.
 
-This includes everything the check scripts surface: `npm run test:console`, `test:smoke`, `test:visual`, `check-configs` (warnings from `bootstrap/scss/`), `check-dist` (a stale `dist` line), `audit-tokens`, `compile-matrix`, `audit-rtl`, `audit-motion`, `audit-layers`, `audit-partials` and `lint:html`. Every Bootstrap bug they find gets a tracking issue (steps 1 and 2 below) **before** it goes into an allowlist. The allowlist entry then references it with `issue: <n>`:
+This includes everything the check scripts surface: `npm run test:console`, `test:smoke`, `test:visual`, `test:a11y`, `check-configs` (warnings from `bootstrap/scss/`), `check-dist` (a stale `dist` line), `audit-tokens`, `compile-matrix`, `audit-rtl`, `audit-motion`, `audit-layers`, `audit-partials` and `lint:html`. Every Bootstrap bug they find gets a tracking issue (steps 1 and 2 below) **before** it goes into an allowlist. The allowlist entry then references it with `issue: <n>`:
 
 - `tests/console/known-issues.js` and `tests/smoke/known-issues.js`: every entry has an `issue`
+- `tests/a11y/known-issues.js`: `issue` for bugs, `reason` only for intended markup, never both
 - `scripts/known-tokens.mjs`, `scripts/known-options.mjs`, `scripts/known-rtl.mjs`, `scripts/known-motion.mjs`, `scripts/known-layers.mjs`, `scripts/known-partials.mjs` and `scripts/known-html.mjs`: `issue` for bugs, `reason` only for intended behavior, never both
 
 When a script reports that a known entry no longer happens, that's step 3 for its issue.
@@ -94,7 +96,7 @@ Also put the upstream link in the reproduction page, if there is one.
 
 When the upstream fix lands on `v6-dev`, meaning the PR is merged or the issue is closed as completed:
 
-1. Check the fix in the playground when practical (`npm run update-bootstrap`, then the reproduction page), and remove the issue's entries from `tests/console/known-issues.js`, `tests/smoke/known-issues.js`, `scripts/known-tokens.mjs`, `scripts/known-options.mjs`, `scripts/known-rtl.mjs`, `scripts/known-motion.mjs`, `scripts/known-layers.mjs`, `scripts/known-partials.mjs` and `scripts/known-html.mjs`, and the `data-issue` of `issues/pg-27/` checks.
+1. Check the fix in the playground when practical (`npm run update-bootstrap`, then the reproduction page), and remove the issue's entries from `tests/console/known-issues.js`, `tests/smoke/known-issues.js`, `tests/a11y/known-issues.js`, `scripts/known-tokens.mjs`, `scripts/known-options.mjs`, `scripts/known-rtl.mjs`, `scripts/known-motion.mjs`, `scripts/known-layers.mjs`, `scripts/known-partials.mjs` and `scripts/known-html.mjs`, and the `data-issue` of `issues/pg-27/` checks.
 2. Update and close:
    ```sh
    gh issue edit <n> --remove-label upstream-reported --add-label upstream-fixed
