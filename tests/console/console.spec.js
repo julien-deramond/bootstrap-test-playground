@@ -35,6 +35,39 @@ const VARIANTS = [
 
 const urls = ['/', '/compare.html', '/matrix.html', '/sizes.html', ...collectPages('/').flatMap(({ pages }) => pages.map(({ url }) => url))]
 
+// How long the network must stay quiet before the page counts as settled.
+const QUIET_MS = 500
+
+// Counts the page's requests in flight, including its frames'. `settled()`
+// resolves once none has been in flight for QUIET_MS, like Playwright's
+// `networkidle`, which in WebKit sometimes never fires on /matrix.html: its
+// off-screen lazy iframes never navigate, and the frame tree never reports
+// idle (#259).
+function trackRequests(page) {
+  let inflight = 0
+  let lastActivity = Date.now()
+  const done = () => {
+    inflight--
+    lastActivity = Date.now()
+  }
+
+  page.on('request', () => {
+    inflight++
+    lastActivity = Date.now()
+  })
+  page.on('requestfinished', done)
+  page.on('requestfailed', done)
+
+  return {
+    async settled() {
+      while (inflight > 0 || Date.now() - lastActivity < QUIET_MS) {
+        // eslint-disable-next-line no-await-in-loop
+        await page.waitForTimeout(100)
+      }
+    }
+  }
+}
+
 const scope = process.env.CONSOLE_SCOPE ? JSON.parse(process.env.CONSOLE_SCOPE) : { full: true }
 const inScope = (variant, url) => scope.full || ['working', 'dist'].includes(variant) ||
   scope.configs.includes(variant) || scope.urls.includes(url)
@@ -48,6 +81,7 @@ for (const theme of THEMES) {
         test(url, async ({ page, baseURL, browserName }) => {
           const { origin } = new URL(baseURL)
           const problems = []
+          const requests = trackRequests(page)
 
           // Remote resources (avatars, web fonts) aren't the playground's to
           // fix, and an unreachable one must not fail the run.
@@ -75,7 +109,7 @@ for (const theme of THEMES) {
           await page.goto(`${url}?${params}`)
           await page.waitForFunction(() => !document.getElementById('playground-config-pending'))
           // Catches errors thrown by late scripts and timers too.
-          await page.waitForLoadState('networkidle')
+          await requests.settled()
 
           const known = knownIssues.filter(entry => entry.pages.includes(url) && (!entry.engines || entry.engines.includes(browserName)))
           const unexpected = problems.filter(problem => !known.some(({ message }) => message.test(problem)))
