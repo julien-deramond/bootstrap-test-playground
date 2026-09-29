@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-playground-busy>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -235,6 +235,9 @@
         }
 
         html.dataset.utilityCases = 'done'
+        // The visual suite waits for this to go before its screenshot. It's in
+        // the markup: this script can run after `load`, too late to set it.
+        delete html.dataset.playgroundBusy
       }
 
       // In a build, this script runs after src/js/main.js, which may be after

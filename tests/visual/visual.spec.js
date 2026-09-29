@@ -47,9 +47,9 @@ for (const theme of THEMES) {
             // A non-default config hides the page until its styles are swapped in.
             await page.waitForFunction(() => !document.getElementById('playground-config-pending'))
             await page.evaluate(() => document.fonts.ready)
-            // Check pages that are still working after they load, like
-            // pages/color-modes.html (overlays, color modes) or the entry
-            // point pages (checks after `load`), mark <html> until they're done.
+            // Pages that are still working after they load, like check pages
+            // (markers drawn after `load`) or pages/color-modes.html (overlays,
+            // color modes), mark <html> until they're done.
             await page.waitForFunction(() => !('playgroundBusy' in document.documentElement.dataset), null, { timeout: 30_000 })
 
             // `issues/pg-1/` → issues/pg-1, `kitchen-sink/forms-radio.html` → kitchen-sink/forms-radio
