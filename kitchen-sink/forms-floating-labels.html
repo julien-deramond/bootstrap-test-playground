@@ -83,9 +83,11 @@
           <a href="#example-3">Example</a>
           <a href="#textareas-2">Textareas</a>
           <a href="#selects">Selects</a>
+          <a href="#date-and-time">Date and time</a>
           <a href="#disabled">Disabled</a>
           <a href="#readonly-plaintext">Readonly plaintext</a>
           <a href="#input-groups-2">Input groups</a>
+          <a href="#always-floating">Always floating</a>
           <a href="#layout">Layout</a>
         </p>
       </nav>
@@ -159,6 +161,20 @@
         </div>
       </section>
 
+      <section class="bd-kitchen-sink-section" aria-labelledby="date-and-time">
+        <h2 class="h5" id="date-and-time" data-playground-chrome>Date and time</h2>
+        <div class="bd-example vstack gap-3">
+          <div class="form-floating">
+            <label for="floatingDate">Date</label>
+            <input type="date" class="form-control" id="floatingDate">
+          </div>
+          <div class="form-floating">
+            <label for="floatingTime">Time</label>
+            <input type="time" class="form-control" id="floatingTime">
+          </div>
+        </div>
+      </section>
+
       <section class="bd-kitchen-sink-section" aria-labelledby="disabled">
         <h2 class="h5" id="disabled" data-playground-chrome>Disabled</h2>
         <div class="bd-example vstack gap-3">
@@ -227,6 +243,20 @@
             <div class="invalid-feedback">
               Please choose a username.
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="bd-kitchen-sink-section" aria-labelledby="always-floating">
+        <h2 class="h5" id="always-floating" data-playground-chrome>Always floating</h2>
+        <div class="bd-example vstack gap-3">
+          <div class="form-floating form-floating-always">
+            <label for="alwaysFloatingInput">Email address</label>
+            <input type="email" class="form-control" id="alwaysFloatingInput" placeholder="name@example.com">
+          </div>
+          <div class="form-floating form-floating-always">
+            <label for="alwaysFloatingPassword">Password</label>
+            <input type="password" class="form-control" id="alwaysFloatingPassword" placeholder="••••••••">
           </div>
         </div>
       </section>
