@@ -609,7 +609,7 @@ Each failure names the page, the rule, the element's selector and, for contrast,
 
 Violations caused by an open upstream bug go in [`tests/a11y/known-issues.js`](tests/a11y/known-issues.js), with the axe rule, the exact pages, the colors (`#ffffff on #0087fe`) or a `target` pattern for the selector, and the tracking issue. An intended one, like a disabled control that axe can't tell is disabled, gets a `reason` instead. When a listed violation stops happening on a page, the run fails, so the entry gets removed and the tracking issue moves to `upstream-fixed` (see [Upstream issues](#upstream-issues)).
 
-The scan takes under a minute, so [`.github/workflows/a11y.yml`](.github/workflows/a11y.yml) runs all of it on every pull request, every night and on demand, and uploads `reports/a11y/` as an artifact. The canary runs it on every Bootstrap update.
+The scan takes about two minutes on CI, so [`.github/workflows/a11y.yml`](.github/workflows/a11y.yml) runs all of it on every pull request, every night and on demand, and uploads `reports/a11y/` as an artifact. The canary runs it on every Bootstrap update.
 
 ## Browser engines
 
