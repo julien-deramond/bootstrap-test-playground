@@ -3,9 +3,9 @@
 // (tests/visual/focus.spec.js). The page fills each surface
 // ([data-focus-surface]) with components ([data-focus]) from its templates.
 //
-// The viewport grows to the whole page first, so nothing scrolls between the
-// unfocused screenshot of a surface and the focused screenshots of its
-// components, and each component's pixels line up in both.
+// Each surface is scrolled into view whole first, and nothing scrolls between
+// its unfocused screenshot and the focused screenshots of its components, so
+// each component's pixels line up in both.
 import fs from 'node:fs'
 import path from 'node:path'
 import { root } from '../../scripts/lib/configs.mjs'
@@ -77,24 +77,42 @@ function focusComponent([surface, index]) {
   const FOCUSABLE = 'a[href], button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])'
   const component = document.querySelectorAll(`[data-focus-surface="${surface}"] [data-focus]`)[index]
   const target = component.querySelector('[data-focus-target]') ?? (component.matches(FOCUSABLE) ? component : component.querySelector(FOCUSABLE))
-  target.focus({ focusVisible: true })
+  target.focus({ focusVisible: true, preventScroll: true })
   return document.activeElement === target && target.matches(':focus-visible')
 }
 
 // Screenshots the surface with nothing focused, then each component focused.
-// `unfocused` covers `rect`, and each item's `focused` covers its `clip`.
+// `unfocused` covers `rect`, and each item's `focused` covers its `clip`, in
+// viewport coordinates once the surface is scrolled to the top.
 export async function captureSurface(page, surface) {
-  const width = page.viewportSize().width
-  const height = await page.evaluate(() => document.documentElement.scrollHeight)
-  if (page.viewportSize().height !== height) {
-    await page.setViewportSize({ width, height })
+  // Once per page: a viewport as tall as the tallest surface, so each surface
+  // fits whole, and no transitions or caret, so no screenshot has to wait for
+  // them. Screenshots of a taller viewport, or with Playwright's own
+  // `animations` and `caret` options, which restyle the page every time, take
+  // several times longer.
+  await page.evaluate(() => {
+    if (!document.getElementById('playground-focus-static')) {
+      const style = document.createElement('style')
+      style.id = 'playground-focus-static'
+      style.textContent = '*, ::before, ::after { transition: none !important; animation: none !important; caret-color: transparent !important; }'
+      document.head.append(style)
+    }
+  })
+  const tallest = await page.evaluate(() => Math.max(...[...document.querySelectorAll('[data-focus-surface]')].map(element => element.getBoundingClientRect().height)))
+  const { width, height } = page.viewportSize()
+  if (height < Math.ceil(tallest) + 2 * PADDING) {
+    await page.setViewportSize({ width, height: Math.ceil(tallest) + 2 * PADDING })
   }
 
   // A key press puts the page in keyboard modality, where focus() shows rings.
   await page.keyboard.press('Shift')
-  await page.evaluate(() => document.activeElement?.blur())
+  await page.evaluate(([surface, padding]) => {
+    document.activeElement?.blur()
+    const top = document.querySelector(`[data-focus-surface="${surface}"]`).getBoundingClientRect().top
+    window.scrollTo(0, window.scrollY + top - padding)
+  }, [surface, PADDING])
 
-  const shot = clip => page.screenshot({ clip, animations: 'disabled', caret: 'hide', scale: 'css' })
+  const shot = clip => page.screenshot({ clip, scale: 'css' })
   const { rect, items } = await page.evaluate(layout, [surface, PADDING])
   const unfocused = await shot(rect)
 

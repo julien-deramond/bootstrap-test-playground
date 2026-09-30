@@ -887,10 +887,10 @@ export default [
     pages: ['/pages/focus.html'],
     reason: 'the ring surrounds the thumb, a sub-component that the check can\'t measure apart from the track'
   },
-  // Every component that draws Bootstrap's ring. Its contrast depends on the
-  // surface, the mode and the config's palette, radii and sizes, so one entry
-  // covers them all: the visual captures (tests/visual/focus.spec.js) show
-  // any change to a ring.
+  // Every component that draws Bootstrap's ring, which fails on most surfaces
+  // in light mode and on many in dark mode: one entry covers them all, and
+  // the visual captures (tests/visual/focus.spec.js) show any change to a
+  // ring.
   {
     rule: 'focus-appearance',
     target: / (?!(chip-input-chip|menu-item|list-group-action)(-|$)|(btn-close|link|range)$)/,
