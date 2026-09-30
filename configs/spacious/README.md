@@ -22,3 +22,4 @@ Category: layout
 ## Known gaps
 
 - [#178](https://github.com/julien-deramond/bootstrap-test-playground/issues/178): the chip input stays 54px tall with 28px chips.
+- [#262](https://github.com/julien-deramond/bootstrap-test-playground/issues/262): the stepper's *Overflow* example scrolls at 1280px, and its `.stepper-overflow` can't be reached from the keyboard.
