@@ -26,7 +26,13 @@ import knownIssues from './known-issues.js'
 const list = (name, fallback) => (process.env[name] || fallback).split(',').map(value => value.trim()).filter(Boolean)
 
 const THEMES = ['light', 'dark']
-const ALL_CONFIGS = listConfigs().map(({ name }) => name)
+
+// Builds of part of Bootstrap leave most pages unstyled on purpose, where
+// unstyled links and controls fail target-size and contrast for no reason.
+// Their own pages (pages/grid-only.html…) load their config whatever
+// `?config` says, so the default config's run scans those.
+const PARTIAL_BUILDS = ['grid-only', 'partial', 'reboot-only', 'utilities-only']
+const ALL_CONFIGS = listConfigs().map(({ name }) => name).filter(name => !PARTIAL_BUILDS.includes(name))
 const CONFIGS = process.env.A11Y_CONFIGS === 'all' ? ALL_CONFIGS : list('A11Y_CONFIGS', 'default')
 
 // Every entry names the axe rule, the pages it happens on, and either the

@@ -4,7 +4,9 @@
 // measured (`#ffffff on #0087fe`), the exact pages it happens on, `themes`
 // to limit it to light or dark, and `configs` to limit it to some configs.
 // Without `configs`, an entry is expected with the default config and allowed
-// with every other one; with it, it's expected with exactly those. Then
+// with every other one; with it, it's expected with exactly those. An
+// element that violates the same rule with the default config, under an
+// entry, is that entry's with every config, whatever its colors. Then
 // either `issue`, the tracking issue of an upstream bug in this repository,
 // or `reason` when the markup or a config's choice is intended, never both.
 // If an entry stops matching on one of its pages, the run fails, so the entry
@@ -416,5 +418,326 @@ export default [
       '/pages/utility-api.html'
     ],
     reason: 'check page sample: it tests which background applies, the body text on a primary fill is incidental'
+  },
+  // Violations of one config only, beyond what it inherits from the default
+  // config's entries (A11Y_CONFIGS=all).
+  {
+    rule: 'color-contrast',
+    colors: '#006ac9 on #c9eaff',
+    themes: ['light'],
+    configs: [
+      'breakpoints-custom',
+      'root-62-5'
+    ],
+    pages: ['/kitchen-sink/components-stepper.html'],
+    issue: 183
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#008c45 on #cff1dd',
+    themes: ['light'],
+    configs: ['breakpoints-custom'],
+    pages: ['/kitchen-sink/components-stepper.html'],
+    issue: 183
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#ffffff on #0087fe',
+    configs: ['no-gradients'],
+    pages: ['/kitchen-sink/components-nav.html'],
+    issue: 183
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#ffffff on #00b15a',
+    themes: ['light'],
+    configs: ['shadcn'],
+    pages: ['/kitchen-sink/components-card.html'],
+    issue: 183
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#0087fe on #ffffff',
+    themes: ['light'],
+    configs: ['brand'],
+    pages: [
+      '/kitchen-sink/components-menu.html',
+      '/pages/marketing-pricing.html',
+      '/pages/marketing-product.html'
+    ],
+    issue: 253
+  },
+  {
+    rule: 'scrollable-region-focusable',
+    target: /\.stepper-overflow/,
+    configs: [
+      'breakpoints-custom',
+      'large-type',
+      'spacious'
+    ],
+    pages: ['/kitchen-sink/components-stepper.html'],
+    issue: 262
+  },
+  {
+    rule: 'target-size',
+    configs: ['compact'],
+    pages: [
+      '/kitchen-sink/components-pagination.html',
+      '/pages/marketing-product.html'
+    ],
+    reason: 'compact config: its denser controls, pagination and link lists go under WCAG 2.2\'s 24px target size on purpose'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#657383 on #06080a',
+    themes: ['dark'],
+    configs: ['gray-cool'],
+    pages: [
+      '/kitchen-sink/components-breadcrumb.html',
+      '/kitchen-sink/components-card.html',
+      '/kitchen-sink/components-menu.html',
+      '/kitchen-sink/components-placeholder.html',
+      '/kitchen-sink/components-stepper.html',
+      '/kitchen-sink/components-tooltip.html',
+      '/kitchen-sink/forms-datepicker.html',
+      '/kitchen-sink/forms-password-strength.html',
+      '/pages/custom-property-prefix.html',
+      '/screens/cards.html',
+      '/screens/dashboard.html',
+      '/screens/playground.html',
+      '/screens/tasks.html'
+    ],
+    reason: 'gray-cool config: its `$gray` moves the muted text (`fg-3`) and subtle secondary steps, which drop under 4.5:1 in dark on purpose'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#657383 on #0b0f12',
+    themes: ['dark'],
+    configs: ['gray-cool'],
+    pages: [
+      '/screens/cards.html',
+      '/screens/dashboard.html'
+    ],
+    reason: 'gray-cool config: its `$gray` moves the muted text (`fg-3`) and subtle secondary steps, which drop under 4.5:1 in dark on purpose'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#828e9b on #252b32',
+    themes: ['dark'],
+    configs: ['gray-cool'],
+    pages: [
+      '/kitchen-sink/components-accordion.html',
+      '/kitchen-sink/components-alert.html',
+      '/kitchen-sink/components-avatar.html',
+      '/kitchen-sink/components-badge.html',
+      '/kitchen-sink/components-button.html',
+      '/kitchen-sink/components-list-group.html',
+      '/kitchen-sink/components-stepper.html',
+      '/kitchen-sink/forms-chips.html',
+      '/screens/cards.html',
+      '/screens/playground.html',
+      '/screens/tasks.html'
+    ],
+    reason: 'gray-cool config: its `$gray` moves the muted text (`fg-3`) and subtle secondary steps, which drop under 4.5:1 in dark on purpose'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#7f6e60 on #0a0705',
+    themes: ['dark'],
+    configs: ['gray-warm'],
+    pages: [
+      '/kitchen-sink/components-breadcrumb.html',
+      '/kitchen-sink/components-card.html',
+      '/kitchen-sink/components-menu.html',
+      '/kitchen-sink/components-placeholder.html',
+      '/kitchen-sink/components-stepper.html',
+      '/kitchen-sink/components-tooltip.html',
+      '/kitchen-sink/forms-datepicker.html',
+      '/kitchen-sink/forms-password-strength.html',
+      '/pages/custom-property-prefix.html',
+      '/screens/cards.html',
+      '/screens/dashboard.html',
+      '/screens/playground.html',
+      '/screens/tasks.html'
+    ],
+    reason: 'gray-warm config: its `$gray` moves the muted text (`fg-3`) and subtle secondary steps, which drop under 4.5:1 in dark on purpose'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#7f6e60 on #110d0a',
+    themes: ['dark'],
+    configs: ['gray-warm'],
+    pages: [
+      '/screens/cards.html',
+      '/screens/dashboard.html'
+    ],
+    reason: 'gray-warm config: its `$gray` moves the muted text (`fg-3`) and subtle secondary steps, which drop under 4.5:1 in dark on purpose'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#98897e on #302923',
+    themes: ['dark'],
+    configs: ['gray-warm'],
+    pages: [
+      '/kitchen-sink/components-accordion.html',
+      '/kitchen-sink/components-alert.html',
+      '/kitchen-sink/components-avatar.html',
+      '/kitchen-sink/components-badge.html',
+      '/kitchen-sink/components-button.html',
+      '/kitchen-sink/components-list-group.html',
+      '/kitchen-sink/components-stepper.html',
+      '/kitchen-sink/forms-chips.html',
+      '/screens/cards.html',
+      '/screens/playground.html',
+      '/screens/tasks.html'
+    ],
+    reason: 'gray-warm config: its `$gray` moves the muted text (`fg-3`) and subtle secondary steps, which drop under 4.5:1 in dark on purpose'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#007f8d on #c3eef0',
+    themes: ['light'],
+    configs: ['hue-shift'],
+    pages: [
+      '/kitchen-sink/components-alert.html',
+      '/kitchen-sink/components-avatar.html',
+      '/kitchen-sink/components-badge.html',
+      '/kitchen-sink/components-button.html',
+      '/kitchen-sink/components-list-group.html',
+      '/kitchen-sink/forms-chips.html'
+    ],
+    reason: 'hue-shift config: every hue rotated 180° with the theme maps\' fixed `contrast` keys, whose WCAG ratios move with the hue (see its README)'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#ea7300 on #2d3136',
+    themes: ['dark'],
+    configs: ['hue-shift'],
+    pages: ['/pages/marketing-product.html'],
+    reason: 'hue-shift config: every hue rotated 180° with the theme maps\' fixed `contrast` keys, whose WCAG ratios move with the hue (see its README)'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#ffffff on #887700',
+    themes: ['dark'],
+    configs: ['hue-shift'],
+    pages: [
+      '/kitchen-sink/components-avatar.html',
+      '/kitchen-sink/components-badge.html',
+      '/kitchen-sink/components-button-group.html',
+      '/kitchen-sink/components-button.html',
+      '/kitchen-sink/components-card.html'
+    ],
+    reason: 'hue-shift config: every hue rotated 180° with the theme maps\' fixed `contrast` keys, whose WCAG ratios move with the hue (see its README)'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#ffffff on #887700',
+    themes: ['light'],
+    configs: ['hue-shift'],
+    pages: [
+      '/kitchen-sink/components-avatar.html',
+      '/kitchen-sink/components-badge.html',
+      '/kitchen-sink/components-button-group.html',
+      '/kitchen-sink/components-button.html'
+    ],
+    reason: 'hue-shift config: every hue rotated 180° with the theme maps\' fixed `contrast` keys, whose WCAG ratios move with the hue (see its README)'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#19191d on #6159e1',
+    themes: ['dark'],
+    configs: ['mono'],
+    pages: [
+      '/kitchen-sink/components-avatar.html',
+      '/kitchen-sink/components-badge.html',
+      '/kitchen-sink/components-button-group.html',
+      '/kitchen-sink/components-button.html',
+      '/kitchen-sink/components-card.html',
+      '/kitchen-sink/components-progress.html'
+    ],
+    reason: 'mono config: one base color for every hue, with the fixed `contrast` keys under 4.5:1 on it (see its README)'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#19191d on #6159e1',
+    themes: ['light'],
+    configs: ['mono'],
+    pages: [
+      '/kitchen-sink/components-avatar.html',
+      '/kitchen-sink/components-badge.html',
+      '/kitchen-sink/components-button-group.html',
+      '/kitchen-sink/components-button.html',
+      '/kitchen-sink/components-progress.html'
+    ],
+    reason: 'mono config: one base color for every hue, with the fixed `contrast` keys under 4.5:1 on it (see its README)'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#7b7dea on #303036',
+    themes: ['dark'],
+    configs: ['mono'],
+    pages: ['/pages/marketing-product.html'],
+    reason: 'mono config: one base color for every hue, with the fixed `contrast` keys under 4.5:1 on it (see its README)'
+  },
+  {
+    rule: 'target-size',
+    configs: ['root-62-5'],
+    pages: [
+      '/pages/dashboard.html',
+      '/screens/cards.html'
+    ],
+    reason: 'root-62-5 config: checks, radios, switches and pages/dashboard.css size themselves in `rem`, so a 62.5% root shrinks them under the 24px target size (see its README)'
+  },
+  {
+    rule: 'color-contrast',
+    target: /#overlay-datepicker/,
+    themes: ['light'],
+    configs: ['shadcn'],
+    pages: ['/pages/color-modes.html'],
+    reason: 'shadcn config: shadcn/ui\'s translucent dark input background (`dark:bg-input/30`) shows the light page through when only the input is dark'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#737373 on #ededed',
+    themes: ['light'],
+    configs: ['shadcn'],
+    pages: [
+      '/kitchen-sink/components-pagination.html',
+      '/screens/cards.html'
+    ],
+    reason: 'shadcn config: shadcn/ui\'s own neutral and destructive colors, under 4.5:1 in these pairings'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#737373 on #f5f5f5',
+    themes: ['light'],
+    configs: ['shadcn'],
+    pages: [
+      '/kitchen-sink/forms-field.html',
+      '/screens/dashboard.html'
+    ],
+    reason: 'shadcn config: shadcn/ui\'s own neutral and destructive colors, under 4.5:1 in these pairings'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#e7000b on #fde6e7',
+    themes: ['light'],
+    configs: ['shadcn'],
+    pages: [
+      '/kitchen-sink/components-alert.html',
+      '/kitchen-sink/components-avatar.html',
+      '/kitchen-sink/components-badge.html',
+      '/kitchen-sink/components-button.html',
+      '/kitchen-sink/components-list-group.html',
+      '/kitchen-sink/forms-chips.html'
+    ],
+    reason: 'shadcn config: shadcn/ui\'s own neutral and destructive colors, under 4.5:1 in these pairings'
+  },
+  {
+    rule: 'target-size',
+    configs: ['shadcn'],
+    pages: ['/screens/cards.html'],
+    reason: 'shadcn config: shadcn/ui\'s 16px checks and radios, closer together than WCAG 2.2\'s 24px target size allows'
   }
 ]
