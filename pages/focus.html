@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Focus rings</title>
+    <meta name="description" content="Focus rings: every focusable component (buttons of every variant, links, form controls, checks, radios, switches, range, OTP, chips, chip input, nav links, menu items, list group actions, pagination, accordion, close button) on bg-body, bg-1, bg-2, bg-3 and every theme's solid background, for every theme color, to check each ring's contrast when focused.">
+    <meta name="playground-tags" content="components, forms, a11y">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <style>
+      /* Room for the rings: 1rem between components, whatever the config's
+         spacers, so a ring never reaches its neighbor. */
+      [data-focus-surface] {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      [data-focus-surface] > div {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      [data-focus^="range"] {
+        width: 12rem;
+      }
+
+      .pg-theme-name {
+        width: 6rem;
+      }
+    </style>
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Pages</p>
+        <h1>Focus rings</h1>
+        <p class="fs-lg fg-2">
+          Every focusable component on <code>bg-body</code>, <code>bg-1</code> to <code>bg-3</code> and every theme's solid background, for every theme color. The accessibility scan focuses each one and measures its ring, and the visual suite captures them focused.
+        </p>
+        <p class="fg-2">
+          A ring passes when the pixels it changes contrast at least 3:1 with what was there before focus, over at least the area of a 2px perimeter of the component (WCAG 2.4.13). See <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/105">#105</a>, and <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/7">#7</a> for chips.
+        </p>
+      </header>
+
+      <!-- Each surface gets the components of #focus-components, and the
+           neutral ones a row of #focus-themed per theme color, from the script
+           at the end of the page. Each [data-focus] element is what gets
+           measured and captured, named by its value within its surface. What
+           gets focused is its [data-focus-target] descendant, the element
+           itself when it's focusable, or its first focusable descendant. The
+           ring is measured against the whole component, or against the
+           sub-component its data-focus-area selector names. -->
+      <h2 class="h5" data-playground-chrome><code>bg-body</code></h2>
+      <section class="bg-body rounded-3 mb-5" data-focus-surface="bg-body" data-focus-themed aria-label="bg-body"></section>
+
+      <h2 class="h5" data-playground-chrome><code>bg-1</code></h2>
+      <section class="bg-1 rounded-3 mb-5" data-focus-surface="bg-1" data-focus-themed aria-label="bg-1"></section>
+
+      <h2 class="h5" data-playground-chrome><code>bg-2</code></h2>
+      <section class="bg-2 rounded-3 mb-5" data-focus-surface="bg-2" data-focus-themed aria-label="bg-2"></section>
+
+      <h2 class="h5" data-playground-chrome><code>bg-3</code></h2>
+      <section class="bg-3 rounded-3 mb-5" data-focus-surface="bg-3" data-focus-themed aria-label="bg-3"></section>
+
+      <h2 class="h5" data-playground-chrome>Solid theme backgrounds</h2>
+      <section class="bg-primary fg-contrast-primary rounded-3 mb-3" data-focus-surface="primary" aria-label="primary"></section>
+      <section class="bg-accent fg-contrast-accent rounded-3 mb-3" data-focus-surface="accent" aria-label="accent"></section>
+      <section class="bg-success fg-contrast-success rounded-3 mb-3" data-focus-surface="success" aria-label="success"></section>
+      <section class="bg-danger fg-contrast-danger rounded-3 mb-3" data-focus-surface="danger" aria-label="danger"></section>
+      <section class="bg-warning fg-contrast-warning rounded-3 mb-3" data-focus-surface="warning" aria-label="warning"></section>
+      <section class="bg-info fg-contrast-info rounded-3 mb-3" data-focus-surface="info" aria-label="info"></section>
+      <section class="bg-inverse fg-contrast-inverse rounded-3 mb-3" data-focus-surface="inverse" aria-label="inverse"></section>
+      <section class="bg-secondary fg-contrast-secondary rounded-3 mb-3" data-focus-surface="secondary" aria-label="secondary"></section>
+
+      <template id="focus-components">
+        <div>
+          <a href="#" data-focus="link">Link</a>
+          <button type="button" class="btn-close" aria-label="Close" data-focus="btn-close"></button>
+          <button type="button" class="btn-icon btn-sm" aria-label="Next" data-focus="btn-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg>
+          </button>
+          <input type="text" class="form-control w-auto" aria-label="Text" data-focus="form-control">
+          <select class="form-control w-auto" aria-label="Select" data-focus="select">
+            <option>Choose one…</option>
+          </select>
+          <input type="text" class="form-control w-auto is-invalid" aria-label="Invalid text" data-focus="form-control-invalid">
+          <input type="text" class="form-control w-auto is-valid" aria-label="Valid text" data-focus="form-control-valid">
+          <input type="checkbox" class="check" aria-label="Check" data-focus="check">
+          <input type="checkbox" class="check is-invalid" aria-label="Invalid check" data-focus="check-invalid">
+          <input type="radio" class="radio" aria-label="Radio" data-focus="radio">
+          <div class="switch" data-focus="switch">
+            <input type="checkbox" role="switch" switch aria-label="Switch">
+          </div>
+          <div class="form-range" data-focus="range">
+            <input type="range" class="form-range-input" aria-label="Range">
+          </div>
+          <div class="otp" data-bs-otp data-focus="otp" data-focus-area=".otp-slot">
+            <input type="text" class="otp-input" maxlength="4" aria-label="Verification code">
+          </div>
+          <span class="chip" data-focus="chip-dismiss">
+            Dismissible
+            <button type="button" class="chip-dismiss" aria-label="Remove">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>
+            </button>
+          </span>
+          <div class="chip-input" data-bs-chips data-focus="chip-input">
+            <span class="chip" data-focus="chip-input-chip">Chip</span>
+            <input type="text" class="form-ghost" aria-label="Add a chip" data-focus-target>
+          </div>
+        </div>
+        <div>
+          <ul class="nav nav-tabs">
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#" data-focus="nav-tabs-active">Active</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" data-focus="nav-tabs-link">Link</a></li>
+          </ul>
+          <ul class="nav nav-pills">
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#" data-focus="nav-pills-active">Active</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" data-focus="nav-pills-link">Link</a></li>
+          </ul>
+          <ul class="pagination mb-0">
+            <li class="page-item"><a class="page-link" href="#" data-focus="page-link">1</a></li>
+            <li class="page-item active"><a class="page-link" href="#" aria-current="page" data-focus="page-link-active">2</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="menu show position-static">
+            <a class="menu-item" href="#" data-focus="menu-item">Menu item</a>
+            <a class="menu-item active" href="#" aria-current="true" data-focus="menu-item-active">Active item</a>
+          </div>
+          <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action" data-focus="list-group-action">List group action</a>
+            <a href="#" class="list-group-item list-group-item-action active" aria-current="true" data-focus="list-group-action-active">Active action</a>
+          </div>
+          <div class="accordion">
+            <details class="accordion-item">
+              <summary class="accordion-header" data-focus="accordion">
+                Accordion item
+                <svg class="accordion-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m2 5 6 6 6-6"/></svg>
+              </summary>
+              <div class="accordion-body">Body</div>
+            </details>
+          </div>
+        </div>
+      </template>
+
+      <!-- The script adds the theme's class to each [data-focus-theme] element
+           and the theme's name to each [data-focus]. -->
+      <template id="focus-themed">
+        <div>
+          <span class="pg-theme-name small" data-playground-chrome></span>
+          <button type="button" class="btn-solid" data-focus-theme data-focus="btn-solid">Solid</button>
+          <button type="button" class="btn-outline" data-focus-theme data-focus="btn-outline">Outline</button>
+          <button type="button" class="btn-subtle" data-focus-theme data-focus="btn-subtle">Subtle</button>
+          <button type="button" class="btn-text" data-focus-theme data-focus="btn-text">Text</button>
+          <button type="button" class="btn btn-link" data-focus-theme data-focus="btn-link">Link</button>
+          <label class="btn-check btn-outline" data-focus-theme data-focus="btn-check">
+            <input type="checkbox">
+            Toggle
+          </label>
+          <input type="checkbox" class="check" checked aria-label="Check" data-focus-theme data-focus="check">
+          <input type="radio" class="radio" checked aria-label="Radio" data-focus-theme data-focus="radio">
+          <div class="switch" data-focus-theme data-focus="switch">
+            <input type="checkbox" role="switch" switch checked aria-label="Switch">
+          </div>
+          <ul class="pagination mb-0" data-focus-theme>
+            <li class="page-item"><a class="page-link" href="#" data-focus="page-link">1</a></li>
+          </ul>
+          <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action" data-focus-theme data-focus="list-group-action">Action</a>
+          </div>
+          <div class="menu show position-static">
+            <a class="menu-item" href="#" data-focus-theme data-focus="menu-item">Menu item</a>
+          </div>
+          <div class="chip-input" data-bs-chips data-focus-theme data-focus="chip-input">
+            <span class="chip" data-focus="chip-input-chip">Chip</span>
+            <input type="text" class="form-ghost" aria-label="Add a chip" data-focus-target>
+          </div>
+        </div>
+      </template>
+    </main>
+
+    <!-- A classic script, so the surfaces are filled while the page parses,
+         before Bootstrap's DOMContentLoaded sets up the chips and OTP inputs. -->
+    <script>
+      const THEMES = ['primary', 'accent', 'success', 'danger', 'warning', 'info', 'inverse', 'secondary']
+      const components = document.getElementById('focus-components')
+      const themed = document.getElementById('focus-themed')
+
+      for (const surface of document.querySelectorAll('[data-focus-surface]')) {
+        surface.append(components.content.cloneNode(true))
+
+        if (!surface.hasAttribute('data-focus-themed')) {
+          continue
+        }
+
+        for (const theme of THEMES) {
+          const row = themed.content.cloneNode(true)
+          row.querySelector('.pg-theme-name').textContent = theme
+          for (const element of row.querySelectorAll('[data-focus-theme]')) {
+            element.classList.add(`theme-${theme}`)
+          }
+
+          for (const element of row.querySelectorAll('[data-focus]')) {
+            element.dataset.focus += `-${theme}`
+          }
+
+          surface.append(row)
+        }
+      }
+    </script>
+  </body>
+</html>

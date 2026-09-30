@@ -354,7 +354,7 @@ It exits with an error when a folder fails to compile, and with `-- --strict` wh
 
 ```text
 index.html               Home: every page, with search and filters
-pages/                   Starter screens (dashboard, checkout and sign-in forms, product and pricing marketing), utility API checks
+pages/                   Starter screens (dashboard, checkout and sign-in forms, product and pricing marketing), utility API checks, focus rings
 screens/                 Real app screens ported from shadcn/ui (dashboard, tasks, authentication, playground, cards, login and signup blocks)
 kitchen-sink/            One page per component or form doc, with all of its docs examples (generated)
 compare.html             Side-by-side comparison of any page
@@ -523,6 +523,8 @@ The default matrix is light and dark, LTR, with the working copy. Widen it with 
 | `VISUAL_DIRS` | `ltr` | `VISUAL_DIRS=ltr,rtl` |
 | `VISUAL_CONFIGS` | `working` | `VISUAL_CONFIGS=working,shadcn`, or `all` for every folder in `configs/` |
 
+[`focus.spec.js`](tests/visual/focus.spec.js) captures [`pages/focus.html`](pages/focus.html) focused, with the same matrix. Only one element can have focus at a time, so each component is focused alone and screenshotted, and the pixels its focus changes are pasted onto the unfocused surface: one image per surface, `focused-<surface>.png`, shows every ring at once. A component that doesn't match `:focus-visible` once focused fails the test.
+
 Baselines live in `tests/visual/screenshots/<platform>/`. Fonts and anti-aliasing differ between operating systems, so a baseline only compares with screenshots taken on the same one. Local baselines (`darwin/`, `win32/`) are ignored by git. Only `linux/`, the platform CI uses, is meant to be committed.
 
 ### In CI
@@ -618,6 +620,12 @@ axe skips hidden elements, so the page scan never sees what's inside a closed me
 
 ```sh
 npm run test:a11y -- -g "open light-default /kitchen-sink/components-menu"
+```
+
+axe doesn't check focus indicators either. [`pages/focus.html`](pages/focus.html) puts every focusable component on `bg-body`, `bg-1` to `bg-3` and each theme's solid background, with a row per theme color on the first four, and [`focus.spec.js`](tests/a11y/focus.spec.js) focuses them one at a time, with the same configs and scope as the page scan. It screenshots each component before and after, and measures its indicator the way WCAG 2.4.13 does: the pixels whose focused and unfocused colors contrast at least 3:1 must cover at least a 2px band along the component's edge, rounded corners included. Anti-aliased edges count for the part the ring covers. A component can name a sub-component to measure instead, like the OTP input's active slot (`data-focus-area`). A ring that fails is a `focus-appearance` violation named `<surface> <component>`, like `bg-1 btn-solid-primary`, with its most common change as its colors (`#6fc8ff on #ffffff`). Its entries in `known-issues.js` match that name with `target`, and the report goes to `reports/a11y/<config>/<theme>/focus/pages/focus.json`:
+
+```sh
+npm run test:a11y -- -g "focus dark-default"
 ```
 
 With every config, the scan loads about 5,500 pages. On pull requests, [`.github/workflows/a11y.yml`](.github/workflows/a11y.yml) scans what [`npm run test-scope`](#console-crawl) finds, with the same rules as the console crawl: the default config on every page, the changed configs on every page and the changed pages with every config, or everything after a shared change like a `tests/a11y/` edit. Everything runs every night, on demand and on the canary's pull request, split across four parallel jobs. Each job uploads its `reports/a11y/` as an artifact, and a summary job writes the `a11y-summary` table to the run's summary. Locally, limit a run the same way:
