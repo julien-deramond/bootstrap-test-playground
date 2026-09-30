@@ -359,7 +359,8 @@ export default [
     rule: 'target-size',
     target: /\[data-bs-slide-to=/,
     pages: [
-      '/kitchen-sink/components-carousel.html'
+      '/kitchen-sink/components-carousel.html',
+      '/pages/focus.html'
     ],
     issue: 255
   },
@@ -884,9 +885,15 @@ export default [
   },
   {
     rule: 'focus-appearance',
-    target: / ((menu-item|list-group-action)(-\w+)?|link)$/,
+    target: / ((menu-item|list-group-action)(-\w+)?|(card-stretched-)?link)$/,
     pages: ['/pages/focus.html'],
     issue: 272
+  },
+  {
+    rule: 'focus-appearance',
+    target: / carousel-indicator(-active)?$/,
+    pages: ['/pages/focus.html'],
+    issue: 274
   },
   {
     rule: 'focus-appearance',
@@ -900,7 +907,7 @@ export default [
   // ring.
   {
     rule: 'focus-appearance',
-    target: / (?!(chip-input-chip|menu-item|list-group-action)(-|$)|(btn-close|link|range)$)/,
+    target: / (?!(chip-input-chip|menu-item|list-group-action|carousel-indicator)(-|$)|(btn-close|(card-stretched-)?link|range)$)/,
     pages: ['/pages/focus.html'],
     issue: 270
   }

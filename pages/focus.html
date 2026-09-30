@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Focus rings</title>
-    <meta name="description" content="Focus rings: every focusable component (buttons of every variant, links, form controls, checks, radios, switches, range, OTP, chips, chip input, nav links, menu items, list group actions, pagination, accordion, close button) on bg-body, bg-1, bg-2, bg-3 and every theme's solid background, for every theme color, to check each ring's contrast when focused.">
+    <meta name="description" content="Focus rings: every focusable component (buttons of every variant, links, form controls, checks, radios, switches, range, OTP, chips, chip input, nav links, menu items, list group actions, pagination, accordion, close button, carousel controls and indicators, card with a stretched link) on bg-body, bg-1, bg-2, bg-3 and every theme's solid background, for every theme color, to check each ring's contrast when focused.">
     <meta name="playground-tags" content="components, forms, a11y">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <script src="/playground-prefs.js"></script>
@@ -149,6 +149,28 @@
             </details>
           </div>
         </div>
+        <div>
+          <div class="carousel" id="focus-carousel">
+            <div class="d-flex gap-3 align-items-center">
+              <button type="button" class="btn-icon btn-sm" data-bs-target="#focus-carousel" data-bs-slide="prev" data-focus="carousel-control">
+                <span class="carousel-icon-prev" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <div class="carousel-indicators">
+                <button type="button" data-bs-target="#focus-carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1" data-focus="carousel-indicator-active"></button>
+                <button type="button" data-bs-target="#focus-carousel" data-bs-slide-to="1" aria-label="Slide 2" data-focus="carousel-indicator"></button>
+              </div>
+            </div>
+          </div>
+          <!-- The link is what gets focused and measured; the capture covers
+               the card, which its ::after makes clickable. -->
+          <div class="card" data-focus="card-stretched-link" data-focus-area=".stretched-link">
+            <div class="card-body">
+              <p class="mb-2">Card</p>
+              <a href="#" class="stretched-link">Stretched link</a>
+            </div>
+          </div>
+        </div>
       </template>
 
       <!-- The script adds the theme's class to each [data-focus-theme] element
@@ -195,7 +217,18 @@
       const themed = document.getElementById('focus-themed')
 
       for (const surface of document.querySelectorAll('[data-focus-surface]')) {
-        surface.append(components.content.cloneNode(true))
+        // One carousel per surface, so each gets its own id.
+        const content = components.content.cloneNode(true)
+        const suffix = `-${surface.dataset.focusSurface}`
+        for (const element of content.querySelectorAll('[id]')) {
+          element.id += suffix
+        }
+
+        for (const element of content.querySelectorAll('[data-bs-target]')) {
+          element.dataset.bsTarget += suffix
+        }
+
+        surface.append(content)
 
         if (!surface.hasAttribute('data-focus-themed')) {
           continue
