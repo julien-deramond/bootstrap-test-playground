@@ -1,6 +1,7 @@
-// Playwright suites for the playground. See "Visual regression tests" in the
-// README. The suites run against a production build served by `vite preview`,
-// so they test what gets deployed, with BOOTSTRAP_PATH honored like in dev.
+// Playwright suites for the playground. See "Visual regression tests" in
+// docs/testing.md. The suites run against a production build served by
+// `vite preview`, so they test what gets deployed, with BOOTSTRAP_PATH
+// honored like in dev.
 import { defineConfig, devices } from '@playwright/test'
 
 const PORT = 4179

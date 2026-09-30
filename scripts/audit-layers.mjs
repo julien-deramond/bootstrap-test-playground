@@ -1,15 +1,16 @@
 #!/usr/bin/env node
-// Audits the cascade layers of configs/default's compiled CSS. The README's
-// customization rules (global tokens unlayered, component overrides in
-// `@layer custom`, utilities last) only hold if every rule sits in the layer
-// it should.
+// Audits the cascade layers of configs/default's compiled CSS. The
+// customization rules of docs/customizing.md (global tokens unlayered,
+// component overrides in `@layer custom`, utilities last) only hold if every
+// rule sits in the layer it should.
 // Usage: npm run audit-layers [-- --all | --render]
 //
 // Findings:
 //   - undeclared: an `@layer` block missing from the `@layer …;` statement,
 //     so it's ordered after every declared layer
-//   - unlayered: a rule outside any layer, other than the global tokens the
-//     README documents as unlayered (`:root`, `:host`, `[data-bs-theme]`).
+//   - unlayered: a rule outside any layer, other than the global tokens
+//     docs/customizing.md documents as unlayered (`:root`, `:host`,
+//     `[data-bs-theme]`).
 //     Unlayered rules beat every layer, utilities included.
 //   - split: a Bootstrap source file whose rules land in more than one layer
 //   - important: an `!important` declaration. Across layers `!important`
