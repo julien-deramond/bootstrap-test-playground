@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Checks that the playground's default CSS matches Bootstrap's committed
-// `dist/css/bootstrap.css`, which the README promises and which makes findings
-// here transferable upstream.
+// `dist/css/bootstrap.css`, which docs/bootstrap.md promises and which makes
+// findings here transferable upstream.
 // Usage: npm run check-dist
 //
 // Compiles `configs/default/main.scss` the way Vite does and compares it with
