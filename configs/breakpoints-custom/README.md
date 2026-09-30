@@ -23,3 +23,4 @@ Category: layout
 
 - [#190](https://github.com/julien-deramond/bootstrap-test-playground/issues/190): the `tablet` container width is output after the `lg` and `xl` ones, so `.container` stays 720px wide from 768px to 1920px instead of growing to 960px and 1200px.
 - [#191](https://github.com/julien-deramond/bootstrap-test-playground/issues/191): responsive placement only knows the default breakpoints: `tablet:` and `3xl:` are ignored, and `md:` still applies at 768px.
+- [#262](https://github.com/julien-deramond/bootstrap-test-playground/issues/262): the stepper's *Overflow* example scrolls at 1280px, and its `.stepper-overflow` can't be reached from the keyboard.

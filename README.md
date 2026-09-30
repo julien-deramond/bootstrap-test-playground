@@ -20,8 +20,9 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run test:visual [-- -u]` | Screenshots every page and compares with the baselines (see [Visual regression tests](#visual-regression-tests)) |
 | `npm run test:console` | Opens every page and fails on errors, warnings and failed requests (see [Console crawl](#console-crawl)) |
 | `npm run test:smoke` | Opens, drives and closes every JavaScript component and checks its state and events (see [Interaction smoke tests](#interaction-smoke-tests)) |
-| `npm run test:a11y` | Scans every page with axe-core at WCAG 2.2 AA, in light and dark with the default config (see [Accessibility scan](#accessibility-scan)) |
-| `npm run test-scope [-- <base>]` | Prints what the console crawl and the smoke tests have to run for the changes since `<base>` (see [Console crawl](#console-crawl)) |
+| `npm run test:a11y` | Scans every page with axe-core at WCAG 2.2 AA, in light and dark with the default config, or every config with `A11Y_CONFIGS=all` (see [Accessibility scan](#accessibility-scan)) |
+| `npm run a11y-summary` | Sums up the last accessibility scan per config: violating elements by axe rule (see [Accessibility scan](#accessibility-scan)) |
+| `npm run test-scope [-- <base>]` | Prints what the console crawl, the smoke tests and the accessibility scan have to run for the changes since `<base>` (see [Console crawl](#console-crawl)) |
 | `npm run test:smoke:engines` / `test:console:engines` | The same suites in Chromium, Firefox and WebKit (see [Browser engines](#browser-engines)) |
 | `npm run lint:html [-- --all]` | Validates the HTML of every page with html-validate (see [Validating HTML](#validating-html)) |
 | `npm run check-configs [-- --strict]` | Compiles the working copy, every config and every reproduction, and lists Sass errors and warnings (see [Checking configs](#checking-configs)) |
@@ -559,7 +560,7 @@ Problems caused by an open upstream bug go in [`tests/console/known-issues.js`](
 
 Sass `@warn` output shows up in the build log, not in the browser, so the crawl doesn't see it. [`npm run check-configs`](#checking-configs) reports it.
 
-The full crawl loads about 5,000 pages, and every new config or page adds a round of them. Most changes only need part of it: a changed config on every page, and a changed page with every config. `npm run test-scope` lists what changed since `origin/main` (or `-- <base>`), committed or not, and prints a `CONSOLE_SCOPE` value that limits the crawl to it, and a `SMOKE_SCOPE` value for the [smoke tests](#interaction-smoke-tests):
+The full crawl loads about 5,000 pages, and every new config or page adds a round of them. Most changes only need part of it: a changed config on every page, and a changed page with every config. `npm run test-scope` lists what changed since `origin/main` (or `-- <base>`), committed or not, and prints a `CONSOLE_SCOPE` value that limits the crawl to it, a `SMOKE_SCOPE` value for the [smoke tests](#interaction-smoke-tests) and an `A11Y_SCOPE` value for the [accessibility scan](#accessibility-scan):
 
 ```sh
 npm run test-scope
@@ -596,20 +597,28 @@ SMOKE_SCOPE='{"full":false,"configs":["pill"],"urls":[]}' npm run test:smoke
 
 ## Accessibility scan
 
-[`tests/a11y/`](tests/a11y/a11y.spec.js) runs [axe-core](https://github.com/dequelabs/axe-core) on every page with Bootstrap's default config ([`configs/default/`](configs/default/)), in light and dark, with the WCAG 2.0, 2.1 and 2.2 A and AA rules. It fails on any violation, like text under 4.5:1, a control without a name or a target under 24×24px.
+[`tests/a11y/`](tests/a11y/a11y.spec.js) runs [axe-core](https://github.com/dequelabs/axe-core) on every page with Bootstrap's default config ([`configs/default/`](configs/default/)), or with every config, in light and dark, with the WCAG 2.0, 2.1 and 2.2 A and AA rules. It fails on any violation, like text under 4.5:1, a control without a name or a target under 24×24px.
 
 It checks Bootstrap's markup and styles, not the playground: pages load with `?chrome=0`, and whatever is still marked `data-playground-chrome` is left out of the scan. The home, compare, matrix and sizes pages and the reproductions (`issues/`) are skipped. Reduced motion is emulated so no transition is caught halfway, and `?freeze` keeps the datepicker's labels the same. axe-core reads the DOM and computed styles, which don't depend on the engine, so the scan runs in Chromium only:
 
 ```sh
 npm run test:a11y
 npm run test:a11y -- -g "dark-default /kitchen-sink/components-alert"
+A11Y_CONFIGS=shadcn,high-contrast npm run test:a11y
+A11Y_CONFIGS=all npm run test:a11y
 ```
 
-Each failure names the page, the rule, the element's selector and, for contrast, the colors axe measured. Every page's violations, known ones included, go to `reports/a11y/<theme>/<page>.json` and are attached to the test in the Playwright report.
+`A11Y_CONFIGS` takes a list of configs, or `all`; without it, only the default config is scanned. `all` leaves out the builds of part of Bootstrap (`grid-only`, `partial`, `reboot-only` and `utilities-only`), which leave most pages unstyled on purpose; their own pages load their config whatever `?config` says, so the default run scans them. Custom palettes, radii and type scales are where contrast and focus rings break, and a config can fix a default violation as well as add one.
 
-Violations caused by an open upstream bug go in [`tests/a11y/known-issues.js`](tests/a11y/known-issues.js), with the axe rule, the exact pages, the colors (`#ffffff on #0087fe`) or a `target` pattern for the selector, and the tracking issue. An intended one, like a disabled control that axe can't tell is disabled, gets a `reason` instead. When a listed violation stops happening on a page, the run fails, so the entry gets removed and the tracking issue moves to `upstream-fixed` (see [Upstream issues](#upstream-issues)).
+Each failure names the page, the rule, the element's selector and, for contrast, the colors axe measured. Every page's violations, known ones included, go to `reports/a11y/<config>/<theme>/<page>.json` and are attached to the test in the Playwright report. `npm run a11y-summary` sums them up in a table with one row per config and one column per axe rule, to compare configs at a glance.
 
-The scan takes about two minutes on CI, so [`.github/workflows/a11y.yml`](.github/workflows/a11y.yml) runs all of it on every pull request, every night and on demand, and uploads `reports/a11y/` as an artifact. The canary runs it on every Bootstrap update.
+Violations caused by an open upstream bug go in [`tests/a11y/known-issues.js`](tests/a11y/known-issues.js), with the axe rule, the exact pages, the colors (`#ffffff on #0087fe`) or a `target` pattern for the selector, and the tracking issue. An intended one, like a disabled control that axe can't tell is disabled, or a config's palette under 4.5:1 on purpose, gets a `reason` instead. An entry without `configs` is expected with the default config and allowed with the others, since most keep its palette; an entry with `configs` is expected with exactly those configs. A config often only shifts the colors of a default violation, like `gray-cool` does to every gray, and then misses the entry's `colors`: when a config has a violation that no entry matches, the test scans the page with the default config too, and an element that violates the same rule there, under an entry, counts as that entry's. So only what the config itself breaks needs an entry of its own. When a listed violation stops happening on a page, the run fails, so the entry gets removed and the tracking issue moves to `upstream-fixed` (see [Upstream issues](#upstream-issues)).
+
+With every config, the scan loads about 5,500 pages. On pull requests, [`.github/workflows/a11y.yml`](.github/workflows/a11y.yml) scans what [`npm run test-scope`](#console-crawl) finds, with the same rules as the console crawl: the default config on every page, the changed configs on every page and the changed pages with every config, or everything after a shared change like a `tests/a11y/` edit. Everything runs every night, on demand and on the canary's pull request, split across four parallel jobs. Each job uploads its `reports/a11y/` as an artifact, and a summary job writes the `a11y-summary` table to the run's summary. Locally, limit a run the same way:
+
+```sh
+A11Y_CONFIGS=all A11Y_SCOPE='{"full":false,"configs":["pill"],"urls":[]}' npm run test:a11y
+```
 
 ## Browser engines
 

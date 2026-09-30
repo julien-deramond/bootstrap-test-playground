@@ -363,11 +363,11 @@
                   <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#chevron-down"/></svg>
                 </button>
                 <div class="menu" id="columnsMenu">
-                  <button class="menu-item selected" type="button" role="menuitemcheckbox" aria-checked="true" data-col-toggle="type">Type <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
-                  <button class="menu-item selected" type="button" role="menuitemcheckbox" aria-checked="true" data-col-toggle="status">Status <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
-                  <button class="menu-item selected" type="button" role="menuitemcheckbox" aria-checked="true" data-col-toggle="target">Target <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
-                  <button class="menu-item selected" type="button" role="menuitemcheckbox" aria-checked="true" data-col-toggle="limit">Limit <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
-                  <button class="menu-item selected" type="button" role="menuitemcheckbox" aria-checked="true" data-col-toggle="reviewer">Reviewer <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+                  <button class="menu-item selected" type="button" aria-pressed="true" data-col-toggle="type">Type <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+                  <button class="menu-item selected" type="button" aria-pressed="true" data-col-toggle="status">Status <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+                  <button class="menu-item selected" type="button" aria-pressed="true" data-col-toggle="target">Target <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+                  <button class="menu-item selected" type="button" aria-pressed="true" data-col-toggle="limit">Limit <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
+                  <button class="menu-item selected" type="button" aria-pressed="true" data-col-toggle="reviewer">Reviewer <svg class="menu-item-check" width="16" height="16" aria-hidden="true"><use href="#check"/></svg></button>
                 </div>
                 <button type="button" class="btn-outline theme-secondary btn-sm">
                   <svg class="bi" width="16" height="16" aria-hidden="true"><use href="#plus"/></svg>
@@ -912,7 +912,7 @@
       for (const item of document.querySelectorAll('[data-col-toggle]')) {
         item.addEventListener('click', () => {
           const visible = item.classList.toggle('selected')
-          item.setAttribute('aria-checked', visible)
+          item.setAttribute('aria-pressed', visible)
           for (const cell of table.querySelectorAll('[data-col="' + item.dataset.colToggle + '"]')) {
             cell.classList.toggle('d-none', !visible)
           }

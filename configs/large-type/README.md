@@ -22,3 +22,4 @@ Category: typography
 
 - [#185](https://github.com/julien-deramond/bootstrap-test-playground/issues/185): the datepicker's days, weekdays and header keep 12px and 16px.
 - [#188](https://github.com/julien-deramond/bootstrap-test-playground/issues/188): checks, radios and switches sit 1.5px to 2px above the center of their label (the large size 1.5px below).
+- [#262](https://github.com/julien-deramond/bootstrap-test-playground/issues/262): the stepper's *Overflow* example scrolls at 1280px, and its `.stepper-overflow` can't be reached from the keyboard.

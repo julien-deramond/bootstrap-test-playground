@@ -1,11 +1,16 @@
 name: Accessibility scan
 
-# Scans every page with axe-core at WCAG 2.2 AA, in light and dark, with
-# Bootstrap's default config, and fails on a violation that isn't listed in
-# tests/a11y/known-issues.js, or on an entry that no longer happens. The scan
-# takes about two minutes, so pull requests run all of it. It runs every night and
-# on demand too, and the canary runs it on every Bootstrap update. Each page's
-# violations, known ones included, are in the a11y-report artifact.
+# Scans every page with axe-core at WCAG 2.2 AA, in light and dark, with every
+# config but the partial builds, and fails on a violation that isn't listed in
+# tests/a11y/known-issues.js, or on an entry that no longer happens.
+#
+# Pull requests scan what they change (`npm run test-scope`): the default
+# config on every page, the changed configs on every page and the changed
+# pages with every config, or everything after a shared change. Everything
+# runs every night and on demand, split across four parallel jobs, and the
+# canary's pull request runs it on every Bootstrap update. Each page's
+# violations, known ones included, are in the a11y-report artifacts, and the
+# summary job sums them up per config and rule.
 on:
   pull_request:
   schedule:
@@ -20,8 +25,49 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  scan:
+  # What to scan, and in how many shards: one for a scoped pull request, four
+  # for everything.
+  scope:
     runs-on: ubuntu-24.04
+    outputs:
+      scope: ${{ steps.shards.outputs.scope }}
+      shards: ${{ steps.shards.outputs.shards }}
+    steps:
+      # Two commits: a pull request's merge commit and its base, HEAD^1.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run test-scope -- HEAD^1
+        if: ${{ github.event_name == 'pull_request' }}
+
+      # Without A11Y_SCOPE (nightly, on demand), the scan covers everything.
+      - id: shards
+        run: |
+          echo "scope=$A11Y_SCOPE" >> "$GITHUB_OUTPUT"
+          if [ -z "$A11Y_SCOPE" ] || [ "$(jq -r .full <<< "$A11Y_SCOPE")" = true ]; then
+            echo 'shards=[1, 2, 3, 4]' >> "$GITHUB_OUTPUT"
+          else
+            echo 'shards=[1]' >> "$GITHUB_OUTPUT"
+          fi
+
+  scan:
+    needs: scope
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.scope.outputs.shards) }}
+    env:
+      A11Y_CONFIGS: all
+      A11Y_SCOPE: ${{ needs.scope.outputs.scope }}
     steps:
       - uses: actions/checkout@v7
 
@@ -34,13 +80,32 @@ jobs:
 
       - run: npx playwright install --with-deps chromium
 
-      - run: npm run test:a11y -- --workers=4
+      - run: npm run test:a11y -- --workers=4 --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
       - uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
-          name: a11y-report
+          name: a11y-report-${{ matrix.shard }}
           path: |
             reports/a11y/
             tests/report/
           retention-days: 14
+
+  # Violations per config and rule, from every shard's reports.
+  summary:
+    needs: scan
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+
+      - uses: actions/download-artifact@v7
+        with:
+          pattern: a11y-report-*
+          merge-multiple: true
+
+      - run: npm run a11y-summary
