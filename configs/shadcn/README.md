@@ -4,7 +4,7 @@ shadcn/ui's default look (new-york style, neutral base color): near-black primar
 
 Category: themes
 
-Everything is Bootstrap configuration in `main.scss` (`$theme-colors`, `$theme-bgs`, `$theme-fgs`, `$theme-borders`, `$root-tokens` and component `$*-tokens`), with shadcn/ui's variable names in the comments. `_custom.scss` only holds what tokens can't express: focus ring placement, button shadows and hover colors. Geist loads from Google Fonts in `tokens.css`.
+Everything is Bootstrap configuration in `main.scss` (`$theme-colors`, `$theme-bgs`, `$theme-fgs`, `$theme-borders`, `$root-tokens` and component `$*-tokens`), with shadcn/ui's variable names in the comments. `_custom.scss` only holds what tokens can't express: focus ring placement, button shadows and hover colors. Geist and Geist Mono are self-hosted in `public/fonts/` and declared in `tokens.css`.
 
 ## What it stresses
 
