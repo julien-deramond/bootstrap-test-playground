@@ -1,12 +1,15 @@
 // Accessibility violations that the scan expects. Each entry names the axe
 // rule (`color-contrast`), optionally a `target` regular expression matched
 // against the node's selector and, for color-contrast, the `colors` axe
-// measured (`#ffffff on #0087fe`), the exact pages it happens on, and `themes`
-// to limit it to light or dark. Then either `issue`, the tracking issue of an
-// upstream bug in this repository, or `reason` when the markup is intended,
-// never both. If an entry stops matching on one of its pages, the run fails,
-// so the entry gets removed and the tracking issue checked (see "Upstream
-// issue tracking" in CLAUDE.md).
+// measured (`#ffffff on #0087fe`), the exact pages it happens on, `themes`
+// to limit it to light or dark, and `configs` to limit it to some configs.
+// Without `configs`, an entry is expected with the default config and allowed
+// with every other one; with it, it's expected with exactly those. Then
+// either `issue`, the tracking issue of an upstream bug in this repository,
+// or `reason` when the markup or a config's choice is intended, never both.
+// If an entry stops matching on one of its pages, the run fails, so the entry
+// gets removed and the tracking issue checked (see "Upstream issue tracking"
+// in CLAUDE.md).
 export default [
   {
     rule: 'color-contrast',

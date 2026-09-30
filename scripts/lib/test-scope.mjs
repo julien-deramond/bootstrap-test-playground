@@ -1,6 +1,7 @@
-// What the console crawl and the smoke tests have to run for a set of changed
-// files. A pull request that changes a config needs every page with that
-// config, and one that changes a page needs that page with every config.
+// What the console crawl, the smoke tests and the accessibility scan have to
+// run for a set of changed files. A pull request that changes a config needs
+// every page with that config, and one that changes a page needs that page
+// with every config.
 // Anything shared, or not recognized, needs everything. Used by
 // scripts/test-scope.mjs.
 import fs from 'node:fs'
@@ -8,9 +9,9 @@ import path from 'node:path'
 import { configsDir, root } from './configs.mjs'
 import { findHtmlFiles, PAGE_GROUPS } from './pages.mjs'
 
-// Files a suite (`console` or `smoke`) can't see: docs, the other suites and
-// workflows, and the scripts and allowlists that the build doesn't import
-// (scripts/lib/ is). A suite's own tests/<suite>/ and workflow are shared.
+// Files a suite (`console`, `smoke` or `a11y`) can't see: docs, the other
+// suites and workflows, and the scripts and allowlists that the build doesn't
+// import (scripts/lib/ is). A suite's own tests/<suite>/ and workflow are shared.
 const noEffect = suite => [
   /\.md$/,
   /^LICENSE$/,
