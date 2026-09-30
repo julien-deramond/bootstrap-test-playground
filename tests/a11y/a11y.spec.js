@@ -5,7 +5,8 @@
 // checked, not the playground's own UI. Reproductions (issues/) are left out
 // too, since they show bugs on purpose. axe skips what's hidden, so the
 // overlays (menus, dialogs, tooltips…) get a scan of their own, open:
-// overlays.spec.js. Focus rings get a check of their own too: focus.spec.js.
+// overlays.spec.js. Focus rings get a check of their own too: focus.spec.js,
+// and color pairings: contrast.spec.js.
 //
 // Violations caused by an open upstream bug, or intended, are listed in
 // known-issues.js. Each page's violations, known ones included, are attached
@@ -40,6 +41,9 @@ async function scan(page, url, theme, config) {
   const { violations } = await new AxeBuilder({ page })
     .withTags(TAGS)
     .exclude('[data-playground-chrome]')
+    // pages/contrast.html's tables, which show failing pairings on purpose:
+    // contrast.spec.js checks them.
+    .exclude('[data-contrast-check]')
     .analyze()
 
   return { params, nodes: toNodes(violations) }

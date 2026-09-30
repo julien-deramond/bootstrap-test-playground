@@ -22,6 +22,7 @@ Open <http://localhost:5173>. The home page lists every page, with search and fi
 | `npm run test:smoke` | Opens, drives and closes every JavaScript component and checks its state and events (see [Interaction smoke tests](#interaction-smoke-tests)) |
 | `npm run test:a11y` | Scans every page with axe-core at WCAG 2.2 AA, in light and dark with the default config, or every config with `A11Y_CONFIGS=all`, then every overlay open (see [Accessibility scan](#accessibility-scan)) |
 | `npm run a11y-summary` | Sums up the last accessibility scan per config: violating elements by axe rule (see [Accessibility scan](#accessibility-scan)) |
+| `npm run report:contrast [-- --config <name>]` | Measures every documented color pairing and the components that embed one, per config and color mode, and writes `reports/contrast/` (see [Accessibility scan](#accessibility-scan)) |
 | `npm run test-scope [-- <base>]` | Prints what the console crawl, the smoke tests and the accessibility scan have to run for the changes since `<base>` (see [Console crawl](#console-crawl)) |
 | `npm run test:smoke:engines` / `test:console:engines` | The same suites in Chromium, Firefox and WebKit (see [Browser engines](#browser-engines)) |
 | `npm run lint:html [-- --all]` | Validates the HTML of every page with html-validate (see [Validating HTML](#validating-html)) |
@@ -626,6 +627,13 @@ axe doesn't check focus indicators either. [`pages/focus.html`](pages/focus.html
 
 ```sh
 npm run test:a11y -- -g "focus dark-default"
+```
+
+axe measures the text on a page, not the pairings a palette promises. [`pages/contrast.html`](pages/contrast.html) measures each one the theme docs document, for every theme color the config has: `contrast` on `bg` and `base`, `fg` on `bg-subtle`, `bg-muted` and the body, `fg-emphasis` on `bg-muted`, and `fg-body` to `fg-3` on the backgrounds the docs allow them on. Then the components whose defaults embed a pairing: solid, outline, subtle, text and link buttons, badges, alerts, tables, list group items, form controls and their placeholder, and disabled controls, which are shown but exempt. The page switches `data-bs-theme` itself to measure light, dark and the config's custom color modes, composites each color on what's behind it, and shows the WCAG 2 ratio, AA and AAA for normal text, and the APCA Lc. [`contrast.spec.js`](tests/a11y/contrast.spec.js) loads it with each config of `A11Y_CONFIGS` and fails on text under 4.5:1 in light or dark: a `pairing-contrast` violation named like the page's row, `primary fg on bg-subtle` or `btn-solid primary`, with its colors. Its entries in `known-issues.js` match that name with `target`, and the report goes to `reports/a11y/<config>/<theme>/contrast/pages/contrast.json`. `npm run report:contrast` runs the page on the dev server with every config, or those `--config` lists, custom color modes included, and writes a JSON and a Markdown table per config to `reports/contrast/`, with `README.md` counting the failures per config and mode and those no entry covers:
+
+```sh
+npm run test:a11y -- -g "contrast default"
+npm run report:contrast -- --config default,shadcn
 ```
 
 With every config, the scan loads about 5,500 pages. On pull requests, [`.github/workflows/a11y.yml`](.github/workflows/a11y.yml) scans what [`npm run test-scope`](#console-crawl) finds, with the same rules as the console crawl: the default config on every page, the changed configs on every page and the changed pages with every config, or everything after a shared change like a `tests/a11y/` edit. Everything runs every night, on demand and on the canary's pull request, split across four parallel jobs. Each job uploads its `reports/a11y/` as an artifact, and a summary job writes the `a11y-summary` table to the run's summary. Locally, limit a run the same way:

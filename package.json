@@ -17,6 +17,7 @@
     "test:console:engines": "playwright test --project \"console*\"",
     "test:a11y": "playwright test --project a11y",
     "a11y-summary": "node scripts/a11y-summary.mjs",
+    "report:contrast": "node scripts/report-contrast.mjs",
     "test-scope": "node scripts/test-scope.mjs",
     "test:smoke": "playwright test --project smoke",
     "test:smoke:engines": "playwright test --project \"smoke*\"",

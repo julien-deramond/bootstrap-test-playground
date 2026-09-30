@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en" data-playground-busy>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Contrast</title>
+    <meta name="description" content="Contrast of every documented color pairing (contrast on bg, fg on bg-subtle, fg-emphasis on bg-muted, fg-1 to fg-3 on bg-body to bg-3) for every theme color, and of the components that embed one (solid and subtle buttons, badges, alerts, list group, tables, placeholders, disabled controls), in every color mode of the config: WCAG 2 ratio, AA and AAA, and APCA Lc.">
+    <meta name="playground-tags" content="components, forms, a11y">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <style>
+      .pg-sample {
+        display: inline-block;
+        padding: .25rem .5rem;
+      }
+
+      .pg-swatch {
+        display: inline-block;
+        min-width: 2.5rem;
+        padding: .125rem .375rem;
+        text-align: center;
+        border: 1px solid rgb(128 128 128 / .4);
+      }
+
+      .pg-result {
+        white-space: nowrap;
+      }
+    </style>
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Pages</p>
+        <h1>Contrast</h1>
+        <p class="fs-lg fg-2">
+          Every documented color pairing, for every theme color, and the components that embed one, in every color mode of the current config.
+        </p>
+        <p class="fg-2">
+          Each foreground is composited on what's behind it, then measured: the WCAG 2 ratio, AA at 4.5:1 and AAA at 7:1 for normal text, and the APCA Lc for reference. Disabled controls are measured but exempt (WCAG 1.4.3). The live sample shows the current color mode, the swatches the colors measured in each mode. See <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/52">#52</a>, and <code>npm run report:contrast</code> for every config.
+        </p>
+      </header>
+
+      <!-- The script at the end of the page fills the tables, once the
+           config's styles are in. [data-contrast] marks each measured
+           element, named by its value: a token pairing's sample, or a live
+           component. The accessibility scan leaves [data-contrast-check] out
+           and checks the results instead (tests/a11y/contrast.spec.js). The
+           tables scroll with a config's custom color modes, so they can take
+           focus. -->
+      <p id="contrast-summary"></p>
+
+      <section class="mb-5">
+        <h2 class="h4">Theme colors</h2>
+        <p class="fg-2" data-playground-chrome>The pairings of <a href="https://github.com/twbs/bootstrap/blob/v6-dev/site/src/content/docs/customize/theme.mdx">the theme docs</a>: <code>contrast</code> on <code>bg</code> and <code>base</code>, <code>fg</code> on <code>bg-subtle</code>, <code>bg-muted</code> and the body, <code>fg-emphasis</code> on <code>bg-muted</code>.</p>
+        <div class="table-responsive" tabindex="0" role="region" aria-label="Theme colors">
+          <table class="table table-sm align-middle" id="contrast-theme" data-contrast-check></table>
+        </div>
+      </section>
+
+      <section class="mb-5">
+        <h2 class="h4">Body and surfaces</h2>
+        <p class="fg-2" data-playground-chrome><code>fg-body</code> on every background, <code>fg-1</code> on <code>bg-body</code> to <code>bg-3</code>, <code>fg-2</code> to <code>bg-2</code>, <code>fg-3</code> to <code>bg-1</code>: the dimmer the text, the fewer the backgrounds.</p>
+        <div class="table-responsive" tabindex="0" role="region" aria-label="Body and surfaces">
+          <table class="table table-sm align-middle" id="contrast-surface" data-contrast-check></table>
+        </div>
+      </section>
+
+      <section class="mb-5">
+        <h2 class="h4">Components</h2>
+        <p class="fg-2" data-playground-chrome>Components whose defaults embed a pairing, on <code>bg-body</code>, measured on the element itself.</p>
+        <div class="table-responsive" tabindex="0" role="region" aria-label="Components">
+          <table class="table table-sm align-middle" id="contrast-component" data-contrast-check></table>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const html = document.documentElement
+
+      // Theme color pairings, [foreground key, background key]. `bg-body` is
+      // the body's, the others the theme color's.
+      const THEME_PAIRINGS = [
+        ['contrast', 'bg'],
+        ['contrast', 'base'],
+        ['fg', 'bg-subtle'],
+        ['fg', 'bg-muted'],
+        ['fg', 'bg-body'],
+        ['fg-emphasis', 'bg-muted']
+      ]
+
+      const SURFACE_PAIRINGS = [
+        ...['bg-body', 'bg-1', 'bg-2', 'bg-3', 'bg-4'].map(bg => ['fg-body', bg]),
+        ...['bg-body', 'bg-1', 'bg-2', 'bg-3'].map(bg => ['fg-1', bg]),
+        ...['bg-body', 'bg-1', 'bg-2'].map(bg => ['fg-2', bg]),
+        ...['bg-body', 'bg-1'].map(bg => ['fg-3', bg])
+      ]
+
+      // Components, once per theme color when their markup has `{theme}`.
+      // `target` selects the measured element inside the markup, `pseudo` the
+      // pseudo-element whose color is measured, and `exempt` marks inactive
+      // controls, which WCAG 1.4.3 exempts.
+      const COMPONENTS = [
+        { name: 'btn-solid', markup: '<button type="button" class="btn-solid theme-{theme}">Solid</button>' },
+        { name: 'btn-outline', markup: '<button type="button" class="btn-outline theme-{theme}">Outline</button>' },
+        { name: 'btn-subtle', markup: '<button type="button" class="btn-subtle theme-{theme}">Subtle</button>' },
+        { name: 'btn-text', markup: '<button type="button" class="btn-text theme-{theme}">Text</button>' },
+        { name: 'btn-link', markup: '<button type="button" class="btn btn-link theme-{theme}">Link</button>' },
+        { name: 'badge', markup: '<span class="badge theme-{theme}">Badge</span>' },
+        { name: 'badge-subtle', markup: '<span class="badge badge-subtle theme-{theme}">Subtle</span>' },
+        { name: 'badge-outline', markup: '<span class="badge badge-outline theme-{theme}">Outline</span>' },
+        { name: 'alert', markup: '<div class="alert theme-{theme} mb-0">Alert</div>' },
+        { name: 'table', markup: '<table class="table theme-{theme} mb-0"><tbody><tr><td>Cell</td></tr></tbody></table>', target: 'td' },
+        { name: 'link', markup: '<a href="#">Link</a>' },
+        { name: 'btn', markup: '<button type="button" class="btn">Button</button>' },
+        { name: 'badge', markup: '<span class="badge">Badge</span>' },
+        { name: 'alert', markup: '<div class="alert mb-0">Alert</div>' },
+        { name: 'table', markup: '<table class="table mb-0"><tbody><tr><td>Cell</td></tr></tbody></table>', target: 'td' },
+        { name: 'list-group-item', markup: '<ul class="list-group"><li class="list-group-item">Item</li></ul>', target: 'li' },
+        { name: 'list-group-item-action', markup: '<div class="list-group"><a href="#" class="list-group-item list-group-item-action">Action</a></div>', target: 'a' },
+        { name: 'list-group-item-active', markup: '<ul class="list-group"><li class="list-group-item active" aria-current="true">Active</li></ul>', target: 'li' },
+        { name: 'form-control', markup: '<input type="text" class="form-control" value="Value" aria-label="Text">' },
+        { name: 'form-control::placeholder', markup: '<input type="text" class="form-control" placeholder="Placeholder" aria-label="Text">', pseudo: '::placeholder' },
+        { name: 'list-group-item-disabled', markup: '<ul class="list-group"><li class="list-group-item disabled" aria-disabled="true">Disabled</li></ul>', target: 'li', exempt: true },
+        { name: 'form-control-disabled', markup: '<input type="text" class="form-control" value="Disabled" aria-label="Disabled text" disabled>', exempt: true },
+        { name: 'btn-solid-disabled', markup: '<button type="button" class="btn-solid theme-primary" disabled>Disabled</button>', exempt: true }
+      ]
+
+      const AA = 4.5
+      const AAA = 7
+
+      // Every style rule of the page's same-origin stylesheets.
+      const styleRules = () => {
+        const found = []
+        const walk = list => {
+          for (const rule of list) {
+            if (rule instanceof CSSStyleRule) {
+              found.push(rule)
+            }
+
+            if (rule.cssRules) {
+              walk(rule.cssRules)
+            }
+          }
+        }
+
+        for (const sheet of document.styleSheets) {
+          try {
+            walk(sheet.cssRules)
+          } catch {
+            // Cross-origin stylesheets can't be read.
+          }
+        }
+
+        return found
+      }
+
+      // The theme colors, from the `.theme-<color>` rules that set
+      // `--<prefix>theme-contrast`, and the custom property prefix with them.
+      // A config can add or remove theme colors, and change the prefix.
+      const themeColors = () => {
+        const themes = []
+        let prefix = 'bs-'
+        for (const rule of styleRules()) {
+          const [, theme] = rule.selectorText.match(/^\.theme-([\w-]+)$/) ?? []
+          const property = theme && [...rule.style].find(name => name.endsWith('theme-contrast'))
+          if (property && !themes.includes(theme) && rule.style.getPropertyValue(property).includes(`${theme}-contrast`)) {
+            themes.push(theme)
+            prefix = property.slice(2, -'theme-contrast'.length)
+          }
+        }
+
+        return { themes, prefix }
+      }
+
+      // Light, dark, then the config's custom `[data-bs-theme="…"]` modes.
+      const colorModes = () => {
+        const found = new Set(['light', 'dark'])
+        for (const rule of styleRules()) {
+          for (const [, mode] of rule.selectorText.matchAll(/\[data-bs-theme="?([\w-]+)"?\]/g)) {
+            found.add(mode)
+          }
+        }
+
+        return [...found]
+      }
+
+      // A CSS color as sRGB channels (0-255) and alpha (0-1), through a
+      // canvas, which takes any syntax the page's styles resolve to (oklch(),
+      // color(srgb …)…) and clips it to sRGB. Null when it can't parse it.
+      const canvas = document.createElement('canvas').getContext('2d', { willReadFrequently: true })
+      const parse = color => {
+        canvas.fillStyle = '#010203'
+        canvas.fillStyle = color
+        if (canvas.fillStyle === '#010203' && !/^#010203$/i.test(color)) {
+          return null
+        }
+
+        canvas.clearRect(0, 0, 1, 1)
+        canvas.fillRect(0, 0, 1, 1)
+        const [r, g, b, a] = canvas.getImageData(0, 0, 1, 1).data
+        return [r, g, b, a / 255]
+      }
+
+      // `top` over an opaque `bottom`, in sRGB like the browser composites.
+      const over = (top, bottom, alpha = top[3]) => [0, 1, 2].map(i => top[i] * alpha + bottom[i] * (1 - alpha)).concat(1)
+
+      // The opaque color behind an element: its ancestors' backgrounds,
+      // composited from the nearest opaque one.
+      const backdrop = element => {
+        const layers = []
+        for (let node = element.parentElement; node; node = node.parentElement) {
+          const color = parse(getComputedStyle(node).backgroundColor)
+          if (color && color[3] > 0) {
+            layers.push(color)
+            if (color[3] === 1) {
+              break
+            }
+          }
+        }
+
+        return layers.reduceRight((below, layer) => over(layer, below), [255, 255, 255, 1])
+      }
+
+      const channel = value => {
+        const c = value / 255
+        return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+      }
+
+      const luminance = ([r, g, b]) => 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b)
+      const ratio = (fg, bg) => {
+        const [high, low] = [luminance(fg), luminance(bg)].sort((a, b) => b - a)
+        return (high + 0.05) / (low + 0.05)
+      }
+
+      // APCA Lc (APCA-W3 0.0.98G): positive for dark text on light, negative
+      // for light text on dark.
+      const apca = (fg, bg) => {
+        const y = ([r, g, b]) => {
+          const value = 0.2126729 * (r / 255) ** 2.4 + 0.7151522 * (g / 255) ** 2.4 + 0.072175 * (b / 255) ** 2.4
+          return value < 0.022 ? value + (0.022 - value) ** 1.414 : value
+        }
+
+        const text = y(fg)
+        const back = y(bg)
+        if (Math.abs(back - text) < 0.0005) {
+          return 0
+        }
+
+        if (back > text) {
+          const sapc = (back ** 0.56 - text ** 0.57) * 1.14
+          return sapc < 0.1 ? 0 : (sapc - 0.027) * 100
+        }
+
+        const sapc = (back ** 0.65 - text ** 0.62) * 1.14
+        return sapc > -0.1 ? 0 : (sapc + 0.027) * 100
+      }
+
+      const hex = color => `#${color.slice(0, 3).map(value => Math.round(value).toString(16).padStart(2, '0')).join('')}`
+
+      // The element's text color and background as the page shows them,
+      // opacity included, as 8-bit sRGB like a screenshot.
+      const measure = (element, pseudo) => {
+        const style = getComputedStyle(element)
+        const behind = backdrop(element)
+        const background = parse(style.backgroundColor)
+        const color = parse(getComputedStyle(element, pseudo ?? null).color)
+        if (!background || !color) {
+          return null
+        }
+
+        const bg = over(background, behind)
+        const fg = over(color, bg)
+        let opacity = 1
+        for (let node = element; node; node = node.parentElement) {
+          opacity *= Number(getComputedStyle(node).opacity)
+        }
+
+        const round = value => value.map(Math.round)
+        return { fg: round(over(fg, behind, opacity)), bg: round(over(bg, behind, opacity)) }
+      }
+
+      const cell = (row, content = '') => {
+        const td = row.insertCell()
+        td.innerHTML = content
+        return td
+      }
+
+      const header = (table, modes, first) => {
+        const row = table.createTHead().insertRow()
+        for (const label of [first, 'Sample', ...modes]) {
+          const th = document.createElement('th')
+          th.scope = 'col'
+          th.textContent = label
+          row.append(th)
+        }
+      }
+
+      // Adds the rows of a table: one per measured element, with its live
+      // sample, then a cell per color mode.
+      const addRows = (table, rows, modes) => {
+        header(table, modes, table.id === 'contrast-component' ? 'Component' : 'Pairing')
+        const body = table.createTBody()
+        return rows.map(({ name, label, markup, target, pseudo, exempt }) => {
+          const row = body.insertRow()
+          row.dataset.contrast = name
+          const th = document.createElement('th')
+          th.scope = 'row'
+          th.innerHTML = label
+          row.append(th)
+          const sample = cell(row, markup)
+          const element = target ? sample.querySelector(target) : sample.firstElementChild
+          element.dataset.contrast = name
+          return { name, element, pseudo, exempt, cells: modes.map(() => cell(row)) }
+        })
+      }
+
+      const mark = (passed, label) => `<span class="badge ${passed ? 'badge-subtle theme-success' : 'theme-danger'}">${label}</span>`
+
+      const run = () => {
+        const { themes, prefix } = themeColors()
+        const modes = colorModes()
+        const token = name => `var(--${prefix}${name})`
+        const defined = name => getComputedStyle(html).getPropertyValue(`--${prefix}${name}`).trim() !== ''
+        const sample = (fg, bg) => `<span class="pg-sample" style="color: ${token(fg)}; background-color: ${token(bg)}">Aa</span>`
+
+        const groups = {
+          theme: themes.flatMap(theme => THEME_PAIRINGS.map(([fg, bg]) => {
+            const background = bg === 'bg-body' ? bg : `${theme}-${bg}`
+            return {
+              name: `${theme} ${fg} on ${bg}`,
+              label: `<code>${theme}</code> <code>${fg}</code> on <code>${bg}</code>`,
+              tokens: [`${theme}-${fg}`, background],
+              markup: sample(`${theme}-${fg}`, background)
+            }
+          })),
+          surface: SURFACE_PAIRINGS.map(([fg, bg]) => ({
+            name: `${fg} on ${bg}`,
+            label: `<code>${fg}</code> on <code>${bg}</code>`,
+            tokens: [fg, bg],
+            markup: sample(fg, bg)
+          })),
+          component: COMPONENTS.flatMap(component => (component.markup.includes('{theme}') ? themes : [null]).map(theme => ({
+            ...component,
+            name: theme ? `${component.name} ${theme}` : component.name,
+            label: `<code>${component.name}</code>${theme ? ` <code>${theme}</code>` : ''}`,
+            markup: component.markup.replaceAll('{theme}', theme)
+          })))
+        }
+
+        const measured = Object.entries(groups).flatMap(([group, rows]) => {
+          // A pairing whose tokens the config doesn't define shows as such.
+          const present = rows.filter(({ tokens }) => !tokens || tokens.every(defined))
+          return addRows(document.getElementById(`contrast-${group}`), present, modes).map(row => ({ ...row, group }))
+        })
+
+        // Transitions off, so switching modes doesn't catch a color halfway.
+        const still = document.head.appendChild(document.createElement('style'))
+        still.textContent = '*, ::before, ::after { transition: none !important; animation: none !important; }'
+        const saved = html.getAttribute('data-bs-theme')
+        const results = []
+
+        for (const [index, mode] of modes.entries()) {
+          html.setAttribute('data-bs-theme', mode)
+          for (const { group, name, element, pseudo, exempt, cells } of measured) {
+            const colors = measure(element, pseudo)
+            if (!colors) {
+              cells[index].textContent = 'Unreadable color'
+              continue
+            }
+
+            const { fg, bg } = colors
+            const value = ratio(fg, bg)
+            const result = {
+              group,
+              name,
+              mode,
+              fg: hex(fg),
+              bg: hex(bg),
+              ratio: Math.round(value * 100) / 100,
+              apca: Math.round(apca(fg, bg) * 10) / 10,
+              aa: value >= AA,
+              aaa: value >= AAA,
+              ...(exempt ? { exempt: true } : {})
+            }
+            results.push(result)
+            cells[index].classList.add('pg-result')
+            cells[index].title = `${result.fg} on ${result.bg}`
+            cells[index].innerHTML = `<span class="pg-swatch" style="color: ${result.fg}; background-color: ${result.bg}">Aa</span> ` +
+              `${result.ratio.toFixed(2)}:1 ` +
+              (exempt ? '<span class="badge badge-subtle">Exempt</span>' : `${mark(result.aa, 'AA')} ${mark(result.aaa, 'AAA')}`) +
+              ` <small class="fg-3">Lc ${result.apca.toFixed(1)}</small>`
+          }
+        }
+
+        if (saved === null) {
+          html.removeAttribute('data-bs-theme')
+        } else {
+          html.setAttribute('data-bs-theme', saved)
+        }
+
+        // Styles recomputed in the saved mode with transitions still off, so
+        // turning them back on doesn't animate from the last mode measured.
+        void getComputedStyle(html).color
+        still.remove()
+
+        const failing = results.filter(result => !result.aa && !result.exempt)
+        document.getElementById('contrast-summary').innerHTML = modes.map(mode => {
+          const count = failing.filter(result => result.mode === mode).length
+          return `<code>${mode}</code>: ${count ? `<strong>${count}</strong> under ${AA}:1` : 'all pass'}`
+        }).join(' · ') + ` (${measured.length} pairings and components, ${themes.length} theme colors)`
+
+        window.playgroundContrast = { prefix, themes, modes, results }
+      }
+
+      // Bootstrap's styles are in once `load` fires, and a config picked with
+      // ?config= once `#playground-config-pending` is gone. Timers rather than
+      // requestAnimationFrame, which stops in hidden tabs.
+      const start = () => {
+        if (document.readyState !== 'complete' || document.getElementById('playground-config-pending')) {
+          setTimeout(start, 50)
+          return
+        }
+
+        run()
+        // Tests and screenshots wait for this to go.
+        delete html.dataset.playgroundBusy
+      }
+
+      start()
+    </script>
+  </body>
+</html>

@@ -4,8 +4,9 @@
 // measured (`#ffffff on #0087fe`), the exact pages it happens on, `themes`
 // to limit it to light or dark, and `configs` to limit it to some configs.
 // `state: 'open'` puts an entry in the scan of open overlays
-// (overlays.spec.js) instead of the page scan, and `rule: 'focus-appearance'`
-// in the focus ring check (focus.spec.js).
+// (overlays.spec.js) instead of the page scan, `rule: 'focus-appearance'`
+// in the focus ring check (focus.spec.js), and `rule: 'pairing-contrast'` in
+// the pairing contrast check (contrast.spec.js).
 // Without `configs`, an entry is expected with the default config and allowed
 // with every other one; with it, it's expected with exactly those. An
 // element that violates the same rule with the default config, under an
@@ -910,5 +911,116 @@ export default [
     target: / (?!(chip-input-chip|menu-item|list-group-action|carousel-indicator)(-|$)|(btn-close|(card-stretched-)?link|range)$)/,
     pages: ['/pages/focus.html'],
     issue: 270
+  },
+  // The pairing contrast check (contrast.spec.js): `target` matches the
+  // pairing or component as pages/contrast.html names them (`primary fg on
+  // bg-subtle`, `btn-solid primary`), `themes` its color modes.
+  {
+    rule: 'pairing-contrast',
+    target: /^((primary|success|danger) contrast on (bg|base)|(btn-solid|badge) (primary|success|danger)|list-group-item-active)$/,
+    pages: ['/pages/contrast.html'],
+    issue: 183
+  },
+  {
+    rule: 'pairing-contrast',
+    target: /^((primary|success|warning|info) fg on bg-subtle|(success|warning|info) fg on bg-body|(btn-outline|btn-text|btn-link|badge-outline) (success|warning|info)|(btn-subtle|badge-subtle|alert|table) (primary|success|warning|info))$/,
+    themes: ['light'],
+    pages: ['/pages/contrast.html'],
+    issue: 183
+  },
+  {
+    rule: 'pairing-contrast',
+    target: /^link$/,
+    themes: ['light'],
+    pages: ['/pages/contrast.html'],
+    issue: 253
+  },
+  {
+    rule: 'pairing-contrast',
+    target: /^inverse (fg|fg-emphasis) on bg-muted$/,
+    themes: ['dark'],
+    pages: ['/pages/contrast.html'],
+    issue: 276
+  },
+  {
+    rule: 'pairing-contrast',
+    target: /^(primary|accent|success|danger|warning|info) fg on bg-muted$/,
+    themes: ['light'],
+    pages: ['/pages/contrast.html'],
+    issue: 277
+  },
+  {
+    rule: 'pairing-contrast',
+    target: /^(danger|secondary) fg on bg-muted$/,
+    themes: ['dark'],
+    pages: ['/pages/contrast.html'],
+    issue: 277
+  },
+  {
+    rule: 'pairing-contrast',
+    target: /^(inverse|secondary) contrast on base$/,
+    themes: ['dark'],
+    pages: ['/pages/contrast.html'],
+    issue: 278
+  },
+  {
+    rule: 'pairing-contrast',
+    target: /^((brand|tertiary) contrast on (bg|base)|(btn-solid|badge) (brand|tertiary))$/,
+    configs: ['brand'],
+    pages: ['/pages/contrast.html'],
+    reason: 'brand config: white `contrast` on its teal and pink `bg`, as Bootstrap\'s own `primary`, `success` and `danger` have (#183)'
+  },
+  {
+    rule: 'pairing-contrast',
+    target: /^(brand|tertiary) fg on bg-muted$/,
+    configs: ['brand'],
+    pages: ['/pages/contrast.html'],
+    issue: 277
+  },
+  {
+    rule: 'pairing-contrast',
+    target: /^(secondary fg on bg-subtle|fg-3 on bg-(body|1)|(btn-subtle|badge-subtle|alert|table) secondary|form-control::placeholder)$/,
+    themes: ['dark'],
+    configs: ['gray-cool', 'gray-warm'],
+    pages: ['/pages/contrast.html'],
+    reason: 'gray-cool and gray-warm configs: their `$gray` moves the muted text (`fg-3`) and subtle secondary steps, which drop under 4.5:1 in dark on purpose'
+  },
+  {
+    rule: 'pairing-contrast',
+    target: /^secondary contrast on base$/,
+    themes: ['light'],
+    configs: ['high-contrast'],
+    pages: ['/pages/contrast.html'],
+    reason: 'high-contrast config: `secondary`\'s `base` stays `--gray-700` while its light `contrast` is black; nothing draws `contrast` on `base` (#278)'
+  },
+  {
+    rule: 'pairing-contrast',
+    target: /^(accent contrast on (bg|base)|(btn-solid|badge) accent|danger fg on bg-subtle|(btn-subtle|badge-subtle|alert|table) danger|primary fg on bg-muted)$/,
+    configs: ['hue-shift'],
+    pages: ['/pages/contrast.html'],
+    reason: 'hue-shift config: every hue rotated 180° with the theme maps\' fixed `contrast` keys, whose WCAG ratios move with the hue (see its README)'
+  },
+  {
+    rule: 'pairing-contrast',
+    target: /^((warning|info) contrast on (bg|base)|(btn-solid|badge) (warning|info))$/,
+    configs: ['mono'],
+    pages: ['/pages/contrast.html'],
+    reason: 'mono config: one base color for every hue, with the fixed `contrast` keys under 4.5:1 on it (see its README)'
+  },
+  {
+    rule: 'pairing-contrast',
+    target: /^(primary|success|warning|info) fg on bg-muted$/,
+    themes: ['dark'],
+    configs: ['mono'],
+    pages: ['/pages/contrast.html'],
+    issue: 277
+  },
+  {
+    rule: 'pairing-contrast',
+    target: /^(danger fg on bg-subtle|(btn-subtle|badge-subtle|alert|table) danger|fg-3 on bg-1)$/,
+    themes: ['light'],
+    configs: ['shadcn'],
+    pages: ['/pages/contrast.html'],
+    reason: 'shadcn config: shadcn/ui\'s own neutral and destructive colors, under 4.5:1 in these pairings'
   }
 ]
