@@ -3,6 +3,8 @@
 // against the node's selector and, for color-contrast, the `colors` axe
 // measured (`#ffffff on #0087fe`), the exact pages it happens on, `themes`
 // to limit it to light or dark, and `configs` to limit it to some configs.
+// `state: 'open'` puts an entry in the scan of open overlays
+// (overlays.spec.js) instead of the page scan.
 // Without `configs`, an entry is expected with the default config and allowed
 // with every other one; with it, it's expected with exactly those. An
 // element that violates the same rule with the default config, under an
@@ -739,5 +741,72 @@ export default [
     configs: ['shadcn'],
     pages: ['/screens/cards.html'],
     reason: 'shadcn config: shadcn/ui\'s 16px checks and radios, closer together than WCAG 2.2\'s 24px target size allows'
+  },
+
+  // Open overlays (overlays.spec.js)
+  {
+    rule: 'color-contrast',
+    colors: '#ffffff on #0087fe',
+    state: 'open',
+    pages: [
+      '/kitchen-sink/components-dialog.html',
+      '/kitchen-sink/components-menu.html',
+      '/kitchen-sink/forms-datepicker.html',
+      '/screens/cards.html',
+      '/screens/dashboard.html',
+      '/screens/playground.html'
+    ],
+    issue: 183
+  },
+  {
+    rule: 'aria-allowed-attr',
+    target: /\[data-bs-value=|^\.selected$/,
+    state: 'open',
+    pages: [
+      '/kitchen-sink/forms-combobox.html',
+      '/screens/cards.html',
+      '/screens/dashboard.html',
+      '/screens/playground.html'
+    ],
+    issue: 261
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#8b8d8e on #ffffff',
+    themes: ['light'],
+    state: 'open',
+    pages: ['/kitchen-sink/forms-datepicker.html'],
+    issue: 265
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#def0ff on #339ffe',
+    themes: ['light'],
+    state: 'open',
+    pages: ['/kitchen-sink/forms-datepicker.html'],
+    issue: 265
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#cddeed on #026ece',
+    themes: ['dark'],
+    state: 'open',
+    pages: ['/kitchen-sink/forms-datepicker.html'],
+    issue: 265
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#009bf3 on #e5e6e7',
+    themes: ['dark'],
+    state: 'open',
+    pages: ['/kitchen-sink/components-tooltip.html'],
+    issue: 266
+  },
+  {
+    rule: 'scrollable-region-focusable',
+    target: /#scrollableBodyDialog/,
+    state: 'open',
+    pages: ['/kitchen-sink/components-dialog.html'],
+    issue: 267
   }
 ]
