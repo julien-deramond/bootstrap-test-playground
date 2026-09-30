@@ -173,9 +173,57 @@ const plainText = markdown => markdown.replace(/`([^`]*)`/g, '$1').replace(/\[([
 const slugify = value => value.toLowerCase().replace(/<[^>]*>/g, '').replace(/[^\w]+/g, '-').replace(/^-|-$/g, '')
 const indent = (html, spaces) => html.split('\n').map(line => (line ? ' '.repeat(spaces) + line : line)).join('\n')
 
+// The ids that an example's toggles open (`data-bs-target="#id"`, or
+// `href="#id"` on a `data-bs-toggle` element).
+const toggleTargets = html => [...html.matchAll(/<[^>]*\sdata-bs-toggle="[^"]*"[^>]*>/g)]
+  .map(([tag]) => (tag.match(/\sdata-bs-target="#([^"]+)"/) ?? tag.match(/\shref="#([^"]+)"/))?.[1])
+  .filter(Boolean)
+
+// Reads the element that starts at `start` in `source`, up to its matching
+// closing tag.
+function readElement(source, start, name) {
+  const tags = new RegExp(`<(/?)${name}\\b[^>]*>`, 'g')
+  tags.lastIndex = start
+  let depth = 0
+  for (const match of source.matchAll(tags)) {
+    depth += match[1] ? -1 : 1
+    if (depth === 0) {
+      return source.slice(start, match.index + match[0].length)
+    }
+  }
+
+  throw new Error(`Unterminated <${name}>`)
+}
+
+// Some examples open an element that the MDX writes as raw HTML outside any
+// <Example>, like the sized dialogs of dialog.mdx. Appends each one to the
+// first example that targets it, so its trigger opens something. `prose` is the
+// MDX source with the examples and code blocks blanked out.
+function attachTargets(examples, prose, source) {
+  const missing = []
+  const ids = new Set(examples.flatMap(({ html }) => [...html.matchAll(/\sid="([^"]+)"/g)].map(([, id]) => id)))
+  for (const example of examples) {
+    for (const id of toggleTargets(example.html).filter(target => !ids.has(target))) {
+      const escaped = id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const match = prose.match(new RegExp(`^<([a-z][\\w-]*)\\b[^>]*\\sid="${escaped}"`, 'm'))
+      if (match) {
+        example.html += `\n\n${cleanHtml(readElement(source, match.index, match[1]))}`
+      } else {
+        missing.push(`#${id}`)
+      }
+
+      ids.add(id)
+    }
+  }
+
+  return missing
+}
+
 function extractExamples(source, getData) {
   const examples = []
   const skipped = []
+  const blank = (text, start, end) => text.slice(0, start) + text.slice(start, end).replace(/[^\n]/g, ' ') + text.slice(end)
+  let prose = source.replace(/^[ \t]*```[\s\S]*?^[ \t]*```/gm, block => block.replace(/[^\n]/g, ' '))
   let index = 0
 
   while ((index = source.indexOf('<Example', index)) !== -1) {
@@ -186,7 +234,9 @@ function extractExamples(source, getData) {
 
     const expression = readExpression(source, codeIndex + 6)
     const expressionEnd = codeIndex + 6 + expression.length
-    const tag = source.slice(index, codeIndex) + source.slice(expressionEnd, source.indexOf('/>', expressionEnd))
+    const tagEnd = source.indexOf('/>', expressionEnd)
+    const tag = source.slice(index, codeIndex) + source.slice(expressionEnd, tagEnd)
+    prose = blank(prose, index, tagEnd)
     index = expressionEnd
 
     const heading = [...source.slice(0, index).matchAll(/^#{2,3} (.+)$/gm)].at(-1)?.[1] ?? 'Example'
@@ -201,6 +251,11 @@ function extractExamples(source, getData) {
     } catch (error) {
       skipped.push(`${heading} (${error.message})`)
     }
+  }
+
+  const missing = attachTargets(examples, prose, source)
+  if (missing.length > 0) {
+    skipped.push(`the targets of ${missing.join(', ')} (not found in the MDX)`)
   }
 
   return { examples, skipped }

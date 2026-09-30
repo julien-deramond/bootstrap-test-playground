@@ -74,6 +74,8 @@ npm run sync-kitchen-sink -- ../twbs/bootstrap   # or rely on BOOTSTRAP_PATH in 
 
 Don't edit these files by hand. They're overwritten on every sync.
 
+An element that an example opens by id (`data-bs-target="#…"`) but that the MDX writes as raw HTML outside `<Example>`, like the sized dialogs of the dialog docs, is copied after the first example that targets it. When the target can't be found, the sync lists it with the skipped examples.
+
 With `BOOTSTRAP_PATH` set, `npm run dev` watches those MDX files: editing one resyncs its page only, and Vite reloads it. When the list of pages changes (a page added, removed or renamed), every page is rewritten, like a full sync. The server's log says which files it wrote. The generator lives in [`scripts/lib/kitchen-sink.mjs`](../scripts/lib/kitchen-sink.mjs).
 
 ## Issue reproductions
