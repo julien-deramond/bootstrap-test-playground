@@ -857,9 +857,16 @@ export default [
   },
   {
     rule: 'color-contrast',
-    target: /^\.bg-(primary|accent|success|danger|warning|info|inverse|secondary) .*data-focus="(link|nav-tabs-link)"/,
+    target: /^\.bg-(primary|accent|success|danger|warning|info|inverse|secondary) /,
     pages: ['/pages/focus.html'],
-    reason: 'pages/focus.html puts links and nav links on solid fills for their focus rings, a pairing their text colors aren\'t meant for'
+    reason: 'pages/focus.html puts components on solid fills for their focus rings, a pairing their text colors aren\'t meant for'
+  },
+  {
+    rule: 'color-contrast',
+    target: /data-focus="(btn-subtle|list-group-action|chip-input)-danger"/,
+    configs: ['shadcn'],
+    pages: ['/pages/focus.html'],
+    reason: 'shadcn config: shadcn/ui\'s own neutral and destructive colors, under 4.5:1 in these pairings'
   },
   // The focus ring check (focus.spec.js): `target` matches `<surface>
   // <component>`, as pages/focus.html names them.

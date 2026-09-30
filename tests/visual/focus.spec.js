@@ -28,6 +28,8 @@ for (const theme of THEMES) {
         // short, even in WebKit.
         for (const surface of SURFACES) {
           test(`${FOCUS_URL} focused ${surface}`, async ({ page }) => {
+            // bg-body's 136 components take over 30s in Linux WebKit.
+            test.setTimeout(120_000)
             const params = new URLSearchParams({ theme, dir, config, chrome: '0', freeze: '' })
             await page.goto(`${FOCUS_URL}?${params}`)
             await page.waitForFunction(() => !document.getElementById('playground-config-pending'))
