@@ -42,15 +42,20 @@ export const matches = (entry, node) => entry.rule === node.rule &&
   (!entry.target || entry.target.test(node.selector)) &&
   (!entry.colors || entry.colors === node.colors)
 
+// The focus ring check's own rule (focus.spec.js), which axe doesn't have.
+export const FOCUS_RULE = 'focus-appearance'
+
 // An entry without `configs` is expected with the default config and allowed
 // with every other one, since most configs keep its palette. An entry with
 // `configs` is expected with exactly those. An entry with `state: 'open'`
-// belongs to the open overlays' scan, the others to the page's.
+// belongs to the open overlays' scan, a FOCUS_RULE entry to the focus ring
+// check (`focus`), the others to the page's.
 const appliesTo = (entry, config) => !entry.configs || entry.configs.includes(config)
 export const expectedWith = (entry, config) => entry.configs ? entry.configs.includes(config) : config === 'default'
+const scanOf = entry => entry.rule === FOCUS_RULE ? 'focus' : entry.state ?? 'closed'
 
 export const knownOn = (url, theme, config, state = 'closed') => knownIssues.filter(entry => entry.pages.includes(url) &&
-  (entry.state ?? 'closed') === state && appliesTo(entry, config) && (!entry.themes || entry.themes.includes(theme)))
+  scanOf(entry) === state && appliesTo(entry, config) && (!entry.themes || entry.themes.includes(theme)))
 
 // Loads a page with a config and theme, ready to scan.
 export async function load(page, url, theme, config) {
@@ -83,12 +88,12 @@ export const toNodes = violations => violations.flatMap(({ id, impact, help, hel
 }))
 
 // Attaches the violations to the test and writes them to
-// reports/a11y/<config>/<theme>/[open/]<page>.json.
+// reports/a11y/<config>/<theme>/[open/|focus/]<page>.json.
 export async function report(testInfo, { config, theme, url, state = 'closed' }, nodes) {
   const json = JSON.stringify(nodes, null, 2)
   await testInfo.attach('violations.json', { body: json, contentType: 'application/json' })
   const name = `${url.replace(/^\/|\/$|\.html$/g, '') || 'index'}.json`
-  const file = path.join(root, 'reports/a11y', config, theme, ...(state === 'open' ? ['open'] : []), name)
+  const file = path.join(root, 'reports/a11y', config, theme, ...(state === 'closed' ? [] : [state]), name)
   fs.mkdirSync(path.dirname(file), { recursive: true })
   fs.writeFileSync(file, json)
 }

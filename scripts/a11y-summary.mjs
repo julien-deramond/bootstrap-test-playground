@@ -2,10 +2,11 @@
 // Sums up the accessibility scan per config, from the reports it writes to
 // reports/a11y/<config>/<theme>/<page>.json: how many pages were scanned, and
 // for each axe rule how many elements violate it, light and dark together.
-// Violations inside open overlays (tests/a11y/overlays.spec.js) count with
-// their page's. Known violations (tests/a11y/known-issues.js) are counted too,
-// and the "Not allowlisted" column says how many aren't, so configs compare at
-// a glance. In GitHub Actions, the table also goes to the job summary.
+// Violations inside open overlays (tests/a11y/overlays.spec.js) and focus rings
+// that fail (tests/a11y/focus.spec.js) count with their page's. Known
+// violations (tests/a11y/known-issues.js) are counted too, and the "Not
+// allowlisted" column says how many aren't, so configs compare at a glance. In
+// GitHub Actions, the table also goes to the job summary.
 // Usage: npm run a11y-summary
 
 import fs from 'node:fs'
@@ -41,9 +42,9 @@ const configs = fs.readdirSync(reportsDir, { withFileTypes: true })
       }
     }
 
-    // Pages, not page × theme, and a page's open overlays (<theme>/open/) count
-    // with it.
-    return { name, pages: new Set(reports.map(file => path.relative(path.join(reportsDir, name), file).split(path.sep).slice(1).filter((part, index) => index > 0 || part !== 'open').join('/'))).size, rules, unknown }
+    // Pages, not page × theme, and a page's open overlays (<theme>/open/) and
+    // focus rings (<theme>/focus/) count with it.
+    return { name, pages: new Set(reports.map(file => path.relative(path.join(reportsDir, name), file).split(path.sep).slice(1).filter((part, index) => index > 0 || !['open', 'focus'].includes(part)).join('/'))).size, rules, unknown }
   })
   .sort((a, b) => (a.name === 'default' ? -1 : b.name === 'default' ? 1 : a.name.localeCompare(b.name)))
 

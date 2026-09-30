@@ -4,7 +4,8 @@
 // measured (`#ffffff on #0087fe`), the exact pages it happens on, `themes`
 // to limit it to light or dark, and `configs` to limit it to some configs.
 // `state: 'open'` puts an entry in the scan of open overlays
-// (overlays.spec.js) instead of the page scan.
+// (overlays.spec.js) instead of the page scan, and `rule: 'focus-appearance'`
+// in the focus ring check (focus.spec.js).
 // Without `configs`, an entry is expected with the default config and allowed
 // with every other one; with it, it's expected with exactly those. An
 // element that violates the same rule with the default config, under an
@@ -27,7 +28,8 @@ export default [
       '/kitchen-sink/components-button-group.html',
       '/kitchen-sink/components-button.html',
       '/kitchen-sink/components-list-group.html',
-      '/kitchen-sink/forms-chips.html'
+      '/kitchen-sink/forms-chips.html',
+      '/pages/focus.html'
     ],
     issue: 183
   },
@@ -41,7 +43,8 @@ export default [
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button.html',
       '/kitchen-sink/components-list-group.html',
-      '/kitchen-sink/forms-chips.html'
+      '/kitchen-sink/forms-chips.html',
+      '/pages/focus.html'
     ],
     issue: 183
   },
@@ -51,7 +54,8 @@ export default [
     themes: ['light'],
     pages: [
       '/kitchen-sink/components-navbar.html',
-      '/pages/checkout.html'
+      '/pages/checkout.html',
+      '/pages/focus.html'
     ],
     issue: 183
   },
@@ -65,7 +69,8 @@ export default [
       '/kitchen-sink/components-menu.html',
       '/kitchen-sink/components-pagination.html',
       '/kitchen-sink/forms-field.html',
-      '/kitchen-sink/forms-validation.html'
+      '/kitchen-sink/forms-validation.html',
+      '/pages/focus.html'
     ],
     issue: 183
   },
@@ -80,7 +85,8 @@ export default [
       '/kitchen-sink/components-button.html',
       '/kitchen-sink/components-drawer.html',
       '/kitchen-sink/components-list-group.html',
-      '/kitchen-sink/forms-chips.html'
+      '/kitchen-sink/forms-chips.html',
+      '/pages/focus.html'
     ],
     issue: 183
   },
@@ -91,7 +97,8 @@ export default [
     pages: [
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button.html',
-      '/kitchen-sink/components-pagination.html'
+      '/kitchen-sink/components-pagination.html',
+      '/pages/focus.html'
     ],
     issue: 183
   },
@@ -114,7 +121,8 @@ export default [
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button.html',
       '/kitchen-sink/components-list-group.html',
-      '/kitchen-sink/forms-chips.html'
+      '/kitchen-sink/forms-chips.html',
+      '/pages/focus.html'
     ],
     issue: 183
   },
@@ -125,7 +133,8 @@ export default [
     pages: [
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button.html',
-      '/kitchen-sink/components-pagination.html'
+      '/kitchen-sink/components-pagination.html',
+      '/pages/focus.html'
     ],
     issue: 183
   },
@@ -134,7 +143,8 @@ export default [
     colors: '#ffffff on #0087fe',
     themes: ['dark'],
     pages: [
-      '/kitchen-sink/components-card.html'
+      '/kitchen-sink/components-card.html',
+      '/pages/focus.html'
     ],
     issue: 183
   },
@@ -170,6 +180,7 @@ export default [
       '/kitchen-sink/forms-overview.html',
       '/kitchen-sink/forms-validation.html',
       '/pages/checkout.html',
+      '/pages/focus.html',
       '/pages/marketing-pricing.html',
       '/pages/marketing-product.html',
       '/pages/sign-in.html',
@@ -197,7 +208,8 @@ export default [
     colors: '#ffffff on #00b15a',
     themes: ['dark'],
     pages: [
-      '/kitchen-sink/components-card.html'
+      '/kitchen-sink/components-card.html',
+      '/pages/focus.html'
     ],
     issue: 183
   },
@@ -215,6 +227,7 @@ export default [
       '/kitchen-sink/forms-chips.html',
       '/pages/color-modes.html',
       '/pages/custom-property-prefix.html',
+      '/pages/focus.html',
       '/pages/utility-api.html'
     ],
     issue: 183
@@ -224,7 +237,8 @@ export default [
     colors: '#ffffff on #e62845',
     themes: ['dark'],
     pages: [
-      '/kitchen-sink/components-card.html'
+      '/kitchen-sink/components-card.html',
+      '/pages/focus.html'
     ],
     issue: 183
   },
@@ -240,6 +254,7 @@ export default [
       '/kitchen-sink/components-progress.html',
       '/pages/color-modes.html',
       '/pages/custom-property-prefix.html',
+      '/pages/focus.html',
       '/pages/utility-api.html'
     ],
     issue: 183
@@ -267,6 +282,7 @@ export default [
     colors: '#0087fe on #f1f2f3',
     themes: ['light'],
     pages: [
+      '/pages/focus.html',
       '/pages/marketing-product.html'
     ],
     issue: 253
@@ -277,6 +293,7 @@ export default [
     themes: ['light'],
     pages: [
       '/pages/checkout.html',
+      '/pages/focus.html',
       '/screens/login-03.html',
       '/screens/login-04.html',
       '/screens/signup-03.html',
@@ -296,6 +313,7 @@ export default [
       '/kitchen-sink/components-tooltip.html',
       '/pages/color-modes.html',
       '/pages/custom-property-prefix.html',
+      '/pages/focus.html',
       '/pages/reboot-only.html',
       '/pages/utility-api.html',
       '/screens/authentication.html',
@@ -536,6 +554,7 @@ export default [
       '/kitchen-sink/components-list-group.html',
       '/kitchen-sink/components-stepper.html',
       '/kitchen-sink/forms-chips.html',
+      '/pages/focus.html',
       '/screens/cards.html',
       '/screens/playground.html',
       '/screens/tasks.html'
@@ -589,6 +608,7 @@ export default [
       '/kitchen-sink/components-list-group.html',
       '/kitchen-sink/components-stepper.html',
       '/kitchen-sink/forms-chips.html',
+      '/pages/focus.html',
       '/screens/cards.html',
       '/screens/playground.html',
       '/screens/tasks.html'
@@ -606,7 +626,8 @@ export default [
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button.html',
       '/kitchen-sink/components-list-group.html',
-      '/kitchen-sink/forms-chips.html'
+      '/kitchen-sink/forms-chips.html',
+      '/pages/focus.html'
     ],
     reason: 'hue-shift config: every hue rotated 180° with the theme maps\' fixed `contrast` keys, whose WCAG ratios move with the hue (see its README)'
   },
@@ -615,7 +636,10 @@ export default [
     colors: '#ea7300 on #2d3136',
     themes: ['dark'],
     configs: ['hue-shift'],
-    pages: ['/pages/marketing-product.html'],
+    pages: [
+      '/pages/focus.html',
+      '/pages/marketing-product.html'
+    ],
     reason: 'hue-shift config: every hue rotated 180° with the theme maps\' fixed `contrast` keys, whose WCAG ratios move with the hue (see its README)'
   },
   {
@@ -628,7 +652,8 @@ export default [
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button-group.html',
       '/kitchen-sink/components-button.html',
-      '/kitchen-sink/components-card.html'
+      '/kitchen-sink/components-card.html',
+      '/pages/focus.html'
     ],
     reason: 'hue-shift config: every hue rotated 180° with the theme maps\' fixed `contrast` keys, whose WCAG ratios move with the hue (see its README)'
   },
@@ -641,7 +666,8 @@ export default [
       '/kitchen-sink/components-avatar.html',
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button-group.html',
-      '/kitchen-sink/components-button.html'
+      '/kitchen-sink/components-button.html',
+      '/pages/focus.html'
     ],
     reason: 'hue-shift config: every hue rotated 180° with the theme maps\' fixed `contrast` keys, whose WCAG ratios move with the hue (see its README)'
   },
@@ -656,7 +682,8 @@ export default [
       '/kitchen-sink/components-button-group.html',
       '/kitchen-sink/components-button.html',
       '/kitchen-sink/components-card.html',
-      '/kitchen-sink/components-progress.html'
+      '/kitchen-sink/components-progress.html',
+      '/pages/focus.html'
     ],
     reason: 'mono config: one base color for every hue, with the fixed `contrast` keys under 4.5:1 on it (see its README)'
   },
@@ -670,7 +697,8 @@ export default [
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button-group.html',
       '/kitchen-sink/components-button.html',
-      '/kitchen-sink/components-progress.html'
+      '/kitchen-sink/components-progress.html',
+      '/pages/focus.html'
     ],
     reason: 'mono config: one base color for every hue, with the fixed `contrast` keys under 4.5:1 on it (see its README)'
   },
@@ -679,7 +707,10 @@ export default [
     colors: '#7b7dea on #303036',
     themes: ['dark'],
     configs: ['mono'],
-    pages: ['/pages/marketing-product.html'],
+    pages: [
+      '/pages/focus.html',
+      '/pages/marketing-product.html'
+    ],
     reason: 'mono config: one base color for every hue, with the fixed `contrast` keys under 4.5:1 on it (see its README)'
   },
   {
@@ -687,6 +718,7 @@ export default [
     configs: ['root-62-5'],
     pages: [
       '/pages/dashboard.html',
+      '/pages/focus.html',
       '/screens/cards.html'
     ],
     reason: 'root-62-5 config: checks, radios, switches and pages/dashboard.css size themselves in `rem`, so a 62.5% root shrinks them under the 24px target size (see its README)'
@@ -808,5 +840,68 @@ export default [
     state: 'open',
     pages: ['/kitchen-sink/components-dialog.html'],
     issue: 267
+  },
+  // pages/focus.html puts every theme's text colors on bg-1 to bg-3 too.
+  {
+    rule: 'color-contrast',
+    target: /^\.bg-[123] .*data-focus="btn-(outline|text|link|check)-(primary|accent|success|danger|warning|info)"/,
+    pages: ['/pages/focus.html'],
+    issue: 183
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#0087fe on #e2e5e7',
+    themes: ['light'],
+    pages: ['/pages/focus.html'],
+    issue: 253
+  },
+  {
+    rule: 'color-contrast',
+    target: /^\.bg-(primary|accent|success|danger|warning|info|inverse|secondary) /,
+    pages: ['/pages/focus.html'],
+    reason: 'pages/focus.html puts components on solid fills for their focus rings, a pairing their text colors aren\'t meant for'
+  },
+  {
+    rule: 'color-contrast',
+    target: /data-focus="(btn-subtle|list-group-action|chip-input)-danger"/,
+    configs: ['shadcn'],
+    pages: ['/pages/focus.html'],
+    reason: 'shadcn config: shadcn/ui\'s own neutral and destructive colors, under 4.5:1 in these pairings'
+  },
+  // The focus ring check (focus.spec.js): `target` matches `<surface>
+  // <component>`, as pages/focus.html names them.
+  {
+    rule: 'focus-appearance',
+    target: / chip-input-chip(-\w+)?$/,
+    pages: ['/pages/focus.html'],
+    issue: 7
+  },
+  {
+    rule: 'focus-appearance',
+    target: / btn-close$/,
+    pages: ['/pages/focus.html'],
+    issue: 271
+  },
+  {
+    rule: 'focus-appearance',
+    target: / ((menu-item|list-group-action)(-\w+)?|link)$/,
+    pages: ['/pages/focus.html'],
+    issue: 272
+  },
+  {
+    rule: 'focus-appearance',
+    target: / range$/,
+    pages: ['/pages/focus.html'],
+    reason: 'the ring surrounds the thumb, a sub-component that the check can\'t measure apart from the track'
+  },
+  // Every component that draws Bootstrap's ring, which fails on most surfaces
+  // in light mode and on many in dark mode: one entry covers them all, and
+  // the visual captures (tests/visual/focus.spec.js) show any change to a
+  // ring.
+  {
+    rule: 'focus-appearance',
+    target: / (?!(chip-input-chip|menu-item|list-group-action)(-|$)|(btn-close|link|range)$)/,
+    pages: ['/pages/focus.html'],
+    issue: 270
   }
 ]
