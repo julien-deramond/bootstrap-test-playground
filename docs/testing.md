@@ -66,7 +66,7 @@ npm run test:console -- -g combobox   # only the pages whose URL matches
 
 Each failure names the page, with its `?theme=` and `?config=`, and lists the messages.
 
-Problems caused by an open upstream bug go in [`tests/console/known-issues.js`](../tests/console/known-issues.js), with the tracking issue number, a pattern for the message and the pages where it happens. They no longer fail the run on those pages. When a listed problem stops happening on a page, the run fails, so the entry gets removed and the tracking issue moves to `upstream-fixed` (see [Upstream issues](../CLAUDE.md#upstream-issue-tracking)).
+Problems caused by an open upstream bug go in [`tests/console/known-issues.js`](../tests/console/known-issues.js), with the tracking issue number, a pattern for the message and the pages where it happens. They no longer fail the run on those pages. When a listed problem stops happening on a page, the crawl loads the page a second time to make sure, since an upstream fix makes it go away on every load. If it's still missing, the run fails, so the entry gets removed and the tracking issue moves to `upstream-fixed` (see [Upstream issues](../CLAUDE.md#upstream-issue-tracking)).
 
 Sass `@warn` output shows up in the build log, not in the browser, so the crawl doesn't see it. [`npm run check-configs`](audits.md#checking-configs) reports it.
 
