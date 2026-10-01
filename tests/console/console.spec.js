@@ -68,6 +68,42 @@ function trackRequests(page) {
   }
 }
 
+// Opens `path` and lists what the page reports.
+async function visit(page, baseURL, path) {
+  const { origin } = new URL(baseURL)
+  const problems = []
+  const requests = trackRequests(page)
+
+  // Remote resources (avatars, web fonts) aren't the playground's to fix, and
+  // an unreachable one must not fail the run.
+  await page.route(target => target.origin !== origin, route => route.abort())
+
+  page.on('pageerror', error => problems.push(`uncaught ${error.name}: ${error.message}`))
+  page.on('console', message => {
+    // Failed resources are reported below, with their URL.
+    if (['error', 'warning'].includes(message.type()) && !message.text().startsWith('Failed to load resource')) {
+      problems.push(`console.${message.type() === 'warning' ? 'warn' : 'error'}: ${message.text()}`)
+    }
+  })
+  page.on('requestfailed', request => {
+    if (new URL(request.url()).origin === origin) {
+      problems.push(`request failed: ${request.url()} (${request.failure()?.errorText})`)
+    }
+  })
+  page.on('response', response => {
+    if (response.status() >= 400 && new URL(response.url()).origin === origin) {
+      problems.push(`HTTP ${response.status()}: ${response.url()}`)
+    }
+  })
+
+  await page.goto(path)
+  await page.waitForFunction(() => !document.getElementById('playground-config-pending'))
+  // Catches errors thrown by late scripts and timers too.
+  await requests.settled()
+
+  return problems
+}
+
 const scope = process.env.CONSOLE_SCOPE ? JSON.parse(process.env.CONSOLE_SCOPE) : { full: true }
 const inScope = (variant, url) => scope.full || ['working', 'dist'].includes(variant) ||
   scope.configs.includes(variant) || scope.urls.includes(url)
@@ -78,44 +114,24 @@ for (const theme of THEMES) {
       test.use({ colorScheme: theme })
 
       for (const url of urls.filter(url => inScope(name, url))) {
-        test(url, async ({ page, baseURL, browserName }) => {
-          const { origin } = new URL(baseURL)
-          const problems = []
-          const requests = trackRequests(page)
-
-          // Remote resources (avatars, web fonts) aren't the playground's to
-          // fix, and an unreachable one must not fail the run.
-          await page.route(target => target.origin !== origin, route => route.abort())
-
-          page.on('pageerror', error => problems.push(`uncaught ${error.name}: ${error.message}`))
-          page.on('console', message => {
-            // Failed resources are reported below, with their URL.
-            if (['error', 'warning'].includes(message.type()) && !message.text().startsWith('Failed to load resource')) {
-              problems.push(`console.${message.type() === 'warning' ? 'warn' : 'error'}: ${message.text()}`)
-            }
-          })
-          page.on('requestfailed', request => {
-            if (new URL(request.url()).origin === origin) {
-              problems.push(`request failed: ${request.url()} (${request.failure()?.errorText})`)
-            }
-          })
-          page.on('response', response => {
-            if (response.status() >= 400 && new URL(response.url()).origin === origin) {
-              problems.push(`HTTP ${response.status()}: ${response.url()}`)
-            }
-          })
-
-          const params = new URLSearchParams({ theme, ...variant })
-          await page.goto(`${url}?${params}`)
-          await page.waitForFunction(() => !document.getElementById('playground-config-pending'))
-          // Catches errors thrown by late scripts and timers too.
-          await requests.settled()
+        test(url, async ({ page, context, baseURL, browserName }) => {
+          const path = `${url}?${new URLSearchParams({ theme, ...variant })}`
+          const problems = await visit(page, baseURL, path)
 
           const known = knownIssues.filter(entry => entry.pages.includes(url) && (!entry.engines || entry.engines.includes(browserName)))
           const unexpected = problems.filter(problem => !known.some(({ message }) => message.test(problem)))
-          const gone = known.filter(({ message }) => !problems.some(problem => message.test(problem)))
+          let gone = known.filter(({ message }) => !problems.some(problem => message.test(problem)))
 
-          expect(unexpected, `${url}?${params} reported problems. If Bootstrap causes one, open a tracking issue labeled \`upstream\` ` +
+          // An upstream fix makes a known issue go away on every load. Load
+          // the page once more before calling it gone, so a single load that
+          // missed it fails neither the run nor closes an issue that isn't
+          // fixed (#283).
+          if (gone.length > 0) {
+            const again = await visit(await context.newPage(), baseURL, path)
+            gone = gone.filter(({ message }) => !again.some(problem => message.test(problem)))
+          }
+
+          expect(unexpected, `${path} reported problems. If Bootstrap causes one, open a tracking issue labeled \`upstream\` ` +
             '(see "Upstream issue tracking" in CLAUDE.md) and add it to tests/console/known-issues.js').toEqual([])
           expect(gone.map(({ issue, message }) => `#${issue} ${message}`),
             'Known issues that no longer happen here: remove them from tests/console/known-issues.js, ' +
