@@ -72,6 +72,7 @@ export function upstreamCommits(from, to, checkoutDir) {
 
   const compare = run('gh', ['api', `repos/twbs/bootstrap/compare/${from}...${to}`, '--jq', '.commits[] | "\\(.sha)\\t\\(.commit.message | split("\\n")[0])"'])
   if (compare.status !== 0) {
+    console.warn(`Can't list the upstream commits ${from.slice(0, 7)}...${to.slice(0, 7)}: ${compare.error?.message ?? compare.stderr.trim()}`)
     return null
   }
 
