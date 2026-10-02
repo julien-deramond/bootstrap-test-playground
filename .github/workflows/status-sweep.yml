@@ -22,9 +22,12 @@ on:
         type: boolean
         default: false
 
+# pull-requests: read, even for twbs/bootstrap's: without it, GITHUB_TOKEN
+# gets issues only, from the issue list as from the search.
 permissions:
   contents: read
   issues: write
+  pull-requests: read
 
 concurrency:
   group: status-sweep
