@@ -305,9 +305,9 @@ const SCENARIOS = {
 
   async toast(page) {
     await load(page, PAGES.toast, page.config)
-    const toast = page.locator('.toast:has([data-bs-dismiss="toast"])').first()
+    const toast = page.locator('#liveToast')
 
-    await toast.evaluate(element => window.bootstrap.Toast.getOrCreateInstance(element, { autohide: false }).show())
+    await page.locator('#liveToastBtn').click()
     await expect(toast).toBeVisible()
     await expectEvents(page, ['show.bs.toast', 'shown.bs.toast'])
 
