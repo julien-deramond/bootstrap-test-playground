@@ -1,6 +1,14 @@
 // Demo wiring for the examples, ported from Bootstrap's docs
 // (site/src/assets/partials/snippets.js). Everything is opt-in and guarded, so
 // pages without these elements are unaffected.
+
+// Buttons that show a toast by id. scripts/lib/kitchen-sink.mjs reads this map
+// too, to bring along toasts that the docs write outside their example.
+export const liveToasts = {
+  liveToastBtn: 'liveToast',
+  dialogToastBtn: 'dialogToast'
+}
+
 export function initExamples({ Carousel, Popover, Toast, Tooltip }) {
   // Tooltips and popovers are opt-in.
   for (const element of document.querySelectorAll('[data-bs-toggle="tooltip"]')) {
@@ -16,11 +24,6 @@ export function initExamples({ Carousel, Popover, Toast, Tooltip }) {
     if (!element.closest('dialog')) {
       new Toast(element, { autohide: false }).show()
     }
-  }
-
-  const liveToasts = {
-    liveToastBtn: 'liveToast',
-    dialogToastBtn: 'dialogToast'
   }
 
   for (const [triggerId, toastId] of Object.entries(liveToasts)) {

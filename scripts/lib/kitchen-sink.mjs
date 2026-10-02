@@ -8,6 +8,7 @@
 
 import fs from 'node:fs'
 import path from 'node:path'
+import { liveToasts } from '../../src/js/examples.js'
 import { root } from './configs.mjs'
 
 export const outDir = path.join(root, 'kitchen-sink')
@@ -173,11 +174,14 @@ const plainText = markdown => markdown.replace(/`([^`]*)`/g, '$1').replace(/\[([
 const slugify = value => value.toLowerCase().replace(/<[^>]*>/g, '').replace(/[^\w]+/g, '-').replace(/^-|-$/g, '')
 const indent = (html, spaces) => html.split('\n').map(line => (line ? ' '.repeat(spaces) + line : line)).join('\n')
 
-// The ids that an example's toggles open (`data-bs-target="#id"`, or
-// `href="#id"` on a `data-bs-toggle` element).
-const toggleTargets = html => [...html.matchAll(/<[^>]*\sdata-bs-toggle="[^"]*"[^>]*>/g)]
-  .map(([tag]) => (tag.match(/\sdata-bs-target="#([^"]+)"/) ?? tag.match(/\shref="#([^"]+)"/))?.[1])
-  .filter(Boolean)
+// The ids that an example opens: the targets of its toggles
+// (`data-bs-target="#id"`, or `href="#id"` on a `data-bs-toggle` element), and
+// the toasts that src/js/examples.js shows from its buttons by id.
+const exampleTargets = html => [
+  ...[...html.matchAll(/<[^>]*\sdata-bs-toggle="[^"]*"[^>]*>/g)]
+    .map(([tag]) => (tag.match(/\sdata-bs-target="#([^"]+)"/) ?? tag.match(/\shref="#([^"]+)"/))?.[1]),
+  ...[...html.matchAll(/\sid="([^"]+)"/g)].map(([, id]) => liveToasts[id])
+].filter(Boolean)
 
 // Reads the element that starts at `start` in `source`, up to its matching
 // closing tag.
@@ -196,18 +200,22 @@ function readElement(source, start, name) {
 }
 
 // Some examples open an element that the MDX writes as raw HTML outside any
-// <Example>, like the sized dialogs of dialog.mdx. Appends each one to the
-// first example that targets it, so its trigger opens something. `prose` is the
-// MDX source with the examples and code blocks blanked out.
+// <Example>, like the sized dialogs of dialog.mdx or the live toast of
+// toasts.mdx. Appends the top-level element that holds each one (the live
+// toast's positioned container, for example) to the first example that targets
+// it, so its trigger opens something. `prose` is the MDX source with the
+// examples and code blocks blanked out.
 function attachTargets(examples, prose, source) {
   const missing = []
   const ids = new Set(examples.flatMap(({ html }) => [...html.matchAll(/\sid="([^"]+)"/g)].map(([, id]) => id)))
   for (const example of examples) {
-    for (const id of toggleTargets(example.html).filter(target => !ids.has(target))) {
+    for (const id of exampleTargets(example.html).filter(target => !ids.has(target))) {
       const escaped = id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      const match = prose.match(new RegExp(`^<([a-z][\\w-]*)\\b[^>]*\\sid="${escaped}"`, 'm'))
-      if (match) {
-        example.html += `\n\n${cleanHtml(readElement(source, match.index, match[1]))}`
+      const target = prose.search(new RegExp(`<[a-z][\\w-]*\\b[^>]*\\sid="${escaped}"`))
+      const top = target === -1 ? undefined : [...prose.matchAll(/^<([a-z][\w-]*)\b/gm)].findLast(match => match.index <= target)
+      const element = top && readElement(source, top.index, top[1])
+      if (element && top.index + element.length > target) {
+        example.html += `\n\n${cleanHtml(element)}`
       } else {
         missing.push(`#${id}`)
       }
