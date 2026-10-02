@@ -40,7 +40,8 @@
     "canary-report": "node scripts/canary-report.mjs",
     "diff-bootstrap": "node scripts/diff-bootstrap.mjs",
     "update-bootstrap": "node scripts/update-bootstrap.mjs",
-    "record-update": "node scripts/record-update.mjs"
+    "record-update": "node scripts/record-update.mjs",
+    "status-sweep": "node scripts/status-sweep.mjs"
   },
   "engines": {
     "node": ">=20.19"

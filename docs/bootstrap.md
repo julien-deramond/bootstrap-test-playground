@@ -79,6 +79,17 @@ From the *Actions* tab, *Run workflow* with *force* runs the checks even when `v
 
 `npm run canary-report` runs the same checks locally, against `node_modules/bootstrap`, in about four minutes. `-- --only audit-rtl,lint:html` runs a subset, and `-- --from <sha> --to <sha>` adds the upstream commit range.
 
+## Weekly status sweep
+
+[`.github/workflows/status-sweep.yml`](../.github/workflows/status-sweep.yml) runs the status sweep of [Upstream issues](../CLAUDE.md#upstream-issue-tracking) every Monday, after the canary, and on demand from the *Actions* tab. It runs `npm run status-sweep -- --apply`:
+
+- An open `upstream-reported` issue follows the twbs/bootstrap items of its *Reported upstream: twbs/bootstrap#n* comments. When they're all fixed on `v6-dev` (a pull request merged, or an issue closed as completed by a commit or with a merged pull request linked to close it, whose commit is in `v6-dev`), the issue moves to `upstream-fixed` and is closed with *Fixed upstream in twbs/bootstrap#pr (commit)*. The comment says whether the playground already installs the fix, and which allowlists or checks still reference the issue: remove those entries with the update, when the checks report them gone. While an item is open, it waits. When they're all closed but one isn't fixed (a pull request closed without merging, an issue closed as not planned, or closed by hand), it comments for a human instead.
+- An open `upstream` issue that a twbs/bootstrap issue or pull request links to moves to `upstream-reported`, with the *Reported upstream* comment. Otherwise, the twbs/bootstrap items updated in the last eight days (`--since`) whose title shares three keywords with the issue's title, or two backed by code from it or five words of the description, get a comment as possible matches. A human decides: follow step 2 or 3 by hand. These are written as code, not links, so a wrong guess doesn't cross-reference the issue on twbs/bootstrap.
+
+Each comment carries a hidden marker, so a finding is reported once. The job summary lists what the sweep did. It only makes API calls, with `GITHUB_TOKEN` (`CANARY_TOKEN` can't read twbs/bootstrap), in about a minute.
+
+`npm run status-sweep` alone is a dry run: it prints what it would do and changes nothing. `-- --since 2026-09-01` looks further back for possible matches.
+
 ## Testing a local checkout
 
 To test a local Bootstrap checkout instead of the GitHub package, such as a branch you're working on, point `BOOTSTRAP_PATH` to it:
