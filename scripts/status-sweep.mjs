@@ -57,7 +57,7 @@ function gh(args, { json = true } = {}) {
 }
 
 // Every page of a REST list, as one array.
-const list = (endpoint, field) => gh(['api', '-X', 'GET', endpoint, '--paginate', '--slurp']).flatMap(page => field ? page[field] : page)
+const list = endpoint => gh(['api', '-X', 'GET', endpoint, '--paginate', '--slurp']).flat()
 
 const repo = process.env.GITHUB_REPOSITORY ?? gh(['repo', 'view', '--json', 'nameWithOwner']).nameWithOwner
 
@@ -278,7 +278,9 @@ for (const issue of reported) {
 }
 
 // 2. Not reported yet: has someone reported it upstream?
-const candidates = list(`search/issues?q=${encodeURIComponent(`repo:${UPSTREAM} updated:>=${since}`)}&per_page=100`, 'items')
+// The repository's list, not the search API: search returns a fraction of the
+// items to the workflow's GITHUB_TOKEN.
+const candidates = list(`repos/${UPSTREAM}/issues?state=all&since=${since}T00:00:00Z&per_page=100`)
   .filter(item => item.user?.type !== 'Bot')
 const unreported = openIssues('upstream')
 for (const issue of unreported) {

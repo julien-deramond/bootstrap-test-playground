@@ -46,5 +46,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           SINCE: ${{ inputs.since }}
-          APPLY: ${{ inputs.dry-run && '' || '--apply' }}
+          # Not `dry-run && '' || '--apply'`: '' is falsy, so that's always --apply.
+          APPLY: ${{ !inputs.dry-run && '--apply' || '' }}
         run: node scripts/status-sweep.mjs ${SINCE:+--since "$SINCE"} $APPLY
