@@ -152,7 +152,7 @@ function playgroundData(base, bootstrapDir) {
 }
 
 // `virtual:bootstrap-source` describes where Bootstrap comes from, for the
-// toolbar and the home page: `{ label, path, url, dirty }` (see
+// toolbar, the home page and the reproductions: `{ label, path, url, sha, dirty }` (see
 // scripts/lib/bootstrap.mjs). Its `onChange(listener)` hears updates in dev.
 //
 // With a BOOTSTRAP_PATH checkout, the dev server also:
@@ -164,7 +164,7 @@ function playgroundData(base, bootstrapDir) {
 function bootstrapSourceData(env, initial) {
   const id = 'virtual:bootstrap-source'
   let source = initial
-  const code = () => `const source = ${JSON.stringify({ label: source.label, path: source.path, url: source.url, dirty: source.dirty })}
+  const code = () => `const source = ${JSON.stringify({ label: source.label, path: source.path, url: source.url, sha: source.sha, dirty: source.dirty })}
 const listeners = new Set()
 export const onChange = listener => listeners.add(listener)
 if (import.meta.hot) {
@@ -190,7 +190,7 @@ export default source`
         clearTimeout(timer)
         timer = setTimeout(() => {
           const next = bootstrapSource(env)
-          if (next.label === source.label && next.url === source.url && next.dirty === source.dirty) {
+          if (next.label === source.label && next.url === source.url && next.sha === source.sha && next.dirty === source.dirty) {
             return
           }
 
@@ -201,7 +201,7 @@ export default source`
           }
 
           server.config.logger.info(`Bootstrap source: ${source.label}`, { timestamp: true })
-          server.ws.send({ type: 'custom', event: 'playground:bootstrap-source', data: { label: source.label, url: source.url, dirty: source.dirty } })
+          server.ws.send({ type: 'custom', event: 'playground:bootstrap-source', data: { label: source.label, url: source.url, sha: source.sha, dirty: source.dirty } })
         }, 300)
       }
 

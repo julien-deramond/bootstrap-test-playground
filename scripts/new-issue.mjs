@@ -6,7 +6,12 @@
 
 import fs from 'node:fs'
 import path from 'node:path'
+import { loadEnv } from 'vite'
+import { bootstrapSource } from './lib/bootstrap.mjs'
 import { NAME_PATTERN, configDir, copyStyles, fail, listConfigs, root, workingDir } from './lib/configs.mjs'
+
+// Tracking issues live in this repository.
+const TRACKING_REPO = 'julien-deramond/bootstrap-test-playground'
 
 const args = process.argv.slice(2)
 const configIndex = args.indexOf('--config')
@@ -28,12 +33,17 @@ if (fs.existsSync(targetDir)) {
   fail(`issues/${name}/ already exists.`)
 }
 
+// `42928`: an upstream issue, so reported. `pg-12`: tracked here, not reported
+// yet. Any other slug: neither, until the page's metadata says otherwise.
 const isUpstream = /^\d+$/.test(name)
+const tracking = name.match(/^pg-(\d+)$/)?.[1]
+const { sha } = bootstrapSource(loadEnv('production', root, ''))
 const template = fs.readFileSync(path.join(root, 'scripts/templates/issue/index.html'), 'utf8')
   .replaceAll('__TITLE__', isUpstream ? `#${name}` : name)
-  .replaceAll('__LINK__', isUpstream ?
-    `<a href="https://github.com/twbs/bootstrap/issues/${name}">twbs/bootstrap#${name}</a>` :
-    'Upstream: not reported yet')
+  .replaceAll('__UPSTREAM__', isUpstream ? `twbs/bootstrap#${name}` : '')
+  .replaceAll('__STATUS__', isUpstream ? 'reported' : 'unreported')
+  .replaceAll('__TRACKING__', tracking ? `${TRACKING_REPO}#${tracking}` : '')
+  .replaceAll('__COMMIT__', sha ?? '')
 
 copyStyles(sourceDir, targetDir)
 fs.writeFileSync(path.join(targetDir, 'index.html'), template)

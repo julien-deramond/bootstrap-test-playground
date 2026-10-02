@@ -8,6 +8,14 @@
          components involved (comma-separated). -->
     <meta name="description" content="">
     <meta name="playground-tags" content="">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="__UPSTREAM__" data-status="__STATUS__" data-tracking="__TRACKING__">
+    <meta name="playground-bootstrap" content="__COMMIT__">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <script src="/playground-prefs.js"></script>
     <!-- This reproduction compiles its own copy of Bootstrap from the config
@@ -17,15 +25,23 @@
     <script type="module" src="/src/js/main.js"></script>
   </head>
   <body>
+    <!-- Before filing, the tracking issue needs (see CLAUDE.md, "Record a
+         potential bug"):
+         - [ ] Summary: one or two sentences, also the description above
+         - [ ] Bootstrap version: the v6-dev commit, shown in the header
+         - [ ] Reproduction: the steps below, and a link to this page
+         - [ ] Expected / Actual, below
+         - [ ] Root cause: file:line in twbs/bootstrap with a permalink, when known
+         - [ ] Possible fix, when known -->
     <main class="container py-5">
       <!-- data-playground-chrome: hidden by ?chrome=0, which shows the
            markup under test alone (screenshots, embeds). -->
       <header class="mb-5" data-playground-chrome>
         <p class="mb-2"><a href="/">Playground</a> / Issues</p>
         <h1>Issue __TITLE__</h1>
-        <p class="fs-lg fg-2">
-          __LINK__
-        </p>
+        <!-- Filled from the metadata above: status, upstream and tracking
+             links, and the Bootstrap commit. -->
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
       </header>
 
       <section class="mb-5" data-playground-chrome>
@@ -33,14 +49,37 @@
         <ol>
           <li>…</li>
         </ol>
-        <p><strong>Expected:</strong> …</p>
-        <p><strong>Actual:</strong> …</p>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <!-- A sentence, and when it helps a screenshot next to this page
+                   (<img src="./expected.png" alt="…">) or markup that renders
+                   the expected result. -->
+              <p class="mb-0">…</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p class="mb-0">…</p>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section>
         <h2 class="h5" data-playground-chrome>Reproduction</h2>
-        <!-- Paste the markup under test here. -->
-        <button type="button" class="btn-solid theme-primary">Button</button>
+        <!-- Paste the markup under test here. data-playground-repro shows it in
+             light and dark side by side: the dark copy is a clone, with `-dark`
+             added to its ids, the references to them and its radio names. The
+             clone exists before this page's own scripts run, so they can set
+             up both with querySelectorAll('[data-playground-repro]'). Remove
+             the attribute when the markup needs the whole page (a fixed navbar,
+             a page-level theme). -->
+        <div data-playground-repro>
+          <button type="button" class="btn-solid theme-primary">Button</button>
+        </div>
       </section>
     </main>
 

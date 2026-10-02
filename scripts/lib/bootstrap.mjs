@@ -64,8 +64,9 @@ function checkoutLabel({ branch, sha, dirty }) {
 // node_modules (default), or a local checkout when BOOTSTRAP_PATH is set.
 // `label` names it (`local checkout: v6-dev@1a2b3c4 (dirty)`), `path` is its
 // folder relative to the playground, so builds embed no absolute path, `url`
-// links to the commit or the branch on GitHub when known, and `dirty` says
-// whether the checkout has uncommitted changes.
+// links to the commit or the branch on GitHub when known, `sha` is the full
+// commit when known, and `dirty` says whether the checkout has uncommitted
+// changes.
 export function bootstrapSource(env) {
   if (env.BOOTSTRAP_PATH) {
     const dir = path.resolve(root, env.BOOTSTRAP_PATH)
@@ -79,23 +80,25 @@ export function bootstrapSource(env) {
       label: state ? `local checkout: ${checkoutLabel(state)}` : `local checkout: ${dir}`,
       path: path.relative(root, dir) || dir,
       url: state?.url,
+      sha: state?.sha,
       dirty: state?.dirty ?? false
     }
   }
 
   let label = 'node_modules/bootstrap'
   let url
+  let sha
   try {
     const lock = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json'), 'utf8'))
     const resolved = lock.packages?.['node_modules/bootstrap']?.resolved ?? ''
-    const sha = resolved.split('#')[1]
+    sha = resolved.split('#')[1]
     if (sha) {
       label = `twbs/bootstrap#v6-dev @ ${sha.slice(0, 9)}`
       url = `https://github.com/${githubRepo(resolved) ?? 'twbs/bootstrap'}/commit/${sha}`
     }
   } catch {}
 
-  return { dir: null, label, path: 'node_modules/bootstrap', url, dirty: false }
+  return { dir: null, label, path: 'node_modules/bootstrap', url, sha, dirty: false }
 }
 
 // Bootstrap's own `.scss` files under `scss/`, as absolute paths. A git

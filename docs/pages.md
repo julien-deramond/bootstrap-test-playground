@@ -86,7 +86,14 @@ npm run new-issue pg-3 -- --config rounded-dark  # from a saved config
 npm run new-issue pg-4 -- --config working       # from the working copy
 ```
 
-This creates `issues/<name>/` with an `index.html` and a copy of the config's three files, served at `/issues/<name>/`. A numeric name links to `twbs/bootstrap#<name>`. Each reproduction **compiles its own copy of Bootstrap**, so its styles stay isolated from the shared files, from other reproductions, and from the toolbar's *Config* list.
+This creates `issues/<name>/` with an `index.html` and a copy of the config's three files, served at `/issues/<name>/`. Each reproduction **compiles its own copy of Bootstrap**, so its styles stay isolated from the shared files, from other reproductions, and from the toolbar's *Config* list.
+
+The page's header comes from two `<meta>` tags, which `new-issue` fills in and [`src/js/reproduction.js`](../src/js/reproduction.js) renders:
+
+- `<meta name="playground-upstream" content="twbs/bootstrap#42754" data-status="reported" data-tracking="julien-deramond/bootstrap-test-playground#12">`: the upstream issue or pull request, a status badge and the tracking issue. `data-status` follows the tracking issue's label: `unreported` (`upstream`), `reported` (`upstream-reported`) or `fixed` (`upstream-fixed`). A numeric name starts as `reported` with its upstream link, `pg-<n>` as `unreported` with its tracking issue. Update the tag along with the label.
+- `<meta name="playground-bootstrap" content="<sha>">`: the Bootstrap commit it was reproduced on. The header shows it next to the commit the page renders with now, which tells whether an update came in since.
+
+The markup under test goes in the `data-playground-repro` block, shown in light and dark side by side. The dark copy is a clone, made before the page's own scripts run, with `-dark` added to its ids, to the references to them (`for`, `aria-*`, `href="#…"`, `data-bs-target`…) and to its radio names. A switch shows the markup once instead, in the toolbar's color mode, and the choice is remembered. Remove the attribute when the markup needs the whole page. A comment at the top of the template lists what the tracking issue needs, from CLAUDE.md.
 
 To share a reproduction, push the repository and link to the folder on GitHub, or open it in StackBlitz: `https://stackblitz.com/github/julien-deramond/bootstrap-test-playground`.
 
