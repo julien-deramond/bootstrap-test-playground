@@ -62,7 +62,7 @@ npm run diff-bootstrap -- 624c7b9 v6-dev --serve
 
 1. updates Bootstrap like `npm run update-bootstrap` (`package.json` keeps `#v6-dev`, the lockfile pins the new commit);
 2. fetches that exact commit's docs and resyncs the kitchen sink;
-3. runs every check with `npm run canary-report`, then compares the two commits with `npm run diff-bootstrap`: the compile and dist checks, every audit, `lint:html`, the size check (its table goes into the report, and the new sizes into `sizes/history.json`), the rendered audits, the console crawl, the smoke tests in all three engines, and the visual suite;
+3. runs every check with `npm run canary-report`, then compares the two commits with `npm run diff-bootstrap`: the compile and dist checks, every audit, `lint:html`, the size check (its table goes into the report, and the new sizes into `sizes/history.json`), the rendered audits, the console crawl, the smoke tests in all three engines, and the visual suite. The console crawl and the smoke tests run the working copy and dist only, like a pull request that changes no config: a Bootstrap update is a shared change, so the pull request's own checks run them with every config;
 4. records the update in [`updates/last-update.json`](#what-changed-in-the-last-update) with `npm run record-update`;
 5. opens a pull request `chore(deps): update bootstrap to v6-dev@<sha>`, or updates the open one. It's labelled `canary`, plus `checks-failing` when a check fails.
 
@@ -73,7 +73,7 @@ Upstream pull request numbers in commit subjects are shown as code, not links, s
 Opening the pull request needs one of these:
 
 - a `CANARY_TOKEN` repository secret (*Settings › Secrets and variables › Actions*, not an environment secret): a fine-grained token limited to this repository, with *Contents*, *Pull requests* and *Issues* read/write. *Issues* covers the labels and the take-over comment. With it, the pull request also starts the other workflows, and shows the token's owner as its author. When the token expires, the canary fails at checkout until the secret is updated.
-- *Allow GitHub Actions to create and approve pull requests* in the repository's *Settings › Actions › General*. The pull request then comes from `GITHUB_TOKEN`, which doesn't start other workflows, so the report is its only check run.
+- *Allow GitHub Actions to create and approve pull requests* in the repository's *Settings › Actions › General*. The pull request then comes from `GITHUB_TOKEN`, which doesn't start other workflows, so the report is its only check run. The console crawl and the smoke tests then never run with every config: start *Console crawl* and *Smoke tests* on the `canary/bootstrap` branch by hand.
 
 From the *Actions* tab, *Run workflow* with *force* runs the checks even when `v6-dev` hasn't moved, and uploads the report without opening a pull request when nothing changed.
 

@@ -3,7 +3,8 @@
 // nightly canary puts in its pull request (.github/workflows/canary.yml).
 // Usage: npm run canary-report [-- --from <sha> --to <sha>] [-- --only audit-rtl,lint:html]
 //
-// Each check runs with BOOTSTRAP_PATH unset, so against node_modules/bootstrap.
+// Each check runs with BOOTSTRAP_PATH unset, so against node_modules/bootstrap,
+// and the console crawl and the smoke tests on the working copy and dist only.
 // The report has the upstream commit range, one row per check, the allowlist
 // entries that no longer match (usually an upstream fix: step 3 of "Upstream
 // issue tracking" in CLAUDE.md), the kitchen sink pages the sync changed, and
@@ -26,6 +27,12 @@ const to = arg('to') ?? lockedSha()
 const from = arg('from') ?? to
 const only = arg('only')?.split(',')
 
+// The console crawl and the smoke tests run what every pull request runs, the
+// working copy and dist: with every config, they outgrow the canary's one job
+// (#285). A Bootstrap update is a shared change, so the canary's pull request
+// runs both in full in its own checks.
+const BASELINE = JSON.stringify({ full: false, configs: [], urls: [] })
+
 // `informational`: a difference is expected whenever Bootstrap changes, so it's
 // reported, not counted as a failure.
 const CHECKS = [
@@ -42,8 +49,8 @@ const CHECKS = [
   { name: 'check-size', command: 'npm run -s check-size', table: true },
   { name: 'audit-motion --render', command: 'npm run -s audit-motion -- --render' },
   { name: 'audit-layers --render', command: 'npm run -s audit-layers -- --render' },
-  { name: 'test:console', command: 'npm run -s test:console -- --reporter=line' },
-  { name: 'test:smoke', command: 'npm run -s test:smoke:engines -- --reporter=line' },
+  { name: 'test:console', command: 'npm run -s test:console -- --reporter=line', env: { CONSOLE_SCOPE: BASELINE } },
+  { name: 'test:smoke', command: 'npm run -s test:smoke:engines -- --reporter=line', env: { SMOKE_SCOPE: BASELINE } },
   { name: 'test:a11y', command: 'npm run -s test:a11y -- --reporter=line' },
   { name: 'test:visual', command: 'npm run -s test:visual -- --reporter=line', informational: true }
 ].filter(({ name }) => !only || only.includes(name))
@@ -58,7 +65,7 @@ const results = []
 for (const check of CHECKS) {
   process.stdout.write(`${check.name}… `)
   const started = Date.now()
-  const run = spawnSync(check.command, { cwd: root, shell: true, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, env: { ...process.env, BOOTSTRAP_PATH: '', FORCE_COLOR: '0' } })
+  const run = spawnSync(check.command, { cwd: root, shell: true, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, env: { ...process.env, ...check.env, BOOTSTRAP_PATH: '', FORCE_COLOR: '0' } })
   const output = stripAnsi(`${run.stdout ?? ''}${run.stderr ?? ''}`)
   const lines = output.split('\n').map(line => line.trimEnd())
   const passed = run.status === 0
@@ -115,6 +122,7 @@ const report = [
   ...results.map(({ name, passed, informational, summary, seconds }) =>
     `| \`${name}\` | ${passed ? '✅' : informational ? '🔶 changed' : '❌'} | ${escapeCell(summary)} | ${seconds}s |`),
   '',
+  ...(results.some(({ env }) => env) ? ['The console crawl and the smoke tests ran the working copy and dist. This pull request\'s own checks run them with every config.', ''] : []),
   ...(stale.length ? [
     '### Allowlist entries that no longer match',
     '',

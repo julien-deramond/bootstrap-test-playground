@@ -11,6 +11,9 @@ name: Canary
 # GitHub Actions to create and approve pull requests" in the repository's
 # Actions settings. With GITHUB_TOKEN, the pull request doesn't start the
 # other workflows: the report is the only check run.
+#
+# The report's console crawl and smoke tests run the working copy and dist
+# only: the pull request's own checks run them with every config.
 
 on:
   schedule:
