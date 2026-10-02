@@ -42,7 +42,7 @@ Sass and JavaScript then come from that checkout, and edits there hot-reload too
 | Command | What it does |
 | --- | --- |
 | `npm run dev` | Starts the dev server |
-| `npm run new-issue <name> [-- --config <name>]` | Creates a reproduction in `issues/<name>/` |
+| `npm run new-issue <name> [-- --config <name>] [--from <page>#<id>]` | Creates a reproduction in `issues/<name>/`, optionally from a kitchen sink example |
 | `npm run save-config <name>` / `use-config <name>` | Saves the working copy as a config, or loads one |
 | `npm run update-bootstrap` | Moves to the latest `v6-dev` commit and runs the checks that need no browser |
 | `npm run test:visual [-- -u]` | Compares every page with its screenshot baselines |

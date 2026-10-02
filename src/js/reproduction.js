@@ -71,8 +71,8 @@ function renderMeta(container, upstream, commit) {
   container.replaceChildren(...parts)
 }
 
-// A copy of `element` whose ids, the references to them and radio names get
-// `suffix`, so it can sit next to the original.
+// A copy of `element` whose ids, the references to them, and radio and
+// `<details>` names get `suffix`, so it can sit next to the original.
 function cloneWithSuffix(element, suffix) {
   const clone = element.cloneNode(true)
   const elements = [clone, ...clone.querySelectorAll('*')]
@@ -83,8 +83,9 @@ function cloneWithSuffix(element, suffix) {
       node.id += suffix
     }
 
-    if (node.matches('input[type="radio"][name]')) {
-      node.name += suffix
+    // Radios and exclusive accordions group by name across the document.
+    if (node.matches('input[type="radio"][name], details[name]')) {
+      node.setAttribute('name', node.getAttribute('name') + suffix)
     }
 
     for (const attribute of [...node.attributes]) {

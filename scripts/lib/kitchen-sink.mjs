@@ -333,6 +333,28 @@ ${indent(html, 10)}
 `
 }
 
+// One example of a generated page, the reverse of renderPage: `{ title, tags,
+// heading, className, html }`, `heading` and `html` as they appear in the page
+// (`html` indented for its section), or `{ ids }`, every example id, when `id`
+// isn't one of them.
+export function readExample(page, id) {
+  const section = /<section class="bd-kitchen-sink-section" aria-labelledby="([^"]+)">\n {8}<h2 class="h5" id="\1" data-playground-chrome>(.*?)<\/h2>\n {8}<div class="bd-example(?: ([^"]*))?">\n([\s\S]*?)\n {8}<\/div>\n {6}<\/section>/g
+  const examples = [...page.matchAll(section)]
+  const example = examples.find(([, exampleId]) => exampleId === id)
+  if (!example) {
+    return { ids: examples.map(([, exampleId]) => exampleId) }
+  }
+
+  const [, , heading, className = '', html] = example
+  return {
+    title: page.match(/<title>Kitchen sink: (.*?)<\/title>/)?.[1] ?? '',
+    tags: page.match(/<meta name="playground-tags" content="([^"]*)">/)?.[1] ?? '',
+    heading,
+    className,
+    html
+  }
+}
+
 // Every docs page with at least one example, in the order of the navigation.
 // `skipped` lists the examples that couldn't be evaluated, by MDX file.
 export function readPages(bootstrapDir) {
