@@ -37,7 +37,7 @@ Contributors, human or agent, also follow [CLAUDE.md](../CLAUDE.md): the convent
 | `npm run audit-partials [-- --all]` | Compiles every Sass partial alone after `root`, the docs' Option B, maps what each needs from the others, and checks `with (…)` on the entry points (see [Auditing partial imports](audits.md#auditing-partial-imports)) |
 | `npm run audit-layers [-- --all \| --render]` | Lists rules outside Bootstrap's cascade layers, undeclared layers and every `!important`, and with `--render` checks the documented override rules in the browser (see [Auditing cascade layers](audits.md#auditing-cascade-layers)) |
 | `npm run audit-tokens [-- --all \| --render]` | Lists `--bs-*` tokens that are read but never defined, or defined but never read, and with `--render` the ones overriding doesn't change (see [Auditing tokens](audits.md#auditing-tokens)) |
-| `npm run new-issue 42928 [-- --config <name>]` | Creates `issues/42928/` from the reproduction template and a config (see [Issue reproductions](pages.md#issue-reproductions)) |
+| `npm run new-issue 42928 [-- --config <name>] [--from <page>#<id>]` | Creates `issues/42928/` from the reproduction template and a config, optionally starting from a kitchen sink example (see [Issue reproductions](pages.md#issue-reproductions)) |
 | `npm run save-config <name> [-- "Description"] [--category <id>]` | Saves the working copy (`src/styles/`) as `configs/<name>/`, filed under a category (see [Configs](customizing.md#configs)) |
 | `npm run use-config <name>` | Replaces the working copy with `configs/<name>/` |
 | `npm run configs-table [-- --check]` | Regenerates the table of configs in `configs/README.md` from their READMEs, or with `--check` fails when it's stale (see [Configs](customizing.md#configs)) |
