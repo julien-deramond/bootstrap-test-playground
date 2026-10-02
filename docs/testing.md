@@ -57,7 +57,7 @@ CI only pushes to the branch of an open pull request, and only while it still po
 - `console.error` and `console.warn`, which includes Bootstrap's deprecation notices
 - requests to the playground itself that fail or return an error status, like a missing asset
 
-Remote resources, such as avatars and web fonts, are blocked, so an unreachable host never fails the run. Like the visual suite, the crawl runs against a production build on port 4179, with your `.env.local`:
+Remote resources, such as avatars and web fonts, are blocked, so an unreachable host never fails the run. Firefox's "Layout was forced before the page was fully loaded" warning is ignored: it depends on how fast the machine loads stylesheets, not on the page. Like the visual suite, the crawl runs against a production build on port 4179, with your `.env.local`:
 
 ```sh
 npm run test:console
