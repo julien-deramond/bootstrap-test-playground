@@ -107,7 +107,9 @@ When the upstream fix lands on `v6-dev`, meaning the PR is merged or the issue i
 
 The nightly canary's pull request (label `canary`) lists the allowlist entries that no longer match: start from it. To take one over, check out `canary/bootstrap`, fix what fails or remove what's stale in its own commits, then squash-merge it like any other pull request. While the branch only has the canary's commits, the next run replaces it; once it has commits of your own, the canary leaves it alone and comments instead.
 
-Run a sweep when starting work that touches upstream behavior, after `npm run update-bootstrap`, or when the user asks:
+The weekly status sweep (`.github/workflows/status-sweep.yml`, see "Weekly status sweep" in `docs/bootstrap.md`) applies the unambiguous steps 2 and 3, and comments on each tracking issue with possible upstream matches for a human to decide. `npm run status-sweep` is its dry run.
+
+Run a sweep by hand when starting work that touches upstream behavior, after `npm run update-bootstrap`, or when the user asks:
 
 ```sh
 gh issue list --label upstream --state open          # anything reported upstream since? → step 2

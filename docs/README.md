@@ -46,3 +46,4 @@ Contributors, human or agent, also follow [CLAUDE.md](../CLAUDE.md): the convent
 | `npm run sync-kitchen-sink -- ../twbs/bootstrap` | Regenerates `kitchen-sink/` from a Bootstrap checkout's docs (see [Kitchen sink](pages.md#kitchen-sink)) |
 | `npm run diff-bootstrap -- <from> <to> [--serve]` | Compares two Bootstrap commits: CSS diff, tokens, sizes and kitchen sink screenshots, or with `--serve` both in the compare view (see [Comparing two commits](bootstrap.md#comparing-two-commits)) |
 | `npm run canary-report [-- --only <checks>]` | Runs every check and writes the nightly canary's report to `reports/canary/report.md` (see [Nightly canary](bootstrap.md#nightly-canary)) |
+| `npm run status-sweep [-- --since <date>] [--apply]` | Checks the upstream status of the tracking issues, and with `--apply` relabels, closes and comments (see [Weekly status sweep](bootstrap.md#weekly-status-sweep)) |

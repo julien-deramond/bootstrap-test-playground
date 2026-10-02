@@ -1,0 +1,50 @@
+name: Status sweep
+
+# Every Monday: the status sweep of "Upstream issue tracking" in CLAUDE.md,
+# with `npm run status-sweep -- --apply`. An `upstream-reported` issue fixed on
+# v6-dev moves to `upstream-fixed` and is closed; an `upstream` issue that a
+# twbs/bootstrap item links to moves to `upstream-reported`. Possible matches
+# and closed-without-a-fix items get a comment for a human. The job summary
+# lists what it did. API calls only: no npm install, no browser.
+
+on:
+  schedule:
+    # After Monday's canary (04:41), so a fix it just installed counts.
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      since:
+        description: Look for possible matches among the twbs/bootstrap items updated since this date (YYYY-MM-DD, default 8 days ago)
+        type: string
+        default: ''
+      dry-run:
+        description: Only list what the sweep would do
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: status-sweep
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+
+      # GITHUB_TOKEN: CANARY_TOKEN can't read twbs/bootstrap through the API (#288).
+      - name: Sweep
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SINCE: ${{ inputs.since }}
+          APPLY: ${{ inputs.dry-run && '' || '--apply' }}
+        run: node scripts/status-sweep.mjs ${SINCE:+--since "$SINCE"} $APPLY
