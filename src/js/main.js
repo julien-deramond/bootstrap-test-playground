@@ -12,6 +12,7 @@ import { configs, initConfigs } from './configs.js'
 import { initExamples } from './examples.js'
 import { markChangedSections } from './last-update.js'
 import { recordVisit } from './page-index.js'
+import { initReproduction } from './reproduction.js'
 import { mountToolbar } from './toolbar.js'
 
 // The import is dynamic, so Bootstrap runs after DOMContentLoaded, and maybe
@@ -27,6 +28,10 @@ window.addEventListener('load', () => fired.add('load'), { once: true })
 // Before the import: swapping stylesheets doesn't need Bootstrap's JavaScript,
 // and starting early lets `load` wait for the swapped ones, as it always has.
 const { swappable } = window.playgroundPrefs ? initConfigs(window.playgroundPrefs) : { swappable: false }
+
+// Also before the import: a reproduction's dark copy has to exist before the
+// page's own module scripts run, and they can start while this one awaits.
+initReproduction()
 
 const jsSource = window.playgroundPrefs?.effective().js === 'dist' ? 'dist' : 'src'
 const bootstrap = jsSource === 'dist' ? await import('bootstrap') : await import('bootstrap/js/src/index.ts')
