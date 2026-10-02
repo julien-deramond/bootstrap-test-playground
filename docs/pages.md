@@ -84,6 +84,7 @@ With `BOOTSTRAP_PATH` set, `npm run dev` watches those MDX files: editing one re
 npm run new-issue 42928                          # from configs/default (Bootstrap's defaults)
 npm run new-issue pg-3 -- --config rounded-dark  # from a saved config
 npm run new-issue pg-4 -- --config working       # from the working copy
+npm run new-issue pg-5 -- --from kitchen-sink/components-tooltip.html#placement  # starting from a docs example
 ```
 
 This creates `issues/<name>/` with an `index.html` and a copy of the config's three files, served at `/issues/<name>/`. Each reproduction **compiles its own copy of Bootstrap**, so its styles stay isolated from the shared files, from other reproductions, and from the toolbar's *Config* list.
@@ -93,7 +94,9 @@ The page's header comes from two `<meta>` tags, which `new-issue` fills in and [
 - `<meta name="playground-upstream" content="twbs/bootstrap#42754" data-status="reported" data-tracking="julien-deramond/bootstrap-test-playground#12">`: the upstream issue or pull request, a status badge and the tracking issue. `data-status` follows the tracking issue's label: `unreported` (`upstream`), `reported` (`upstream-reported`) or `fixed` (`upstream-fixed`). A numeric name starts as `reported` with its upstream link, `pg-<n>` as `unreported` with its tracking issue. Update the tag along with the label.
 - `<meta name="playground-bootstrap" content="<sha>">`: the Bootstrap commit it was reproduced on. The header shows it next to the commit the page renders with now, which tells whether an update came in since.
 
-The markup under test goes in the `data-playground-repro` block, shown in light and dark side by side. The dark copy is a clone, made before the page's own scripts run, with `-dark` added to its ids, to the references to them (`for`, `aria-*`, `href="#…"`, `data-bs-target`…) and to its radio names. A switch shows the markup once instead, in the toolbar's color mode, and the choice is remembered. Remove the attribute when the markup needs the whole page. A comment at the top of the template lists what the tracking issue needs, from CLAUDE.md.
+The markup under test goes in the `data-playground-repro` block, shown in light and dark side by side. The dark copy is a clone, made before the page's own scripts run, with `-dark` added to its ids, to the references to them (`for`, `aria-*`, `href="#…"`, `data-bs-target`…) and to its radio and `<details>` names. The playground's demos wired by id, like the live toast, work in both copies. A switch shows the markup once instead, in the toolbar's color mode, and the choice is remembered. Remove the attribute when the markup needs the whole page. A comment at the top of the template lists what the tracking issue needs, from CLAUDE.md.
+
+`--from` copies a kitchen sink example into the reproduction: its markup, the classes of its example frame, its tags and a link to it in the steps. It takes the page and the example's id (its heading's anchor), as a path, `components-tooltip#placement`, or the URL from the playground. An unknown id lists the page's ids. A few examples need the kitchen sink's own frame styles, like `bd-example-drawer`, which shows drawers in place: the page then loads `kitchen-sink/kitchen-sink.css` too, with a comment, since those styles aren't Bootstrap's.
 
 To share a reproduction, push the repository and link to the folder on GitHub, or open it in StackBlitz: `https://stackblitz.com/github/julien-deramond/bootstrap-test-playground`.
 
