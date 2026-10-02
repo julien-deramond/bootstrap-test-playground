@@ -36,7 +36,9 @@ concurrency:
 
 env:
   BRANCH: canary/bootstrap
-  GH_TOKEN: ${{ secrets.CANARY_TOKEN || github.token }}
+  # CANARY_TOKEN, limited to this repository, can't read twbs/bootstrap through
+  # the API (#288): only the pull request step uses it.
+  GH_TOKEN: ${{ github.token }}
 
 jobs:
   canary:
@@ -128,6 +130,8 @@ jobs:
 
       - name: Open or update the pull request
         if: steps.check.outputs.moved == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.CANARY_TOKEN || github.token }}
         run: |
           to="${{ steps.update.outputs.to }}"
           title="chore(deps): update bootstrap to v6-dev@${to:0:7}"
