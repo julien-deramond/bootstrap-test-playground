@@ -38,6 +38,15 @@ const urls = ['/', '/compare.html', '/matrix.html', '/sizes.html', ...collectPag
 // How long the network must stay quiet before the page counts as settled.
 const QUIET_MS = 500
 
+// Messages that say nothing about the page. Failed resources are reported
+// below, with their URL. Firefox warns when layout runs before a document's
+// stylesheets have loaded, which depends on how fast the runner is: one frame
+// of /matrix.html out of a nightly run's 13,904 loads, never locally (#297).
+const IGNORED = [
+  /^Failed to load resource/,
+  /Layout was forced before the page was fully loaded/
+]
+
 // Counts the page's requests in flight, including its frames'. `settled()`
 // resolves once none has been in flight for QUIET_MS, like Playwright's
 // `networkidle`, which in WebKit sometimes never fires on /matrix.html: its
@@ -80,8 +89,7 @@ async function visit(page, baseURL, path) {
 
   page.on('pageerror', error => problems.push(`uncaught ${error.name}: ${error.message}`))
   page.on('console', message => {
-    // Failed resources are reported below, with their URL.
-    if (['error', 'warning'].includes(message.type()) && !message.text().startsWith('Failed to load resource')) {
+    if (['error', 'warning'].includes(message.type()) && !IGNORED.some(pattern => pattern.test(message.text()))) {
       problems.push(`console.${message.type() === 'warning' ? 'warn' : 'error'}: ${message.text()}`)
     }
   })
