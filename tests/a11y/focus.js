@@ -104,6 +104,12 @@ export async function captureSurface(page, surface) {
     await page.setViewportSize({ width, height: Math.ceil(tallest) + 2 * PADDING })
   }
 
+  // Components that Bootstrap's scripts build, like the OTP input's slots, exist
+  // once src/js/main.js has imported Bootstrap, which can be after `load`: wait
+  // for every `data-focus-area` target before measuring anything.
+  await page.waitForFunction(() => window.bootstrap &&
+    [...document.querySelectorAll('[data-focus][data-focus-area]')].every(component => component.querySelector(component.dataset.focusArea)))
+
   // A key press puts the page in keyboard modality, where focus() shows rings.
   await page.keyboard.press('Shift')
   await page.evaluate(([surface, padding]) => {
