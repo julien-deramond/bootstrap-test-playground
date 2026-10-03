@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-270: Focus rings under 3:1 contrast</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="Focus rings: the theme focus ring mixes the theme color with --bg-body, which is under 3:1 against the page in light mode, and on bg-2, bg-3 and solid backgrounds in dark mode.">
+    <meta name="playground-tags" content="components, forms, a11y">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#270">
+    <meta name="playground-bootstrap" content="0632eaa44acd9c8ba4a1bf70786d2930c6d1b745">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <!-- Before filing, the tracking issue needs (see CLAUDE.md, "Record a
+         potential bug"):
+         - [ ] Summary: one or two sentences, also the description above
+         - [ ] Bootstrap version: the v6-dev commit, shown in the header
+         - [ ] Reproduction: the steps below, and a link to this page
+         - [ ] Expected / Actual, below
+         - [ ] Root cause: file:line in twbs/bootstrap with a permalink, when known
+         - [ ] Possible fix, when known
+         And an assert.js next to this page, when "fixed" can be measured, or
+         a repro.spec.js (`new-issue -- --spec`) when it takes the keyboard or
+         the viewport: `npm run check-issues` then tells when the fix lands
+         (see "Assertions" in docs/pages.md). -->
+    <main class="container py-5">
+      <!-- data-playground-chrome: hidden by ?chrome=0, which shows the
+           markup under test alone (screenshots, embeds). -->
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-270</h1>
+        <!-- Filled from the metadata above: status, upstream and tracking
+             links, and the Bootstrap commit. -->
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Put a focusable component, here a button, on <code>bg-body</code>, <code>bg-1</code>, <code>bg-2</code> and <code>bg-3</code>, in light and dark mode.</li>
+          <li>Tab to it and measure its focus ring (<code>--bs-primary-focus-ring</code>) against the surface behind it.</li>
+          <li>The full matrix, every component and theme, is in <a href="/pages/focus.html">/pages/focus.html</a>.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <!-- A sentence, and when it helps a screenshot next to this page
+                   (<img src="./expected.png" alt="…">) or markup that renders
+                   the expected result. -->
+              <p class="mb-0">The ring contrasts at least 3:1 with what's behind it (WCAG 1.4.11 and 2.4.13), on every surface and in both modes.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p>The ring is the theme color mixed 50% (light) or 75% (dark) with <code>--bg-body</code>, whatever the surface it sits on. It fails 3:1 in light mode everywhere and in dark mode on <code>bg-2</code> and <code>bg-3</code>.</p>
+              <p class="mb-0">Measured here: <code id="measured">…</code></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <!-- Paste the markup under test here. data-playground-repro shows it in
+             light and dark side by side: the dark copy is a clone, with `-dark`
+             added to its ids, the references to them and its radio and
+             <details> names. The
+             clone exists before this page's own scripts run, so they can set
+             up both with querySelectorAll('[data-playground-repro]'). Remove
+             the attribute when the markup needs the whole page (a fixed navbar,
+             a page-level theme). -->
+        <div data-playground-repro>
+          <div class="vstack gap-3">
+            <div class="bg-body p-3 rounded-3" data-surface="bg-body"><button type="button" class="btn-solid theme-primary">bg-body</button></div>
+            <div class="bg-1 p-3 rounded-3" data-surface="bg-1"><button type="button" class="btn-solid theme-primary">bg-1</button></div>
+            <div class="bg-2 p-3 rounded-3" data-surface="bg-2"><button type="button" class="btn-solid theme-primary">bg-2</button></div>
+            <div class="bg-3 p-3 rounded-3" data-surface="bg-3"><button type="button" class="btn-solid theme-primary">bg-3</button></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      import { measureRings, format } from './measure.js'
+
+      const show = () => {
+        document.getElementById('measured').textContent = format(measureRings())
+      }
+
+      if (document.readyState === 'complete') {
+        show()
+      } else {
+        window.addEventListener('load', show, { once: true })
+      }
+    </script>
+  </body>
+</html>
