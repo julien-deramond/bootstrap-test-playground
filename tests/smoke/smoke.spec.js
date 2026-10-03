@@ -524,16 +524,20 @@ test.describe('playground', () => {
       const count = Math.min(Number(await layer.getAttribute('data-count')), 60)
       for (let index = 1; index <= count; index++) {
         await page.keyboard.press('Tab')
-        const focused = await page.evaluate(() => {
-          const { left, top, width, height } = document.activeElement.getBoundingClientRect()
-          return { left, top, width, height }
-        })
-        // Sub-pixel text widths differ slightly between the control and its box in WebKit.
+        // The page may still be scrolling to the focused control (the overlay
+        // only draws boxes in the viewport, and redraws a frame after), and
+        // sub-pixel text widths differ slightly between the control and its
+        // box in WebKit: measure both together, on every attempt.
         await expect.poll(() => layer.locator(`.box[data-index="${index}"]`).evaluate(box => {
-          const { left, top, width, height } = box.getBoundingClientRect()
-          return { left, top, width, height }
-        }).then(box => Math.max(...Object.keys(focused).map(key => Math.abs(box[key] - focused[key]))) < 0.5)
-          .catch(() => false), `tab stop ${index} of ${url}`).toBe(true)
+          const rect = element => {
+            const { left, top, width, height } = element.getBoundingClientRect()
+            return { left, top, width, height }
+          }
+
+          const focused = rect(document.activeElement)
+          const drawn = rect(box)
+          return Math.max(...Object.keys(focused).map(key => Math.abs(drawn[key] - focused[key]))) < 0.5
+        }).catch(() => false), `tab stop ${index} of ${url}`).toBe(true)
       }
     }
 
