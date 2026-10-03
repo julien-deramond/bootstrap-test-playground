@@ -54,6 +54,27 @@ function inlinePrefsScript() {
   }
 }
 
+// Reproductions made by `npm run import-issue` hold an upstream issue's
+// content, which anyone can write. They carry a `playground-imported` marker
+// until someone has reviewed them, and builds (so CI, the suites and the
+// deploy) refuse them until then. `npm run dev` still serves them, for the
+// review. See "Importing an upstream issue" in docs/pages.md.
+function rejectUnreviewedImports() {
+  return {
+    name: 'reject-unreviewed-imports',
+    apply: 'build',
+    buildStart() {
+      const issuesDir = path.join(root, 'issues')
+      const unreviewed = fs.readdirSync(issuesDir)
+        .map(name => path.join('issues', name, 'index.html'))
+        .filter(file => fs.existsSync(path.join(root, file)) && /<meta name="playground-imported"/.test(fs.readFileSync(path.join(root, file), 'utf8')))
+      if (unreviewed.length > 0) {
+        this.error(`Unreviewed imports: ${unreviewed.join(', ')}. Review each page, then remove its \`playground-imported\` marker (see "Importing an upstream issue" in docs/pages.md).`)
+      }
+    }
+  }
+}
+
 // Vite replaces `<link data-playground-styles="main" href="/src/styles/main.scss">`
 // with a bare link to the compiled asset, which breaks config switching in
 // builds. This puts the attribute back on the matching compiled link.
@@ -316,6 +337,6 @@ export default defineConfig(({ mode }) => {
       cssTarget,
       rolldownOptions: { input }
     },
-    plugins: [inlinePrefsScript(), playgroundData(base, bootstrap.dir ?? undefined), bootstrapSourceData(env, bootstrap), keepStyleMarkers(), ...(base === '/' ? [] : [prefixRootUrls(base)])]
+    plugins: [rejectUnreviewedImports(), inlinePrefsScript(), playgroundData(base, bootstrap.dir ?? undefined), bootstrapSourceData(env, bootstrap), keepStyleMarkers(), ...(base === '/' ? [] : [prefixRootUrls(base)])]
   }
 })
