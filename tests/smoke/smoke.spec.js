@@ -23,6 +23,7 @@ import { loadEnv } from 'vite'
 import { bootstrapSource } from '../../scripts/lib/bootstrap.mjs'
 import { configDir, listConfigs, readPartials, root } from '../../scripts/lib/configs.mjs'
 import { listReproductions } from '../../scripts/lib/export-issue.mjs'
+import { readReproductionMeta } from '../../scripts/lib/repro-status.mjs'
 import known from './known-issues.js'
 
 const VARIANTS = [
@@ -530,6 +531,27 @@ test.describe('playground', () => {
     await palette.getByRole('combobox').fill('--alert-padding-x')
     await expect(palette.getByRole('option').first()).toContainText('Alert')
     await expect(palette.getByRole('option').first()).toContainText('--alert-padding-x')
+  })
+
+  // Reproductions show their upstream status on the home page, from their
+  // <meta name="playground-upstream">, and the sidebar filters by it.
+  test('reproduction status', async ({ page }) => {
+    const statuses = listReproductions().map(name => readReproductionMeta(name)?.status).filter(Boolean)
+    test.skip(statuses.length === 0, 'No reproduction with an upstream status')
+
+    await page.goto('/?group=issues')
+    const cards = page.locator('#results .page-card')
+    await expect(cards.locator('.page-card-repro .badge')).toHaveCount(statuses.length)
+
+    const [status] = statuses
+    const chip = page.locator('#status-filters').locator(`[data-repro-status="${status}"]`)
+    await expect(chip).toContainText(String(statuses.filter(entry => entry === status).length))
+    await chip.click()
+    await expect(page).toHaveURL(new RegExp(`status=${status}`))
+    await expect(chip).toHaveAttribute('aria-pressed', 'true')
+    await expect(cards).toHaveCount(statuses.filter(entry => entry === status).length)
+    await chip.click()
+    await expect(page).not.toHaveURL(/status=/)
   })
 
   // Every reproduction exports itself for upstream maintainers

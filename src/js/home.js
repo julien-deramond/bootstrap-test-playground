@@ -1,7 +1,8 @@
-// Home page: every page found by vite.config.js, with search, group and tag
-// filters in the sidebar, and recently viewed pages. The filters live in the
-// URL (?q=menu&group=kitchen-sink&tag=forms), so a filtered list can be
-// shared. The sidebar's Configs view (?group=configs, or /#configs) lists the
+// Home page: every page found by vite.config.js, with search, group, upstream
+// status and tag filters in the sidebar, and recently viewed pages. The
+// filters live in the URL (?q=menu&group=kitchen-sink&tag=forms, or
+// ?status=reported for the reproductions reported upstream), so a filtered
+// list can be shared. The sidebar's Configs view (?group=configs, or /#configs) lists the
 // saved configs by category, applied in one click.
 //
 // The home page is playground UI, not a page under test: it doesn't load
@@ -11,6 +12,7 @@ import source, { onChange as onSourceChange } from 'virtual:bootstrap-source'
 import { configs, groupConfigs } from './configs.js'
 import { groups, pages, queryText, readRecent, resultUrl, search } from './page-index.js'
 import { changeLabels, pageUrl, record } from './last-update.js'
+import { STATUSES, githubUrl } from './repro-status.js'
 
 const VIEW_KEY = 'bootstrap-playground-home-view'
 
@@ -23,6 +25,7 @@ const input = document.getElementById('page-search')
 const results = document.getElementById('results')
 const groupFilters = document.getElementById('group-filters')
 const tagFilters = document.getElementById('tag-filters')
+const statusFilters = document.getElementById('status-filters')
 const resultCount = document.getElementById('result-count')
 const configList = document.getElementById('configs')
 
@@ -130,6 +133,7 @@ const state = {
   q: params.get('q') ?? '',
   group: isGroup(params.get('group')) ? params.get('group') : (location.hash === '#configs' ? CONFIGS : ''),
   tag: params.get('tag') ?? '',
+  status: params.get('status') in STATUSES ? params.get('status') : '',
   view: 'grid'
 }
 
@@ -180,6 +184,23 @@ const matchesHtml = matches => (matches?.length ?
 
 const groupIcon = dir => `<span class="page-card-icon" data-group-icon="${escapeHtml(dir)}" aria-hidden="true"><svg width="16" height="16"><use href="#icon-${escapeHtml(dir)}"/></svg></span>`
 
+// A reproduction's upstream status, and links to its upstream issue and its
+// tracking issue (src/js/repro-status.js).
+function reproLinks(page) {
+  if (!page.repro) {
+    return ''
+  }
+
+  const { status, upstream, tracking } = page.repro
+  const number = reference => escapeHtml(reference.replace(/^.*#/, '#'))
+  const parts = [
+    STATUSES[status] && `<span class="badge badge-subtle theme-${STATUSES[status].theme}" title="${STATUSES[status].text}">${STATUSES[status].short}</span>`,
+    githubUrl(upstream) && `<a href="${escapeHtml(githubUrl(upstream))}" rel="noopener" title="Upstream: ${escapeHtml(upstream)}">Upstream ${number(upstream)}</a>`,
+    githubUrl(tracking) && `<a href="${escapeHtml(githubUrl(tracking))}" rel="noopener" title="Tracking issue in this repository">Tracking ${number(tracking)}</a>`
+  ].filter(Boolean)
+  return parts.length > 0 ? `<p class="page-card-repro">${parts.join('')}</p>` : ''
+}
+
 // A page tile: icon, title and description. Tags, source and path only show
 // in the list view; the sidebar has the tags.
 function card(result, { showGroup }) {
@@ -194,6 +215,7 @@ function card(result, { showGroup }) {
           ${showGroup ? `<span class="page-card-group">${escapeHtml(page.groupLabel)}</span>` : ''}
         </div>
         ${page.description ? `<p class="page-card-description" title="${escapeHtml(page.description)}">${highlight(page.description, state.q)}</p>` : ''}
+        ${reproLinks(page)}
         ${matchesHtml(matches)}
         ${section ? `<a class="page-card-section" href="${escapeHtml(resultUrl(result))}"><svg width="14" height="14" aria-hidden="true"><use href="#icon-corner"/></svg><span>${highlight(section.title, state.q)}</span></a>` : ''}
       </div>
@@ -221,11 +243,13 @@ function emptyGroupHint(dir) {
     'Nothing here yet.'
 }
 
-// Pages matching everything but `except` ('group' or 'tag'), for the chip counts.
+// Pages matching everything but `except` ('group', 'tag' or 'status'), for
+// the chip counts.
 function matching(except) {
   return search(state.q, pages.filter(page =>
     (except === 'group' || !state.group || page.group === state.group) &&
-    (except === 'tag' || !state.tag || page.tags.includes(state.tag))))
+    (except === 'tag' || !state.tag || page.tags.includes(state.tag)) &&
+    (except === 'status' || !state.status || page.repro?.status === state.status)))
 }
 
 function renderFilters() {
@@ -246,6 +270,25 @@ function renderFilters() {
     '<hr class="home-nav-divider">',
     navItem(CONFIGS, 'Configs', 'palette', matchingConfigs().length)
   ].join('')
+
+  // The reproductions' upstream statuses, when any page in view has one.
+  const statusCounts = new Map(Object.keys(STATUSES).map(status => [status, 0]))
+  for (const { page } of state.group === CONFIGS ? [] : matching('status')) {
+    if (statusCounts.has(page.repro?.status)) {
+      statusCounts.set(page.repro.status, statusCounts.get(page.repro.status) + 1)
+    }
+  }
+
+  const statuses = [...statusCounts].filter(([status, count]) => count > 0 || status === state.status)
+  statusFilters.hidden = statuses.length === 0
+  statusFilters.innerHTML = `
+    <h2 class="home-sidebar-title" id="status-heading">Upstream status</h2>
+    <div class="home-tag-list">
+      ${statuses.map(([status, count]) => `
+        <button type="button" class="home-tag${state.status === status ? ' active' : ''}" data-repro-status="${status}" aria-pressed="${state.status === status}" title="Reproductions ${STATUSES[status].text.toLowerCase()}">
+          <span class="home-status-dot theme-${STATUSES[status].theme}" aria-hidden="true"></span>${STATUSES[status].short} <span class="home-tag-count">${count}</span>
+        </button>`).join('')}
+    </div>`
 
   // Tags don't filter configs.
   const counts = new Map()
@@ -281,8 +324,8 @@ function renderHead() {
   if (state.group === CONFIGS) {
     title = 'Configs'
     description = CONFIGS_DESCRIPTION
-  } else if (state.q || state.tag) {
-    title = state.q ? 'Results' : `Tagged “${state.tag}”`
+  } else if (state.q || state.tag || state.status) {
+    title = state.q ? 'Results' : state.tag ? `Tagged “${state.tag}”` : STATUSES[state.status].text
     description = group ? `In ${group.label}.` : ''
   }
 
@@ -302,23 +345,21 @@ function renderResults() {
     return
   }
 
-  const found = search(state.q, pages.filter(page =>
-    (!state.group || page.group === state.group) &&
-    (!state.tag || page.tags.includes(state.tag))))
-  const filtered = state.q || state.tag
+  const found = matching()
+  const filtered = state.q || state.tag || state.status
 
   resultCount.textContent = `${plural(found.length, 'page')} found`
 
   if (found.length === 0) {
     results.innerHTML = `
       <div class="home-empty">
-        <p class="home-empty-title">No pages match${state.q ? ` “${escapeHtml(state.q)}”` : ''}${state.tag ? ` tagged “${escapeHtml(state.tag)}”` : ''}.</p>
+        <p class="home-empty-title">No pages match${state.q ? ` “${escapeHtml(state.q)}”` : ''}${state.tag ? ` tagged “${escapeHtml(state.tag)}”` : ''}${state.status ? `, ${STATUSES[state.status].text.toLowerCase()}` : ''}.</p>
         <button type="button" class="btn-outline theme-secondary btn-sm" data-clear>Clear filters</button>
       </div>`
     return
   }
 
-  // A search or a tag shows one list, best matches first. Otherwise, pages
+  // A search, a tag or a status shows one list, best matches first. Otherwise, pages
   // are grouped like the folders they live in.
   if (filtered) {
     results.innerHTML = `
@@ -425,7 +466,7 @@ function renderConfigs() {
 
 function syncUrl() {
   const url = new URL(location.href)
-  for (const key of ['q', 'group', 'tag']) {
+  for (const key of ['q', 'group', 'tag', 'status']) {
     if (state[key]) {
       url.searchParams.set(key, state[key])
     } else {
@@ -495,7 +536,7 @@ results.addEventListener('keydown', event => {
 })
 
 document.addEventListener('click', event => {
-  const target = event.target.closest('[data-group], [data-tag], [data-view], [data-clear], [data-more-tags]')
+  const target = event.target.closest('[data-group], [data-tag], [data-repro-status], [data-view], [data-clear], [data-more-tags]')
   if (!target) {
     return
   }
@@ -505,11 +546,13 @@ document.addEventListener('click', event => {
     renderFilters()
     tagFilters.querySelector('[data-more-tags]').focus()
   } else if (target.matches('[data-group]')) {
-    // The Configs view doesn't take a tag.
-    update({ group: target.dataset.group, ...(target.dataset.group === CONFIGS && { tag: '' }) })
+    // The Configs view doesn't take a tag or a status.
+    update({ group: target.dataset.group, ...(target.dataset.group === CONFIGS && { tag: '', status: '' }) })
     window.scrollTo({ top: 0 })
   } else if (target.matches('[data-tag]')) {
     update({ tag: state.tag === target.dataset.tag ? '' : target.dataset.tag })
+  } else if (target.matches('[data-repro-status]')) {
+    update({ status: state.status === target.dataset.reproStatus ? '' : target.dataset.reproStatus })
   } else if (target.matches('[data-view]')) {
     try {
       localStorage.setItem(VIEW_KEY, target.dataset.view)
@@ -518,7 +561,7 @@ document.addEventListener('click', event => {
     update({ view: target.dataset.view })
   } else {
     input.value = ''
-    update({ q: '', tag: '', group: '' })
+    update({ q: '', tag: '', status: '', group: '' })
     input.focus()
   }
 })
@@ -541,7 +584,7 @@ render()
 // /#configs opens the Configs view.
 window.addEventListener('hashchange', () => {
   if (location.hash === '#configs') {
-    update({ group: CONFIGS, tag: '' })
+    update({ group: CONFIGS, tag: '', status: '' })
   }
 })
 

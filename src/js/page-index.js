@@ -4,6 +4,7 @@
 // (`--alert-padding-x`, `--bs-alert-padding-x`), matched against the Bootstrap
 // classes each page's markup uses.
 import groups, { tokens } from 'virtual:playground-pages'
+import { STATUSES } from './repro-status.js'
 
 const RECENT_KEY = 'bootstrap-playground-recent'
 const RECENT_MAX = 8
@@ -20,7 +21,9 @@ const indexed = new Map(pages.map(page => [page, {
   titleWords: words(page.title),
   tags: page.tags,
   sections: page.sections.map(section => ({ ...section, words: words(section.title), text: normalize(section.title) })),
-  other: normalize([page.groupLabel, page.url, page.description, page.source?.label ?? ''].join(' ')),
+  // A reproduction is found by its status ("reported") and its issues' numbers.
+  other: normalize([page.groupLabel, page.url, page.description, page.source?.label ?? '',
+    STATUSES[page.repro?.status]?.text ?? '', page.repro?.upstream ?? '', page.repro?.tracking.replace(/^.*#/, '#') ?? ''].join(' ')),
   classes: new Map(page.classes.map(([name, count, section]) => [name, { count, section }]))
 }]))
 
