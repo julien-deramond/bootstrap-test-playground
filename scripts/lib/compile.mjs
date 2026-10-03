@@ -14,8 +14,9 @@ export const bootstrapImporter = bootstrapDir => ({
 
 // Resolves to PostCSS's result: `.css`, and `.root` to walk. With `sourceMap`,
 // `node.source.input.origin(line, column)` points back to the Sass source.
-export async function compileConfig(file, { bootstrapDir, logger, sourceMap = false }) {
-  const { css, sourceMap: map } = await sass.compileAsync(file, { importers: [bootstrapImporter(bootstrapDir)], logger, sourceMap })
+// `style: 'compressed'` minifies.
+export async function compileConfig(file, { bootstrapDir, logger, sourceMap = false, style }) {
+  const { css, sourceMap: map } = await sass.compileAsync(file, { importers: [bootstrapImporter(bootstrapDir)], logger, sourceMap, style })
   return postcss(postcssConfig.plugins).process(css, { from: file, map: sourceMap && { prev: map, inline: false, annotation: false } })
 }
 

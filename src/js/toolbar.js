@@ -312,6 +312,18 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
   const originHtml = origin ? `
       <span class="origin">Adapted from <a href="${escapeHtml(origin.dataset.url)}" target="_blank" rel="noopener">${escapeHtml(origin.content)}</a>${origin.dataset.license ? ` (${escapeHtml(origin.dataset.license)})` : ''}</span>` : ''
 
+  // An issue reproduction exports itself for upstream maintainers: one HTML
+  // file, or a Vite project in StackBlitz, which public/open-in-stackblitz.html
+  // posts. The dev server and builds make both next to the page (see
+  // `issueExports` in vite.config.js).
+  const base = import.meta.env.BASE_URL
+  const issue = location.pathname.startsWith(base) ?
+    location.pathname.slice(base.length).match(/^issues\/([a-z0-9][a-z0-9-]*)\/(?:index\.html)?$/)?.[1] :
+    undefined
+  const exportHtml = issue ? `
+        <a class="action" href="${base}issues/${issue}/export.html" download="bootstrap-repro-${issue}.html" title="This reproduction as one HTML file, with Bootstrap from jsDelivr or inlined">Export HTML</a>
+        <a class="action" href="${base}open-in-stackblitz.html?issue=${issue}" target="_blank" rel="noopener" title="This reproduction as a Vite + Sass project, compiled from the same Bootstrap commit">Open in StackBlitz</a>` : ''
+
   shadow.innerHTML = `
     <style>${styles}</style>
     <div class="dock">${originHtml}
@@ -357,7 +369,7 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
       <footer>
         <button type="button" class="action copy">Copy link</button>
         <a class="action" href="${compareUrl}">Compare</a>
-        <a class="action" href="${matrixUrl}">Matrix</a>
+        <a class="action" href="${matrixUrl}">Matrix</a>${exportHtml}
         <button type="button" class="action reset" title="Back to Bootstrap's defaults">Reset</button>
         <a class="source"></a>
       </footer>
