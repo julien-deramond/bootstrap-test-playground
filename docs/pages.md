@@ -4,7 +4,7 @@
 
 ```text
 index.html               Home: every page, with search and filters
-pages/                   Starter screens (dashboard, checkout and sign-in forms, product and pricing marketing), utility API checks, focus rings
+pages/                   Starter screens (dashboard, checkout and sign-in forms, product and pricing marketing), utility API checks, focus rings, the JavaScript API
 screens/                 Real app screens ported from shadcn/ui (dashboard, tasks, authentication, playground, cards, login and signup blocks)
 kitchen-sink/            One page per component or form doc, with all of its docs examples (generated)
 compare.html             Side-by-side comparison of any page

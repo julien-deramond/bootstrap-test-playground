@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en" data-playground-busy>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JavaScript API</title>
+    <meta name="description" content="JavaScript API: every Bootstrap component driven from JavaScript, with getInstance, getOrCreateInstance, its methods, dispose and re-init, a log of every *.bs.* event with its relatedTarget, a switch that cancels the next one with preventDefault(), copies of the markup mounted after load, and checks of the option precedence between data-bs-config, data-bs-* attributes and JavaScript options.">
+    <meta name="playground-tags" content="components, forms, javascript">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <script>
+      // Records every Bootstrap event from the start, before Bootstrap and the
+      // page's module load. Bootstrap dispatches each `*.bs.*` event with
+      // dispatchEvent(), so this sees all of them, whatever their name.
+      // pages/js-api.js logs them, and marks those a listener prevented.
+      (() => {
+        const events = []
+        const dispatch = EventTarget.prototype.dispatchEvent
+        window.jsApiEvents = events
+        EventTarget.prototype.dispatchEvent = function (event) {
+          if (!event.type.includes('.bs.')) {
+            return dispatch.call(this, event)
+          }
+
+          const entry = { event, target: this, dispatched: false }
+          events.push(entry)
+          events.onEvent?.(entry)
+          try {
+            return dispatch.call(this, event)
+          } finally {
+            entry.dispatched = true
+            events.onDispatched?.(entry)
+          }
+        }
+      })()
+    </script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <style>
+      .pg-log {
+        max-height: 14rem;
+        padding: .5rem .75rem;
+        overflow-y: auto;
+        font-family: var(--bs-font-monospace);
+        font-size: .8125rem;
+        background-color: var(--bs-bg-1);
+        border-radius: var(--bs-radius-3);
+      }
+
+      .pg-log ol {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+
+      .pg-log li[data-kind="call"] {
+        color: var(--bs-fg-2);
+      }
+
+      .pg-log li[data-prevented] {
+        color: var(--bs-danger-fg);
+      }
+
+      .pg-log:not(:has(li))::before {
+        color: var(--bs-fg-3);
+        content: "No event yet";
+      }
+
+      .pg-narrow {
+        max-width: 16rem;
+      }
+
+      .pg-scrollspy {
+        position: relative;
+        height: 10rem;
+        overflow-y: auto;
+      }
+
+      .pg-scrollspy section {
+        min-height: 8rem;
+      }
+
+      .pg-carousel svg {
+        height: 8rem;
+      }
+    </style>
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Pages</p>
+        <h1>JavaScript API</h1>
+        <p class="fs-lg fg-2">
+          Every component driven from JavaScript, where framework integrations break: <code>getInstance</code>, <code>getOrCreateInstance</code>, the component's methods, <code>dispose()</code> and re-init, with a log of every <code>*.bs.*</code> event and its <code>relatedTarget</code>.
+        </p>
+        <p class="fg-2">
+          Methods that return a promise log when it resolves, which should come right after the matching <code>shown</code>, <code>hidden</code> or <code>closed</code> event. <em>Cancel next</em> calls <code>preventDefault()</code> on the next event that starts the action. <em>Mount a copy</em> adds the markup again, with new ids, after Bootstrap has loaded, as a framework would, and the buttons then drive that copy. The page only uses <code>window.bootstrap</code>, so it works with <code>?js=dist</code> too. The smoke suite asserts the precedence and the event order. See <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/77">#77</a>.
+        </p>
+      </header>
+
+      <section class="mb-5" aria-labelledby="option-precedence">
+        <h2 id="option-precedence">Option precedence</h2>
+        <p class="fg-2">
+          Bootstrap merges a component's defaults, then <code>data-bs-config</code>, then its <code>data-bs-*</code> attributes, then the options passed in JavaScript, the latest winning. Each row sets one option on a fresh copy of the component's markup, from each source in turn, and reads what the instance got. <code>getOrCreateInstance(element, options)</code> ignores the options when the element already has an instance; after <code>dispose()</code>, it creates a new one with them.
+        </p>
+        <p class="fg-2">
+          Upstream: <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/322">#322</a> (tooltip and popover ignore <code>data-bs-config</code>) and <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/323">#323</a> (a <code>%</code> in <code>data-bs-config</code> drops all of it, here Scrollspy's <code>topMargin</code>), not reported yet
+        </p>
+        <div class="table-responsive" tabindex="0" role="region" aria-label="Option precedence">
+          <table class="table small" id="precedence-checks">
+            <thead>
+              <tr>
+                <th scope="col">Component</th>
+                <th scope="col">Option</th>
+                <th scope="col">Default</th>
+                <th scope="col"><code>data-bs-config</code></th>
+                <th scope="col">+ <code>data-bs-*</code></th>
+                <th scope="col"><code>data-bs-*</code> + JS</th>
+                <th scope="col">All three</th>
+                <th scope="col">Existing instance</th>
+                <th scope="col">After <code>dispose()</code></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <!-- The copies the checks instantiate, and the elements a collapse's
+             `parent` option points to. -->
+        <div id="precedence-sandbox" hidden>
+          <div id="parent-1"></div>
+          <div id="parent-2"></div>
+          <div id="parent-3"></div>
+        </div>
+      </section>
+
+      <!-- Each [data-jsapi] section has the component's markup in
+           [data-jsapi-markup], copied as written before Bootstrap loads (see the
+           script at the end), and its instance on [data-jsapi-element] inside
+           it. pages/js-api.js adds the controls and the event log, and wires
+           the [data-jsapi-call] buttons of modal overlays, since the page
+           behind them is inert. -->
+
+      <section class="mb-5" data-jsapi="alert" aria-labelledby="alert">
+        <h2 id="alert">Alert</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <div class="alert theme-warning" role="alert" id="api-alert" data-jsapi-element>
+              <p>A dismissible alert. <code>close()</code> removes it.</p>
+              <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="button" aria-labelledby="button">
+        <h2 id="button">Button</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <button type="button" class="btn-solid theme-primary" data-bs-toggle="button" aria-pressed="false" id="api-button" data-jsapi-element>Toggle button</button>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="carousel" aria-labelledby="carousel">
+        <h2 id="carousel">Carousel</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <div id="api-carousel" class="carousel slide pg-carousel" data-jsapi-element>
+              <div class="d-flex justify-content-end">
+                <button class="btn-icon btn-sm" type="button" data-bs-target="#api-carousel" data-bs-slide="prev">
+                  <span class="carousel-icon-prev" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="btn-icon btn-sm" type="button" data-bs-target="#api-carousel" data-bs-slide="next">
+                  <span class="carousel-icon-next" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
+              <div class="carousel-inner rounded-5">
+                <div class="carousel-item active">
+                  <svg aria-label="First slide" class="d-block w-100" preserveAspectRatio="xMidYMid slice" role="img" width="800" height="128" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#777" /><text x="50%" y="50%" fill="#eee" dy=".3em">First slide</text></svg>
+                </div>
+                <div class="carousel-item">
+                  <svg aria-label="Second slide" class="d-block w-100" preserveAspectRatio="xMidYMid slice" role="img" width="800" height="128" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#666" /><text x="50%" y="50%" fill="#eee" dy=".3em">Second slide</text></svg>
+                </div>
+                <div class="carousel-item">
+                  <svg aria-label="Third slide" class="d-block w-100" preserveAspectRatio="xMidYMid slice" role="img" width="800" height="128" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#555" /><text x="50%" y="50%" fill="#eee" dy=".3em">Third slide</text></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="chips" aria-labelledby="chips">
+        <h2 id="chips">Chips</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <div class="chip-input" data-bs-chips id="api-chips" data-jsapi-element>
+              <label class="chip-input-label" for="api-chips-input">Skills:</label>
+              <span class="chip">JavaScript</span>
+              <span class="chip">TypeScript</span>
+              <input type="text" class="form-ghost" id="api-chips-input" placeholder="Add more…">
+            </div>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="collapse" aria-labelledby="collapse">
+        <h2 id="collapse">Collapse</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <button class="btn-solid theme-primary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#api-collapse" aria-expanded="false" aria-controls="api-collapse">Toggle collapse</button>
+            <div class="collapse" id="api-collapse" data-jsapi-element>
+              <div class="card card-body">Collapsible content.</div>
+            </div>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="combobox" aria-labelledby="combobox">
+        <h2 id="combobox">Combobox</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <button class="form-control combobox-toggle pg-narrow" type="button" data-bs-toggle="combobox" data-bs-name="option" data-bs-placeholder="Select an item…" id="api-combobox" data-jsapi-element>
+              <span class="combobox-value">Select an item…</span>
+              <svg class="combobox-caret" width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.46967 5.46967C0.762563 5.17678 1.23744 5.17678 1.53033 5.46967L5 8.93934L8.46967 5.46967C8.76256 5.17678 9.23744 5.17678 9.53033 5.46967C9.82322 5.76256 9.82322 6.23744 9.53033 6.53033L5.53033 10.5303C5.23744 10.8232 4.76256 10.8232 4.46967 10.5303L0.46967 6.53033C0.176777 6.23744 0.176777 5.76256 0.46967 5.46967Z" fill="currentcolor"/></svg>
+            </button>
+            <div class="menu">
+              <button class="menu-item" type="button" data-bs-value="1">Option one</button>
+              <button class="menu-item" type="button" data-bs-value="2">Option two</button>
+              <button class="menu-item" type="button" data-bs-value="3">Option three</button>
+            </div>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="datepicker" aria-labelledby="datepicker">
+        <h2 id="datepicker">Datepicker</h2>
+        <p class="fg-2"><code>dispose()</code> replaces the input with a copy, so the buttons keep driving the old one, which never shows its calendar again: <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/324">#324</a>.</p>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <label for="api-datepicker" class="form-label">Date</label>
+            <input type="text" class="form-control pg-narrow" id="api-datepicker" data-bs-toggle="datepicker" autocomplete="off" placeholder="Choose date…" data-jsapi-element>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="dialog" aria-labelledby="dialog">
+        <h2 id="dialog">Dialog</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#api-dialog">Open dialog</button>
+            <dialog class="dialog" id="api-dialog" aria-labelledby="api-dialog-title" data-jsapi-element>
+              <div class="dialog-header">
+                <h3 class="dialog-title h5" id="api-dialog-title">Dialog</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="dialog" aria-label="Close"></button>
+              </div>
+              <div class="dialog-body">
+                <p>Opened from its toggle or from JavaScript. The page behind is inert while it's open: this button calls the instance's <code>hide()</code>.</p>
+              </div>
+              <div class="dialog-footer">
+                <button type="button" class="btn-outline theme-secondary btn-sm" data-jsapi-call="hide">hide()</button>
+              </div>
+            </dialog>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="drawer" aria-labelledby="drawer">
+        <h2 id="drawer">Drawer</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <button class="btn-solid theme-primary" type="button" data-bs-toggle="drawer" data-bs-target="#api-drawer" aria-controls="api-drawer">Open drawer</button>
+            <dialog class="drawer drawer-end" tabindex="-1" id="api-drawer" aria-labelledby="api-drawer-title" data-jsapi-element>
+              <div class="drawer-header">
+                <h3 class="drawer-title h5" id="api-drawer-title">Drawer</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="drawer" aria-label="Close"></button>
+              </div>
+              <div class="drawer-body">
+                <p>Opened from its toggle or from JavaScript. The page behind is inert while it's open: this button calls the instance's <code>hide()</code>.</p>
+                <button type="button" class="btn-outline theme-secondary btn-sm" data-jsapi-call="hide">hide()</button>
+              </div>
+            </dialog>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="menu" aria-labelledby="menu">
+        <h2 id="menu">Menu</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <button class="btn-solid theme-primary" type="button" data-bs-toggle="menu" aria-expanded="false" id="api-menu" data-jsapi-element>Toggle menu</button>
+            <div class="menu">
+              <a class="menu-item" href="#">Menu item 1</a>
+              <a class="menu-item" href="#">Menu item 2</a>
+              <a class="menu-item" href="#">Menu item 3</a>
+            </div>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="nav-overflow" aria-labelledby="nav-overflow">
+        <h2 id="nav-overflow">Nav overflow</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <div class="nav-overflow pg-narrow" data-bs-toggle="nav-overflow" id="api-nav-overflow" data-jsapi-element>
+              <ul class="nav nav-pills">
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="#nav-overflow">Overview</a></li>
+                <li class="nav-item"><a class="nav-link" href="#nav-overflow">Activity</a></li>
+                <li class="nav-item"><a class="nav-link" href="#nav-overflow">Settings</a></li>
+                <li class="nav-item"><a class="nav-link" href="#nav-overflow">Members</a></li>
+                <li class="nav-item"><a class="nav-link" href="#nav-overflow">Billing</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="otp-input" aria-labelledby="otp-input">
+        <h2 id="otp-input">OTP input</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <div class="otp" data-bs-otp id="api-otp" data-jsapi-element>
+              <input type="text" class="otp-input" maxlength="6" aria-label="Verification code">
+            </div>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="popover" aria-labelledby="popover">
+        <h2 id="popover">Popover</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <button type="button" class="btn-solid theme-primary" data-bs-toggle="popover" data-bs-title="Popover title" data-bs-content="Popover content." id="api-popover" data-jsapi-element>Toggle popover</button>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="range" aria-labelledby="range">
+        <h2 id="range">Range</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <label for="api-range-input" class="form-label">Volume</label>
+            <div class="form-range" id="api-range" data-jsapi-element>
+              <input type="range" class="form-range-input" id="api-range-input">
+            </div>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="scrollspy" aria-labelledby="scrollspy">
+        <h2 id="scrollspy">Scrollspy</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <nav id="api-scrollspy-nav" class="mb-2" aria-label="Scrollspy sections">
+              <ul class="nav nav-pills">
+                <li class="nav-item"><a class="nav-link" href="#api-scrollspy-1">First</a></li>
+                <li class="nav-item"><a class="nav-link" href="#api-scrollspy-2">Second</a></li>
+                <li class="nav-item"><a class="nav-link" href="#api-scrollspy-3">Third</a></li>
+              </ul>
+            </nav>
+            <div class="pg-scrollspy bg-1 p-3 rounded-2" data-bs-spy="scroll" data-bs-target="#api-scrollspy-nav" tabindex="0" id="api-scrollspy" data-jsapi-element>
+              <section id="api-scrollspy-1"><h3 class="h6">First</h3><p>Scroll this box to activate the links.</p></section>
+              <section id="api-scrollspy-2"><h3 class="h6">Second</h3><p>Each link activates once its section reaches the top.</p></section>
+              <section id="api-scrollspy-3"><h3 class="h6">Third</h3><p>The last section.</p></section>
+            </div>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="strength" aria-labelledby="strength">
+        <h2 id="strength">Password strength</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <label for="api-strength-input" class="form-label">Password</label>
+            <input type="password" class="form-control pg-narrow" id="api-strength-input" autocomplete="off">
+            <div class="strength pg-narrow" data-bs-strength id="api-strength" data-jsapi-element>
+              <div class="strength-segment"></div>
+              <div class="strength-segment"></div>
+              <div class="strength-segment"></div>
+              <div class="strength-segment"></div>
+            </div>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="tab" aria-labelledby="tab">
+        <h2 id="tab">Tab</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <ul class="nav nav-tabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="api-tab-home" data-bs-toggle="tab" data-bs-target="#api-tab-home-pane" type="button" role="tab" aria-controls="api-tab-home-pane" aria-selected="true">Home</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="api-tab-profile" data-bs-toggle="tab" data-bs-target="#api-tab-profile-pane" type="button" role="tab" aria-controls="api-tab-profile-pane" aria-selected="false" data-jsapi-element>Profile</button>
+              </li>
+            </ul>
+            <div class="tab-content pt-3">
+              <div class="tab-pane show active" id="api-tab-home-pane" role="tabpanel" aria-labelledby="api-tab-home" tabindex="0">The <strong>Home</strong> pane.</div>
+              <div class="tab-pane" id="api-tab-profile-pane" role="tabpanel" aria-labelledby="api-tab-profile" tabindex="0">The <strong>Profile</strong> pane, which the buttons show.</div>
+            </div>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="toast" aria-labelledby="toast">
+        <h2 id="toast">Toast</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <div class="toast" role="status" aria-live="polite" aria-atomic="true" data-bs-autohide="false" id="api-toast" data-jsapi-element>
+              <div class="toast-header">
+                <strong class="me-auto">Bootstrap</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+              </div>
+              <div class="toast-body">Shown from JavaScript. It doesn't hide on its own.</div>
+            </div>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="toggler" aria-labelledby="toggler">
+        <h2 id="toggler">Toggler</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <div class="p-3 rounded border" data-bs-toggle="toggler" data-bs-value="fg-danger" data-bs-attribute="class" id="api-toggler" data-jsapi-element>Click to toggle <code>fg-danger</code></div>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+
+      <section class="mb-5" data-jsapi="tooltip" aria-labelledby="tooltip">
+        <h2 id="tooltip">Tooltip</h2>
+        <div class="row g-3">
+          <div class="md:col-6" data-jsapi-markup>
+            <button type="button" class="btn-solid theme-primary" data-bs-toggle="tooltip" data-bs-title="Tooltip text" id="api-tooltip" data-jsapi-element>Tooltip trigger</button>
+          </div>
+          <div class="md:col-6" data-jsapi-panel></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- A classic script runs while the page parses, before src/js/main.js
+         loads Bootstrap: it keeps each component's markup as written, for
+         "Mount a copy" and the precedence checks. -->
+    <script>
+      window.jsApiMarkup = new Map([...document.querySelectorAll('[data-jsapi]')]
+        .map(section => [section.dataset.jsapi, section.querySelector('[data-jsapi-markup]').cloneNode(true)]))
+    </script>
+    <script type="module" src="/pages/js-api.js"></script>
+  </body>
+</html>
