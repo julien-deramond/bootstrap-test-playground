@@ -15,7 +15,9 @@ export default [
       '/screens/dashboard.html',
       '/screens/playground.html',
       '/kitchen-sink/forms-combobox.html',
-      '/kitchen-sink/forms-field.html'
+      '/kitchen-sink/forms-field.html',
+      '/issues/pg-2/',
+      '/issues/pg-6/'
     ]
   }
 ]

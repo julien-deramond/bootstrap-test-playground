@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-8: Chip font-weight falls back to a removed token</title>
+    <meta name="description" content="Chip: font-weight falls back to the removed --font-weight-base token, so a chip inherits its container's weight.">
+    <meta name="playground-tags" content="forms">
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#8">
+    <meta name="playground-bootstrap" content="0632eaa44acd9c8ba4a1bf70786d2930c6d1b745">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-8: chip font weight</h1>
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Put a <code>.chip</code> in bold text, as below.</li>
+          <li>Inspect the chip's <code>font-weight</code>.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">The chip is normal weight (400), like the other fallbacks on the same rule resolve.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p>The chip is bold. <code>.chip</code> sets <code>font-weight: var(--chip-font-weight, var(--font-weight-base))</code>: neither token exists in v6, so the declaration is invalid at computed-value time and the weight inherits.</p>
+              <p class="mb-0">Measured here: <code id="measured">…</code></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <div data-playground-repro>
+          <p class="fw-bold mb-0">Bold text <span class="chip">Chip</span></p>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      const show = () => {
+        const style = getComputedStyle(document.querySelector('.chip'))
+        document.getElementById('measured').textContent =
+          `--bs-font-weight-base: ${style.getPropertyValue('--bs-font-weight-base').trim() || '(undefined)'}, font-weight: ${style.fontWeight}`
+      }
+
+      if (document.readyState === 'complete') {
+        show()
+      } else {
+        window.addEventListener('load', show, { once: true })
+      }
+    </script>
+  </body>
+</html>

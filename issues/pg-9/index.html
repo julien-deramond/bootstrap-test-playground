@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-9: Nav and range read undeclared tokens</title>
+    <meta name="description" content="Nav and range: --nav-link-font-weight and --range-track-box-shadow are read without a fallback but never declared.">
+    <meta name="playground-tags" content="components, forms">
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#9">
+    <meta name="playground-bootstrap" content="0632eaa44acd9c8ba4a1bf70786d2930c6d1b745">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-9: nav and range tokens</h1>
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Put a <code>.nav</code> in bold text, as below.</li>
+          <li>Render a range with the defaults, where <code>$enable-shadows</code> is <code>true</code>.</li>
+          <li>Inspect the nav link's <code>font-weight</code>, and look for <code>--range-track-box-shadow</code> on the range.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">Every token a rule reads without a fallback is declared in a token map: the nav link has a weight of its own, and the range track gets its shadow. Both show up in the docs' token tables.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p><code>.nav-link</code> reads <code>var(--nav-link-font-weight)</code> and the range track <code>var(--range-track-box-shadow)</code>, and no map declares them. The link inherits the bold weight, and the track has no shadow.</p>
+              <p class="mb-0">Measured here: <code id="measured">…</code></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <div data-playground-repro>
+          <div class="vstack gap-3">
+            <div class="fw-bold">
+              <ul class="nav">
+                <li class="nav-item"><a class="nav-link" href="#">Link</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Another link</a></li>
+              </ul>
+            </div>
+            <div>
+              <label for="range" class="form-label">Example range</label>
+              <div class="form-range">
+                <input type="range" class="form-range-input" id="range">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      const show = () => {
+        const link = getComputedStyle(document.querySelector('.nav-link'))
+        const range = getComputedStyle(document.querySelector('.form-range-input'))
+        const token = (style, name) => style.getPropertyValue(name).trim() || '(undefined)'
+        document.getElementById('measured').textContent =
+          `--bs-nav-link-font-weight: ${token(link, '--bs-nav-link-font-weight')}, nav link font-weight: ${link.fontWeight}; ` +
+          `--bs-range-track-box-shadow: ${token(range, '--bs-range-track-box-shadow')}`
+      }
+
+      if (document.readyState === 'complete') {
+        show()
+      } else {
+        window.addEventListener('load', show, { once: true })
+      }
+    </script>
+  </body>
+</html>

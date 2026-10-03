@@ -1,0 +1,14 @@
+// Custom Sass rules, compiled after Bootstrap into the `custom` cascade layer
+// (after components, before helpers and utilities).
+
+@layer custom {
+  // A narrow field, like a combobox in a card or a sidebar.
+  .pg-narrow {
+    width: 200px;
+  }
+
+  // The first half of the possible fix: lets the toggle shrink to its column.
+  .pg-min-width-0 {
+    min-width: 0;
+  }
+}

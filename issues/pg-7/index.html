@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-7: Chips have no focus indicator</title>
+    <meta name="description" content="Chips have no visible focus indicator: .chip:focus-visible sets outline: 0 and puts no focus ring in its place.">
+    <meta name="playground-tags" content="forms, a11y">
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#7">
+    <meta name="playground-bootstrap" content="0632eaa44acd9c8ba4a1bf70786d2930c6d1b745">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-7: chip focus</h1>
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Start from the <a href="/kitchen-sink/forms-chips.html#chip-input">Chips: Chip input</a> docs example, copied below.</li>
+          <li>Click in the "Add more…" field.</li>
+          <li>Press <kbd>Shift</kbd>+<kbd>Tab</kbd>: focus moves to the "TypeScript" chip.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">The focused chip shows a focus ring, like its dismiss button does.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p>Nothing marks the focused chip. <code>.chip:focus-visible</code> sets <code>outline: 0</code> without the <code>focus-ring()</code> that <code>.chip-dismiss</code> gets. The only ring is the whole chip input's, from <code>:focus-within</code>.</p>
+              <p class="mb-0">Measured on the focused chip: <code id="measured">focus a chip</code></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <div data-playground-repro>
+          <div class="chip-input" data-bs-chips>
+            <label class="chip-input-label" for="skillsInput">Skills:</label>
+            <span class="chip">
+              JavaScript
+            </span>
+            <span class="chip">
+              TypeScript
+            </span>
+            <input type="text" class="form-ghost" id="skillsInput" placeholder="Add more…" />
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      document.addEventListener('focusin', event => {
+        const chip = event.target.closest('.chip')
+        if (!chip) {
+          return
+        }
+
+        const style = getComputedStyle(chip)
+        document.getElementById('measured').textContent =
+          `:focus-visible ${chip.matches(':focus-visible') ? 'matches' : 'doesn\'t match'}, outline-style: ${style.outlineStyle}, box-shadow: ${style.boxShadow}`
+      })
+    </script>
+  </body>
+</html>
