@@ -437,6 +437,6 @@ export function listKitchenSinkTags() {
     const page = fs.readFileSync(path.join(outDir, file), 'utf8')
     const slug = SECTIONS.reduce((name, { dir }) => name.replace(new RegExp(`^${dir}-`), ''), path.basename(file, '.html'))
     const tags = page.match(/<meta name="playground-tags" content="([^"]*)">/)?.[1].split(',').map(tag => tag.trim()).filter(Boolean) ?? []
-    return { slug, tags }
+    return { slug, tags, url: `/kitchen-sink/${file}` }
   })
 }
