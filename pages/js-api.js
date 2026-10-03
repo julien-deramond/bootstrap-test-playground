@@ -189,6 +189,12 @@ function logEvent(entry) {
   }
 
   const { event, target } = entry
+  // Nav overflow fires this on every resize observation, so how many there are
+  // depends on timing. Screenshots (`?freeze`) skip it to stay stable.
+  if (window.playgroundPrefs?.frozen && event.type === 'overflow.bs.navoverflow') {
+    return
+  }
+
   const details = [`on ${describe(target)}`]
   if ('relatedTarget' in event) {
     details.push(`relatedTarget: ${event.relatedTarget ? describe(event.relatedTarget) : 'null'}`)
