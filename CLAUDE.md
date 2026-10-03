@@ -92,7 +92,7 @@ gh issue edit <n> --remove-label upstream --add-label upstream-reported
 gh issue comment <n> --body "Reported upstream: twbs/bootstrap#<upstream-number>"
 ```
 
-Also put the upstream link in the reproduction page, if there is one.
+Also put the upstream link in the reproduction page, if there is one. Its `data-status` follows the label: `npm run check-issues` updates it, and fills an empty upstream link from the comment above. The canary and the weekly sweep do it too.
 
 ### 3. Fixed upstream (`upstream-fixed`, then close)
 

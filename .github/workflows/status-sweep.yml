@@ -4,8 +4,11 @@ name: Status sweep
 # with `npm run status-sweep -- --apply`. An `upstream-reported` issue fixed on
 # v6-dev moves to `upstream-fixed` and is closed; an `upstream` issue that a
 # twbs/bootstrap item links to moves to `upstream-reported`. Possible matches
-# and closed-without-a-fix items get a comment for a human. The job summary
-# lists what it did. API calls only: no npm install, no browser.
+# and closed-without-a-fix items get a comment for a human. Each reproduction's
+# `data-status` follows its tracking issue's label: the pages that changed go
+# in one pull request (branch status-sweep/pages), opened with CANARY_TOKEN
+# like the canary's, so its checks run. The job summary lists what it did. API
+# calls only: no npm install, no browser.
 
 on:
   schedule:
@@ -22,12 +25,13 @@ on:
         type: boolean
         default: false
 
-# pull-requests: read, even for twbs/bootstrap's: without it, GITHUB_TOKEN
-# gets issues only, from the issue list as from the search.
+# pull-requests, even to read twbs/bootstrap's: without it, GITHUB_TOKEN gets
+# issues only, from the issue list as from the search. Write, and contents
+# write, for the pages' pull request without CANARY_TOKEN.
 permissions:
-  contents: read
+  contents: write
   issues: write
-  pull-requests: read
+  pull-requests: write
 
 concurrency:
   group: status-sweep
@@ -39,6 +43,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
+        with:
+          token: ${{ secrets.CANARY_TOKEN || github.token }}
 
       - uses: actions/setup-node@v7
         with:
@@ -52,3 +58,49 @@ jobs:
           # Not `dry-run && '' || '--apply'`: '' is falsy, so that's always --apply.
           APPLY: ${{ !inputs.dry-run && '--apply' || '' }}
         run: node scripts/status-sweep.mjs ${SINCE:+--since "$SINCE"} $APPLY
+
+      - name: Open or update the pull request
+        if: ${{ !inputs.dry-run }}
+        env:
+          GH_TOKEN: ${{ secrets.CANARY_TOKEN || github.token }}
+          BRANCH: status-sweep/pages
+        run: |
+          if [ -z "$(git status --porcelain -- issues)" ]; then
+            echo "Every reproduction page follows its tracking issue: no pull request."
+            exit 0
+          fi
+
+          title="chore(issues): sync reproduction statuses with their tracking issues"
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          bot="41898282+github-actions[bot]@users.noreply.github.com"
+          number=$(gh api "repos/$GITHUB_REPOSITORY/pulls?head=$GITHUB_REPOSITORY_OWNER:$BRANCH&state=open" --jq '.[0].number // empty')
+
+          # Someone took the pull request over: don't force-push over their commits.
+          if [ -n "$number" ] && git fetch -q origin "$BRANCH" && git log --format=%ae "origin/main..origin/$BRANCH" | grep -Fxqv "$bot"; then
+            gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$number/comments" --silent \
+              -f body="The status sweep has reproduction pages to update again, but this branch has commits of its own, so it left it alone. See the [run]($run_url)."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "$bot"
+          git switch -C "$BRANCH"
+          git add issues
+          git commit -q -m "$title" -m "Opened by the weekly status sweep: $run_url"
+          git push -q --force origin "$BRANCH"
+
+          {
+            cat reports/status-sweep.md
+            echo
+            echo "A reproduction now \`fixed\` upstream is deleted by hand, with its visual baselines (step 3 of [Upstream issue tracking](CLAUDE.md#upstream-issue-tracking))."
+            echo
+            echo "---"
+            echo "Opened by the weekly status sweep ([run]($run_url), [\`status-sweep.yml\`](.github/workflows/status-sweep.yml))."
+          } > "$RUNNER_TEMP/body.md"
+
+          if [ -n "$number" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/pulls/$number" -f title="$title" -F body=@"$RUNNER_TEMP/body.md" --silent
+          else
+            number=$(gh api -X POST "repos/$GITHUB_REPOSITORY/pulls" -f title="$title" -f head="$BRANCH" -f base=main -F body=@"$RUNNER_TEMP/body.md" --jq .number)
+          fi
+          echo "Pull request: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/pull/$number"

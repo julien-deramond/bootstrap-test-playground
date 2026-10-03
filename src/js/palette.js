@@ -2,6 +2,7 @@
 // page and its example headings. Like the toolbar, it renders in a shadow root
 // so it neither inherits from nor leaks into the page under test.
 import { pages, readRecent, resultUrl, search } from './page-index.js'
+import { STATUSES } from './repro-status.js'
 
 const MAX_RESULTS = 50
 
@@ -52,6 +53,10 @@ const styles = `
   .section { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: .75; }
   .group { flex-shrink: 0; margin-inline-start: auto; font-size: 12px; opacity: .5; }
   .current { font-size: 11px; opacity: .5; }
+  .status { flex-shrink: 0; padding: 0 6px; font-size: 11px; border: 1px solid currentcolor; border-radius: 999px; }
+  .status-unreported { color: #f5c46b; }
+  .status-reported { color: #7cc4f5; }
+  .status-fixed { color: #7ed69a; }
   .match { flex-shrink: 0; padding: 0 5px; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; background: rgb(255 255 255 / .08); border-radius: 4px; opacity: .8; }
   .empty { padding: 24px; text-align: center; opacity: .6; }
   footer { display: flex; gap: 16px; padding: 8px 14px; font-size: 11px; border-block-start: 1px solid rgb(255 255 255 / .1); opacity: .55; }
@@ -87,6 +92,7 @@ export function mountPalette() {
       <li role="presentation">
         <a href="${escapeHtml(resultUrl(result))}" role="option" id="palette-option-${index}" data-index="${index}" aria-selected="${index === selected}">
           <span class="title">${escapeHtml(page.title)}</span>
+          ${STATUSES[page.repro?.status] ? `<span class="status status-${page.repro.status}" title="${STATUSES[page.repro.status].text}">${STATUSES[page.repro.status].short}</span>` : ''}
           ${section ? `<span class="section">› ${escapeHtml(section.title)}</span>` : ''}
           ${(result.matches ?? []).map(({ label }) => `<code class="match">${escapeHtml(label)}</code>`).join('')}
           ${current ? '<span class="current">(this page)</span>' : ''}

@@ -657,6 +657,7 @@
   /* Controls inside a tile sit above its stretched link. */
   .page-card-actions,
   .page-card-section,
+  .page-card-repro a,
   .page-card-tag {
     position: relative;
     z-index: 1;
@@ -733,6 +734,44 @@
     svg {
       flex-shrink: 0;
     }
+  }
+
+  /* A reproduction's upstream status, upstream issue and tracking issue. */
+  .page-card-repro {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .125rem .5rem;
+    align-items: center;
+    margin: .25rem 0 0;
+    font-size: var(--bs-font-size-xs);
+    white-space: nowrap;
+
+    /* Bootstrap's subtle badges and link color are under 4.5:1 at this size
+       in light mode (#183): the emphasis color and the secondary text pass. */
+    .badge {
+      flex-shrink: 0;
+      color: var(--bs-theme-fg-emphasis);
+    }
+
+    a {
+      color: var(--bs-fg-2);
+      text-decoration: underline;
+      text-decoration-color: var(--bs-border-color);
+      text-underline-offset: 2px;
+
+      &:hover {
+        color: var(--bs-fg-body);
+        text-decoration-color: currentcolor;
+      }
+    }
+  }
+
+  .home-status-dot {
+    align-self: center;
+    width: .5rem;
+    height: .5rem;
+    background-color: var(--bs-theme-base);
+    border-radius: 50%;
   }
 
   /* Tags, source and path: the list view only. */

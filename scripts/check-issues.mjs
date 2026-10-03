@@ -24,7 +24,10 @@
 //   NONE  no assert.js and no repro.spec.js
 //
 // With the GitHub CLI, each tracking issue's state and label are checked
-// against the result, and the step's commands are printed. Exits with 1 when a
+// against the result, and the step's commands are printed. Each page's
+// `data-status` is updated to follow its tracking issue's label, and an empty
+// upstream reference takes its "Reported upstream" item (see
+// scripts/lib/repro-status.mjs). Exits with 1 when a
 // reproduction passes, errors, or fails while its tracking issue is closed.
 import { spawn, spawnSync } from 'node:child_process'
 import fs from 'node:fs'
@@ -33,6 +36,7 @@ import { parseArgs } from 'node:util'
 import { chromium } from '@playwright/test'
 import { createServer } from 'vite'
 import { fail, root } from './lib/configs.mjs'
+import { UPSTREAM_LABELS, needsRefs, readReproductionMeta, reportedRefs, syncReproduction } from './lib/repro-status.mjs'
 
 const USAGE = 'Usage: npm run check-issues [-- <name>...] [--no-gh]   (e.g. npm run check-issues -- pg-4 42754)'
 let values
@@ -58,13 +62,12 @@ const ALLOWLISTS = [
 // --- The reproductions --------------------------------------------------------
 
 function readReproduction(name) {
-  const page = fs.readFileSync(path.join(issuesDir, name, 'index.html'), 'utf8')
-  const meta = page.match(/<meta name="playground-upstream" content="([^"]*)"(?: data-status="([^"]*)")?(?: data-tracking="([^"]*)")?>/)
+  const meta = readReproductionMeta(name) ?? {}
   return {
     name,
-    upstream: meta?.[1] || '',
-    status: meta?.[2] || '',
-    tracking: meta?.[3] || '',
+    upstream: meta.upstream ?? '',
+    status: meta.status ?? '',
+    tracking: meta.tracking ?? '',
     hasAssert: fs.existsSync(path.join(issuesDir, name, 'assert.js')),
     hasSpec: fs.existsSync(path.join(issuesDir, name, 'repro.spec.js'))
   }
@@ -259,11 +262,30 @@ function trackingIssue(reference) {
   return issueCache.get(reference)
 }
 
-const UPSTREAM_LABELS = ['upstream', 'upstream-reported', 'upstream-fixed']
 for (const reproduction of reproductions) {
   const issue = reproduction.tracking ? trackingIssue(reproduction.tracking) : null
   reproduction.issue = issue
   reproduction.label = issue ? issue.labels.find(label => UPSTREAM_LABELS.includes(label)) ?? '' : ''
+}
+
+// The "Reported upstream" comments of a tracking issue, for a page whose
+// upstream reference is empty.
+function reportedRefsOf(reference) {
+  const [, repo, n] = reference.match(/^([\w.-]+\/[\w.-]+)#(\d+)$/)
+  const result = spawnSync('gh', ['api', `repos/${repo}/issues/${n}/comments?per_page=100`, '--paginate', '--slurp'], { encoding: 'utf8' })
+  return result.status === 0 ? reportedRefs(JSON.parse(result.stdout).flat()) : []
+}
+
+// Each page's data-status follows its tracking issue's label (see
+// scripts/lib/repro-status.mjs). The nightly canary commits what changed.
+const synced = []
+for (const reproduction of reproductions.filter(({ label }) => label)) {
+  const { name, label, tracking } = reproduction
+  const refs = needsRefs(reproduction, label) ? reportedRefsOf(tracking) : []
+  const changes = syncReproduction(name, { label, refs })
+  if (changes.length > 0) {
+    synced.push(`  issues/${name}/index.html: ${changes.join(', ')} (${tracking.replace(/^.*#/, '#')} is ${label})`)
+  }
 }
 
 // --- Report -------------------------------------------------------------------
@@ -300,6 +322,10 @@ for (const row of rows) {
 
 const counts = Object.fromEntries(['PASS', 'FAIL', 'SKIP', 'NONE', 'ERROR'].map(result => [result, reproductions.filter(reproduction => reproduction.result === result).length]))
 console.log(`\n${reproductions.length} reproduction(s): ${Object.entries(counts).filter(([, count]) => count > 0).map(([result, count]) => `${count} ${result}`).join(', ')}`)
+
+if (synced.length > 0) {
+  console.log(`\nUpstream status updated to follow the tracking issues' labels:\n${synced.join('\n')}`)
+}
 
 let problems = 0
 for (const reproduction of reproductions) {

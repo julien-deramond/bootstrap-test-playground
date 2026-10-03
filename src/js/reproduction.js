@@ -2,23 +2,12 @@
 // header from the page's metadata and shows the markup under test in light and
 // dark side by side. Pages without that metadata or markup are left alone.
 import source, { onChange as onSourceChange } from 'virtual:bootstrap-source'
-
-const STATUSES = {
-  unreported: { text: 'Not reported upstream', theme: 'warning' },
-  reported: { text: 'Reported upstream', theme: 'info' },
-  fixed: { text: 'Fixed upstream', theme: 'success' }
-}
+import { STATUSES, githubUrl } from './repro-status.js'
 
 const STORAGE_KEY = 'playground-repro-side-by-side'
 
 // Attributes holding one id or a space-separated list of ids.
 const ID_LIST_ATTRIBUTES = ['for', 'form', 'list', 'headers', 'popovertarget', 'commandfor', 'anchor', 'aria-activedescendant', 'aria-controls', 'aria-describedby', 'aria-details', 'aria-errormessage', 'aria-flowto', 'aria-labelledby', 'aria-owns']
-
-// `twbs/bootstrap#42754` → its URL. GitHub redirects /issues/ to /pull/.
-const githubUrl = reference => {
-  const [, repo, number] = reference.match(/^([\w.-]+\/[\w.-]+)#(\d+)$/) ?? []
-  return repo ? `https://github.com/${repo}/issues/${number}` : undefined
-}
 
 const link = (href, text) => {
   const anchor = document.createElement('a')

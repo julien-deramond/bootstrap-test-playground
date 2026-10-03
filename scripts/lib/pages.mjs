@@ -5,6 +5,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { pageClasses } from './class-index.mjs'
 import { root } from './configs.mjs'
+import { STATUSES, readMeta } from './repro-status.mjs'
 
 // Folders scanned for pages. Every `.html` file inside becomes a Vite entry.
 export const PAGE_GROUPS = [
@@ -41,6 +42,8 @@ const plainText = html => decodeEntities(html.replace(/<[^>]*>/g, '')).replace(/
 // - <meta name="description">, or the header's lead paragraph (`.fs-lg`)
 // - <meta name="playground-tags" content="forms, auth">
 // - <meta name="playground-source">, see the toolbar
+// - <meta name="playground-upstream">, a reproduction's upstream status, its
+//   upstream issue and its tracking issue (see repro-status.mjs)
 // - every <h2 id="…">, so a search can jump straight to an example
 // - the "Docs source" link of kitchen sink pages
 // - with `bootstrapClasses`, the Bootstrap classes its markup uses (see class-index.mjs)
@@ -54,6 +57,7 @@ function readPage(file, bootstrapClasses) {
   const lead = html.match(/<p class="[^"]*\bfs-lg\b[^"]*">([\s\S]*?)<\/p>/i)?.[1]
   const sourceTag = meta('playground-source')
   const docs = html.match(/<a href="([^"]*)">Docs source<\/a>/)?.[1]
+  const upstream = readMeta(head)
 
   return {
     title: title.replace(TITLE_PREFIX, '').replace(TITLE_SUFFIX, ''),
@@ -62,6 +66,7 @@ function readPage(file, bootstrapClasses) {
     source: sourceTag ? { label: decodeEntities(attribute(sourceTag, 'content')), url: attribute(sourceTag, 'data-url') } : undefined,
     sections: [...html.matchAll(/<h2[^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/gi)].map(([, id, heading]) => ({ id, title: plainText(heading) })),
     ...(docs ? { docs } : {}),
+    ...(upstream ? { repro: { status: STATUSES.includes(upstream.status) ? upstream.status : '', upstream: upstream.upstream, tracking: upstream.tracking } } : {}),
     ...(bootstrapClasses ? { classes: pageClasses(html, bootstrapClasses) } : {})
   }
 }

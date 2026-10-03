@@ -11,6 +11,10 @@
 //   to moves to `upstream-reported`. One updated since --since whose title and
 //   description share its keywords gets a comment as a possible match: a human
 //   decides.
+// - each reproduction's page follows its tracking issue's label, as the sweep
+//   leaves it: `data-status`, and an empty upstream reference (see
+//   scripts/lib/repro-status.mjs). The workflow opens a pull request with the
+//   pages that changed.
 //
 // Usage: npm run status-sweep [-- --since <YYYY-MM-DD>] [--apply]
 // Without --apply, it changes nothing and prints what it would do. It needs
@@ -20,6 +24,7 @@ import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { LABEL_STATUS, UPSTREAM_LABELS, listReproductions, needsRefs, readReproductionMeta, reportedRefs, syncReproduction } from './lib/repro-status.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const UPSTREAM = 'twbs/bootstrap'
@@ -62,13 +67,6 @@ const list = endpoint => gh(['api', '-X', 'GET', endpoint, '--paginate', '--slur
 const repo = process.env.GITHUB_REPOSITORY ?? gh(['repo', 'view', '--json', 'nameWithOwner']).nameWithOwner
 
 // --- Upstream items -----------------------------------------------------------
-
-const UPSTREAM_REF = new RegExp(String.raw`(?:${UPSTREAM}#|github\.com/${UPSTREAM}/(?:issues|pull)/)(\d+)`, 'g')
-
-// The upstream items an issue's "Reported upstream" comments link to.
-const reportedRefs = comments => [...new Set(comments
-  .filter(comment => /reported upstream/i.test(comment.body))
-  .flatMap(comment => [...comment.body.matchAll(UPSTREAM_REF)].map(match => Number(match[1]))))]
 
 const inBranch = new Map()
 // Whether a twbs/bootstrap commit is in v6-dev.
@@ -193,7 +191,17 @@ function act(issue, description, ...steps) {
 }
 
 const comment = (issue, body) => () => gh(['api', '-X', 'POST', `repos/${repo}/issues/${issue.number}/comments`, '-f', `body=${body}`, '--silent'], { json: false })
-const relabel = (issue, from, to) => () => {
+// The labels and "Reported upstream" items the sweep gives issues, for the
+// pages (see "Reproduction pages" below), also in a dry run.
+const newLabels = new Map()
+const newRefs = new Map()
+
+const relabel = (issue, from, to) => {
+  newLabels.set(issue.number, to)
+  return relabelStep(issue, from, to)
+}
+
+const relabelStep = (issue, from, to) => () => {
   try {
     gh(['api', '-X', 'DELETE', `repos/${repo}/issues/${issue.number}/labels/${from}`, '--silent'], { json: false })
   } catch {
@@ -298,6 +306,7 @@ for (const issue of unreported) {
       `Found by the weekly status sweep: ${UPSTREAM}#${link.number} links to this issue (step 2 of [Upstream issue tracking](${TRACKING})).`,
       marker(`reported:${link.number}`)
     ].join('\n')
+    newRefs.set(issue.number, link.number)
     act(issue, `linked from ${UPSTREAM}#${link.number} (${link.title}): \`upstream\` → \`upstream-reported\``,
       relabel(issue, 'upstream', 'upstream-reported'), comment(issue, body))
     continue
@@ -323,6 +332,30 @@ for (const issue of unreported) {
   act(issue, `possible upstream match ${matches.map(({ item }) => `${UPSTREAM}#${item.number} (${item.title})`).join(', ')}: comment`, comment(issue, body))
 }
 
+// --- Reproduction pages -------------------------------------------------------
+
+// Each reproduction's data-status follows its tracking issue's label, as the
+// sweep leaves it, and an empty upstream reference takes its "Reported
+// upstream" item (scripts/lib/repro-status.mjs). With --apply, the pages are
+// written, and the workflow opens a pull request with them.
+const synced = []
+for (const name of listReproductions()) {
+  const meta = readReproductionMeta(name)
+  const [, owner, n] = meta?.tracking.match(/^([\w.-]+\/[\w.-]+)#(\d+)$/) ?? []
+  if (owner !== repo) {
+    continue
+  }
+
+  const number = Number(n)
+  const issue = gh(['api', `repos/${repo}/issues/${number}`])
+  const label = newLabels.get(number) ?? issue.labels.map(({ name: labelName }) => labelName).find(labelName => UPSTREAM_LABELS.includes(labelName))
+  const refs = needsRefs(meta, label) ? [...(newRefs.has(number) ? [newRefs.get(number)] : []), ...reportedRefs(commentsOf(issue))] : []
+  const changes = syncReproduction(name, { label, refs }, { write: apply })
+  if (changes.length > 0) {
+    synced.push(`- \`issues/${name}/index.html\`: ${changes.join(', ')} (#${number} is \`${label}\`, ${LABEL_STATUS[label]})`)
+  }
+}
+
 // --- Report -------------------------------------------------------------------
 
 const report = [
@@ -331,9 +364,13 @@ const report = [
   `${reported.length} \`upstream-reported\` and ${unreported.length} \`upstream\` issues; ${candidates.length} ${UPSTREAM} issues and pull requests updated since ${since}.`,
   '',
   ...(done.length > 0 ? done : ['Nothing new.']),
-  ...(notes.length > 0 ? ['', ...notes] : [])
+  ...(notes.length > 0 ? ['', ...notes] : []),
+  ...(synced.length > 0 ? ['', `Reproduction pages${apply ? ' updated' : ' to update'}, to follow their tracking issues:`, '', ...synced] : [])
 ].join('\n')
 console.log(report)
+// The workflow's pull request body, when pages changed.
+fs.mkdirSync(path.join(root, 'reports'), { recursive: true })
+fs.writeFileSync(path.join(root, 'reports/status-sweep.md'), `${report}\n`)
 if (process.env.GITHUB_STEP_SUMMARY) {
   fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${report}\n`)
 }
