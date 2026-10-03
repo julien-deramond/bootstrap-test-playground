@@ -9,9 +9,9 @@ A test bench for [Bootstrap v6](https://github.com/twbs/bootstrap/tree/v6-dev). 
 - **Kitchen sink**: every component and form example from the v6 docs, generated from the docs source
 - **Real screens**: dashboards, forms and app screens ported from [shadcn/ui](https://github.com/shadcn-ui/ui) and Bootstrap's own examples, built with v6 components only
 - **Configs**: saved Sass and CSS setups (radii, palettes, type scales, `$enable-*` options, custom color modes, partial builds), switched live on any page
-- **Toolbar**: color mode, direction, primary hue, source or dist build, on every page, plus side-by-side *compare* and multi-config *matrix* views
+- **Toolbar**: color mode, direction, primary hue, source or dist build, on every page, a tab order overlay, plus side-by-side *compare* and multi-config *matrix* views
 - **Issue reproductions**: one folder per bug, each compiling its own isolated copy of Bootstrap
-- **Test suites**: visual regression, a console crawl, interaction smoke tests for every JavaScript component, and an accessibility scan (axe-core, focus rings, color contrast), in Chromium, Firefox and WebKit
+- **Test suites**: visual regression, a console crawl, interaction smoke tests and keyboard walkthroughs for every JavaScript component, and an accessibility scan (axe-core, focus rings, color contrast), in Chromium, Firefox and WebKit
 - **Audits**: CSS tokens, RTL, reduced motion, cascade layers, partial imports, option combinations, dist drift and bundle sizes
 - **Nightly canary**: follows `v6-dev`, runs every check and opens a pull request with what changed
 

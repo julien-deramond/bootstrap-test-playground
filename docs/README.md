@@ -20,7 +20,7 @@ Contributors, human or agent, also follow [CLAUDE.md](../CLAUDE.md): the convent
 | `npm run build` / `npm run preview` | Builds every page to `dist/` and serves the build |
 | `npm run test:visual [-- -u]` | Screenshots every page and compares with the baselines (see [Visual regression tests](testing.md#visual-regression-tests)) |
 | `npm run test:console` | Opens every page and fails on errors, warnings and failed requests (see [Console crawl](testing.md#console-crawl)) |
-| `npm run test:smoke` | Opens, drives and closes every JavaScript component and checks its state and events (see [Interaction smoke tests](testing.md#interaction-smoke-tests)) |
+| `npm run test:smoke` | Opens, drives and closes every JavaScript component and checks its state and events, then walks every documented key in LTR and RTL (see [Interaction smoke tests](testing.md#interaction-smoke-tests)) |
 | `npm run test:a11y` | Scans every page with axe-core at WCAG 2.2 AA, in light and dark with the default config, or every config with `A11Y_CONFIGS=all`, then every overlay open (see [Accessibility scan](testing.md#accessibility-scan)) |
 | `npm run a11y-summary` | Sums up the last accessibility scan per config: violating elements by axe rule (see [Accessibility scan](testing.md#accessibility-scan)) |
 | `npm run report:contrast [-- --config <name>]` | Measures every documented color pairing and the components that embed one, per config and color mode, and writes `reports/contrast/` (see [Accessibility scan](testing.md#accessibility-scan)) |

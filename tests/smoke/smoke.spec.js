@@ -21,55 +21,10 @@ import path from 'node:path'
 import { expect, test } from '@playwright/test'
 import { loadEnv } from 'vite'
 import { bootstrapSource } from '../../scripts/lib/bootstrap.mjs'
-import { configDir, listConfigs, readPartials, root } from '../../scripts/lib/configs.mjs'
+import { root } from '../../scripts/lib/configs.mjs'
 import { listReproductions } from '../../scripts/lib/export-issue.mjs'
 import { readReproductionMeta } from '../../scripts/lib/repro-status.mjs'
-import known from './known-issues.js'
-
-const VARIANTS = [
-  ...['working', ...listConfigs().map(({ name }) => name)].map(config => ({ name: config, params: `config=${config}` })),
-  { name: 'dist', params: 'config=working&css=dist&js=dist' }
-]
-
-// Records every Bootstrap event (`show.bs.menu`…) as it's dispatched.
-function recordEvents() {
-  window.bsEvents = []
-  const dispatch = EventTarget.prototype.dispatchEvent
-  EventTarget.prototype.dispatchEvent = function (event) {
-    if (event.type.includes('.bs.')) {
-      window.bsEvents.push(event.type)
-    }
-
-    return dispatch.call(this, event)
-  }
-}
-
-async function load(page, url, params) {
-  await page.addInitScript(recordEvents)
-  await page.goto(`${url}?${params}&chrome=0&freeze`)
-  await page.waitForFunction(() => !document.getElementById('playground-config-pending'))
-  await page.waitForFunction(() => window.bootstrap)
-}
-
-const events = page => page.evaluate(() => window.bsEvents)
-const clearEvents = page => page.evaluate(() => {
-  window.bsEvents = []
-})
-
-// Waits until the events were emitted, in this order (others may interleave).
-async function expectEvents(page, expected) {
-  await expect.poll(async () => {
-    const seen = await events(page)
-    let index = 0
-    for (const type of seen) {
-      if (type === expected[index]) {
-        index++
-      }
-    }
-
-    return expected.slice(index)
-  }, { message: `events ${expected.join(', ')}`, timeout: 3000 }).toEqual([])
-}
+import { PAGES, PARTIALS, VARIANTS, clearEvents, events, expectEvents, first, inScope, known, knownFor, leftOut, load, tabsToControls } from './shared.js'
 
 // What a closed overlay could leave behind: open dialogs (some docs examples
 // render one open), a scroll lock, inert content.
@@ -92,59 +47,6 @@ async function pin(page, locator, name) {
   }, name)
   return page.locator(`[data-smoke="${name}"]`)
 }
-
-// The first element matching `selector` outside the playground's UI.
-const first = (page, selector) => page.locator(selector).filter({ visible: true }).first()
-
-// Each scenario's kitchen sink page, so a pull request that changes the page
-// runs the scenario with every config (SMOKE_SCOPE).
-const PAGES = {
-  dialog: '/kitchen-sink/components-dialog.html',
-  drawer: '/kitchen-sink/components-drawer.html',
-  menu: '/kitchen-sink/components-menu.html',
-  tooltip: '/kitchen-sink/components-tooltip.html',
-  popover: '/kitchen-sink/components-popover.html',
-  collapse: '/kitchen-sink/components-collapse.html',
-  tab: '/kitchen-sink/components-tab.html',
-  carousel: '/kitchen-sink/components-carousel.html',
-  toast: '/kitchen-sink/components-toasts.html',
-  alert: '/kitchen-sink/components-alert.html',
-  button: '/kitchen-sink/components-button.html',
-  toggler: '/kitchen-sink/components-toggler.html',
-  scrollspy: '/kitchen-sink/components-scrollspy.html',
-  combobox: '/kitchen-sink/forms-combobox.html',
-  datepicker: '/kitchen-sink/forms-datepicker.html',
-  otp: '/kitchen-sink/forms-otp-input.html',
-  chips: '/kitchen-sink/forms-chips.html',
-  strength: '/kitchen-sink/forms-password-strength.html',
-  range: '/kitchen-sink/forms-range.html'
-}
-
-// The partial that styles each scenario's component. A config that loads only
-// some partials (configs/partial) leaves the others out on purpose, so their
-// scenarios are skipped there. Toggler and scrollspy only need JavaScript.
-const PARTIALS = {
-  dialog: 'dialog',
-  drawer: 'drawer',
-  menu: 'menu',
-  tooltip: 'tooltip',
-  popover: 'popover',
-  collapse: 'transitions',
-  tab: 'nav',
-  carousel: 'carousel',
-  toast: 'toasts',
-  alert: 'alert',
-  button: 'buttons',
-  combobox: 'forms',
-  datepicker: 'datepicker',
-  otp: 'forms',
-  chips: 'forms',
-  strength: 'forms',
-  range: 'forms'
-}
-
-const loadedPartials = Object.fromEntries(listConfigs().map(({ name }) => [name, readPartials(configDir(name))]))
-const leftOut = (variant, name) => Boolean(loadedPartials[variant] && PARTIALS[name] && !loadedPartials[variant].includes(PARTIALS[name]))
 
 const SCENARIOS = {
   async dialog(page) {
@@ -455,17 +357,11 @@ const SCENARIOS = {
   }
 }
 
-const scope = process.env.SMOKE_SCOPE ? JSON.parse(process.env.SMOKE_SCOPE) : { full: true }
-const inScope = (variant, name) => scope.full || ['working', 'dist'].includes(variant) ||
-  scope.configs.includes(variant) || scope.urls.includes(PAGES[name])
-
 for (const { name: variant, params } of VARIANTS) {
   test.describe(variant, () => {
     for (const [name, scenario] of Object.entries(SCENARIOS).filter(([name]) => inScope(variant, name))) {
       test(name, async ({ page, browserName }) => {
-        const issue = known.find(entry => entry.scenario === name &&
-          (!entry.configs || entry.configs.includes(variant)) &&
-          (!entry.engines || entry.engines.includes(browserName)))
+        const [issue] = knownFor(known.filter(entry => entry.scenario === name), variant, browserName)
         test.skip(leftOut(variant, name), `${variant} doesn't load the ${PARTIALS[name]} partial`)
         test.fail(Boolean(issue), issue && `known upstream bug #${issue.issue}`)
         page.config = params
@@ -603,6 +499,44 @@ test.describe('playground', () => {
     expect(posts[0].method()).toBe('POST')
     expect(fields.get('project[template]')).toBe('node')
     expect(fields.get('project[files][main.scss]')).toContain('bootstrap/scss/bootstrap')
+  })
+
+  // The tab order overlay (src/js/tab-order.js) numbers the tab stops in the
+  // order Tab visits them: roving tabindex, disabled controls, radio groups.
+  test('tab order', async ({ page }) => {
+    await page.goto('/kitchen-sink/components-button.html?freeze')
+    await page.waitForFunction(() => window.bootstrap)
+    const toolbar = page.locator('#playground-toolbar')
+    await toolbar.getByRole('button', { name: /^Playground settings/ }).click()
+    const button = toolbar.getByRole('button', { name: /^Show tab order/ })
+    await button.click()
+    await expect(button).toHaveAttribute('aria-pressed', 'true')
+    await page.keyboard.press('Escape')
+    const layer = page.locator('#playground-tab-order [popover]')
+    await expect(layer).toHaveAttribute('data-count', /^\d+$/)
+    test.skip(!await tabsToControls(page), 'Tab skips buttons and links here')
+
+    // It stays on from page to page, in the same tab.
+    for (const url of ['/kitchen-sink/components-tab.html', '/kitchen-sink/forms-radio.html']) {
+      await page.goto(`${url}?freeze`)
+      await page.waitForFunction(() => window.bootstrap)
+      await expect(layer).toHaveAttribute('data-count', /^\d+$/)
+      const count = Math.min(Number(await layer.getAttribute('data-count')), 60)
+      for (let index = 1; index <= count; index++) {
+        await page.keyboard.press('Tab')
+        const focused = await page.evaluate(() => {
+          const { left, top, width, height } = document.activeElement.getBoundingClientRect()
+          return { left, top, width, height }
+        })
+        await expect.poll(() => layer.locator(`.box[data-index="${index}"]`).evaluate(box => {
+          const { left, top, width, height } = box.getBoundingClientRect()
+          return { left, top, width, height }
+        }).catch(() => undefined), `tab stop ${index} of ${url}`).toEqual(focused)
+      }
+    }
+
+    await page.keyboard.press('Alt+Shift+O')
+    await expect(layer).toHaveCount(0)
   })
 
   // The first-visit hint hides under automation: pretend to be a person.

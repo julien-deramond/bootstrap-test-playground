@@ -215,6 +215,7 @@ The settings panel is a modal dialog, a bottom sheet on small screens. It closes
 | Direction | LTR or RTL, through `dir` on `<html>` | <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> toggles | `?dir=rtl` |
 | CSS, JavaScript | *Source* compiles Bootstrap from `scss/` or `js/src/`, *Dist* loads the prebuilt `dist/css/bootstrap.css` or `js/dist/` (see [Where Bootstrap comes from](bootstrap.md#source-or-dist)) | | `?css=dist`, `?js=dist` |
 | Primary | Remaps the `--bs-primary-*` tokens to another hue at runtime | | `?primary=teal` |
+| Show tab order | Numbers every tab stop of the page in the order <kbd>Tab</kbd> visits them, with positive `tabindex` in orange, for a manual review of focus order. It follows opening menus and dialogs, and stays on from page to page for the browser session (see [`src/js/tab-order.js`](../src/js/tab-order.js) for what counts as a stop) | <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>O</kbd> toggles | |
 | Config | Swaps the working copy for a saved config. Configs are grouped by category, with a filter, their description, a *tokens only* badge and their known gaps (see [`configs/README.md`](../configs/README.md#saved-configs)) | | `?config=<name>` |
 | Copy link | Copies the page's URL with the current choices as URL overrides | | |
 | Export HTML, Open in StackBlitz | On an issue reproduction: downloads it as one HTML file, or opens it in StackBlitz as a Vite project (see [Exporting a reproduction](#exporting-a-reproduction)) | | |
