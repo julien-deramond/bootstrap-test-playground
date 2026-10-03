@@ -21,6 +21,9 @@ const noEffect = suite => [
   /^scripts\/[^/]+\.mjs$/,
   /^scripts\/templates\//,
   new RegExp(`^tests/(?!${suite}/)`),
+  // A reproduction's assertion and spec: `npm run check-issues` and the
+  // `issues` project run them, not these suites.
+  /^issues\/[^/]+\/(assert\.js|repro\.spec\.js)$/,
   // The working copy: every page opens with it anyway.
   /^src\/styles\//
 ]

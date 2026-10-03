@@ -149,6 +149,17 @@ With every config, the scan loads about 5,500 pages. On pull requests, [`.github
 A11Y_CONFIGS=all A11Y_SCOPE='{"full":false,"configs":["pill"],"urls":[]}' npm run test:a11y
 ```
 
+## Reproduction specs
+
+A reproduction in `issues/` can say what "fixed" looks like, either in an `assert.js` that runs in the page or, when the bug needs the keyboard or a forced pseudo-class, in a `repro.spec.js` on the `repro` fixture of [`tests/issues/fixtures.js`](../tests/issues/fixtures.js). Both record a verdict: false while the bug is there, which is the expected state, true once the fix landed. The specs are the `issues` Playwright project, Chromium only, run on a build like the other suites:
+
+```sh
+npm run test:issues
+npx playwright test issues/pg-7/repro.spec.js --project issues
+```
+
+A spec whose verdict is true fails with the step to take: the fix landed upstream, so the tracking issue moves to `upstream-fixed` and the reproduction is deleted (step 3 of [Upstream issue tracking](../CLAUDE.md#upstream-issue-tracking)). The Chromium job of [`smoke.yml`](../.github/workflows/smoke.yml) runs the project on every pull request and every night, and `npm run check-issues` runs every reproduction's spec or assertion against the dev server, with each tracking issue's label and the commands of step 3. See [Assertions](pages.md#assertions).
+
 ## Browser engines
 
 v6 leans on features whose support differs between engines at the floors of Bootstrap's `.browserslistrc` (Chrome 130, Firefox 132, Safari 18): `light-dark()`, `color-mix()`, `oklch()`, `:has()`, `@layer`, `<dialog>`. Every suite but the [accessibility scan](#accessibility-scan) runs in each of Playwright's engines, as one project per engine: `visual`, `visual-firefox`, `visual-webkit`, `console`, `console-firefox` and so on. The unsuffixed projects are Chromium, and `npm run test:visual`, `test:console` and `test:smoke` run only those, for speed:

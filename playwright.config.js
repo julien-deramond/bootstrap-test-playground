@@ -5,6 +5,9 @@
 import { defineConfig, devices } from '@playwright/test'
 
 const PORT = 4179
+// `npm run check-issues` runs the reproductions' specs against its own dev
+// server: PLAYWRIGHT_BASE_URL then replaces the build and preview below.
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || `http://localhost:${PORT}`
 
 // Playwright's three engines, at desktop size. To add a device preset (a
 // phone viewport with touch), add an entry like `'iphone': devices['iPhone 15']`.
@@ -29,7 +32,7 @@ export default defineConfig({
   },
   use: {
     ...devices['Desktop Chrome'],
-    baseURL: `http://localhost:${PORT}`,
+    baseURL: BASE_URL,
     // `?freeze` fixes "today" at noon UTC; UTC keeps it on the same day.
     timezoneId: 'UTC',
     locale: 'en-US'
@@ -47,9 +50,12 @@ export default defineConfig({
   }))).concat(
     // axe-core checks the DOM and computed styles, which don't depend on the
     // engine, so the accessibility scan runs in Chromium only.
-    { name: 'a11y', testDir: 'tests/a11y', use: { ...ENGINES.chromium } }
+    { name: 'a11y', testDir: 'tests/a11y', use: { ...ENGINES.chromium } },
+    // The reproductions' own specs, issues/<name>/repro.spec.js (see
+    // tests/issues/fixtures.js), in Chromium: `forcePseudoState` needs it.
+    { name: 'issues', testDir: 'issues', testMatch: /repro\.spec\.js$/, use: { ...ENGINES.chromium } }
   ),
-  webServer: {
+  webServer: process.env.PLAYWRIGHT_BASE_URL ? undefined : {
     command: `npm run build && npm run preview -- --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}`,
     reuseExistingServer: false,
