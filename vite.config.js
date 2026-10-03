@@ -57,18 +57,31 @@ function inlinePrefsScript() {
 // Vite replaces `<link data-playground-styles="main" href="/src/styles/main.scss">`
 // with a bare link to the compiled asset, which breaks config switching in
 // builds. This puts the attribute back on the matching compiled link.
+//
+// The match goes by the asset's `names`, not its file name: the bundler merges
+// stylesheets with identical content into one asset, named after the first one
+// it meets, but keeps every source's name in `names`. An unchanged
+// reproduction's `./main.scss` turns the default `main.scss` into
+// `assets/index-<hash>.css` (#299).
 function keepStyleMarkers() {
   return {
     name: 'keep-style-markers',
     apply: 'build',
     transformIndexHtml: {
       order: 'post',
-      handler(html, { filename }) {
+      handler(html, { filename, bundle }) {
         const source = fs.readFileSync(filename, 'utf8')
         for (const [link] of source.matchAll(/<link\b[^>]*\bdata-playground-styles="[^"]*"[^>]*>/g)) {
           const key = link.match(/data-playground-styles="([^"]*)"/)[1]
-          const name = path.parse(link.match(/href="([^"]*)"/)[1]).name
-          html = html.replace(new RegExp(`<link rel="stylesheet"(?=[^>]*href="[^"]*/assets/${name}-[\\w-]+\\.css")`), `$& data-playground-styles="${key}"`)
+          const name = `${path.parse(link.match(/href="([^"]*)"/)[1]).name}.css`
+          const matches = [...html.matchAll(/<link rel="stylesheet"(?=[^>]*href="[^"]*?(assets\/[^"]+\.css)")/g)]
+            .filter(([, fileName]) => bundle[fileName]?.names?.includes(name))
+          if (matches.length !== 1) {
+            throw new Error(`keep-style-markers: ${path.relative(root, filename)} has ${matches.length} compiled stylesheets from a ${name}, expected 1 for data-playground-styles="${key}"`)
+          }
+
+          const [{ 0: tag, index }] = matches
+          html = `${html.slice(0, index + tag.length)} data-playground-styles="${key}"${html.slice(index + tag.length)}`
         }
 
         return html
