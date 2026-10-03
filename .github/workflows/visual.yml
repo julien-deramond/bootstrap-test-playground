@@ -100,23 +100,23 @@ jobs:
           rm -rf tests/visual/screenshots/linux
           npm run test:visual:engines -- --update-snapshots=all
 
-      # Pushes only to the open pull request's branch, and only while it still
+      # Commits only to the open pull request's branch, and only while it still
       # points to the commit the baselines were recorded from: a plain push
-      # would recreate a branch deleted by the merge. When nothing changed, an
+      # would recreate a branch deleted by the merge. The commit goes through
+      # the GraphQL API (scripts/commit-via-api.mjs) instead of `git push`, so
+      # GitHub signs it and it shows as Verified. When nothing changed, an
       # empty commit gives `compare` a commit of its own, since its run on the
       # current one failed on the label.
       - id: push
         run: |
           recorded_from=$(git rev-parse HEAD)
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add tests/visual/screenshots/linux
           if git diff --cached --quiet; then
             changed=false
-            git commit --allow-empty -m "test: the Linux visual baselines are up to date"
+            message="test: the Linux visual baselines are up to date"
           else
             changed=true
-            git commit -m "test: update the Linux visual baselines"
+            message="test: update the Linux visual baselines"
           fi
 
           fail() {
@@ -139,12 +139,17 @@ jobs:
           }
 
           check_state
-          if ! git push --force-with-lease="refs/heads/$BRANCH:$recorded_from" origin "HEAD:refs/heads/$BRANCH"; then
+          status=0
+          sha=$(node scripts/commit-via-api.mjs "$BRANCH" "$recorded_from" "$message") || status=$?
+          if [ "$status" -ne 0 ]; then
             check_state
-            fail "\`$BRANCH\` moved while the baselines were being recorded. Add the \`update-baselines\` label again to record them from its new commit."
+            if [ "$status" -eq 2 ]; then
+              fail "\`$BRANCH\` moved while the baselines were being recorded. Add the \`update-baselines\` label again to record them from its new commit."
+            fi
+            fail "GitHub refused the commit with the new baselines. This run's *visual-baselines* artifact holds them."
           fi
           echo "pushed=true" >> "$GITHUB_OUTPUT"
-          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-artifact@v7
         if: ${{ failure() && steps.push.outcome == 'failure' }}
