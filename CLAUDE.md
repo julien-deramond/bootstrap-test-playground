@@ -103,6 +103,7 @@ When the upstream fix lands on `v6-dev`, meaning the PR is merged or the issue i
    gh issue edit <n> --remove-label upstream-reported --add-label upstream-fixed
    gh issue close <n> --reason completed --comment "Fixed upstream in twbs/bootstrap#<pr> (<commit>)"
    ```
+3. Delete its reproduction (`issues/<n>/` or `issues/pg-<n>/`) and its visual baselines (`tests/visual/screenshots/**/issues/<name>/`). `issues/` only lists bugs that aren't fixed, so never create a reproduction for one that already is. An open pull request doesn't count as a fix: until it's merged, the reproduction stays.
 
 ### Status sweep
 

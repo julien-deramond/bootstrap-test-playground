@@ -89,6 +89,8 @@ npm run new-issue pg-5 -- --from kitchen-sink/components-tooltip.html#placement 
 
 This creates `issues/<name>/` with an `index.html` and a copy of the config's three files, served at `/issues/<name>/`. Each reproduction **compiles its own copy of Bootstrap**, so its styles stay isolated from the shared files, from other reproductions, and from the toolbar's *Config* list.
 
+`issues/` only holds bugs that aren't fixed. Once the fix is merged on `v6-dev`, the reproduction and its visual baselines are deleted (step 3 of the upstream workflow in [CLAUDE.md](../CLAUDE.md)). A bug that is already fixed gets no reproduction, even when the upstream issue is still open. An open pull request isn't a fix: its reproduction stays, and is the page to test it on.
+
 The page's header comes from two `<meta>` tags, which `new-issue` fills in and [`src/js/reproduction.js`](../src/js/reproduction.js) renders:
 
 - `<meta name="playground-upstream" content="twbs/bootstrap#42754" data-status="reported" data-tracking="julien-deramond/bootstrap-test-playground#12">`: the upstream issue or pull request, a status badge and the tracking issue. `data-status` follows the tracking issue's label: `unreported` (`upstream`), `reported` (`upstream-reported`) or `fixed` (`upstream-fixed`). A numeric name starts as `reported` with its upstream link, `pg-<n>` as `unreported` with its tracking issue. Update the tag along with the label.

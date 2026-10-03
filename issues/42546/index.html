@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>#42546: scrollbar-gutter: stable leaves an empty gutter</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="Root: scrollbar-gutter: stable reserves an empty strip for the scrollbar on pages that don't scroll, with classic scrollbars (Windows Chromium).">
+    <meta name="playground-tags" content="components">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="twbs/bootstrap#42546" data-status="reported" data-tracking="julien-deramond/bootstrap-test-playground#304">
+    <meta name="playground-bootstrap" content="0632eaa44acd9c8ba4a1bf70786d2930c6d1b745">
+    <meta http-equiv="Content-Security-Policy" content="img-src 'self' data:; media-src 'self'; font-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <!-- From twbs/bootstrap#42546, by import-issue:
+         - The issue loaded https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css: the reproduction compiles its own Bootstrap instead.
+         - The issue loaded https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js: the reproduction compiles its own Bootstrap instead.
+         - The issue loaded dist/css/bootstrap.min.css: the reproduction compiles its own Bootstrap instead.
+         - The issue loaded dist/js/bootstrap.bundle.min.js: the reproduction compiles its own Bootstrap instead. -->
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue #42546: <code>scrollbar-gutter: stable</code> leaves an empty gutter</h1>
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Use a browser with classic scrollbars: Chromium on Windows as in the issue, on Linux, or on macOS with “Show scroll bars: Always”. Overlay scrollbars take no room, so there's nothing to see.</li>
+          <li>Open <a href="?chrome=0">this page without its chrome</a>: it's too short to scroll. As in the issue, <code>tokens.css</code> draws a red border around <code>html</code> and <code>body</code>.</li>
+          <li>Look at the inline end of the page, then switch to <code>scrollbar-gutter: auto</code>.</li>
+          <li>Bootstrap sets <code>scrollbar-gutter: stable</code> on <code>:root</code> (<code>scss/_root.scss</code>) so that the page doesn't shift when a dialog or drawer hides its scrollbar.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">A page that doesn't scroll uses the whole width of the window, as with Bootstrap 5.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p class="mb-0">An empty strip as wide as a scrollbar stays on the inline end of every page, between the red border and the window's edge, and full-width backgrounds stop short of it.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <!-- Not in data-playground-repro: the bug is the page's own gutter. The
+             measurement stays out of the chrome, for ?chrome=0. -->
+        <div class="vstack gap-3 align-items-start">
+          <h1>Hello, world!</h1>
+          <p class="mb-0">Reserved for the scrollbar: <code id="measured">…</code></p>
+          <button type="button" class="btn-outline theme-secondary" id="toggleGutter" aria-pressed="false">Use <code>scrollbar-gutter: auto</code></button>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // The gutter is the part of the window the root's content box doesn't
+      // use: with a classic scrollbar and `stable`, it's there even when the
+      // page doesn't scroll.
+      const root = document.documentElement
+      const measured = document.getElementById('measured')
+      const toggle = document.getElementById('toggleGutter')
+      const measure = () => {
+        const gutter = window.innerWidth - root.clientWidth
+        const scrolls = root.scrollHeight > root.clientHeight
+        measured.textContent = `${gutter}px, with scrollbar-gutter: ${getComputedStyle(root).scrollbarGutter}, on a page that ${scrolls ? 'scrolls' : 'doesn\'t scroll'}` +
+          (gutter === 0 && !scrolls ? ' (overlay scrollbars, or the gutter is gone)' : '')
+      }
+
+      toggle.addEventListener('click', () => {
+        const auto = toggle.getAttribute('aria-pressed') !== 'true'
+        root.style.scrollbarGutter = auto ? 'auto' : ''
+        toggle.setAttribute('aria-pressed', String(auto))
+        measure()
+      })
+      window.addEventListener('resize', measure)
+      window.addEventListener('load', measure)
+      measure()
+    </script>
+  </body>
+</html>
