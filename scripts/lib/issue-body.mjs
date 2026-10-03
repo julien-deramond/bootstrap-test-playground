@@ -37,8 +37,17 @@ const LANGUAGES = {
   html: 'html', htm: 'html', xhtml: 'html', svg: 'html', xml: 'html',
   css: 'css',
   scss: 'scss', sass: 'scss',
-  js: 'js', javascript: 'js', mjs: 'js', jsx: 'js'
+  js: 'js', javascript: 'js', mjs: 'js', jsx: 'js', tsx: 'js'
 }
+
+// JSX, React-Bootstrap for instance: PascalCase or dotted tags (`<Form.Group>`,
+// `<FloatingLabel>`), fragments, `className`, `{…}` attribute values. A browser
+// parser would turn it into bogus elements, so it isn't markup.
+export const isJsx = code => /<[A-Z][a-z][\w.]*[\s/>]|<\/?>|\bclassName=|[\w-]=\{/.test(code)
+
+// A line that only names a version (`v5`, `**v6**`, `### Bootstrap 5.3.8:`):
+// its major, or undefined.
+const versionMarker = line => plain(line.replace(/^#+\s*/, '')).match(/^(?:bootstrap\s*)?v?(\d+)(?:\.\d+)*(?:-\w+)?\s*:?$/i)?.[1]
 
 // An untagged block's language, from its content. Logs, errors and shell
 // sessions are none of them.
@@ -77,14 +86,38 @@ export const dedent = code => {
   return lines.map((line, index) => (index === 0 && first < rest ? line.slice(first) : line.slice(Number.isFinite(indent) ? Math.min(indent, indentOf(line)) : 0))).join('\n')
 }
 
-// Fenced code blocks, as `{ language, code }`: `language` from the info string,
-// or sniffed when it has none, `null` for anything else (`txt`, `bash`, …).
+// Fenced code blocks, as `{ language, code, version, jsx }`: `language` from the
+// info string, or sniffed when it has none, `null` for anything else (`txt`,
+// `bash`, …). `version` is the major a line right before the fence announces
+// (`v5`, then `v6` before the next block), and `jsx` marks JSX, which counts as
+// JavaScript: parsed as HTML, it would give `<form.group>` elements.
 export function codeBlocks(text) {
+  const source = text.replace(/\r\n?/g, '\n')
   const fence = /^[ \t]*(`{3,}|~{3,})[ \t]*([^\s`]*)[^\n]*\n([\s\S]*?)\n[ \t]*\1[ \t]*$/gm
-  return [...text.replace(/\r\n?/g, '\n').matchAll(fence)].map(([, , info, code]) => {
+  return [...source.matchAll(fence)].map(({ 2: info, 3: code, index }) => {
     const tag = info.toLowerCase()
-    return { language: tag ? LANGUAGES[tag] ?? null : sniff(code), code: dedent(code) }
+    let language = tag ? LANGUAGES[tag] ?? null : sniff(code)
+    const jsx = ['jsx', 'tsx'].includes(tag) || (language === 'html' && isJsx(code))
+    if (jsx) {
+      language = 'js'
+    }
+
+    const before = source.slice(0, index).trimEnd().split('\n').pop() ?? ''
+    return { language, code: dedent(code), version: versionMarker(before), jsx }
   })
+}
+
+// When an issue shows the same case for several versions, the v6 blocks:
+// `{ blocks, skipped }`, where `skipped` lists the other versions' blocks.
+// Without a v6 block, or with v6 only, nothing is skipped.
+export function pickVersion(blocks, major = '6') {
+  const versions = new Set(blocks.map(block => block.version).filter(Boolean))
+  if (!versions.has(major) || versions.size < 2) {
+    return { blocks, skipped: [] }
+  }
+
+  const other = block => block.version && block.version !== major
+  return { blocks: blocks.filter(block => !other(block)), skipped: blocks.filter(other) }
 }
 
 // Markdown to one line of plain text.
@@ -98,10 +131,12 @@ const plain = text => text
 
 const shorten = (text, max) => text.length <= max ? text : `${text.slice(0, text.lastIndexOf(' ', max - 1))}…`
 
-// The first paragraph of prose: not a checklist, a quote, a code block or an image.
+// The first paragraph of prose: not a checklist, a quote, a code block, an
+// image, a bare version (`v5` before a code block) or a word or two.
 export function summary(text, max = 200) {
   const withoutCode = text.replace(/^[ \t]*(`{3,}|~{3,})[\s\S]*?^[ \t]*\1[ \t]*$/gm, '')
-  const paragraph = withoutCode.replace(/^#{1,6}\s.*$/gm, '').split(/\n\s*\n/).map(plain).find(block => block && !/^(- \[[ x]\]|>)/i.test(block))
+  const paragraph = withoutCode.replace(/^#{1,6}\s.*$/gm, '').split(/\n\s*\n/).map(plain)
+    .find(block => block && !/^(- \[[ x]\]|>)/i.test(block) && !versionMarker(block) && block.split(' ').length > 2)
   return paragraph ? shorten(paragraph, max) : ''
 }
 
@@ -127,6 +162,27 @@ export function versionOf(sections, body) {
 export function demoLinks(body) {
   const pattern = /https:\/\/(?:www\.)?(?:codepen\.io|stackblitz\.com|[\w-]+\.stackblitz\.io|jsfiddle\.net|codesandbox\.io|jsbin\.com)\/[^\s)>\]"'`]+/g
   return [...new Set(body.match(pattern) ?? [])]
+}
+
+// Ids the markup uses more than once, as `{ id, count }`: the page's dark clone
+// adds `-dark` to every id, so each one has to be unique.
+export function duplicateIds(markup) {
+  const counts = new Map()
+  for (const [, id] of markup.matchAll(/\sid="([^"]*)"/g)) {
+    counts.set(id, (counts.get(id) ?? 0) + 1)
+  }
+
+  return [...counts].filter(([, count]) => count > 1).map(([id, count]) => ({ id, count }))
+}
+
+// The kitchen sink slugs a title names: `popovers` → `popover`, `FloatingLabels`
+// → `floating-labels`, `Fix/dialog content overflow` → `dialog`.
+export function componentsNamed(title, slugs) {
+  const words = ` ${title.replace(/([a-z\d])([A-Z])/g, '$1 $2').toLowerCase().replace(/[^a-z\d]+/g, ' ')} `
+  return slugs.filter(slug => {
+    const stem = slug.replace(/-/g, ' ').replace(/s$/, '')
+    return new RegExp(`\\b${stem}(?:e?s)?\\b`).test(words)
+  })
 }
 
 // Upstream issues a pull request closes, from its body.
@@ -229,7 +285,7 @@ function cleanNodes(parent, found) {
 
     const attribute = attr => node.attrs.find(({ name }) => name === attr)?.value
     if (name === 'style') {
-      found.css.push(node.childNodes.map(child => child.value ?? '').join(''))
+      found.css.push(dedent(node.childNodes.map(child => child.value ?? '').join('')))
       parent.childNodes.splice(parent.childNodes.indexOf(node), 1)
       continue
     }

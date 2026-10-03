@@ -112,9 +112,13 @@ npm run import-issue 42754 -- --config pill   # from a saved config
 
 `import-issue` reads the issue with the GitHub CLI and creates `issues/<n>/` like `new-issue <n>`, then fills it in:
 
-- **The header and steps**: the issue's title, its first paragraph as the description, the version it was reported on (the issue form's answer, and the commit a CDN link pins), its live demos (CodePen, StackBlitz, JSFiddle…) as links, and its "Expected behavior" and "Actual behavior" lines.
+- **The header and steps**: the issue's title, its first paragraph of prose as the description (a bare `v5` before a code block, or a word or two, doesn't count; without any, the title), the version it was reported on (the issue form's answer, and the commit a CDN link pins), its live demos (CodePen, StackBlitz, JSFiddle…) as links, and its "Expected behavior" and "Actual behavior" lines.
 - **The code** of its "Reduced test cases" section, or of every code block when that section has none. A block's language comes from its fence (`html`, `css`, `scss`, `js`…), or from its content when the fence has none. Logs and shell sessions are left out. The markup goes in the reproduction block, CSS in `tokens.css` (unlayered, as in the issue), a Sass `@use "bootstrap/scss/bootstrap" with (…)` in place of the one in `main.scss`, other Sass in `_custom.scss`. A whole HTML document gives its body, its `<style>` and its scripts. The Bootstrap files it loads from a CDN are dropped: the page compiles its own.
-- **The tags**: the kitchen sink pages of the components the markup uses, and `javascript` for an issue with scripts or the `js` label.
+  - When the issue shows the same case for several versions, `v5` before one block and `v6` before the next, only the v6 blocks are imported.
+  - JSX (React-Bootstrap's `<Form.Group className="…">`) isn't HTML, whatever its fence says: it stays text, in the inert script with the JavaScript.
+  - An id the markup uses twice is reported: the page's dark clone adds `-dark` to every id, so each one has to be unique.
+  - Without markup (an issue without code, or a pull request, whose changes are in its diff), the reproduction block keeps the template's placeholder button, and a comment there says so and names the kitchen sink pages of the components the title mentions.
+- **The tags**: the kitchen sink pages of the components the markup uses and of those the title names (`popovers`, `FloatingLabels`), `javascript` for an issue with scripts or the `js` label, and `a11y` for the `accessibility` label.
 
 The playground tests v6. An issue labeled `v5` (or `v4`, `v3`), or reported on a 5.x version, without a `v6` label is refused, unless `--force`. Otherwise the steps say whether it's a v6 issue, and how they know.
 
@@ -127,7 +131,7 @@ Anyone can open an issue, so an import can carry code that steals data, tracks w
 - **Markup** is parsed with [parse5](https://github.com/inikulin/parse5), as a browser parses it, then cleaned: no `<script>`, `<iframe>`, `<object>`, `<embed>`, `<base>`, `<meta>` or `<link>`, no event handler attributes (`onerror`…) or `srcdoc`, no `javascript:` URL, and nothing loaded from another site (`src`, `srcset`, `poster`, form actions, styles with a remote `url()`). Links to other sites stay: they wait for a click.
 - **CSS** loses `@import` and any declaration that loads from another site. **Sass** keeps `@use`, `@forward` and `@import` of `bootstrap/…` and `sass:` modules only: the others, and `meta.load-css()`, are commented out.
 - **JavaScript** stays text, in a `<script type="text/plain">` at the bottom of the page, which never runs.
-- Every removal is listed in a comment at the top of the page's `<body>` and in the command's output.
+- Every removal is listed in a comment at the top of the page's `<body>` and in the command's output, with the other findings: the versions skipped, the JSX, the duplicate ids and the missing markup.
 - The page has a **Content-Security-Policy** that blocks images, media, fonts, frames and requests from other sites, in case anything slipped through.
 - The page has a **`<meta name="playground-imported">` marker**, and **builds fail** while any page has one: CI, every suite and the deploy refuse it, so nothing unreviewed reaches GitHub Pages. `npm run dev` still serves it, for the review.
 

@@ -18,9 +18,9 @@ import { spawnSync } from 'node:child_process'
 import path from 'node:path'
 import { parseArgs } from 'node:util'
 import { fail } from './lib/configs.mjs'
-import { cleanCss, cleanHtml, cleanScss, closedIssues, codeBlocks, commentText, dedent, demoLinks, expectedActual, inertScript, readSections, sectionMatching, summary, versionOf } from './lib/issue-body.mjs'
+import { cleanCss, cleanHtml, cleanScss, closedIssues, codeBlocks, commentText, componentsNamed, dedent, demoLinks, duplicateIds, expectedActual, inertScript, pickVersion, readSections, sectionMatching, summary, versionOf } from './lib/issue-body.mjs'
 import { listKitchenSinkTags } from './lib/kitchen-sink.mjs'
-import { addSteps, escapeHtml, renderTemplate, replaceOnce, resolveTarget, setMarkup, setTags, writeReproduction } from './lib/reproduction.mjs'
+import { REPRO_PLACEHOLDER, addSteps, escapeHtml, renderTemplate, replaceOnce, resolveTarget, setMarkup, setTags, writeReproduction } from './lib/reproduction.mjs'
 
 const USAGE = 'Usage: npm run import-issue <twbs/bootstrap issue or pull request number> [-- --config <config>] [--force]   (e.g. npm run import-issue 42754)'
 
@@ -88,6 +88,11 @@ if (issue.isPullRequest && blocks.length === 0) {
   }
 }
 
+// The same case for several versions (`v5` before one block, `v6` before the
+// next): the v6 one.
+const { blocks: kept, skipped } = pickVersion(blocks)
+blocks = kept
+
 // --- What goes where --------------------------------------------------------
 
 const removed = []
@@ -96,8 +101,11 @@ const markup = []
 const css = []
 const scss = []
 const js = []
+const jsx = []
 for (const block of blocks) {
-  if (block.language === 'html') {
+  if (block.jsx) {
+    jsx.push(block.code)
+  } else if (block.language === 'html') {
     const result = cleanHtml(block.code)
     if (result.markup) {
       markup.push(result.markup)
@@ -126,18 +134,32 @@ const description = summary(describe) || issue.title
 const { expected, actual } = expectedActual(describe)
 const demos = demoLinks(`${issue.body}\n${codeSource === issue ? '' : codeSource.body}`)
 
-// Tags: the kitchen sink pages of the components the markup uses.
+// Tags: the kitchen sink pages of the components the markup uses and of those
+// the title names, and the issue's labels.
+const kitchenSink = listKitchenSinkTags().filter(({ slug }) => slug !== 'overview')
+const named = componentsNamed(issue.title, kitchenSink.map(({ slug }) => slug))
 const classes = new Set(markup.join('\n').match(/\bclass="[^"]*"/g)?.flatMap(attribute => attribute.slice(7, -1).split(/\s+/)) ?? [])
 const tags = new Set()
-for (const { slug, tags: pageTags } of listKitchenSinkTags()) {
+for (const { slug, tags: pageTags } of kitchenSink) {
   if ([...classes].some(name => name === slug || name.startsWith(`${slug}-`))) {
     pageTags.forEach(tag => tags.add(tag))
+  }
+
+  if (named.includes(slug)) {
+    pageTags.forEach(tag => tags.add(tag))
+    tags.add(slug)
   }
 }
 
 if (js.length > 0 || issue.labels.includes('js')) {
   tags.add('javascript')
 }
+
+if (issue.labels.includes('accessibility')) {
+  tags.add('a11y')
+}
+
+const repeated = duplicateIds(markup.join('\n'))
 
 // --- The page ---------------------------------------------------------------
 
@@ -184,13 +206,33 @@ if (actual) {
   html = html.replace(/(<h3 class="h6">Actual<\/h3>\n\s*)<p class="mb-0">…<\/p>/, (_, before) => `${before}<p class="mb-0">${escapeHtml(actual)}</p>`)
 }
 
+const startFrom = kitchenSink.filter(({ slug }) => named.includes(slug)).map(({ url }) => url)
 if (markup.length > 0) {
   const indented = markup.join('\n\n').split('\n').map(line => (line ? `          ${line}` : line)).join('\n')
   html = setMarkup(html, indented)
+} else {
+  const why = issue.isPullRequest && codeSource === issue ? `twbs/bootstrap#${number} is a pull request without markup (its changes are in its diff)` : `twbs/bootstrap#${codeSource.number} has no markup`
+  const lines = ['']
+  for (const word of `${why}: this button is the template's placeholder. Write the reproduction yourself${startFrom.length > 0 ? `, starting from the kitchen sink: ${startFrom.join(' ')}` : ''}.`.split(' ')) {
+    if (lines.at(-1).length + word.length > 68) {
+      lines.push('')
+    }
+
+    lines[lines.length - 1] += ` ${word}`
+  }
+
+  html = replaceOnce(html, REPRO_PLACEHOLDER, `        <div data-playground-repro>
+          <!--${lines.join('\n              ')} -->
+          <button type="button" class="btn-solid theme-primary">Button</button>
+`)
 }
 
 const notes = [
   ...bootstrapFiles.map(file => `The issue loaded ${file}: the reproduction compiles its own Bootstrap instead.`),
+  ...skipped.map(block => `Skipped the v${block.version} ${block.language === 'js' ? 'JavaScript' : block.language.toUpperCase()} block: the v6 one is used.`),
+  ...jsx.map(() => 'A JSX block (React) isn\'t HTML: kept as text with the JavaScript.'),
+  ...repeated.map(({ id, count }) => `The markup uses id="${id}" ${count} times: each id has to be unique (the dark clone adds -dark to every id).`),
+  ...(markup.length === 0 ? [`No markup to import: the reproduction block keeps the template's placeholder button.${startFrom.length > 0 ? ` Start from the kitchen sink: ${startFrom.join(', ')}` : ''}`] : []),
   ...removed.map(item => `Removed: ${item}`)
 ]
 if (notes.length > 0) {
@@ -199,13 +241,14 @@ ${notes.map(note => `         - ${commentText(note)}`).join('\n')} -->
     <main class="container py-5">\n`)
 }
 
-if (js.length > 0) {
+if (js.length > 0 || jsx.length > 0) {
+  const inert = [...js.map(code => dedent(code)), ...jsx.map(code => `// JSX from the issue (React): not HTML, kept as text.\n${dedent(code)}`)]
   html = replaceOnce(html, '    <script type="module">\n', `    <!-- The issue's JavaScript, inert: type="text/plain" never runs. Read it,
          then move what the reproduction needs to the module below.
          Bootstrap is on \`window.bootstrap\` once src/js/main.js has imported
          it, which may come after \`load\`. -->
     <script type="text/plain" data-playground-imported>
-${inertScript(js.map(code => dedent(code)).join('\n\n')).replace(/^(?=.)/gm, '      ')}
+${inertScript(inert.join('\n\n')).replace(/^(?=.)/gm, '      ')}
     </script>
 
     <script type="module">\n`)
@@ -240,10 +283,7 @@ writeReproduction({ sourceDir, targetDir, html, transform })
 const relative = path.relative(process.cwd(), targetDir)
 console.log(`Created ${relative}/ from ${issue.isPullRequest ? 'pull request' : 'issue'} twbs/bootstrap#${number}${codeSource === issue ? '' : ` and the code of #${codeSource.number}`}, with the "${values.config}" config`)
 console.log(`  ${v6Evidence ? `A v6 issue: ${v6Evidence}` : `Not known to be a v6 issue${otherMajor ? ` (${otherMajor}, imported with --force)` : ''}: check that it applies`}`)
-console.log(`  ${markup.length} markup, ${css.length} CSS, ${scss.length} Sass and ${js.length} JavaScript part(s)${js.length > 0 ? ' (the JavaScript is inert)' : ''}`)
-if (blocks.length === 0) {
-  console.log('  The issue has no code to import: fill in the reproduction block yourself.')
-}
+console.log(`  ${markup.length} markup, ${css.length} CSS, ${scss.length} Sass${jsx.length > 0 ? `, ${jsx.length} JSX` : ''} and ${js.length} JavaScript part(s)${js.length + jsx.length > 0 ? ' (the JavaScript is inert)' : ''}`)
 
 for (const note of notes) {
   console.log(`  ${note}`)
