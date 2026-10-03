@@ -62,7 +62,7 @@ function renderMeta(container, upstream, commit) {
 
 // A copy of `element` whose ids, the references to them, and radio and
 // `<details>` names get `suffix`, so it can sit next to the original.
-function cloneWithSuffix(element, suffix) {
+export function cloneWithSuffix(element, suffix) {
   const clone = element.cloneNode(true)
   const elements = [clone, ...clone.querySelectorAll('*')]
   const ids = new Set(elements.filter(node => node.id).map(node => node.id))
