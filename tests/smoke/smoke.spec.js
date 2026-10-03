@@ -528,10 +528,12 @@ test.describe('playground', () => {
           const { left, top, width, height } = document.activeElement.getBoundingClientRect()
           return { left, top, width, height }
         })
+        // Sub-pixel text widths differ slightly between the control and its box in WebKit.
         await expect.poll(() => layer.locator(`.box[data-index="${index}"]`).evaluate(box => {
           const { left, top, width, height } = box.getBoundingClientRect()
           return { left, top, width, height }
-        }).catch(() => undefined), `tab stop ${index} of ${url}`).toEqual(focused)
+        }).then(box => Math.max(...Object.keys(focused).map(key => Math.abs(box[key] - focused[key]))) < 0.5)
+          .catch(() => false), `tab stop ${index} of ${url}`).toBe(true)
       }
     }
 
