@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>State matrix</title>
+    <meta name="description" content="State matrix: buttons, toggle buttons, links, checks, radios, switches, form controls, nav, menu items, list group items, pagination, chips and cards in every state Bootstrap expresses in markup (.active, .show, :disabled, .disabled, checked, indeterminate, readonly, .is-valid, .is-invalid), for every theme color where the component takes one. The visual suite also forces :hover, :focus-visible and :active on each table.">
+    <meta name="playground-tags" content="states, components, forms">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <style>
+      .pg-states {
+        border-collapse: separate;
+        border-spacing: 1rem .75rem;
+        margin-inline: -1rem;
+      }
+
+      .pg-states th {
+        font-size: .75rem;
+        font-weight: 400;
+        text-align: start;
+        white-space: nowrap;
+      }
+
+      .pg-states td {
+        vertical-align: middle;
+      }
+
+      .pg-states .form-control,
+      .pg-states .form-range,
+      .pg-states .chip-input,
+      .pg-states .form-adorn,
+      .pg-states .input-group,
+      .pg-states .form-floating {
+        width: 12rem;
+      }
+
+      .pg-states .card {
+        width: 10rem;
+      }
+    </style>
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Pages</p>
+        <h1>State matrix</h1>
+        <p class="fs-lg fg-2">
+          Every interactive component in every state Bootstrap expresses in markup, once per theme color where the component takes one: <code>.active</code>, <code>.show</code>, <code>:disabled</code>, <code>.disabled</code>, checked, indeterminate, readonly, <code>.is-valid</code> and <code>.is-invalid</code>.
+        </p>
+        <p class="fg-2">
+          Pseudo-classes can't be set from markup. The visual suite forces <code>:hover</code>, <code>:focus-visible</code> and <code>:active</code> on every table through the DevTools protocol and captures each one, and does the same for the kitchen sink examples. In a browser, force them from the developer tools' <code>:hov</code> panel. See <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/63">#63</a>.
+        </p>
+      </header>
+
+      <!-- The script at the end of the page fills each [data-states] table from
+           STATE_TABLES: a row per theme color (or per component), a column per
+           state. The visual suite (tests/visual/states.spec.js) forces each
+           pseudo-class on every table and captures it. -->
+      <section class="mb-5" data-states="btn-solid" aria-labelledby="btn-solid"><h2 class="h5" id="btn-solid">Solid buttons</h2></section>
+      <section class="mb-5" data-states="btn-outline" aria-labelledby="btn-outline"><h2 class="h5" id="btn-outline">Outline buttons</h2></section>
+      <section class="mb-5" data-states="btn-subtle" aria-labelledby="btn-subtle"><h2 class="h5" id="btn-subtle">Subtle buttons</h2></section>
+      <section class="mb-5" data-states="btn-text" aria-labelledby="btn-text"><h2 class="h5" id="btn-text">Text buttons</h2></section>
+      <section class="mb-5" data-states="btn-link" aria-labelledby="btn-link"><h2 class="h5" id="btn-link">Link buttons</h2></section>
+      <section class="mb-5" data-states="btn-other" aria-labelledby="btn-other"><h2 class="h5" id="btn-other">Base, icon and close buttons</h2></section>
+      <section class="mb-5" data-states="btn-check-solid" aria-labelledby="btn-check-solid"><h2 class="h5" id="btn-check-solid">Solid toggle buttons</h2></section>
+      <section class="mb-5" data-states="btn-check-outline" aria-labelledby="btn-check-outline"><h2 class="h5" id="btn-check-outline">Outline toggle buttons</h2></section>
+      <section class="mb-5" data-states="links" aria-labelledby="links"><h2 class="h5" id="links">Links</h2></section>
+      <section class="mb-5" data-states="check" aria-labelledby="check"><h2 class="h5" id="check">Checks</h2></section>
+      <section class="mb-5" data-states="radio" aria-labelledby="radio"><h2 class="h5" id="radio">Radios</h2></section>
+      <section class="mb-5" data-states="switch" aria-labelledby="switch"><h2 class="h5" id="switch">Switches</h2></section>
+      <section class="mb-5" data-states="form-controls" aria-labelledby="form-controls"><h2 class="h5" id="form-controls">Form controls</h2></section>
+      <section class="mb-5" data-states="nav" aria-labelledby="nav"><h2 class="h5" id="nav">Nav</h2></section>
+      <section class="mb-5" data-states="menu-item" aria-labelledby="menu-item"><h2 class="h5" id="menu-item">Menu items</h2></section>
+      <section class="mb-5" data-states="list-group" aria-labelledby="list-group"><h2 class="h5" id="list-group">List group items</h2></section>
+      <section class="mb-5" data-states="pagination" aria-labelledby="pagination"><h2 class="h5" id="pagination">Pagination</h2></section>
+      <section class="mb-5" data-states="chip" aria-labelledby="chip"><h2 class="h5" id="chip">Chips</h2></section>
+      <section class="mb-5" data-states="card" aria-labelledby="card"><h2 class="h5" id="card">Cards with a stretched link</h2></section>
+    </main>
+
+    <!-- A classic script, so the tables are filled while the page parses,
+         before Bootstrap's DOMContentLoaded sets up the chips and OTP inputs. -->
+    <script>
+      const THEMES = ['primary', 'accent', 'success', 'danger', 'warning', 'info', 'inverse', 'secondary']
+      // The rows of a themed table: no theme class, then each theme color.
+      const THEMED = [{ name: 'default', theme: '' }, ...THEMES.map(theme => ({ name: theme, theme: ` theme-${theme}` }))]
+
+      // A button variant's columns. `{theme}` is the row's theme class.
+      const buttonColumns = (classes, label) => [
+        ['rest', `<button type="button" class="${classes}{theme}">${label}</button>`],
+        ['.active', `<button type="button" class="${classes}{theme} active" aria-pressed="true">${label}</button>`],
+        ['.show', `<button type="button" class="${classes}{theme} show" aria-expanded="true">${label}</button>`],
+        [':disabled', `<button type="button" class="${classes}{theme}" disabled>${label}</button>`],
+        ['a.disabled', `<a class="${classes}{theme} disabled" role="button" aria-disabled="true">${label}</a>`]
+      ]
+
+      const toggleColumns = classes => [
+        ['unchecked', `<label class="btn-check ${classes}{theme}"><input type="checkbox" autocomplete="off">Toggle</label>`],
+        ['checked', `<label class="btn-check ${classes}{theme}"><input type="checkbox" checked autocomplete="off">Toggle</label>`],
+        [':disabled', `<label class="btn-check ${classes}{theme}"><input type="checkbox" disabled autocomplete="off">Toggle</label>`],
+        [':disabled checked', `<label class="btn-check ${classes}{theme}"><input type="checkbox" checked disabled autocomplete="off">Toggle</label>`]
+      ]
+
+      // A check or radio's columns. Indeterminate checks are set up by
+      // src/js/examples.js, from their id.
+      const checkColumns = (type, classes) => [
+        ['unchecked', `<input type="${type}" class="${classes}{theme}" aria-label="Unchecked">`],
+        ['checked', `<input type="${type}" class="${classes}{theme}" checked aria-label="Checked">`],
+        ...type === 'checkbox' ? [['indeterminate', `<input type="checkbox" class="${classes}{theme}" id="stateIndeterminate{id}" aria-label="Indeterminate">`]] : [],
+        [':disabled', `<input type="${type}" class="${classes}{theme}" disabled aria-label="Disabled">`],
+        [':disabled checked', `<input type="${type}" class="${classes}{theme}" checked disabled aria-label="Disabled checked">`],
+        ['.is-invalid', `<input type="${type}" class="${classes}{theme} is-invalid" aria-label="Invalid">`],
+        ['.is-invalid checked', `<input type="${type}" class="${classes}{theme} is-invalid" checked aria-label="Invalid checked">`],
+        ['.is-valid checked', `<input type="${type}" class="${classes}{theme} is-valid" checked aria-label="Valid checked">`]
+      ]
+
+      const switchCell = attributes => `<div class="switch{theme}"><input type="checkbox" role="switch" switch ${attributes}></div>`
+
+      // Each table: its rows (`theme` is the class added to the row's
+      // components) and its columns, [heading, markup]. A null markup leaves
+      // the cell empty. Rows can bring their own columns' markup in `cells`.
+      const STATE_TABLES = {
+        'btn-solid': { rows: THEMED, columns: buttonColumns('btn-solid', 'Solid') },
+        'btn-outline': { rows: THEMED, columns: buttonColumns('btn-outline', 'Outline') },
+        'btn-subtle': { rows: THEMED, columns: buttonColumns('btn-subtle', 'Subtle') },
+        'btn-text': { rows: THEMED, columns: buttonColumns('btn-text', 'Text') },
+        'btn-link': { rows: THEMED, columns: buttonColumns('btn btn-link', 'Link') },
+        'btn-other': {
+          columns: ['rest', '.active', ':disabled', 'a.disabled'],
+          rows: [
+            { name: 'btn', cells: buttonColumns('btn', 'Button').filter(([state]) => state !== '.show').map(([, markup]) => markup) },
+            {
+              name: 'btn-icon',
+              cells: [
+                '<button type="button" class="btn-icon" aria-label="Next">{icon}</button>',
+                '<button type="button" class="btn-icon active" aria-pressed="true" aria-label="Next">{icon}</button>',
+                '<button type="button" class="btn-icon" disabled aria-label="Next">{icon}</button>',
+                '<a class="btn-icon disabled" role="button" aria-disabled="true" aria-label="Next">{icon}</a>'
+              ]
+            },
+            {
+              name: 'btn-close',
+              cells: [
+                '<button type="button" class="btn-close" aria-label="Close"></button>',
+                null,
+                '<button type="button" class="btn-close" disabled aria-label="Close"></button>',
+                '<a class="btn-close disabled" role="button" aria-disabled="true" aria-label="Close"></a>'
+              ]
+            }
+          ]
+        },
+        'btn-check-solid': { rows: THEMED, columns: toggleColumns('btn-solid') },
+        'btn-check-outline': { rows: THEMED, columns: toggleColumns('btn-outline') },
+        links: {
+          rows: THEMED,
+          columns: [
+            ['link', '<a href="#" class="{theme}">Link</a>'],
+            ['icon-link', '<a href="#" class="icon-link icon-link-hover{theme}">Icon link {icon}</a>']
+          ]
+        },
+        check: { rows: THEMED, columns: checkColumns('checkbox', 'check') },
+        radio: { rows: THEMED, columns: checkColumns('radio', 'radio') },
+        switch: {
+          rows: THEMED,
+          columns: [
+            ['unchecked', switchCell('aria-label="Unchecked"')],
+            ['checked', switchCell('checked aria-label="Checked"')],
+            [':disabled', switchCell('disabled aria-label="Disabled"')],
+            [':disabled checked', switchCell('checked disabled aria-label="Disabled checked"')],
+            ['.is-invalid', switchCell('class="is-invalid" aria-label="Invalid"')],
+            ['.is-invalid checked', switchCell('class="is-invalid" checked aria-label="Invalid checked"')]
+          ]
+        },
+        'form-controls': {
+          columns: ['rest', '[readonly]', ':disabled', '.is-valid', '.is-invalid'],
+          // Each row's `cell` gets each column's [attributes, classes].
+          rows: [
+            { name: 'text', cell: ([attributes, classes]) => `<input type="text" class="form-control${classes}" value="Text" aria-label="Text"${attributes}>` },
+            { name: 'placeholder', cell: ([attributes, classes]) => `<input type="text" class="form-control${classes}" placeholder="Placeholder" aria-label="Placeholder"${attributes}>` },
+            { name: 'select', cell: ([attributes, classes]) => attributes === ' readonly' ? null : `<select class="form-control${classes}" aria-label="Select"${attributes}><option>Choose one…</option></select>` },
+            { name: 'textarea', cell: ([attributes, classes]) => `<textarea class="form-control${classes}" rows="2" aria-label="Textarea"${attributes}>Text</textarea>` },
+            { name: 'file', cell: ([attributes, classes]) => attributes === ' readonly' ? null : `<input type="file" class="form-control${classes}" aria-label="File"${attributes}>` },
+            { name: 'range', cell: ([attributes, classes]) => attributes === ' readonly' ? null : `<div class="form-range"><input type="range" class="form-range-input${classes}" aria-label="Range"${attributes}></div>` },
+            { name: 'floating label', cell: ([attributes, classes]) => `<div class="form-floating"><label for="stateFloating{id}">Email</label><input type="email" class="form-control${classes}" id="stateFloating{id}" placeholder="name@example.com"${attributes}></div>` },
+            { name: 'input group', cell: ([attributes, classes]) => `<div class="input-group"><span class="input-group-text">@</span><input type="text" class="form-control${classes}" aria-label="Username" value="Text"${attributes}></div>` },
+            { name: 'form adorn', cell: ([attributes, classes]) => `<label class="form-control form-adorn"><span class="form-adorn-icon" aria-hidden="true">{search}</span><input type="search" class="form-ghost${classes}" placeholder="Search…" aria-label="Search"${attributes}></label>` },
+            { name: 'chip input', cell: ([attributes, classes]) => `<div class="chip-input" data-bs-chips><span class="chip"${attributes === ' disabled' ? ' aria-disabled="true"' : ''}>Chip</span><input type="text" class="form-ghost${classes}" aria-label="Add a chip"${attributes}></div>` },
+            { name: 'otp', cell: ([attributes, classes]) => attributes === ' disabled' ? null : `<div class="otp${classes}" data-bs-otp><input type="text" class="otp-input" maxlength="4" aria-label="Verification code"${attributes}></div>` }
+          ],
+          states: [['', ''], [' readonly', ''], [' disabled', ''], ['', ' is-valid'], ['', ' is-invalid']]
+        },
+        nav: {
+          columns: ['rest', '.active', '.show', '.disabled', ':disabled'],
+          rows: ['nav', 'nav nav-tabs', 'nav nav-pills', 'nav nav-underline'].map(classes => ({
+            name: classes.replace('nav ', ''),
+            cells: [
+              `<ul class="${classes}"><li class="nav-item"><a class="nav-link" href="#">Link</a></li></ul>`,
+              `<ul class="${classes}"><li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Active</a></li></ul>`,
+              `<ul class="${classes}"><li class="nav-item show"><a class="nav-link" href="#" aria-expanded="true">Shown</a></li></ul>`,
+              `<ul class="${classes}"><li class="nav-item"><a class="nav-link disabled" aria-disabled="true">Disabled</a></li></ul>`,
+              `<ul class="${classes}"><li class="nav-item"><button type="button" class="nav-link" disabled>Disabled</button></li></ul>`
+            ]
+          }))
+        },
+        'menu-item': {
+          rows: THEMED,
+          columns: [
+            ['rest', '<div class="menu show position-static"><a class="menu-item{theme}" href="#">Menu item</a></div>'],
+            ['.active', '<div class="menu show position-static"><a class="menu-item{theme} active" aria-current="true" href="#">Active</a></div>'],
+            ['.disabled', '<div class="menu show position-static"><a class="menu-item{theme} disabled" aria-disabled="true">Disabled</a></div>'],
+            [':disabled', '<div class="menu show position-static"><button type="button" class="menu-item{theme}" disabled>Disabled</button></div>']
+          ]
+        },
+        'list-group': {
+          rows: THEMED,
+          columns: [
+            ['rest', '<div class="list-group"><a href="#" class="list-group-item list-group-item-action{theme}">Action</a></div>'],
+            ['.active', '<div class="list-group"><a href="#" class="list-group-item list-group-item-action{theme} active" aria-current="true">Active</a></div>'],
+            ['.disabled', '<div class="list-group"><a class="list-group-item list-group-item-action{theme} disabled" aria-disabled="true">Disabled</a></div>'],
+            [':disabled', '<div class="list-group"><button type="button" class="list-group-item list-group-item-action{theme}" disabled>Disabled</button></div>'],
+            ['static', '<ul class="list-group"><li class="list-group-item{theme}">Item</li></ul>']
+          ]
+        },
+        pagination: {
+          rows: THEMED,
+          columns: [
+            ['rest', '<ul class="pagination{theme} mb-0"><li class="page-item"><a class="page-link" href="#">1</a></li></ul>'],
+            ['.active', '<ul class="pagination{theme} mb-0"><li class="page-item active"><a class="page-link" href="#" aria-current="page">2</a></li></ul>'],
+            ['.disabled', '<ul class="pagination{theme} mb-0"><li class="page-item disabled"><a class="page-link" aria-disabled="true">3</a></li></ul>']
+          ]
+        },
+        chip: {
+          rows: THEMED,
+          columns: [
+            ['rest', '<span class="chip{theme}">Chip</span>'],
+            ['.active', '<span class="chip{theme} active">Active</span>'],
+            ['.disabled', '<span class="chip{theme} disabled" aria-disabled="true">Disabled</span>'],
+            ['button', '<button type="button" class="chip{theme}">Button</button>'],
+            ['button :disabled', '<button type="button" class="chip{theme}" disabled>Disabled</button>'],
+            ['dismissible', '<span class="chip{theme}">Dismiss<button type="button" class="chip-dismiss" aria-label="Remove">{cross}</button></span>']
+          ]
+        },
+        card: {
+          columns: ['rest', 'bg-1'],
+          rows: [
+            {
+              name: 'card',
+              cells: [
+                '<div class="card"><div class="card-body"><p class="mb-2">Card</p><a href="#" class="stretched-link">Stretched link</a></div></div>',
+                '<div class="card bg-1"><div class="card-body"><p class="mb-2">Card</p><a href="#" class="stretched-link">Stretched link</a></div></div>'
+              ]
+            }
+          ]
+        }
+      }
+
+      const ICONS = {
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg>',
+        search: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><line x1="10.5" y1="10.5" x2="14" y2="14"/></svg>',
+        cross: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>'
+      }
+
+      let id = 0
+      const cell = markup => {
+        const td = document.createElement('td')
+        if (markup) {
+          id++
+          td.innerHTML = markup.replaceAll('{id}', id).replace(/\{(icon|search|cross)\}/g, (_, name) => ICONS[name])
+        }
+
+        return td
+      }
+
+      const th = (text, scope) => {
+        const element = document.createElement('th')
+        element.scope = scope
+        element.textContent = text
+        return element
+      }
+
+      for (const section of document.querySelectorAll('[data-states]')) {
+        const table = STATE_TABLES[section.dataset.states]
+        const headings = table.columns.map(column => Array.isArray(column) ? column[0] : column)
+        const element = document.createElement('table')
+        element.className = 'pg-states'
+        element.setAttribute('aria-labelledby', section.getAttribute('aria-labelledby'))
+        const head = element.createTHead().insertRow()
+        head.append(th('', 'col'), ...headings.map(heading => th(heading, 'col')))
+
+        const body = element.createTBody()
+        for (const row of table.rows) {
+          const tr = body.insertRow()
+          tr.append(th(row.name, 'row'))
+          const cells = row.cells ??
+            (row.cell ? table.states.map(row.cell) : table.columns.map(([, markup]) => markup.replaceAll('{theme}', row.theme)))
+          tr.append(...cells.map(markup => cell(markup)))
+        }
+
+        section.append(element)
+      }
+    </script>
+  </body>
+</html>

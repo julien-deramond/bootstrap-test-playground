@@ -30,7 +30,8 @@ export default [
       '/kitchen-sink/components-button.html',
       '/kitchen-sink/components-list-group.html',
       '/kitchen-sink/forms-chips.html',
-      '/pages/focus.html'
+      '/pages/focus.html',
+      '/pages/states.html'
     ],
     issue: 183
   },
@@ -45,7 +46,8 @@ export default [
       '/kitchen-sink/components-button.html',
       '/kitchen-sink/components-list-group.html',
       '/kitchen-sink/forms-chips.html',
-      '/pages/focus.html'
+      '/pages/focus.html',
+      '/pages/states.html'
     ],
     issue: 183
   },
@@ -71,7 +73,8 @@ export default [
       '/kitchen-sink/components-pagination.html',
       '/kitchen-sink/forms-field.html',
       '/kitchen-sink/forms-validation.html',
-      '/pages/focus.html'
+      '/pages/focus.html',
+      '/pages/states.html'
     ],
     issue: 183
   },
@@ -87,7 +90,8 @@ export default [
       '/kitchen-sink/components-drawer.html',
       '/kitchen-sink/components-list-group.html',
       '/kitchen-sink/forms-chips.html',
-      '/pages/focus.html'
+      '/pages/focus.html',
+      '/pages/states.html'
     ],
     issue: 183
   },
@@ -99,7 +103,8 @@ export default [
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button.html',
       '/kitchen-sink/components-pagination.html',
-      '/pages/focus.html'
+      '/pages/focus.html',
+      '/pages/states.html'
     ],
     issue: 183
   },
@@ -123,7 +128,8 @@ export default [
       '/kitchen-sink/components-button.html',
       '/kitchen-sink/components-list-group.html',
       '/kitchen-sink/forms-chips.html',
-      '/pages/focus.html'
+      '/pages/focus.html',
+      '/pages/states.html'
     ],
     issue: 183
   },
@@ -135,7 +141,8 @@ export default [
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button.html',
       '/kitchen-sink/components-pagination.html',
-      '/pages/focus.html'
+      '/pages/focus.html',
+      '/pages/states.html'
     ],
     issue: 183
   },
@@ -145,7 +152,8 @@ export default [
     themes: ['dark'],
     pages: [
       '/kitchen-sink/components-card.html',
-      '/pages/focus.html'
+      '/pages/focus.html',
+      '/pages/states.html'
     ],
     issue: 183
   },
@@ -185,6 +193,7 @@ export default [
       '/pages/marketing-pricing.html',
       '/pages/marketing-product.html',
       '/pages/sign-in.html',
+      '/pages/states.html',
       '/pages/utilities-only.html',
       '/screens/authentication.html',
       '/screens/cards.html',
@@ -210,7 +219,8 @@ export default [
     themes: ['dark'],
     pages: [
       '/kitchen-sink/components-card.html',
-      '/pages/focus.html'
+      '/pages/focus.html',
+      '/pages/states.html'
     ],
     issue: 183
   },
@@ -229,6 +239,7 @@ export default [
       '/pages/color-modes.html',
       '/pages/custom-property-prefix.html',
       '/pages/focus.html',
+      '/pages/states.html',
       '/pages/utility-api.html'
     ],
     issue: 183
@@ -239,7 +250,8 @@ export default [
     themes: ['dark'],
     pages: [
       '/kitchen-sink/components-card.html',
-      '/pages/focus.html'
+      '/pages/focus.html',
+      '/pages/states.html'
     ],
     issue: 183
   },
@@ -256,6 +268,7 @@ export default [
       '/pages/color-modes.html',
       '/pages/custom-property-prefix.html',
       '/pages/focus.html',
+      '/pages/states.html',
       '/pages/utility-api.html'
     ],
     issue: 183
@@ -295,6 +308,7 @@ export default [
     pages: [
       '/pages/checkout.html',
       '/pages/focus.html',
+      '/pages/states.html',
       '/screens/login-03.html',
       '/screens/login-04.html',
       '/screens/signup-03.html',
@@ -316,6 +330,7 @@ export default [
       '/pages/custom-property-prefix.html',
       '/pages/focus.html',
       '/pages/reboot-only.html',
+      '/pages/states.html',
       '/pages/utility-api.html',
       '/screens/authentication.html',
       '/screens/login-01.html',
@@ -336,7 +351,8 @@ export default [
     colors: '#dedede on #0070fa',
     pages: [
       '/kitchen-sink/components-button-group.html',
-      '/kitchen-sink/components-button.html'
+      '/kitchen-sink/components-button.html',
+      '/pages/states.html'
     ],
     issue: 254
   },
@@ -344,9 +360,54 @@ export default [
     rule: 'color-contrast',
     colors: '#dedede on #dc0028',
     pages: [
-      '/kitchen-sink/components-button-group.html'
+      '/kitchen-sink/components-button-group.html',
+      '/pages/states.html'
     ],
     issue: 254
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#dedede on #00a03d',
+    pages: [
+      '/pages/states.html'
+    ],
+    issue: 254
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#e33c4e on #360309',
+    themes: ['dark'],
+    pages: [
+      '/pages/states.html'
+    ],
+    issue: 254
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#7b858e on #2d3136',
+    themes: ['dark'],
+    pages: [
+      '/pages/states.html'
+    ],
+    issue: 254
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#007e2e on #cff1dd',
+    themes: ['light'],
+    pages: [
+      '/pages/states.html'
+    ],
+    issue: 183
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#007dbc on #cbf2ff',
+    themes: ['light'],
+    pages: [
+      '/pages/states.html'
+    ],
+    issue: 183
   },
   {
     rule: 'scrollable-region-focusable',
@@ -485,7 +546,8 @@ export default [
     pages: [
       '/kitchen-sink/components-menu.html',
       '/pages/marketing-pricing.html',
-      '/pages/marketing-product.html'
+      '/pages/marketing-product.html',
+      '/pages/states.html'
     ],
     issue: 253
   },
@@ -557,6 +619,7 @@ export default [
       '/kitchen-sink/components-stepper.html',
       '/kitchen-sink/forms-chips.html',
       '/pages/focus.html',
+      '/pages/states.html',
       '/screens/cards.html',
       '/screens/playground.html',
       '/screens/tasks.html'
@@ -611,6 +674,7 @@ export default [
       '/kitchen-sink/components-stepper.html',
       '/kitchen-sink/forms-chips.html',
       '/pages/focus.html',
+      '/pages/states.html',
       '/screens/cards.html',
       '/screens/playground.html',
       '/screens/tasks.html'
@@ -629,7 +693,8 @@ export default [
       '/kitchen-sink/components-button.html',
       '/kitchen-sink/components-list-group.html',
       '/kitchen-sink/forms-chips.html',
-      '/pages/focus.html'
+      '/pages/focus.html',
+      '/pages/states.html'
     ],
     reason: 'hue-shift config: every hue rotated 180° with the theme maps\' fixed `contrast` keys, whose WCAG ratios move with the hue (see its README)'
   },
@@ -655,7 +720,8 @@ export default [
       '/kitchen-sink/components-button-group.html',
       '/kitchen-sink/components-button.html',
       '/kitchen-sink/components-card.html',
-      '/pages/focus.html'
+      '/pages/focus.html',
+      '/pages/states.html'
     ],
     reason: 'hue-shift config: every hue rotated 180° with the theme maps\' fixed `contrast` keys, whose WCAG ratios move with the hue (see its README)'
   },
@@ -669,9 +735,50 @@ export default [
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button-group.html',
       '/kitchen-sink/components-button.html',
-      '/pages/focus.html'
+      '/pages/focus.html',
+      '/pages/states.html'
     ],
     reason: 'hue-shift config: every hue rotated 180° with the theme maps\' fixed `contrast` keys, whose WCAG ratios move with the hue (see its README)'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#dedede on #7c6500',
+    themes: ['light'],
+    configs: ['hue-shift'],
+    pages: [
+      '/pages/states.html'
+    ],
+    reason: 'hue-shift config: every hue rotated 180° with the theme maps\' fixed `contrast` keys, whose WCAG ratios move with the hue (see its README)'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#dedede on #7c6500',
+    themes: ['dark'],
+    configs: ['hue-shift'],
+    pages: [
+      '/pages/states.html'
+    ],
+    reason: 'hue-shift config: every hue rotated 180° with the theme maps\' fixed `contrast` keys, whose WCAG ratios move with the hue (see its README)'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#007284 on #c3eef0',
+    themes: ['light'],
+    configs: ['hue-shift'],
+    pages: [
+      '/pages/states.html'
+    ],
+    reason: 'hue-shift config: every hue rotated 180° with the theme maps\' fixed `contrast` keys, whose WCAG ratios move with the hue (see its README)'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#dc5300 on #340900',
+    themes: ['dark'],
+    configs: ['hue-shift'],
+    pages: [
+      '/pages/states.html'
+    ],
+    issue: 254
   },
   {
     rule: 'color-contrast',
@@ -685,7 +792,8 @@ export default [
       '/kitchen-sink/components-button.html',
       '/kitchen-sink/components-card.html',
       '/kitchen-sink/components-progress.html',
-      '/pages/focus.html'
+      '/pages/focus.html',
+      '/pages/states.html'
     ],
     reason: 'mono config: one base color for every hue, with the fixed `contrast` keys under 4.5:1 on it (see its README)'
   },
@@ -700,7 +808,8 @@ export default [
       '/kitchen-sink/components-button-group.html',
       '/kitchen-sink/components-button.html',
       '/kitchen-sink/components-progress.html',
-      '/pages/focus.html'
+      '/pages/focus.html',
+      '/pages/states.html'
     ],
     reason: 'mono config: one base color for every hue, with the fixed `contrast` keys under 4.5:1 on it (see its README)'
   },
@@ -714,6 +823,46 @@ export default [
       '/pages/marketing-product.html'
     ],
     reason: 'mono config: one base color for every hue, with the fixed `contrast` keys under 4.5:1 on it (see its README)'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#141419 on #533dde',
+    themes: ['light'],
+    configs: ['mono'],
+    pages: [
+      '/pages/states.html'
+    ],
+    reason: 'mono config: one base color for every hue, with the fixed `contrast` keys under 4.5:1 on it (see its README)'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#141419 on #533dde',
+    themes: ['dark'],
+    configs: ['mono'],
+    pages: [
+      '/pages/states.html'
+    ],
+    reason: 'mono config: one base color for every hue, with the fixed `contrast` keys under 4.5:1 on it (see its README)'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#6865e2 on #110f35',
+    themes: ['dark'],
+    configs: ['mono'],
+    pages: [
+      '/pages/states.html'
+    ],
+    issue: 254
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#6a6ccc on #090a0c',
+    themes: ['dark'],
+    configs: ['mono'],
+    pages: [
+      '/pages/states.html'
+    ],
+    issue: 254
   },
   {
     rule: 'target-size',
@@ -766,7 +915,8 @@ export default [
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button.html',
       '/kitchen-sink/components-list-group.html',
-      '/kitchen-sink/forms-chips.html'
+      '/kitchen-sink/forms-chips.html',
+      '/pages/states.html'
     ],
     reason: 'shadcn config: shadcn/ui\'s own neutral and destructive colors, under 4.5:1 in these pairings'
   },
@@ -868,6 +1018,16 @@ export default [
     target: /data-focus="(btn-subtle|list-group-action|chip-input)-danger"/,
     configs: ['shadcn'],
     pages: ['/pages/focus.html'],
+    reason: 'shadcn config: shadcn/ui\'s own neutral and destructive colors, under 4.5:1 in these pairings'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#de0000 on #fde6e7',
+    themes: ['light'],
+    configs: ['shadcn'],
+    pages: [
+      '/pages/states.html'
+    ],
     reason: 'shadcn config: shadcn/ui\'s own neutral and destructive colors, under 4.5:1 in these pairings'
   },
   // The focus ring check (focus.spec.js): `target` matches `<surface>
