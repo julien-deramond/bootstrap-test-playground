@@ -418,6 +418,221 @@ for (const { name: variant, params } of VARIANTS) {
   })
 }
 
+// pages/js-api.html drives every component from JavaScript, with the working
+// copy's JavaScript and with Bootstrap's dist (`?js=dist`), whatever the scope:
+// a config doesn't change the API. The page logs each call, what it returned
+// and every `*.bs.*` event in its section, as `data-entry` values like
+// `show()`, `show.bs.dialog`, `show.bs.dialog prevented` or `show() resolved`.
+const JS_API = {
+  url: '/pages/js-api.html',
+  variants: [
+    { name: 'working', params: 'config=working' },
+    { name: 'dist', params: 'config=working&js=dist' }
+  ]
+}
+
+// Which source an option should come from, by precedence case: Bootstrap
+// merges the defaults, then data-bs-config, then the data-bs-* attributes,
+// then the options passed in JavaScript, the latest winning.
+// getOrCreateInstance(element, options) ignores the options when the element
+// already has an instance (created from data-bs-config here), and uses them
+// once dispose() has removed it.
+const PRECEDENCE = {
+  default: 'default',
+  config: 'config',
+  'config-attribute': 'attribute',
+  'attribute-js': 'js',
+  all: 'js',
+  existing: 'config',
+  disposed: 'js'
+}
+
+// The components whose option the page checks. Alert, Button and Tab have none.
+const WITH_OPTIONS = ['carousel', 'chips', 'collapse', 'combobox', 'datepicker', 'dialog', 'drawer', 'menu', 'nav-overflow', 'otp-input', 'popover', 'range', 'scrollspy', 'strength', 'toast', 'toggler', 'tooltip']
+
+async function loadJsApi(page, params) {
+  await page.goto(`${JS_API.url}?${params}&chrome=0&freeze`)
+  await page.waitForFunction(() => document.documentElement.dataset.jsApi === 'ready')
+}
+
+// Drives one section of the page. Each step clears the log, then clicks a
+// button or runs an action, and returns what got logged: calls, and the events
+// of the component's own namespace (a combobox's inner menu logs `*.bs.menu`
+// events too). The page's buttons get a dispatched click, without pointer or
+// focus, which would count as a click outside a menu, a datepicker or a
+// tooltip: these steps test the API.
+function jsApiSection(page, key, namespace) {
+  const section = page.locator(`[data-jsapi="${key}"]`)
+  const own = entry => !entry.includes('.bs.') || entry.replace(/ prevented$/, '').endsWith(`.bs.${namespace}`)
+  const entries = () => section.locator('[data-jsapi-log] li').evaluateAll(items => items.map(item => item.dataset.entry))
+  const clear = () => section.locator('[data-jsapi-log] ol').evaluate(list => list.replaceChildren())
+
+  return {
+    section,
+    copy: selector => section.locator(`[data-jsapi-copies] ${selector}`).first(),
+    cancelNext: () => section.locator('[data-jsapi-panel] input[type="checkbox"]').check(),
+    // Clicks the button named `label` (or runs `action`), then waits for the
+    // log to read `expected`: calls and events, or calls only with
+    // `{ calls: true }`, for steps whose events depend on the component
+    // (a constructor that updates the component may fire some).
+    async step(labelOrAction, expected, { calls = false } = {}) {
+      await clear()
+      await (typeof labelOrAction === 'function' ?
+        labelOrAction() :
+        section.locator('[data-jsapi-panel] button').getByText(labelOrAction, { exact: true }).dispatchEvent('click'))
+      const keep = entry => (calls ? !entry.includes('.bs.') : own(entry))
+      await expect.poll(async () => (await entries()).filter(keep), { message: `log after ${labelOrAction}`, timeout: 3000 }).toEqual(expected)
+    }
+  }
+}
+
+// What each component's own flow expects, after the shared instance checks.
+// `show` and `hide` components go through show(), hide(), a canceled show(),
+// dispose() and a show() that re-creates the instance (its events must fire
+// once), then the data API on a copy mounted after load.
+const SHOW_HIDE = {
+  collapse: { trigger: copy => copy('[data-bs-toggle="collapse"]').click() },
+  combobox: { trigger: copy => copy('[data-bs-toggle="combobox"]').click() },
+  datepicker: { trigger: copy => copy('[data-bs-toggle="datepicker"]').click() },
+  dialog: { trigger: copy => copy('[data-bs-toggle="dialog"]').click() },
+  drawer: { trigger: copy => copy('[data-bs-toggle="drawer"]').click() },
+  menu: { trigger: copy => copy('[data-bs-toggle="menu"]').click() },
+  popover: { inserted: true, trigger: copy => copy('[data-bs-toggle="popover"]').click() },
+  toast: {},
+  tooltip: { inserted: true, trigger: copy => copy('[data-bs-toggle="tooltip"]').focus() }
+}
+
+const FLOWS = {
+  ...Object.fromEntries(Object.entries(SHOW_HIDE).map(([key, { inserted, trigger }]) => [key, async api => {
+    const shown = [`show.bs.${key}`, ...(inserted ? [`inserted.bs.${key}`] : []), `shown.bs.${key}`]
+    const hidden = [`hide.bs.${key}`, `hidden.bs.${key}`]
+    await api.step('show()', ['show()', ...shown, 'show() resolved'])
+    await api.step('hide()', ['hide()', ...hidden, 'hide() resolved'])
+    await api.cancelNext()
+    await api.step('show()', ['show()', `show.bs.${key} prevented`, 'show() resolved'])
+    await expect(api.section.locator('[data-jsapi-panel] input[type="checkbox"]')).not.toBeChecked()
+    await api.step('dispose()', ['dispose()'])
+    await api.step('show()', ['getOrCreateInstance() → new instance', 'show()', ...shown, 'show() resolved'])
+    await api.step('hide()', ['hide()', ...hidden, 'hide() resolved'])
+    if (trigger) {
+      await api.step('Mount a copy', [expect.stringMatching(/^mounted #api-[\w-]+-copy1$/)])
+      await api.step(() => trigger(api.copy), shown)
+    }
+  }])),
+
+  async alert(api) {
+    await api.cancelNext()
+    await api.step('close()', ['close()', 'close.bs.alert prevented', 'close() resolved'])
+    await api.step('close()', ['close()', 'close.bs.alert', 'closed.bs.alert', 'close() resolved'])
+    await expect(api.section.locator('#api-alert')).toHaveCount(0)
+    await api.step('Mount a copy', ['mounted #api-alert-copy1'])
+    await api.step(() => api.copy('[data-bs-dismiss="alert"]').click(), ['close.bs.alert', 'closed.bs.alert'])
+  },
+
+  async button(api) {
+    await api.step('toggle()', ['toggle()'])
+    await expect(api.section.locator('#api-button')).toHaveAttribute('aria-pressed', 'true')
+  },
+
+  async carousel(api) {
+    await api.step('next()', ['next()', 'slide.bs.carousel', 'slid.bs.carousel'])
+    await api.cancelNext()
+    await api.step('next()', ['next()', 'slide.bs.carousel prevented'])
+    await api.step('Mount a copy', ['mounted #api-carousel-copy1'])
+    await api.step(() => api.copy('[data-bs-slide="next"]').click(), ['slide.bs.carousel', 'slid.bs.carousel'])
+  },
+
+  async chips(api) {
+    await api.step('add("Smoke")', ['add("Smoke")', 'add.bs.chips', 'change.bs.chips', 'add("Smoke") → span.chip'])
+    await api.step('remove("Smoke")', ['remove("Smoke")', 'remove.bs.chips', 'change.bs.chips', 'remove("Smoke") → true'])
+    await api.cancelNext()
+    await api.step('add("Smoke")', ['add("Smoke")', 'add.bs.chips prevented', 'add("Smoke") → null'])
+  },
+
+  async 'otp-input'(api) {
+    await api.step('setValue("123456")', ['setValue("123456")', 'complete.bs.otpInput'])
+    await api.step('getValue()', ['getValue()', 'getValue() → "123456"'])
+  },
+
+  async range(api) {
+    await api.step('update()', ['update()', 'changed.bs.range'])
+  },
+
+  async tab(api) {
+    const tab = ['hide.bs.tab', 'show.bs.tab', 'hidden.bs.tab', 'shown.bs.tab']
+    await api.step('show()', ['show()', ...tab, 'show() resolved'])
+    await api.step(() => api.section.locator('#api-tab-home').click(), tab)
+    await api.cancelNext()
+    await api.step('show()', ['show()', 'hide.bs.tab', 'show.bs.tab prevented', 'show() resolved'])
+    await expect(api.section.locator('#api-tab-home')).toHaveAttribute('aria-selected', 'true')
+    await api.step('Mount a copy', ['mounted #api-tab-profile-copy1'])
+    await api.step(() => api.copy('#api-tab-profile-copy1').click(), tab)
+  },
+
+  async toggler(api) {
+    await api.step('toggle()', ['toggle()', 'toggle.bs.toggler', 'toggled.bs.toggler'])
+    await api.cancelNext()
+    await api.step('toggle()', ['toggle()', 'toggle.bs.toggler prevented'])
+    await api.step('Mount a copy', ['mounted #api-toggler-copy1'])
+    await api.step(() => api.copy('[data-bs-toggle="toggler"]').click(), ['toggle.bs.toggler', 'toggled.bs.toggler'])
+  }
+}
+
+// Each section's event namespace, `Component.NAME`.
+const NAMESPACES = { 'nav-overflow': 'navoverflow', 'otp-input': 'otpInput' }
+
+test.describe('js-api', () => {
+  for (const { name: variant, params } of JS_API.variants) {
+    test.describe(variant, () => {
+      for (const key of WITH_OPTIONS) {
+        test(`precedence ${key}`, async ({ page, browserName }) => {
+          const [issue] = knownFor(known.filter(entry => entry.scenario === `js-api precedence ${key}`), variant, browserName)
+          test.fail(Boolean(issue), issue && `known upstream bug #${issue.issue}`)
+          await loadJsApi(page, params)
+          const row = page.locator(`#precedence-checks tr[data-component="${key}"]`)
+          const sources = await row.evaluate(element => ({ ...element.dataset }))
+          const actual = await row.locator('td[data-case]').evaluateAll(cells => Object.fromEntries(cells.map(cell => [cell.dataset.case, cell.dataset.actual])))
+          const expected = Object.fromEntries(Object.entries(PRECEDENCE).map(([id, source]) => [id, sources[source]]))
+          expect(actual, `${key}: ${JSON.stringify(sources)}`).toEqual(expected)
+        })
+      }
+
+      // Every component: dispose() removes the instance, getOrCreateInstance()
+      // makes a new one, and markup mounted after load has none until then.
+      // Then the component's own flow, if any.
+      for (const key of ['alert', 'button', 'carousel', 'chips', 'collapse', 'combobox', 'datepicker', 'dialog', 'drawer', 'menu', 'nav-overflow', 'otp-input', 'popover', 'range', 'scrollspy', 'strength', 'tab', 'toast', 'toggler', 'tooltip']) {
+        test(`api ${key}`, async ({ page, browserName }) => {
+          const [issue] = knownFor(known.filter(entry => entry.scenario === `js-api ${key}`), variant, browserName)
+          test.fail(Boolean(issue), issue && `known upstream bug #${issue.issue}`)
+          await loadJsApi(page, params)
+          const api = jsApiSection(page, key, NAMESPACES[key] ?? key)
+
+          const calls = { calls: true }
+          await api.step('getOrCreateInstance()', [expect.stringMatching(/^getOrCreateInstance\(\) → (existing|new) instance$/)], calls)
+          await api.step('dispose()', ['dispose()'], calls)
+          await api.step('getInstance()', ['getInstance() → null'], calls)
+          await api.step('getOrCreateInstance()', ['getOrCreateInstance() → new instance'], calls)
+          await api.step('getOrCreateInstance()', ['getOrCreateInstance() → existing instance'], calls)
+          await FLOWS[key]?.(jsApiSection(page, key, NAMESPACES[key] ?? key))
+        })
+      }
+
+      // A copy mounted after load has no instance until something creates
+      // one, components that initialize on load included.
+      test('mounted copies', async ({ page }) => {
+        await loadJsApi(page, params)
+        for (const key of await page.locator('[data-jsapi]').evaluateAll(sections => sections.map(section => section.dataset.jsapi))) {
+          const api = jsApiSection(page, key, NAMESPACES[key] ?? key)
+          const calls = { calls: true }
+          await api.step('Mount a copy', [expect.stringMatching(/^mounted #api-[\w-]+-copy1$/)], calls)
+          await api.step('getInstance()', ['getInstance() → null'], calls)
+          await api.step('getOrCreateInstance()', ['getOrCreateInstance() → new instance'], calls)
+        }
+      })
+    })
+  }
+})
+
 // The playground's own configurator, once per engine and whatever the scope:
 // open the panel, pick a config from a category, the stylesheets swap, then
 // close it, reopen it with its shortcut and reset. Builds hash the
