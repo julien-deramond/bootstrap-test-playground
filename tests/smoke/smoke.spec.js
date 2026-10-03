@@ -17,8 +17,12 @@
 // `test.fail()`, so Playwright reports it when it starts passing. The suite
 // runs in each engine (`smoke`, `smoke-firefox`, `smoke-webkit`), and an
 // entry can be limited to some of them.
+import path from 'node:path'
 import { expect, test } from '@playwright/test'
-import { configDir, listConfigs, readPartials } from '../../scripts/lib/configs.mjs'
+import { loadEnv } from 'vite'
+import { bootstrapSource } from '../../scripts/lib/bootstrap.mjs'
+import { configDir, listConfigs, readPartials, root } from '../../scripts/lib/configs.mjs'
+import { listReproductions } from '../../scripts/lib/export-issue.mjs'
 import known from './known-issues.js'
 
 const VARIANTS = [
@@ -526,6 +530,57 @@ test.describe('playground', () => {
     await palette.getByRole('combobox').fill('--alert-padding-x')
     await expect(palette.getByRole('option').first()).toContainText('Alert')
     await expect(palette.getByRole('option').first()).toContainText('--alert-padding-x')
+  })
+
+  // Every reproduction exports itself for upstream maintainers
+  // (scripts/lib/export-issue.mjs): one HTML file, whose Bootstrap comes from
+  // jsDelivr, served here from the local copy, and a project the toolbar posts
+  // to StackBlitz, intercepted here.
+  test('issue exports', async ({ page, request }) => {
+    const names = listReproductions()
+    test.skip(names.length === 0, 'No reproduction left in issues/')
+
+    const bootstrap = bootstrapSource(loadEnv('production', root, ''))
+    const bootstrapDir = bootstrap.dir ?? path.join(root, 'node_modules/bootstrap')
+    await page.context().route('https://cdn.jsdelivr.net/gh/twbs/bootstrap@*/**', route => route.fulfill({
+      // /gh/twbs/bootstrap@<sha>/dist/js/bootstrap.bundle.min.js → dist/js/…
+      path: path.join(bootstrapDir, ...new URL(route.request().url()).pathname.split('/').slice(4))
+    }))
+    const posts = []
+    await page.context().route('https://stackblitz.com/**', route => {
+      posts.push(route.request())
+      return route.fulfill({ contentType: 'text/html', body: '<title>StackBlitz</title>' })
+    })
+
+    for (const name of names) {
+      const html = await (await request.get(`/issues/${name}/export.html`)).text()
+      expect(html, name).toContain('/dist/js/bootstrap.bundle.min.js')
+      expect(html, name).not.toMatch(/data-playground-chrome|src="[^"]*(src\/js\/main\.js|playground-prefs\.js)"/)
+      const project = await (await request.get(`/issues/${name}/stackblitz.json`)).json()
+      expect(Object.keys(project.files), name).toEqual(expect.arrayContaining(['index.html', 'main.js', 'main.scss', '_custom.scss', 'tokens.css', 'package.json']))
+    }
+
+    // The HTML export renders alone, with Bootstrap's styles and JavaScript.
+    const [name] = names
+    await page.goto(`/issues/${name}/export.html`)
+    await page.waitForFunction(() => window.bootstrap)
+    expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--bs-primary-base'))).not.toBe('')
+
+    await page.goto(`/issues/${name}/?freeze`)
+    await page.waitForFunction(() => window.bootstrap)
+    await page.keyboard.press('Alt+Shift+P')
+    const panel = page.locator('#playground-toolbar').getByRole('dialog', { name: 'Playground settings' })
+    await expect(panel.getByRole('link', { name: 'Export HTML' })).toHaveAttribute('download', `bootstrap-repro-${name}.html`)
+    // A page of its own posts the project: an imported reproduction's
+    // Content-Security-Policy blocks forms to other sites.
+    const popup = page.waitForEvent('popup')
+    await panel.getByRole('link', { name: 'Open in StackBlitz' }).click()
+    await expect(await popup).toHaveTitle('StackBlitz')
+    expect(posts).toHaveLength(1)
+    const fields = new URLSearchParams(posts[0].postData())
+    expect(posts[0].method()).toBe('POST')
+    expect(fields.get('project[template]')).toBe('node')
+    expect(fields.get('project[files][main.scss]')).toContain('bootstrap/scss/bootstrap')
   })
 
   // The first-visit hint hides under automation: pretend to be a person.

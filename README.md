@@ -44,6 +44,7 @@ Sass and JavaScript then come from that checkout, and edits there hot-reload too
 | `npm run dev` | Starts the dev server |
 | `npm run new-issue <name> [-- --config <name>] [--from <page>#<id>]` | Creates a reproduction in `issues/<name>/`, optionally from a kitchen sink example |
 | `npm run import-issue <n> [-- --config <name>] [--force]` | Creates `issues/<n>/` from a twbs/bootstrap issue or pull request, its code cleaned and inert until reviewed |
+| `npm run export-issue <name>` | Exports a reproduction as one HTML file and a StackBlitz project, for upstream maintainers |
 | `npm run save-config <name>` / `use-config <name>` | Saves the working copy as a config, or loads one |
 | `npm run update-bootstrap` | Moves to the latest `v6-dev` commit and runs the checks that need no browser |
 | `npm run test:visual [-- -u]` | Compares every page with its screenshot baselines |

@@ -5,6 +5,7 @@ import { defineConfig, loadEnv } from 'vite'
 import { bootstrapSource, gitDir } from './scripts/lib/bootstrap.mjs'
 import { readBootstrapIndex } from './scripts/lib/class-index.mjs'
 import { CATEGORIES, listConfigs, readKnownGaps } from './scripts/lib/configs.mjs'
+import { EXPORT_FILES, exportIssue, listReproductions } from './scripts/lib/export-issue.mjs'
 import { docsDir, SECTIONS, syncPage } from './scripts/lib/kitchen-sink.mjs'
 import { collectPages, findHtmlFiles, PAGE_GROUPS } from './scripts/lib/pages.mjs'
 
@@ -106,6 +107,56 @@ function keepStyleMarkers() {
         }
 
         return html
+      }
+    }
+  }
+}
+
+// The exports of each reproduction, for upstream maintainers (see
+// scripts/lib/export-issue.mjs): `issues/<name>/export.html`, the page as one
+// HTML file, and `issues/<name>/stackblitz.json`, the Vite project the toolbar
+// opens in StackBlitz. The dev server makes them on request, from the current
+// files; builds write them next to every reproduction, so the toolbar's
+// buttons work on GitHub Pages too.
+function issueExports(env, bootstrap) {
+  const files = Object.entries(EXPORT_FILES)
+  const render = (kind, { html, project }) => (kind === 'html' ? html : JSON.stringify(project))
+
+  return {
+    name: 'issue-exports',
+    configureServer(server) {
+      const { base } = server.config
+      server.middlewares.use(async (request, response, next) => {
+        const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname)
+        const [, name, fileName] = pathname.startsWith(base) ? pathname.slice(base.length).match(/^issues\/([a-z0-9][a-z0-9-]*)\/([\w.-]+)$/) ?? [] : []
+        const kind = files.find(([, file]) => file === fileName)?.[0]
+        if (!kind || !listReproductions().includes(name)) {
+          next()
+          return
+        }
+
+        try {
+          // Read again: a local checkout's commit or dirty state may have changed.
+          const result = await exportIssue(name, { bootstrap: bootstrapSource(env) })
+          for (const warning of result.warnings) {
+            server.config.logger.warn(`Export of issues/${name}/: ${warning}`, { timestamp: true })
+          }
+
+          response.setHeader('Content-Type', kind === 'html' ? 'text/html; charset=utf-8' : 'application/json')
+          response.end(render(kind, result))
+        } catch (error) {
+          response.statusCode = 500
+          response.setHeader('Content-Type', 'text/plain; charset=utf-8')
+          response.end(error.message)
+        }
+      })
+    },
+    async generateBundle() {
+      const results = await Promise.all(listReproductions().map(async name => [name, await exportIssue(name, { bootstrap })]))
+      for (const [name, result] of results) {
+        for (const [kind, file] of files) {
+          this.emitFile({ type: 'asset', fileName: `issues/${name}/${file}`, source: render(kind, result) })
+        }
       }
     }
   }
@@ -337,6 +388,6 @@ export default defineConfig(({ mode }) => {
       cssTarget,
       rolldownOptions: { input }
     },
-    plugins: [rejectUnreviewedImports(), inlinePrefsScript(), playgroundData(base, bootstrap.dir ?? undefined), bootstrapSourceData(env, bootstrap), keepStyleMarkers(), ...(base === '/' ? [] : [prefixRootUrls(base)])]
+    plugins: [rejectUnreviewedImports(), inlinePrefsScript(), issueExports(env, bootstrap), playgroundData(base, bootstrap.dir ?? undefined), bootstrapSourceData(env, bootstrap), keepStyleMarkers(), ...(base === '/' ? [] : [prefixRootUrls(base)])]
   }
 })

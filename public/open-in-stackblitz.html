@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Opening in StackBlitz…</title>
+    <style>
+      body { margin: 2rem; font: 16px/1.5 system-ui, sans-serif; }
+    </style>
+  </head>
+  <body>
+    <p id="status">Opening the reproduction in StackBlitz…</p>
+    <script>
+      // Opened by the toolbar's "Open in StackBlitz" on an issue reproduction,
+      // `open-in-stackblitz.html?issue=<name>`: posts the project of
+      // issues/<name>/stackblitz.json, which the dev server and builds make
+      // (see scripts/lib/export-issue.mjs), to StackBlitz's POST API. A page
+      // of its own, because an imported reproduction's Content-Security-Policy
+      // has `form-action 'self'`, which blocks the post from there.
+      const status = document.getElementById('status')
+      const name = new URLSearchParams(location.search).get('issue') ?? ''
+
+      async function open() {
+        if (!/^[a-z0-9][a-z0-9-]*$/.test(name)) {
+          throw new Error('No reproduction given: open this page from the toolbar of an issue reproduction.')
+        }
+
+        // Relative to this page, so it works under a base path too.
+        const response = await fetch(`issues/${name}/stackblitz.json`)
+        if (!response.ok) {
+          throw new Error((await response.text()) || `${response.status} ${response.statusText}`)
+        }
+
+        const project = await response.json()
+        const form = document.createElement('form')
+        form.method = 'post'
+        form.action = `https://stackblitz.com/run?file=${encodeURIComponent(project.openFile)}`
+        const fields = {
+          'project[title]': project.title,
+          'project[description]': project.description,
+          'project[template]': project.template,
+          ...Object.fromEntries(Object.entries(project.files).map(([file, content]) => [`project[files][${file}]`, content]))
+        }
+        for (const [field, value] of Object.entries(fields)) {
+          const input = document.createElement('input')
+          input.type = 'hidden'
+          input.name = field
+          input.value = value
+          form.append(input)
+        }
+
+        document.body.append(form)
+        form.submit()
+      }
+
+      open().catch(error => {
+        status.textContent = `Could not open issues/${name}/ in StackBlitz: ${error.message}`
+      })
+    </script>
+  </body>
+</html>

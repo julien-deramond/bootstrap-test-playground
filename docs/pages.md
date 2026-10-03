@@ -15,7 +15,7 @@ configs/<name>/          Saved configs; configs/default/ is Bootstrap's defaults
 src/js/main.js           Example pages' entry: Bootstrap JS, demo wiring, config switcher, toolbar
 src/js/home.js           Home page: page search and the Configs section, without the toolbar
 src/js/page-index.js     Page list and search, shared by the home page and the page switcher
-public/                  Favicon and the early preferences script
+public/                  Favicon, the early preferences script and the StackBlitz launcher of exports
 scripts/                 npm scripts: configs, reproductions, updates, checks and audits, and their allowlists
 tests/visual/            Visual regression suite (Playwright) and its baselines
 tests/console/           Console crawl (Playwright) and its known issues
@@ -100,7 +100,7 @@ The markup under test goes in the `data-playground-repro` block, shown in light 
 
 `--from` copies a kitchen sink example into the reproduction: its markup, the classes of its example frame, its tags and a link to it in the steps. It takes the page and the example's id (its heading's anchor), as a path, `components-tooltip#placement`, or the URL from the playground. An unknown id lists the page's ids. A few examples need the kitchen sink's own frame styles, like `bd-example-drawer`, which shows drawers in place: the page then loads `kitchen-sink/kitchen-sink.css` too, with a comment, since those styles aren't Bootstrap's.
 
-To share a reproduction, push the repository and link to the folder on GitHub, or open it in StackBlitz: `https://stackblitz.com/github/julien-deramond/bootstrap-test-playground`.
+To share a reproduction, link to its page on the deployed playground or its folder on GitHub, or export it (see [Exporting a reproduction](#exporting-a-reproduction)).
 
 ### Assertions
 
@@ -144,6 +144,20 @@ The table has one line per reproduction, with its tracking issue and label, read
 - **NONE**: no `assert.js` and no `repro.spec.js`.
 
 The exit code is 1 when a reproduction passes, errors, or fails with a closed tracking issue. The nightly canary runs it, so a fix that lands upstream shows up in its report the next morning as a stale entry, and the status sweep gets the same answer from the tracker a few days later.
+
+### Exporting a reproduction
+
+Upstream maintainers want a reproduction they can open without cloning this repository, which needs Vite, Sass and the playground's scripts. Each reproduction exports itself two ways, from the toolbar's panel on its page (*Export HTML*, *Open in StackBlitz*) or from the command line:
+
+```sh
+npm run export-issue 42754         # one or more reproductions
+npm run export-issue -- --all
+```
+
+- **One HTML file** (`dist/exports/42754.html`, *Export HTML*): the markup of `?chrome=0`, without the toolbar and the playground's scripts, and the page's own scripts. A paragraph of the chrome that a script writes to, like *Measured here*, stays. The styles are Bootstrap's `dist/css/bootstrap.min.css` from jsDelivr, at the same `v6-dev` commit, when the config is Bootstrap's defaults (`main.scss` and `_custom.scss` as in `configs/default/`), or the reproduction's own compiled copy, inlined, otherwise. What `tokens.css` adds to the template is inlined after them. The JavaScript is the commit's `dist/js/bootstrap.bundle.min.js` from jsDelivr, on `window.bootstrap` like in the playground, with tooltips and popovers initialized when the page has some. A comment at the top says what the page reproduces, the upstream issue, the commit and where the styles come from. Root-relative links point to the deployed playground.
+- **A Vite + Sass project** (`dist/exports/42754/`, *Open in StackBlitz*): the same page with the reproduction's `main.scss`, `_custom.scss` and `tokens.css`, the playground's `postcss.config.js` and `.browserslistrc`, and a `package.json` that installs Bootstrap from a tarball of the commit, so it compiles from the commit's source like the playground does. `npm install && npm run dev` runs it locally. The toolbar opens it in StackBlitz through [`public/open-in-stackblitz.html`](../public/open-in-stackblitz.html), which posts it to StackBlitz's POST API: a page of its own, because an imported reproduction's Content-Security-Policy blocks forms to other sites. `dist/exports/42754-stackblitz.html` does the same from the command line.
+
+The dev server makes both on request, from the current files, at `issues/<name>/export.html` and `issues/<name>/stackblitz.json`; builds write them next to every reproduction, so the toolbar's buttons work on GitHub Pages too. The exports load Bootstrap from GitHub by its commit: with a `BOOTSTRAP_PATH` checkout, push the commit first, and uncommitted changes aren't in them (`export-issue` and the dev server's log say so). An unreviewed import isn't exported. `npm run build` empties `dist/`, `dist/exports/` included. The library is [`scripts/lib/export-issue.mjs`](../scripts/lib/export-issue.mjs).
 
 ### Importing an upstream issue
 
@@ -203,6 +217,7 @@ The settings panel is a modal dialog, a bottom sheet on small screens. It closes
 | Primary | Remaps the `--bs-primary-*` tokens to another hue at runtime | | `?primary=teal` |
 | Config | Swaps the working copy for a saved config. Configs are grouped by category, with a filter, their description, a *tokens only* badge and their known gaps (see [`configs/README.md`](../configs/README.md#saved-configs)) | | `?config=<name>` |
 | Copy link | Copies the page's URL with the current choices as URL overrides | | |
+| Export HTML, Open in StackBlitz | On an issue reproduction: downloads it as one HTML file, or opens it in StackBlitz as a Vite project (see [Exporting a reproduction](#exporting-a-reproduction)) | | |
 | Compare | Opens the current page in the compare view | | |
 | Reset | Back to Bootstrap's defaults | | |
 

@@ -44,7 +44,8 @@
     "record-update": "node scripts/record-update.mjs",
     "status-sweep": "node scripts/status-sweep.mjs",
     "import-issue": "node scripts/import-issue.mjs",
-    "check-issues": "node scripts/check-issues.mjs"
+    "check-issues": "node scripts/check-issues.mjs",
+    "export-issue": "node scripts/export-issue.mjs"
   },
   "engines": {
     "node": ">=20.19"
