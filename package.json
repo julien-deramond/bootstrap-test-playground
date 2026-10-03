@@ -41,7 +41,8 @@
     "diff-bootstrap": "node scripts/diff-bootstrap.mjs",
     "update-bootstrap": "node scripts/update-bootstrap.mjs",
     "record-update": "node scripts/record-update.mjs",
-    "status-sweep": "node scripts/status-sweep.mjs"
+    "status-sweep": "node scripts/status-sweep.mjs",
+    "import-issue": "node scripts/import-issue.mjs"
   },
   "engines": {
     "node": ">=20.19"
@@ -56,6 +57,7 @@
     "@playwright/test": "^1.63.0",
     "autoprefixer": "^10.6.1",
     "html-validate": "^11.16.0",
+    "parse5": "^8.0.1",
     "postcss-prefix-custom-properties": "^0.1.0",
     "sass-embedded": "^1.105.0",
     "vite": "^8.3.1"

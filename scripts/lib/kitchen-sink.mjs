@@ -429,3 +429,14 @@ export function syncPage(bootstrapDir, mdx) {
 
   return { written, removed, skipped: skipped.filter(line => line.startsWith(`${section}/${name}:`)) }
 }
+
+// Each generated page's component and tags, as `{ slug, tags }`:
+// `components-drawer.html` → `{ slug: 'drawer', tags: ['components'] }`.
+export function listKitchenSinkTags() {
+  return fs.readdirSync(outDir).filter(file => file.endsWith('.html')).map(file => {
+    const page = fs.readFileSync(path.join(outDir, file), 'utf8')
+    const slug = SECTIONS.reduce((name, { dir }) => name.replace(new RegExp(`^${dir}-`), ''), path.basename(file, '.html'))
+    const tags = page.match(/<meta name="playground-tags" content="([^"]*)">/)?.[1].split(',').map(tag => tag.trim()).filter(Boolean) ?? []
+    return { slug, tags }
+  })
+}

@@ -6,17 +6,14 @@
 //   --from copies a kitchen sink example into the reproduction:
 //   `kitchen-sink/components-tooltip.html#placement`, `components-tooltip#placement`
 //   or its URL in the playground.
+// To start from an upstream issue's own code, see import-issue.mjs.
 
 import fs from 'node:fs'
 import path from 'node:path'
 import { parseArgs } from 'node:util'
-import { loadEnv } from 'vite'
-import { bootstrapSource } from './lib/bootstrap.mjs'
-import { NAME_PATTERN, configDir, copyStyles, fail, listConfigs, root, workingDir } from './lib/configs.mjs'
+import { fail } from './lib/configs.mjs'
 import { outDir as kitchenSinkDir, readExample } from './lib/kitchen-sink.mjs'
-
-// Tracking issues live in this repository.
-const TRACKING_REPO = 'julien-deramond/bootstrap-test-playground'
+import { fromExample, isValidName, renderTemplate, resolveTarget, writeReproduction } from './lib/reproduction.mjs'
 
 const USAGE = 'Usage: npm run new-issue <number-or-slug> [-- --config <config>] [--from <kitchen-sink page>#<id>]   (e.g. npm run new-issue 42928)'
 
@@ -34,19 +31,11 @@ try {
 const configName = values.config
 const name = positionals[0]?.replace(/^#/, '')
 
-if (!name || !NAME_PATTERN.test(name)) {
+if (!isValidName(name)) {
   fail(USAGE)
 }
 
-const sourceDir = configName === 'working' ? workingDir : configDir(configName)
-if (!configName || !fs.existsSync(path.join(sourceDir, 'main.scss'))) {
-  fail(`Unknown config "${configName}". Available: working, ${listConfigs().map(config => config.name).join(', ')}`)
-}
-
-const targetDir = path.join(root, 'issues', name)
-if (fs.existsSync(targetDir)) {
-  fail(`issues/${name}/ already exists.`)
-}
+const { sourceDir, targetDir } = resolveTarget(name, configName)
 
 // `--from`: the kitchen sink example, read before anything is written.
 let example
@@ -66,55 +55,12 @@ if (values.from) {
   example.url = `/kitchen-sink/${page}.html#${id}`
 }
 
-// `42928`: an upstream issue, so reported. `pg-12`: tracked here, not reported
-// yet. Any other slug: neither, until the page's metadata says otherwise.
-const isUpstream = /^\d+$/.test(name)
-const tracking = name.match(/^pg-(\d+)$/)?.[1]
-const { sha } = bootstrapSource(loadEnv('production', root, ''))
-let template = fs.readFileSync(path.join(root, 'scripts/templates/issue/index.html'), 'utf8')
-  .replaceAll('__TITLE__', isUpstream ? `#${name}` : name)
-  .replaceAll('__UPSTREAM__', isUpstream ? `twbs/bootstrap#${name}` : '')
-  .replaceAll('__STATUS__', isUpstream ? 'reported' : 'unreported')
-  .replaceAll('__TRACKING__', tracking ? `${TRACKING_REPO}#${tracking}` : '')
-  .replaceAll('__COMMIT__', sha ?? '')
-
+let html = renderTemplate(name)
 if (example) {
-  template = fromExample(template, example)
+  html = fromExample(html, example)
 }
 
-// Puts the example's markup in the reproduction block with its classes, its
-// tags on the page, and a link to it in the steps. Some examples need the
-// kitchen sink's own frame styles (`bd-example-drawer` shows drawers in place):
-// the page then loads kitchen-sink.css too.
-function fromExample(html, { title, tags, heading, className, html: markup, url }) {
-  const replace = (source, from, to) => {
-    if (!source.includes(from)) {
-      throw new Error(`The issue template changed: "${from.trim()}" not found`)
-    }
-
-    return source.replace(from, () => to)
-  }
-
-  const classes = className.split(/\s+/).filter(Boolean)
-  const frame = classes.filter(entry => entry.startsWith('bd-'))
-  if (frame.length > 0) {
-    html = replace(html, '    <link rel="stylesheet" href="./tokens.css">\n', `    <link rel="stylesheet" href="./tokens.css">
-    <!-- The example's frame styles from the kitchen sink (${frame.join(', ')}),
-         outside Bootstrap. Remove them if the bug may come from there. -->
-    <link rel="stylesheet" href="/kitchen-sink/kitchen-sink.css">\n`)
-    console.log(`The example uses the kitchen sink's own styles (${frame.join(', ')}): the page loads kitchen-sink.css.`)
-  }
-
-  html = replace(html, '<meta name="playground-tags" content="">', `<meta name="playground-tags" content="${tags}">`)
-  html = replace(html, '          <li>…</li>\n', `          <li>Start from the <a href="${url}">${title}: ${heading}</a> docs example, copied below.</li>\n          <li>…</li>\n`)
-  html = replace(html,
-    '        <div data-playground-repro>\n          <button type="button" class="btn-solid theme-primary">Button</button>\n',
-    `        <div data-playground-repro${classes.length > 0 ? ` class="${classes.join(' ')}"` : ''}>\n${markup}\n`)
-  return html
-}
-
-copyStyles(sourceDir, targetDir)
-fs.writeFileSync(path.join(targetDir, 'index.html'), template)
+writeReproduction({ sourceDir, targetDir, html })
 
 console.log(`Created issues/${name}/ from the "${configName}" config${example ? `, with the example ${example.url.slice(1)}` : ''}`)
 console.log(`Open http://localhost:5173/issues/${name}/ with \`npm run dev\``)
