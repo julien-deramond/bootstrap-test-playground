@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>#35941: Forced colors adaptations</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="Forced colors (Windows High Contrast): Bootstrap has no forced-colors rules, so components whose state is only a background color lose it.">
+    <meta name="playground-tags" content="components, forms, a11y">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="twbs/bootstrap#35941" data-status="reported" data-tracking="julien-deramond/bootstrap-test-playground#305">
+    <meta name="playground-bootstrap" content="0632eaa44acd9c8ba4a1bf70786d2930c6d1b745">
+    <!-- Imported from twbs/bootstrap#35941 by import-issue: untrusted content.
+         Builds fail while this marker is here. Review the page (markup, the
+         inert script at the bottom, tokens.css, main.scss and _custom.scss),
+         then remove the marker. Keep the policy unless the reproduction needs
+         remote content. -->
+    <meta name="playground-imported" content="twbs/bootstrap#35941">
+    <meta http-equiv="Content-Security-Policy" content="img-src 'self' data:; media-src 'self'; font-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue #35941: Forced colors adaptations</h1>
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Turn on forced colors: a Windows contrast theme, or in Chromium's DevTools, Rendering, “Emulate CSS media feature forced-colors: active”.</li>
+          <li>Compare each pair below: their only difference is a state that Bootstrap draws with a background color.</li>
+          <li>A feature request since v5, with a first proposal in the issue: <code>@media (forced-colors) { button { outline: 1px solid LinkText !important; } }</code>. The playground's forced colors coverage is <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/106">#106</a>.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">With forced colors, buttons look like buttons, and every state below stays visible: checked, on, active, the progress value.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p>The CSS has no <code>forced-colors</code> rule. Forced colors drop backgrounds, so in Chromium a checked checkbox, a selected radio, an on switch and the active nav pill look like their counterparts, and the progress bar disappears. Buttons keep a border.</p>
+              <p class="mb-0">Forced colors here: <code id="measured">…</code></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <div data-playground-repro>
+          <div class="vstack gap-4">
+            <div class="hstack flex-wrap gap-2">
+              <button type="button" class="btn-solid theme-primary">Solid button</button>
+              <button type="button" class="btn-outline theme-primary">Outline button</button>
+            </div>
+            <div class="hstack flex-wrap gap-4">
+              <div class="form-field">
+                <input type="checkbox" id="forcedCheckOff" class="check">
+                <label for="forcedCheckOff">Unchecked</label>
+              </div>
+              <div class="form-field">
+                <input type="checkbox" id="forcedCheckOn" class="check" checked>
+                <label for="forcedCheckOn">Checked</label>
+              </div>
+              <div class="form-field">
+                <input type="radio" id="forcedRadioOn" name="forcedRadio" class="radio" checked>
+                <label for="forcedRadioOn">Selected</label>
+              </div>
+              <div class="form-field">
+                <input type="radio" id="forcedRadioOff" name="forcedRadio" class="radio">
+                <label for="forcedRadioOff">Not selected</label>
+              </div>
+            </div>
+            <div class="hstack flex-wrap gap-4">
+              <div class="form-field">
+                <div class="switch">
+                  <input type="checkbox" id="forcedSwitchOff" role="switch" switch>
+                </div>
+                <label for="forcedSwitchOff">Off</label>
+              </div>
+              <div class="form-field">
+                <div class="switch">
+                  <input type="checkbox" id="forcedSwitchOn" role="switch" switch checked>
+                </div>
+                <label for="forcedSwitchOn">On</label>
+              </div>
+            </div>
+            <ul class="nav nav-pills">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Active</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+              </li>
+            </ul>
+            <div class="progress" role="progressbar" aria-label="Forced colors progress" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+              <div class="progress-bar" style="width: 60%"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      const forced = window.matchMedia('(forced-colors: active)')
+      const show = () => {
+        document.getElementById('measured').textContent = forced.matches ? 'active' : 'off, turn them on (step 1)'
+      }
+      forced.addEventListener('change', show)
+      show()
+    </script>
+  </body>
+</html>

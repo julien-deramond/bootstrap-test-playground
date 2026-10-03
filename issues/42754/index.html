@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>#42754: drawer-sheet ignores drawer-start and drawer-end</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="Drawer: .drawer-sheet is always centered at the bottom, it ignores .drawer-start and .drawer-end.">
+    <meta name="playground-tags" content="components, drawer, javascript">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="twbs/bootstrap#42754" data-status="reported" data-tracking="julien-deramond/bootstrap-test-playground#303">
+    <meta name="playground-bootstrap" content="0632eaa44acd9c8ba4a1bf70786d2930c6d1b745">
+    <!-- Imported from twbs/bootstrap#42754 by import-issue: untrusted content.
+         Builds fail while this marker is here. Review the page (markup, the
+         inert script at the bottom, tokens.css, main.scss and _custom.scss),
+         then remove the marker. Keep the policy unless the reproduction needs
+         remote content. -->
+    <meta name="playground-imported" content="twbs/bootstrap#42754">
+    <meta http-equiv="Content-Security-Policy" content="img-src 'self' data:; media-src 'self'; font-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue #42754: <code>.drawer-sheet</code> ignores <code>.drawer-start</code> and <code>.drawer-end</code></h1>
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Start from the <a href="/kitchen-sink/components-drawer.html">Drawer: Sheet</a> docs example, which uses <code>.drawer-bottom</code>.</li>
+          <li>Open the three sheets below: the docs' <code>.drawer-bottom</code>, then <code>.drawer-start</code> and <code>.drawer-end</code>.</li>
+          <li>Compare where each one sits. The docs say the sheet works with any placement.</li>
+          <li>Fix in flight: <a href="https://github.com/twbs/bootstrap/pull/42755">twbs/bootstrap#42755</a>.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">The start and end sheets are flush with the left and right edges of the viewport, full height, as the bottom sheet is flush with the bottom edge.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p><code>.drawer-sheet</code> sets <code>left: 0</code>, <code>right: 0</code>, <code>width: 100vw</code> and <code>margin-inline: auto</code> whatever the placement, so the start and end sheets span the whole width below <code>lg</code>, and from <code>lg</code> are 760px wide and centered, between the top and bottom insets.</p>
+              <p class="mb-0">Measured here: <code id="measured">open a sheet</code></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <!-- Not in data-playground-repro: drawers are fixed to the viewport, so
+             a light and a dark copy would cover each other. -->
+        <div class="hstack flex-wrap gap-2">
+          <button class="btn-solid theme-secondary" type="button" data-bs-toggle="drawer" data-bs-target="#sheetBottom" aria-controls="sheetBottom">Bottom sheet (docs)</button>
+          <button class="btn-solid theme-primary" type="button" data-bs-toggle="drawer" data-bs-target="#sheetStart" aria-controls="sheetStart">Start sheet</button>
+          <button class="btn-solid theme-primary" type="button" data-bs-toggle="drawer" data-bs-target="#sheetEnd" aria-controls="sheetEnd">End sheet</button>
+        </div>
+
+        <dialog class="drawer drawer-bottom drawer-sheet" tabindex="-1" id="sheetBottom" aria-labelledby="sheetBottomLabel">
+          <div class="drawer-header">
+            <h5 class="drawer-title" id="sheetBottomLabel">Bottom sheet</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="drawer" aria-label="Close"></button>
+          </div>
+          <div class="drawer-body">
+            Flush with the bottom edge, as documented.
+          </div>
+        </dialog>
+
+        <dialog class="drawer drawer-start drawer-sheet" tabindex="-1" id="sheetStart" aria-labelledby="sheetStartLabel">
+          <div class="drawer-header">
+            <h5 class="drawer-title" id="sheetStartLabel">Start sheet</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="drawer" aria-label="Close"></button>
+          </div>
+          <div class="drawer-body">
+            Should be flush with the start edge, full height.
+          </div>
+        </dialog>
+
+        <dialog class="drawer drawer-end drawer-sheet" tabindex="-1" id="sheetEnd" aria-labelledby="sheetEndLabel">
+          <div class="drawer-header">
+            <h5 class="drawer-title" id="sheetEndLabel">End sheet</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="drawer" aria-label="Close"></button>
+          </div>
+          <div class="drawer-body">
+            Should be flush with the end edge, full height.
+          </div>
+        </dialog>
+      </section>
+    </main>
+
+    <script type="module">
+      // Where each sheet ends up once open: its distance to each viewport edge.
+      const measured = document.getElementById('measured')
+      for (const sheet of document.querySelectorAll('.drawer-sheet')) {
+        sheet.addEventListener('shown.bs.drawer', () => {
+          const rect = sheet.getBoundingClientRect()
+          const gaps = {
+            top: rect.top,
+            right: document.documentElement.clientWidth - rect.right,
+            bottom: window.innerHeight - rect.bottom,
+            left: rect.left
+          }
+          measured.textContent = `${sheet.querySelector('.drawer-title').textContent}: ${Math.round(rect.width)}×${Math.round(rect.height)}px, ` +
+            Object.entries(gaps).map(([edge, gap]) => `${Math.round(gap)}px from the ${edge}`).join(', ')
+        })
+      }
+    </script>
+  </body>
+</html>
