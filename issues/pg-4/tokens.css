@@ -1,0 +1,9 @@
+/*
+ * The override under test: a component token, in Bootstrap's `custom` layer,
+ * which comes after `components`. Square checkboxes are expected.
+ */
+@layer custom {
+  .check {
+    --check-border-radius: 0;
+  }
+}

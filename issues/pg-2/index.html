@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-2: Combobox logs "more than one instance per element"</title>
+    <meta name="description" content="Combobox logs &quot;more than one instance per element&quot;: it creates a Menu on its own element, so the Menu is never registered.">
+    <meta name="playground-tags" content="forms, combobox, menu, javascript">
+    <meta name="playground-upstream" content="twbs/bootstrap#42965" data-status="reported" data-tracking="julien-deramond/bootstrap-test-playground#2">
+    <meta name="playground-bootstrap" content="0632eaa44acd9c8ba4a1bf70786d2930c6d1b745">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-2: combobox instance</h1>
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Start from the <a href="/kitchen-sink/forms-combobox.html#example">Combobox: Example</a> docs example, copied below.</li>
+          <li>Open the browser console. Each combobox logs the error once, so twice with the light and dark copies.</li>
+          <li>Run <code>bootstrap.Menu.getInstance(document.querySelector('.combobox-toggle'))</code>.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">No console error, and <code>Menu.getInstance()</code> returns the combobox's menu.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p>The console logs <code>Bootstrap doesn't allow more than one instance per element. Bound instance: bs.combobox.</code> <code>Combobox</code> creates its <code>Menu</code> on its own element, and <code>Data.set</code> refuses a second instance there.</p>
+              <p class="mb-0">Measured here: <code id="measured">…</code></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <div data-playground-repro>
+          <button class="form-control combobox-toggle" type="button"
+                data-bs-toggle="combobox"
+                data-bs-name="option"
+                data-bs-placeholder="Select an item…">
+            <span class="combobox-value">Select an item…</span>
+            <svg class="combobox-caret" width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.46967 5.46967C0.762563 5.17678 1.23744 5.17678 1.53033 5.46967L5 8.93934L8.46967 5.46967C8.76256 5.17678 9.23744 5.17678 9.53033 5.46967C9.82322 5.76256 9.82322 6.23744 9.53033 6.53033L5.53033 10.5303C5.23744 10.8232 4.76256 10.8232 4.46967 10.5303L0.46967 6.53033C0.176777 6.23744 0.176777 5.76256 0.46967 5.46967Z" fill="currentcolor"/></svg>
+          </button>
+          <div class="menu">
+            <button class="menu-item" type="button" data-bs-value="1">Option one</button>
+            <button class="menu-item" type="button" data-bs-value="2">Option two</button>
+            <button class="menu-item" type="button" data-bs-value="3">Option three</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Bootstrap is on `window.bootstrap` once src/js/main.js has imported it,
+      // which may come after `load`. Timers rather than requestAnimationFrame,
+      // which stops in hidden tabs.
+      const ready = () => new Promise(resolve => {
+        const check = () => (window.bootstrap && document.readyState === 'complete' ? resolve() : setTimeout(check, 50))
+        check()
+      })
+      await ready()
+
+      const { Combobox, Menu } = window.bootstrap
+      const toggle = document.querySelector('.combobox-toggle')
+      const menu = Menu.getInstance(toggle)
+      document.getElementById('measured').textContent =
+        `Combobox.getInstance(): ${Combobox.getInstance(toggle) ? 'a Combobox' : 'null'}, Menu.getInstance(): ${menu ? 'a Menu' : 'null'}`
+    </script>
+  </body>
+</html>

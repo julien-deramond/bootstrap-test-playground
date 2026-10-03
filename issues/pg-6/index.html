@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-6: Combobox long value overflows</title>
+    <meta name="description" content="Combobox: a long value overflows .form-field and never shows an ellipsis.">
+    <meta name="playground-tags" content="forms, combobox">
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#6">
+    <meta name="playground-bootstrap" content="0632eaa44acd9c8ba4a1bf70786d2930c6d1b745">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-6: combobox overflow</h1>
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Start from the <a href="/kitchen-sink/forms-combobox.html#with-form-field">Combobox: With form field</a> docs example, copied below.</li>
+          <li>Make the <code>.form-field</code> 200px wide, and pre-select an option with a long label.</li>
+          <li>In the second field, add <code>min-width: 0</code> to the toggle.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">Both toggles fit their field, and the value ends with an ellipsis.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p>The first toggle overflows its field: in the <code>.form-field</code> grid, its automatic minimum width is its content's. The second one fits, but its value is cut off with no ellipsis: <code>.combobox-value</code> is <code>display: flex</code>, so <code>text-overflow</code> doesn't apply to its text.</p>
+              <p class="mb-0">Measured here: <code id="measured">…</code></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <div data-playground-repro>
+          <div class="vstack gap-3">
+            <div class="form-field pg-narrow">
+              <label for="exampleCombobox" class="form-label">Combobox</label>
+              <button class="form-control combobox-toggle" type="button" id="exampleCombobox"
+                  data-bs-toggle="combobox"
+                  data-bs-name="country"
+                  data-bs-placeholder="Pick a country…">
+                <span class="combobox-value">Pick a country…</span>
+                <svg class="combobox-caret" width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.46967 5.46967C0.762563 5.17678 1.23744 5.17678 1.53033 5.46967L5 8.93934L8.46967 5.46967C8.76256 5.17678 9.23744 5.17678 9.53033 5.46967C9.82322 5.76256 9.82322 6.23744 9.53033 6.53033L5.53033 10.5303C5.23744 10.8232 4.76256 10.8232 4.46967 10.5303L0.46967 6.53033C0.176777 6.23744 0.176777 5.76256 0.46967 5.46967Z" fill="currentcolor"/></svg>
+              </button>
+              <div class="menu">
+                <button class="menu-item" type="button" data-bs-value="us">United States</button>
+                <button class="menu-item selected" type="button" data-bs-value="uk" aria-selected="true">United Kingdom of Great Britain and Northern Ireland</button>
+                <button class="menu-item" type="button" data-bs-value="ca">Canada</button>
+              </div>
+            </div>
+            <div class="form-field pg-narrow">
+              <label for="exampleComboboxMinWidth" class="form-label">Combobox with <code>min-width: 0</code></label>
+              <button class="form-control combobox-toggle pg-min-width-0" type="button" id="exampleComboboxMinWidth"
+                  data-bs-toggle="combobox"
+                  data-bs-name="country-min-width"
+                  data-bs-placeholder="Pick a country…">
+                <span class="combobox-value">Pick a country…</span>
+                <svg class="combobox-caret" width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.46967 5.46967C0.762563 5.17678 1.23744 5.17678 1.53033 5.46967L5 8.93934L8.46967 5.46967C8.76256 5.17678 9.23744 5.17678 9.53033 5.46967C9.82322 5.76256 9.82322 6.23744 9.53033 6.53033L5.53033 10.5303C5.23744 10.8232 4.76256 10.8232 4.46967 10.5303L0.46967 6.53033C0.176777 6.23744 0.176777 5.76256 0.46967 5.46967Z" fill="currentcolor"/></svg>
+              </button>
+              <div class="menu">
+                <button class="menu-item" type="button" data-bs-value="us">United States</button>
+                <button class="menu-item selected" type="button" data-bs-value="uk" aria-selected="true">United Kingdom of Great Britain and Northern Ireland</button>
+                <button class="menu-item" type="button" data-bs-value="ca">Canada</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // The combobox renders the selected value once Bootstrap is on
+      // `window.bootstrap`, which may come after `load`. Timers rather than
+      // requestAnimationFrame, which stops in hidden tabs.
+      const ready = () => new Promise(resolve => {
+        const check = () => (window.bootstrap && document.readyState === 'complete' ? resolve() : setTimeout(check, 50))
+        check()
+      })
+      await ready()
+
+      const [plain, minWidth] = document.querySelector('[data-playground-repro]').querySelectorAll('.combobox-toggle')
+      const value = minWidth.querySelector('.combobox-value')
+      document.getElementById('measured').textContent =
+        `toggle ${Math.round(plain.getBoundingClientRect().width)}px in a ${Math.round(plain.parentElement.getBoundingClientRect().width)}px field; ` +
+        `with min-width: 0, ${Math.round(minWidth.getBoundingClientRect().width)}px, its value ${value.scrollWidth > value.clientWidth ? 'clipped' : 'not clipped'}`
+    </script>
+  </body>
+</html>
