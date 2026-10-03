@@ -8,8 +8,12 @@
 //
 // `assert()` runs in the page once Bootstrap is on `window.bootstrap`, with
 // the page's own markup, and returns `pass: true` when the bug is gone, `false`
-// while it's there, `null` when this environment can't tell. See "Assertions"
-// in docs/pages.md.
+// while it's there, `null` when this environment can't tell. A bug that needs
+// the keyboard or the viewport has a Playwright spec instead,
+// issues/<name>/repro.spec.js on tests/issues/fixtures.js, which records the
+// same verdict; it's run here with `playwright test` against this script's dev
+// server, and takes precedence over assert.js. See "Assertions" in
+// docs/pages.md.
 //
 // Usage: npm run check-issues [-- <name>...] [--no-gh]
 //
@@ -17,12 +21,12 @@
 //         which deletes the reproduction
 //   FAIL  still broken, the expected state
 //   SKIP  the assertion can't tell here (overlay scrollbars, say)
-//   NONE  no assert.js
+//   NONE  no assert.js and no repro.spec.js
 //
 // With the GitHub CLI, each tracking issue's state and label are checked
 // against the result, and the step's commands are printed. Exits with 1 when a
 // reproduction passes, errors, or fails while its tracking issue is closed.
-import { spawnSync } from 'node:child_process'
+import { spawn, spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { parseArgs } from 'node:util'
@@ -61,7 +65,8 @@ function readReproduction(name) {
     upstream: meta?.[1] || '',
     status: meta?.[2] || '',
     tracking: meta?.[3] || '',
-    hasAssert: fs.existsSync(path.join(issuesDir, name, 'assert.js'))
+    hasAssert: fs.existsSync(path.join(issuesDir, name, 'assert.js')),
+    hasSpec: fs.existsSync(path.join(issuesDir, name, 'repro.spec.js'))
   }
 }
 
@@ -82,10 +87,15 @@ async function runAssertions() {
   // Headless Chromium hides scrollbars by default, which some assertions measure.
   const browser = await chromium.launch({ ignoreDefaultArgs: ['--hide-scrollbars'] })
   try {
+    await runSpecs(reproductions.filter(reproduction => reproduction.hasSpec), base)
     for (const reproduction of reproductions) {
+      if (reproduction.hasSpec) {
+        continue
+      }
+
       if (!reproduction.hasAssert) {
         reproduction.result = 'NONE'
-        reproduction.details = 'no assert.js next to the page'
+        reproduction.details = 'no assert.js or repro.spec.js next to the page'
         continue
       }
 
@@ -137,6 +147,88 @@ async function runAssertions() {
   } finally {
     await browser.close()
     await server.close()
+  }
+}
+
+// Runs a command and resolves with its output. Asynchronous on purpose: the
+// dev server lives in this process, and spawnSync would stop it from answering
+// the browser while the command runs.
+const run = (command, args, env) => new Promise(resolve => {
+  const child = spawn(command, args, { cwd: root, env: { ...process.env, ...env } })
+  let stdout = ''
+  let stderr = ''
+  child.stdout.on('data', chunk => (stdout += chunk))
+  child.stderr.on('data', chunk => (stderr += chunk))
+  child.on('error', error => resolve({ status: null, stdout, stderr, error }))
+  child.on('close', status => resolve({ status, stdout, stderr }))
+})
+
+// The specs, in one `playwright test` run against the dev server, each test's
+// verdict from the annotation the fixture adds. A test that threw is an error.
+async function runSpecs(specs, base) {
+  if (specs.length === 0) {
+    return
+  }
+
+  const output = path.join(root, 'tests/results/check-issues.json')
+  fs.mkdirSync(path.dirname(output), { recursive: true })
+  fs.rmSync(output, { force: true })
+  // The files first: `--project` takes every value after it.
+  const result = await run('npx', ['playwright', 'test', ...specs.map(({ name }) => `issues/${name}/repro.spec.js`), '--project', 'issues', '--reporter=json'],
+    { PLAYWRIGHT_BASE_URL: base, PLAYWRIGHT_JSON_OUTPUT_FILE: output, FORCE_COLOR: '0' })
+  let report
+  try {
+    report = JSON.parse(fs.readFileSync(output, 'utf8'))
+  } catch {
+    for (const spec of specs) {
+      spec.result = 'ERROR'
+      spec.details = `playwright test didn't report: ${(result.stderr || result.stdout || result.error?.message || '').trim().split('\n').find(Boolean) ?? `exit code ${result.status}`}`
+    }
+
+    return
+  }
+
+  const tests = []
+  const walk = suite => {
+    for (const spec of suite.specs ?? []) {
+      for (const test of spec.tests) {
+        const verdict = test.annotations.find(({ type }) => type === 'verdict')
+        const last = test.results.at(-1)
+        tests.push({
+          name: path.basename(path.dirname(path.resolve(root, 'tests', spec.file))),
+          title: spec.title,
+          verdict: verdict ? JSON.parse(verdict.description) : null,
+          // eslint-disable-next-line no-control-regex
+          error: last?.status === 'passed' ? null : (last?.error?.message ?? `${last?.status ?? 'no result'}`).replace(/\u001B\[[\d;]*[A-Za-z]/g, '').split('\n').find(line => line.trim())
+        })
+      }
+    }
+
+    for (const child of suite.suites ?? []) {
+      walk(child)
+    }
+  }
+
+  walk(report)
+  for (const spec of specs) {
+    const own = tests.filter(test => test.name === spec.name)
+    if (own.length === 0) {
+      spec.result = 'ERROR'
+      spec.details = 'repro.spec.js ran no test'
+      continue
+    }
+
+    // A fixed bug fails its test on purpose, with the verdict recorded first.
+    const broken = own.filter(test => !test.verdict)
+    if (broken.length > 0) {
+      spec.result = 'ERROR'
+      spec.details = broken.map(test => `${test.title}: ${test.error}`).join('; ')
+      continue
+    }
+
+    const passes = own.map(test => test.verdict.pass)
+    spec.result = passes.every(pass => pass === true) ? 'PASS' : passes.some(pass => pass === false) ? 'FAIL' : 'SKIP'
+    spec.details = `${own.map(test => test.verdict.details).join('; ')} (repro.spec.js)`
   }
 }
 
@@ -246,7 +338,7 @@ for (const reproduction of reproductions) {
 }
 
 if (counts.NONE > 0) {
-  console.log(`\n${counts.NONE} reproduction(s) without an assertion: add an assert.js next to the page to know when the fix lands (see "Assertions" in docs/pages.md).`)
+  console.log(`\n${counts.NONE} reproduction(s) without an assertion: add an assert.js or a repro.spec.js next to the page to know when the fix lands (see "Assertions" in docs/pages.md).`)
 }
 
 if (problems === 0) {

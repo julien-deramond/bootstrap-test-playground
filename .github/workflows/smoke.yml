@@ -12,6 +12,10 @@ name: Smoke tests
 # the working copy and dist only: engine differences seldom depend on the
 # config. Every variant runs in every engine each night and on demand, and in
 # the canary on every Bootstrap update.
+#
+# The Chromium job also runs the reproductions' own specs, the `issues`
+# project (issues/<name>/repro.spec.js): one that passes means a tracked bug
+# is fixed upstream, and fails the job with the step to take.
 on:
   pull_request:
   schedule:
@@ -60,7 +64,7 @@ jobs:
       - run: echo 'SMOKE_SCOPE={"full":false,"configs":[],"urls":[]}' >> "$GITHUB_ENV"
         if: ${{ github.event_name == 'pull_request' && matrix.engine != 'chromium' }}
 
-      - run: npx playwright test --project ${{ matrix.project }}
+      - run: npx playwright test --project ${{ matrix.project }} ${{ matrix.engine == 'chromium' && '--project issues' || '' }}
 
       - uses: actions/upload-artifact@v7
         if: ${{ failure() }}

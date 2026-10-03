@@ -21,6 +21,7 @@
     "test-scope": "node scripts/test-scope.mjs",
     "test:smoke": "playwright test --project smoke",
     "test:smoke:engines": "playwright test --project \"smoke*\"",
+    "test:issues": "playwright test --project issues",
     "lint:html": "node scripts/lint-html.mjs",
     "check-configs": "node scripts/check-configs.mjs",
     "check-dist": "node scripts/check-dist.mjs",

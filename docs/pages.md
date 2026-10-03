@@ -119,12 +119,29 @@ export async function assert() {
 
 `npm run check-issues [-- <name>...]` opens every reproduction in headless Chromium, with the dev server, and calls its `assert()` in the page once Bootstrap is on `window.bootstrap`, the document is loaded and a non-default config has swapped its styles in. The function returns `pass: true` when the bug is gone, `false` while it's there, `null` when the environment can't tell (`details` says why), and a one-line `details` with what it measured, which the table shows. The dark clone is there too: `document.querySelector` and `getElementById` reach the light copy, with the original ids. An optional `environment` export sets the viewport and emulates `forcedColors` or `colorScheme` before the assertion runs. Keep the assertion to the bug itself: a check stricter than the upstream fix never passes.
 
+A bug that needs the keyboard, a click, or a forced pseudo-class gets a Playwright spec instead, `issues/<name>/repro.spec.js`, which `npm run new-issue <name> -- --spec` creates from a template. It builds on the `repro` fixture of [`tests/issues/fixtures.js`](../tests/issues/fixtures.js):
+
+```js
+import { expect, test } from '../../tests/issues/fixtures.js'
+
+test('a chip focused from the keyboard shows a focus ring', async ({ page, repro }) => {
+  await repro.open()                                  // ?chrome=0&freeze, Bootstrap and the config's styles in
+  await page.locator('[data-playground-repro] input').first().click()
+  await page.keyboard.press('Shift+Tab')
+  const outline = await page.locator('.chip').last().evaluate(chip => getComputedStyle(chip).outlineStyle)
+  await repro.screenshot('focused chip')              // attached to the report
+  repro.verdict(outline !== 'none', `outline-style: ${outline}`)
+})
+```
+
+`repro.verdict(pass, details)` records the same verdict as `assert()`, and `repro.expectFixed(details, assertions)` turns failed `expect` calls into a false verdict, so the assertions describe the fixed behavior. `repro.forcePseudoState(locator, ['hover'])` forces pseudo-classes through the DevTools protocol, so the `issues` project is Chromium only. A false verdict is the expected state and the test passes; a true one means the fix landed, and the test fails with the step to take. A spec that throws fails like any test, so a broken spec never passes for a fixed bug. The specs run as the `issues` Playwright project, `npm run test:issues`, on a build like the other suites; the Chromium job of [`smoke.yml`](../.github/workflows/smoke.yml) runs them on every pull request and every night. `check-issues` runs a reproduction's spec, against its own dev server, instead of its `assert.js` when it has one.
+
 The table has one line per reproduction, with its tracking issue and label, read with the GitHub CLI (`--no-gh` skips that):
 
 - **PASS**: the fix landed. Check the page by hand, then follow step 3 of [Upstream issue tracking](../CLAUDE.md#upstream-issue-tracking): the command prints its `gh` commands, the `git rm` of the reproduction and its visual baselines, and the allowlists that still reference the issue.
 - **FAIL**: still broken, the expected state. With a closed tracking issue, the bug is back or was never fixed.
 - **SKIP**: the assertion can't tell here. `issues/42546/` needs classic scrollbars, which headless Chromium has on Linux, not on macOS.
-- **NONE**: no `assert.js`.
+- **NONE**: no `assert.js` and no `repro.spec.js`.
 
 The exit code is 1 when a reproduction passes, errors, or fails with a closed tracking issue. The nightly canary runs it, so a fix that lands upstream shows up in its report the next morning as a stale entry, and the status sweep gets the same answer from the tracker a few days later.
 
