@@ -102,6 +102,32 @@ The markup under test goes in the `data-playground-repro` block, shown in light 
 
 To share a reproduction, push the repository and link to the folder on GitHub, or open it in StackBlitz: `https://stackblitz.com/github/julien-deramond/bootstrap-test-playground`.
 
+### Assertions
+
+A reproduction can say what "fixed" looks like, in an `assert.js` next to its page:
+
+```js
+// issues/42754/assert.js
+export const environment = { viewport: { width: 1280, height: 600 } }  // optional
+
+export async function assert() {
+  const sheet = document.getElementById('sheetStart')
+  // open it, measure it…
+  return { pass: Math.round(sheet.getBoundingClientRect().left) === 0, details: '…px from the left edge' }
+}
+```
+
+`npm run check-issues [-- <name>...]` opens every reproduction in headless Chromium, with the dev server, and calls its `assert()` in the page once Bootstrap is on `window.bootstrap`, the document is loaded and a non-default config has swapped its styles in. The function returns `pass: true` when the bug is gone, `false` while it's there, `null` when the environment can't tell (`details` says why), and a one-line `details` with what it measured, which the table shows. The dark clone is there too: `document.querySelector` and `getElementById` reach the light copy, with the original ids. An optional `environment` export sets the viewport and emulates `forcedColors` or `colorScheme` before the assertion runs. Keep the assertion to the bug itself: a check stricter than the upstream fix never passes.
+
+The table has one line per reproduction, with its tracking issue and label, read with the GitHub CLI (`--no-gh` skips that):
+
+- **PASS**: the fix landed. Check the page by hand, then follow step 3 of [Upstream issue tracking](../CLAUDE.md#upstream-issue-tracking): the command prints its `gh` commands, the `git rm` of the reproduction and its visual baselines, and the allowlists that still reference the issue.
+- **FAIL**: still broken, the expected state. With a closed tracking issue, the bug is back or was never fixed.
+- **SKIP**: the assertion can't tell here. `issues/42546/` needs classic scrollbars, which headless Chromium has on Linux, not on macOS.
+- **NONE**: no `assert.js`.
+
+The exit code is 1 when a reproduction passes, errors, or fails with a closed tracking issue. The nightly canary runs it, so a fix that lands upstream shows up in its report the next morning as a stale entry, and the status sweep gets the same answer from the tracker a few days later.
+
 ### Importing an upstream issue
 
 ```sh

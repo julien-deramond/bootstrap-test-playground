@@ -42,7 +42,8 @@
     "update-bootstrap": "node scripts/update-bootstrap.mjs",
     "record-update": "node scripts/record-update.mjs",
     "status-sweep": "node scripts/status-sweep.mjs",
-    "import-issue": "node scripts/import-issue.mjs"
+    "import-issue": "node scripts/import-issue.mjs",
+    "check-issues": "node scripts/check-issues.mjs"
   },
   "engines": {
     "node": ">=20.19"

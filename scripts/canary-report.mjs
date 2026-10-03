@@ -49,6 +49,7 @@ const CHECKS = [
   { name: 'check-size', command: 'npm run -s check-size', table: true },
   { name: 'audit-motion --render', command: 'npm run -s audit-motion -- --render' },
   { name: 'audit-layers --render', command: 'npm run -s audit-layers -- --render' },
+  { name: 'check-issues', command: 'npm run -s check-issues' },
   { name: 'test:console', command: 'npm run -s test:console -- --reporter=line', env: { CONSOLE_SCOPE: BASELINE } },
   { name: 'test:smoke', command: 'npm run -s test:smoke:engines -- --reporter=line', env: { SMOKE_SCOPE: BASELINE } },
   { name: 'test:a11y', command: 'npm run -s test:a11y -- --reporter=line' },

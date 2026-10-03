@@ -90,6 +90,8 @@ Each comment carries a hidden marker, so a finding is reported once. The job sum
 
 `npm run status-sweep` alone is a dry run: it prints what it would do and changes nothing. `-- --since 2026-09-01` looks further back for possible matches.
 
+The sweep asks the tracker. `npm run check-issues` asks the playground: it runs each reproduction's assertion (see [Assertions](pages.md#assertions)) and reports which bugs no longer reproduce, with the step 3 commands. The canary runs it every night.
+
 ## Testing a local checkout
 
 To test a local Bootstrap checkout instead of the GitHub package, such as a branch you're working on, point `BOOTSTRAP_PATH` to it:
