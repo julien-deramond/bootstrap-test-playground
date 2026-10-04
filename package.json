@@ -60,10 +60,10 @@
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.63.0",
     "autoprefixer": "^10.6.1",
-    "html-validate": "^11.16.0",
+    "html-validate": "^11.16.1",
     "parse5": "^8.0.1",
     "postcss-prefix-custom-properties": "^0.1.0",
-    "sass-embedded": "^1.105.0",
-    "vite": "^8.3.1"
+    "sass-embedded": "^1.105.1",
+    "vite": "^8.3.2"
   }
 }
