@@ -21,55 +21,10 @@ import path from 'node:path'
 import { expect, test } from '@playwright/test'
 import { loadEnv } from 'vite'
 import { bootstrapSource } from '../../scripts/lib/bootstrap.mjs'
-import { configDir, listConfigs, readPartials, root } from '../../scripts/lib/configs.mjs'
+import { root } from '../../scripts/lib/configs.mjs'
 import { listReproductions } from '../../scripts/lib/export-issue.mjs'
 import { readReproductionMeta } from '../../scripts/lib/repro-status.mjs'
-import known from './known-issues.js'
-
-const VARIANTS = [
-  ...['working', ...listConfigs().map(({ name }) => name)].map(config => ({ name: config, params: `config=${config}` })),
-  { name: 'dist', params: 'config=working&css=dist&js=dist' }
-]
-
-// Records every Bootstrap event (`show.bs.menu`…) as it's dispatched.
-function recordEvents() {
-  window.bsEvents = []
-  const dispatch = EventTarget.prototype.dispatchEvent
-  EventTarget.prototype.dispatchEvent = function (event) {
-    if (event.type.includes('.bs.')) {
-      window.bsEvents.push(event.type)
-    }
-
-    return dispatch.call(this, event)
-  }
-}
-
-async function load(page, url, params) {
-  await page.addInitScript(recordEvents)
-  await page.goto(`${url}?${params}&chrome=0&freeze`)
-  await page.waitForFunction(() => !document.getElementById('playground-config-pending'))
-  await page.waitForFunction(() => window.bootstrap)
-}
-
-const events = page => page.evaluate(() => window.bsEvents)
-const clearEvents = page => page.evaluate(() => {
-  window.bsEvents = []
-})
-
-// Waits until the events were emitted, in this order (others may interleave).
-async function expectEvents(page, expected) {
-  await expect.poll(async () => {
-    const seen = await events(page)
-    let index = 0
-    for (const type of seen) {
-      if (type === expected[index]) {
-        index++
-      }
-    }
-
-    return expected.slice(index)
-  }, { message: `events ${expected.join(', ')}`, timeout: 3000 }).toEqual([])
-}
+import { PAGES, PARTIALS, VARIANTS, clearEvents, events, expectEvents, first, inScope, known, knownFor, leftOut, load, tabsToControls } from './shared.js'
 
 // What a closed overlay could leave behind: open dialogs (some docs examples
 // render one open), a scroll lock, inert content.
@@ -93,58 +48,52 @@ async function pin(page, locator, name) {
   return page.locator(`[data-smoke="${name}"]`)
 }
 
-// The first element matching `selector` outside the playground's UI.
-const first = (page, selector) => page.locator(selector).filter({ visible: true }).first()
+// '' when the tab order overlay draws its stop `index` over `selector` (the
+// focused element by default), else where both are. The page may still be
+// scrolling to the control (the overlay only draws the boxes in the viewport,
+// a frame later), so both are measured together on every attempt, and
+// sub-pixel text widths differ slightly between them in WebKit.
+const drawnOver = (layer, index, selector) => layer.evaluate((layer, [index, selector]) => {
+  const target = selector ? document.querySelector(selector) : document.activeElement
+  const box = layer.querySelector(`.box[data-index="${index}"]`)
+  const rect = element => {
+    const { left, top, width, height } = element.getBoundingClientRect()
+    return { left, top, width, height }
+  }
 
-// Each scenario's kitchen sink page, so a pull request that changes the page
-// runs the scenario with every config (SMOKE_SCOPE).
-const PAGES = {
-  dialog: '/kitchen-sink/components-dialog.html',
-  drawer: '/kitchen-sink/components-drawer.html',
-  menu: '/kitchen-sink/components-menu.html',
-  tooltip: '/kitchen-sink/components-tooltip.html',
-  popover: '/kitchen-sink/components-popover.html',
-  collapse: '/kitchen-sink/components-collapse.html',
-  tab: '/kitchen-sink/components-tab.html',
-  carousel: '/kitchen-sink/components-carousel.html',
-  toast: '/kitchen-sink/components-toasts.html',
-  alert: '/kitchen-sink/components-alert.html',
-  button: '/kitchen-sink/components-button.html',
-  toggler: '/kitchen-sink/components-toggler.html',
-  scrollspy: '/kitchen-sink/components-scrollspy.html',
-  combobox: '/kitchen-sink/forms-combobox.html',
-  datepicker: '/kitchen-sink/forms-datepicker.html',
-  otp: '/kitchen-sink/forms-otp-input.html',
-  chips: '/kitchen-sink/forms-chips.html',
-  strength: '/kitchen-sink/forms-password-strength.html',
-  range: '/kitchen-sink/forms-range.html'
+  if (box && target && Object.entries(rect(target)).every(([key, value]) => Math.abs(rect(box)[key] - value) < 0.5)) {
+    return ''
+  }
+
+  const where = element => Object.values(rect(element)).map(value => Math.round(value * 10) / 10).join(', ')
+  const name = target ? `${target.localName}${target.id ? `#${target.id}` : ''} at ${where(target)}` : 'nothing'
+  return `${name}, box ${box ? `at ${where(box)}` : 'not drawn'}`
+}, [index, selector])
+
+// In the page, given the element focused before Tab: whether Tab went from a
+// radio without a name past the next one of the same form. Marks that radio
+// `data-skipped-radio` and scrolls it into view.
+function skipsUnnamedRadio(from) {
+  const unnamed = element => element?.matches?.('input[type="radio"]:not([name]), input[type="radio"][name=""]')
+  if (!unnamed(from)) {
+    return false
+  }
+
+  const to = document.activeElement
+  const follows = (a, b) => Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING)
+  // Focus left the page's stops: Tab wrapped around, or went to the browser.
+  const end = !to || to === document.body || !follows(from, to)
+  const skipped = [...document.querySelectorAll('input[type="radio"]')].find(radio =>
+    unnamed(radio) && radio.form === from.form && follows(from, radio) && (end || follows(radio, to)) &&
+    !radio.disabled && radio.tabIndex >= 0 && !radio.closest('[inert]') && radio.checkVisibility({ visibilityProperty: true }))
+  if (!skipped) {
+    return false
+  }
+
+  skipped.dataset.skippedRadio = ''
+  skipped.scrollIntoView({ block: 'center' })
+  return true
 }
-
-// The partial that styles each scenario's component. A config that loads only
-// some partials (configs/partial) leaves the others out on purpose, so their
-// scenarios are skipped there. Toggler and scrollspy only need JavaScript.
-const PARTIALS = {
-  dialog: 'dialog',
-  drawer: 'drawer',
-  menu: 'menu',
-  tooltip: 'tooltip',
-  popover: 'popover',
-  collapse: 'transitions',
-  tab: 'nav',
-  carousel: 'carousel',
-  toast: 'toasts',
-  alert: 'alert',
-  button: 'buttons',
-  combobox: 'forms',
-  datepicker: 'datepicker',
-  otp: 'forms',
-  chips: 'forms',
-  strength: 'forms',
-  range: 'forms'
-}
-
-const loadedPartials = Object.fromEntries(listConfigs().map(({ name }) => [name, readPartials(configDir(name))]))
-const leftOut = (variant, name) => Boolean(loadedPartials[variant] && PARTIALS[name] && !loadedPartials[variant].includes(PARTIALS[name]))
 
 const SCENARIOS = {
   async dialog(page) {
@@ -455,17 +404,11 @@ const SCENARIOS = {
   }
 }
 
-const scope = process.env.SMOKE_SCOPE ? JSON.parse(process.env.SMOKE_SCOPE) : { full: true }
-const inScope = (variant, name) => scope.full || ['working', 'dist'].includes(variant) ||
-  scope.configs.includes(variant) || scope.urls.includes(PAGES[name])
-
 for (const { name: variant, params } of VARIANTS) {
   test.describe(variant, () => {
     for (const [name, scenario] of Object.entries(SCENARIOS).filter(([name]) => inScope(variant, name))) {
       test(name, async ({ page, browserName }) => {
-        const issue = known.find(entry => entry.scenario === name &&
-          (!entry.configs || entry.configs.includes(variant)) &&
-          (!entry.engines || entry.engines.includes(browserName)))
+        const [issue] = knownFor(known.filter(entry => entry.scenario === name), variant, browserName)
         test.skip(leftOut(variant, name), `${variant} doesn't load the ${PARTIALS[name]} partial`)
         test.fail(Boolean(issue), issue && `known upstream bug #${issue.issue}`)
         page.config = params
@@ -603,6 +546,49 @@ test.describe('playground', () => {
     expect(posts[0].method()).toBe('POST')
     expect(fields.get('project[template]')).toBe('node')
     expect(fields.get('project[files][main.scss]')).toContain('bootstrap/scss/bootstrap')
+  })
+
+  // The tab order overlay (src/js/tab-order.js) numbers the tab stops in the
+  // order Tab visits them: roving tabindex, disabled controls, radio groups.
+  test('tab order', async ({ page, browserName }) => {
+    await page.goto('/kitchen-sink/components-button.html?freeze')
+    await page.waitForFunction(() => window.bootstrap)
+    const toolbar = page.locator('#playground-toolbar')
+    await toolbar.getByRole('button', { name: /^Playground settings/ }).click()
+    const button = toolbar.getByRole('button', { name: /^Show tab order/ })
+    await button.click()
+    await expect(button).toHaveAttribute('aria-pressed', 'true')
+    await page.keyboard.press('Escape')
+    const layer = page.locator('#playground-tab-order [popover]')
+    await expect(layer).toHaveAttribute('data-count', /^\d+$/)
+    test.skip(!await tabsToControls(page), 'Tab skips buttons and links here')
+
+    // It stays on from page to page, in the same tab.
+    for (const url of ['/kitchen-sink/components-tab.html', '/kitchen-sink/forms-radio.html']) {
+      await page.goto(`${url}?freeze`)
+      await page.waitForFunction(() => window.bootstrap)
+      await expect(layer).toHaveAttribute('data-count', /^\d+$/)
+      const count = Math.min(Number(await layer.getAttribute('data-count')), 60)
+      for (let index = 1; index <= count; index++) {
+        const previous = await page.evaluateHandle(() => document.activeElement)
+        await page.keyboard.press('Tab')
+        // WebKit's Tab never goes from a radio without a name to another one
+        // of the same form: it takes them all for a single group, where HTML
+        // puts each in a group of its own, as the overlay, Chromium and Firefox
+        // do. Check that the overlay's stop is the radio WebKit skipped; the
+        // rest of the page no longer lines up.
+        if (browserName === 'webkit' && await previous.evaluate(skipsUnnamedRadio)) {
+          await expect.poll(() => drawnOver(layer, index, '[data-skipped-radio]'), `tab stop ${index} of ${url}, skipped by WebKit`).toBe('')
+          test.info().annotations.push({ type: 'WebKit skips unnamed radios', description: `${url}: walked ${index - 1} of ${count} stops` })
+          break
+        }
+
+        await expect.poll(() => drawnOver(layer, index), `tab stop ${index} of ${url}`).toBe('')
+      }
+    }
+
+    await page.keyboard.press('Alt+Shift+O')
+    await expect(layer).toHaveCount(0)
   })
 
   // The first-visit hint hides under automation: pretend to be a person.
