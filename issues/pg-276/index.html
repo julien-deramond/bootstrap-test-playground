@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-276: Theme inverse bg-muted is light in dark mode</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="Theme docs: fg-emphasis works best with muted, but inverse bg-muted is light in dark mode, so fg-emphasis on it is 2.14:1.">
+    <meta name="playground-tags" content="theme, colors, accessibility">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#276">
+    <meta name="playground-bootstrap" content="0632eaa44acd9c8ba4a1bf70786d2930c6d1b745">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <!-- Before filing, the tracking issue needs (see CLAUDE.md, "Record a
+         potential bug"):
+         - [ ] Summary: one or two sentences, also the description above
+         - [ ] Bootstrap version: the v6-dev commit, shown in the header
+         - [ ] Reproduction: the steps below, and a link to this page
+         - [ ] Expected / Actual, below
+         - [ ] Root cause: file:line in twbs/bootstrap with a permalink, when known
+         - [ ] Possible fix, when known
+         And an assert.js next to this page, when "fixed" can be measured, or
+         a repro.spec.js (`new-issue -- --spec`) when it takes the keyboard or
+         the viewport: `npm run check-issues` then tells when the fix lands
+         (see "Assertions" in docs/pages.md). -->
+    <main class="container py-5">
+      <!-- data-playground-chrome: hidden by ?chrome=0, which shows the
+           markup under test alone (screenshots, embeds). -->
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-276: inverse bg-muted in dark mode</h1>
+        <!-- Filled from the metadata above: status, upstream and tracking
+             links, and the Bootstrap commit. -->
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Draw <code>inverse</code>'s <code>--theme-fg-emphasis</code> text on its <code>--theme-bg-muted</code> background, as the theme docs pair them.</li>
+          <li>Compare the light and dark copies below, or run <code>npm run report:contrast -- --config default</code> (rows <code>inverse fg-emphasis on bg-muted</code> and <code>inverse fg on bg-muted</code>).</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0"><code>fg-emphasis</code> on <code>bg-muted</code> meets 4.5:1 in both modes.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p>In dark mode, <code>inverse</code> <code>bg-muted</code> is <code>--gray-300</code>, lighter than in light mode, so <code>fg-emphasis</code> on it is 2.14:1 and <code>fg</code> 1.31:1.</p>
+              <p class="mb-0">Measured here: <code id="measured">…</code></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <div data-playground-repro>
+          <div class="vstack gap-2">
+            <div class="theme-inverse p-2 rounded" style="background: var(--bs-theme-bg-muted); color: var(--bs-theme-fg-emphasis)">inverse: fg-emphasis on bg-muted</div>
+            <div class="theme-inverse p-2 rounded" style="background: var(--bs-theme-bg-muted); color: var(--bs-theme-fg)">inverse: fg on bg-muted</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      import { assert } from './assert.js'
+
+      const show = async () => {
+        document.getElementById('measured').textContent = (await assert()).details
+      }
+
+      if (document.readyState === 'complete') {
+        show()
+      } else {
+        window.addEventListener('load', show, { once: true })
+      }
+    </script>
+  </body>
+</html>
