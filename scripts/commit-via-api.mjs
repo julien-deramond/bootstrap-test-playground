@@ -34,10 +34,13 @@ for (let i = 0; i < entries.length; i += 2) {
   else additions.push({ path, contents: readFileSync(path).toString('base64') })
 }
 
-// GitHub refuses a request payload over 45MB, so a large change is split into
-// consecutive commits whose base64 contents stay under MAX_BATCH_BYTES. The
-// deletions go in the first one. A single commit is made when it all fits.
-const MAX_BATCH_BYTES = 30 * 1024 * 1024
+// GitHub refuses a request payload over 45MB, and in practice answers 504 when
+// a single commit takes too long to create (30MB batches timed out on CI), so
+// a large change is split into consecutive commits whose base64 contents stay
+// under MAX_BATCH_BYTES. The deletions go in the first one. A single commit is
+// made when it all fits.
+const MAX_BATCH_BYTES = 8 * 1024 * 1024
+const MAX_ATTEMPTS = 4
 const batches = [{ additions: [], deletions, bytes: 0 }]
 for (const addition of additions) {
   let batch = batches.at(-1)
@@ -48,6 +51,17 @@ for (const addition of additions) {
 
   batch.additions.push(addition)
   batch.bytes += addition.contents.length
+}
+
+function findCreatedCommit(parentOid, headline) {
+  const result = spawnSync('gh', ['api', `repos/${repository}/commits/${encodeURIComponent(branch)}`], { encoding: 'utf8', maxBuffer: 1 << 28 })
+  try {
+    const commit = JSON.parse(result.stdout)
+    const parents = (commit.parents || []).map(parent => parent.sha)
+    if (parents.length === 1 && parents[0] === parentOid && commit.commit.message.split('\n')[0] === headline) return commit.sha
+  } catch {}
+
+  return null
 }
 
 const query = `mutation($input: CreateCommitOnBranchInput!) {
@@ -64,25 +78,47 @@ batches.forEach((batch, index) => {
     fileChanges: { additions: batch.additions, deletions: batch.deletions }
   }
 
-  const result = spawnSync('gh', ['api', 'graphql', '--input', '-'], {
-    input: JSON.stringify({ query, variables: { input } }),
-    encoding: 'utf8',
-    maxBuffer: 1 << 28
-  })
+  const payload = JSON.stringify({ query, variables: { input } })
+  let oid
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    const result = spawnSync('gh', ['api', 'graphql', '--input', '-'], { input: payload, encoding: 'utf8', maxBuffer: 1 << 28 })
 
-  let response
-  try {
-    response = JSON.parse(result.stdout)
-  } catch {
-    console.error(result.stderr || result.stdout || 'No response from the GitHub API.')
-    process.exit(1)
-  }
+    let response
+    try {
+      response = JSON.parse(result.stdout)
+    } catch {
+      response = null
+    }
 
-  const oid = response.data?.createCommitOnBranch?.commit?.oid
-  if (!oid) {
-    const errors = (response.errors || [{ message: result.stderr }]).map(error => error.message).join('; ')
-    console.error(errors)
-    process.exit(/expected branch to point to|is at .* but expected/i.test(errors) ? 2 : 1)
+    oid = response?.data?.createCommitOnBranch?.commit?.oid
+    if (oid) break
+
+    const errors = (response?.errors || [{ message: result.stderr || result.stdout || 'No response from the GitHub API.' }]).map(error => error.message).join('; ')
+    const moved = /expected branch to point to|is at .* but expected/i.test(errors)
+    const transient = /HTTP (5\d\d)|timed out|timeout|ECONN|socket hang up/i.test(errors) || !response
+
+    // A timed-out request may still have created the commit: when the branch now
+    // sits on a commit whose only parent is the head we sent, that commit is ours.
+    if (transient || moved) {
+      const created = findCreatedCommit(head, headline)
+      if (created) {
+        oid = created
+        break
+      }
+    }
+
+    if (moved) {
+      console.error(errors)
+      process.exit(2)
+    }
+
+    if (!transient || attempt === MAX_ATTEMPTS) {
+      console.error(errors)
+      process.exit(1)
+    }
+
+    console.error(`Attempt ${attempt} failed (${errors.trim()}), retrying.`)
+    spawnSync('sleep', [String(attempt * 5)])
   }
 
   head = oid
