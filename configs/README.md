@@ -33,6 +33,19 @@ npm run use-config rounded-dark
 
 `default` holds Bootstrap's defaults. Keep it pristine.
 
+## Sass or tokens.css
+
+A token can change in `main.scss`, through `with (…)`, or in `tokens.css`, at runtime. The docs present the two as equivalent, and mostly they are: `npm run check-equivalence` makes the same customizations both ways and finds the alert paddings, the `--btn-input-*` control paddings, a theme color sub-key passed as a whole `$theme-colors` sub-map and the border width render the same. These don't (see [Sass and tokens.css equivalence](../docs/audits.md#sass-and-tokenscss-equivalence)):
+
+| Customization | Sass `with (…)` | tokens.css | Tracking |
+| --- | --- | --- | --- |
+| The spacing scale | `$spacer` scales every `--spacer-*` step, utility and gutter | `--spacer` only moves what reads it directly: alert, list group, popover, drawer, tooltip and form field paddings | [#333](https://github.com/julien-deramond/bootstrap-test-playground/issues/333) |
+| A spacing or radius step | `$spacers` and `$radii` also change the utilities and gutters | `--spacer-3` or `--radius-5` misses `.p-3`, `.g-3`, `.rounded`… which write the value | [#332](https://github.com/julien-deramond/bootstrap-test-playground/issues/332) |
+| A generated root token: radius and spacer steps, theme color sub-keys, font sizes, `--radius-pill`… | `$root-tokens` is silently overwritten: use the map the token comes from (`$radii`, `$theme-colors`…) | Works | [#334](https://github.com/julien-deramond/bootstrap-test-playground/issues/334), [#176](https://github.com/julien-deramond/bootstrap-test-playground/issues/176) |
+| A component token that a modifier sets again, like the button paddings and `.btn-sm` | `$button-tokens` changes the default, sizes keep theirs | An override in `@layer custom` on the base classes beats the size modifiers too. To resize every size, change the `--btn-input-*` root tokens instead | Intended: the cascade |
+
+So a *tokens only* config, which also applies on top of the prebuilt dist (`?css=dist`), has to set every step a Sass variable would derive, and its utilities keep their default values. The other way round, `configs/square/` sets `--radius-pill` in `tokens.css` because `$root-tokens` can't.
+
 ## Saved configs
 
 Configs are grouped by the `Category:` line of their README, one of the ids in `CATEGORIES` in [`scripts/lib/configs.mjs`](../scripts/lib/configs.mjs): `baseline`, `shape`, `color`, `typography`, `layout`, `options`, `sass` or `themes`. A config without one lands in *Other*, and an unknown id fails `npm run configs-table`. `save-config` asks for the category of a new config, or takes `--category <id>`, which also changes an existing config's. The toolbar and the home page group the configs the same way.

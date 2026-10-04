@@ -13,6 +13,8 @@ In `tokens.css`, write tokens unprefixed like the Sass docs (`--border-radius`) 
 - **Global tokens** (`:root`) must stay **unlayered**. Bootstrap outputs its `:root` tokens unlayered, so an override inside `@layer custom { :root { … } }` loses.
 - **Component tokens and rules** go in `@layer custom`, after `components` and before `helpers` and `utilities`.
 
+The same override doesn't always do the same in `main.scss` and in `tokens.css`: Sass derives scales and utilities from some variables at compile time. [Sass or tokens.css](../configs/README.md#sass-or-tokenscss) lists where the two differ.
+
 ## Configs
 
 Once the working copy holds a good test case, save it as a **config**, a folder in [`configs/`](../configs/) with the same three files:

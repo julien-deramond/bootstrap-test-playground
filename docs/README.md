@@ -8,7 +8,7 @@ How the playground works, tool by tool. The [README](../README.md) has the overv
 | [Pages and tools](pages.md) | The folder layout, page search, starter and real screens, the kitchen sink, issue reproductions, the toolbar and its URL flags, the compare and matrix views, deployment |
 | [Bootstrap versions and updates](bootstrap.md) | Updating Bootstrap, what the last update changed, comparing two commits, the nightly canary, testing a local checkout, source or dist |
 | [Test suites](testing.md) | Visual regression, console crawl, interaction smoke tests, accessibility scan, browser engines, and how CI runs them |
-| [Checks and audits](audits.md) | Config compilation, HTML validation, dist drift, tokens, sizes, option combinations, RTL, motion, cascade layers, partial imports |
+| [Checks and audits](audits.md) | Config compilation, HTML validation, dist drift, tokens, sizes, option combinations, RTL, motion, cascade layers, partial imports, Sass and tokens.css equivalence |
 
 Contributors, human or agent, also follow [CLAUDE.md](../CLAUDE.md): the conventions, and how a Bootstrap bug found here is tracked until it's fixed upstream.
 
@@ -29,6 +29,7 @@ Contributors, human or agent, also follow [CLAUDE.md](../CLAUDE.md): the convent
 | `npm run lint:html [-- --all]` | Validates the HTML of every page with html-validate (see [Validating HTML](audits.md#validating-html)) |
 | `npm run check-configs [-- --strict]` | Compiles the working copy, every config and every reproduction, and lists Sass errors and warnings (see [Checking configs](audits.md#checking-configs)) |
 | `npm run check-dist` | Checks that the default config compiles to Bootstrap's `dist/css/bootstrap.css` (see [Checking the dist](audits.md#checking-the-dist)) |
+| `npm run check-equivalence [-- --pair=<names>] [--page=<filter>] [--static]` | Makes the same customizations through Sass `with (…)` and through tokens.css, screenshots the kitchen sink with both and lists the pairs that render differently, with what only Sass changes (see [Sass and tokens.css equivalence](audits.md#sass-and-tokenscss-equivalence)) |
 | `npm run check-size [-- --record]` | Measures each config's CSS, the dist files and the JS bundle (minified, gzip, brotli) and compares them with `sizes/history.json` (see [Sizes](audits.md#sizes)) |
 | `npm run compile-matrix` | Compiles Bootstrap under combinations of its `$enable-*` options and reports failures and options that do nothing (see [Option combinations](audits.md#option-combinations)) |
 | `npm run matrix -- <page>[#<example>]` | Renders a page or a kitchen sink example under several configs, themes and directions, and writes the grid as one image with a pixel diff against the first column (see [Matrix](pages.md#matrix)) |

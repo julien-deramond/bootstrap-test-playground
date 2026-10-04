@@ -173,3 +173,25 @@ The Sass docs offer two ways in: all of Bootstrap, or "Option B", `root` first a
 - **with:** a `@use … with (…)` that doesn't reach its entry point: `config` and `theme` before `root`, `root` with `$root-tokens`, a component with its token map, a folder index with a file's map, `utilities` before `utilities/api`
 
 Its output is the dependency map. Known findings are listed in [`scripts/known-partials.mjs`](../scripts/known-partials.mjs), with their tracking issue or the reason. The audit fails on a new finding and on an entry that no longer matches. `npm run update-bootstrap`, the *Configs* workflow and the canary run it.
+
+## Sass and tokens.css equivalence
+
+Bootstrap's Sass docs offer two ways to change a token: at compile time through `@use "bootstrap/scss/bootstrap" with (…)`, and at runtime with a CSS custom property, which is what a config's `tokens.css` does. They diverge when Sass consumes a value at compile time: a scale folded from `$spacer`, a utility that writes a map's value instead of reading its token, a `$root-tokens` key a loop overwrites, a `null` key that removes a declaration. That's exactly what someone hits when moving a config from one path to the other.
+
+`npm run check-equivalence` makes the same customization both ways. The pairs are in [`scripts/equivalence-pairs.mjs`](../scripts/equivalence-pairs.mjs): a radius step, the spacer and a spacer step, the button and control paddings, the alert paddings, a theme color sub-key and the border width, through their Sass variable or map and, where the docs suggest it, through `$root-tokens`. For each pair:
+
+1. **Static**: it compiles the Sass side and compares the CSS with Bootstrap's defaults. Each change is either one tokens.css makes too, or one only Sass makes, computed or consumed at compile time. It also lists the tokens the Sass side never changes, and the rules that declare a layered token again, like size modifiers, which a `@layer custom` override replaces and Sass doesn't.
+2. **Render**: it starts a dev server, opens every kitchen sink page with Bootstrap's defaults, with the Sass side and with the tokens side, screenshots each example in light mode and compares the two sides pixel by pixel. For the first examples that differ, it lists the computed styles that do.
+
+```
+✓ alert-padding: equivalent: 0 of 7 examples differ (Sass changes 6, tokens.css 6)
+! radius-root-tokens: diverges: 147 of 481 examples differ (Sass changes 0, tokens.css 106)  (#334)
+    The Sass side never changes --bs-radius-5: it keeps its default value everywhere.
+! spacers: diverges: 94 of 481 examples differ (Sass changes 110, tokens.css 16)  (#332)
+    Only the Sass side changes 126 declarations, computed or consumed at compile time:
+      - margin-block-end on .mb-3, :where(.space-y-3 > :not(:last-child)) and 10 more (utilities): .5rem → .75rem, 12 declarations
+```
+
+*Sass changes* and *tokens.css* count the examples each side changes from the defaults, so a pair that changes nothing on either side shows *no visible effect* rather than a false *equivalent*. All three use the 10 pixel threshold of the other renders, so anti-aliasing doesn't count as a change. The run takes about six minutes and writes `reports/equivalence/report.md`, with an image per example that differs: Sass, tokens.css and their difference in magenta. `--pair=spacer,radius` and `--page=button` narrow it, and `--static` skips the browser and only compares the CSS, in seconds. A page that gives no result within two minutes, as happens when a headless tab stalls on a busy machine, is tried once more in fresh tabs, then skipped and listed in the report.
+
+[`scripts/known-equivalence.mjs`](../scripts/known-equivalence.mjs) lists the pairs known to diverge, with their tracking issue or the reason it's intended, and [`configs/README.md`](../configs/README.md#sass-or-tokenscss) sums them up for whoever writes a config. The check fails on a pair that diverges without an entry, and on an entry whose pair no longer diverges (not with `--page` or a skipped page, which may leave its examples out). Record a new divergence as an upstream issue (see [Upstream issues](../CLAUDE.md#upstream-issue-tracking)) before adding it. To check another customization, add a pair: `sass` is the body of `with (…)`, `tokens` a tokens.css, and `pages` an optional filter on the kitchen sink pages.

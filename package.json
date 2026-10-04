@@ -25,6 +25,7 @@
     "lint:html": "node scripts/lint-html.mjs",
     "check-configs": "node scripts/check-configs.mjs",
     "check-dist": "node scripts/check-dist.mjs",
+    "check-equivalence": "node scripts/check-equivalence.mjs",
     "audit-tokens": "node scripts/audit-tokens.mjs",
     "compile-matrix": "node scripts/compile-matrix.mjs",
     "matrix": "node scripts/matrix.mjs",

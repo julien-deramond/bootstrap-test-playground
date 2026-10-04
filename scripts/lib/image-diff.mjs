@@ -7,10 +7,12 @@ export const PLACEHOLDER_IMAGE = `<svg xmlns="http://www.w3.org/2000/svg" width=
 // Runs in the browser, through `page.evaluate(compareImages, [a, b, mirror])`,
 // with two image URLs. Compares `b` (mirrored first, with `mirror`) with `a`
 // pixel by pixel and draws the three side by side, differences in magenta.
+// A fourth item, `false`, only counts the pixels, without the image.
 // A pixel only counts as different when no pixel within 1px in the other image
 // is close to it, so anti-aliasing on a border that lands half a pixel away
-// doesn't count. Shared by the RTL render and scripts/diff-bootstrap.mjs.
-export async function compareImages([first, second, mirror]) {
+// doesn't count. Shared by the RTL render, scripts/diff-bootstrap.mjs,
+// scripts/matrix.mjs and scripts/check-equivalence.mjs.
+export async function compareImages([first, second, mirror, draw = true]) {
   const load = src => new Promise((resolve, reject) => {
     const image = new Image()
     image.onload = () => resolve(image)
@@ -53,6 +55,19 @@ export async function compareImages([first, second, mirror]) {
     }
 
     return false
+  }
+
+  if (!draw) {
+    let different = 0
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        if (!close(x, y, right, ((y * width) + x) * 4)) {
+          different++
+        }
+      }
+    }
+
+    return { ratio: different / (width * height), pixels: different, resized: a.width !== b.width || a.height !== b.height }
   }
 
   const canvas = new OffscreenCanvas((width * 3) + 16, height)
