@@ -2,8 +2,9 @@ name: Smoke tests
 
 # Opens, drives and closes every Bootstrap JavaScript component on its kitchen
 # sink page, with the working copy and every config, in Chromium, Firefox and
-# WebKit, and fails on a missing event or a stuck state. Known upstream bugs
-# are listed in tests/smoke/known-issues.js.
+# WebKit, and fails on a missing event or a stuck state. Then walks every key
+# the docs document for each component, in LTR and RTL (keyboard.spec.js).
+# Known upstream bugs are listed in tests/smoke/known-issues.js.
 #
 # One job per engine. Pull requests run what they change (`npm run
 # test-scope`) in Chromium: the working copy and dist on every scenario, the

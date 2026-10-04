@@ -10,6 +10,7 @@
 //   P  open or close the panel
 //   T  cycle color mode (auto, light, dark, then the config's own modes)
 //   D  toggle direction (LTR, RTL)
+//   O  show or hide the tab order (see tab-order.js)
 // Ctrl+K (⌘K on macOS) opens the page switcher, see palette.js.
 //
 // The panel is a modal <dialog>: it traps focus, and closes on Escape and on
@@ -22,6 +23,7 @@
 import { groupConfigs } from './configs.js'
 import { mountPalette, paletteShortcut } from './palette.js'
 import { siblings } from './page-index.js'
+import { mountTabOrder } from './tab-order.js'
 
 const HUES = ['default', 'indigo', 'violet', 'purple', 'pink', 'red', 'orange', 'amber', 'lime', 'green', 'teal', 'cyan', 'brown', 'gray']
 const COLOR_MODES = ['auto', 'light', 'dark']
@@ -185,6 +187,8 @@ const styles = `
   footer { flex-wrap: wrap; }
   .action { padding: 4px 10px; font-weight: 600; border: 1px solid rgb(255 255 255 / .18); border-radius: 6px; }
   .action:hover { text-decoration: none; background: rgb(255 255 255 / .1); }
+  .action[aria-pressed="true"] { color: #111; background: #e6e6e6; }
+  .action kbd { margin-inline-start: 4px; }
   .source { flex-basis: 100%; font-size: 11px; font-weight: 400; opacity: .55; overflow-wrap: anywhere; }
 `
 
@@ -215,6 +219,11 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
   let render = () => {}
   let togglePanel = () => {}
   let dismissHint = () => {}
+  let renderTabOrder = () => {}
+
+  // The tab order overlay, on the page under test only: not in the embedded
+  // copies of the compare and matrix pages, nor in screenshots.
+  const tabOrder = prefs.embedded ? undefined : mountTabOrder({ onChange: on => renderTabOrder(on) })
 
   // Keyboard shortcuts work even when the toolbar is hidden or embedded.
   document.addEventListener('keydown', event => {
@@ -230,6 +239,8 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
       render(prefs.save({ dir: current.dir === 'rtl' ? 'ltr' : 'rtl' }))
     } else if (event.code === 'KeyP' && !prefs.embedded) {
       togglePanel()
+    } else if (event.code === 'KeyO' && tabOrder) {
+      tabOrder.toggle()
     } else {
       return
     }
@@ -358,6 +369,10 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
           <div class="swatches">${swatches}</div>
         </fieldset>
       </section>
+      <section aria-labelledby="panel-inspect">
+        <h3 id="panel-inspect">Inspect</h3>
+        <button type="button" class="action tab-order" aria-pressed="false" aria-keyshortcuts="Alt+Shift+O" title="Number every tab stop in the order Tab visits them (Alt+Shift+O)">Show tab order <kbd>Alt+Shift+O</kbd></button>
+      </section>
       <section aria-labelledby="panel-config">
         <h3 id="panel-config">Config</h3>
         <input type="search" class="filter" placeholder="Filter ${configs.length} configs…" aria-label="Filter configs" autocomplete="off" spellcheck="false">
@@ -381,6 +396,9 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
   const modeGroup = shadow.querySelector('[data-radios="colorMode"]')
   const filter = shadow.querySelector('.filter')
   const copy = shadow.querySelector('.copy')
+  const tabOrderButton = shadow.querySelector('.tab-order')
+  renderTabOrder = on => tabOrderButton.setAttribute('aria-pressed', String(on))
+  renderTabOrder(tabOrder.on)
 
   // Where Bootstrap comes from, linked to its commit or branch on GitHub.
   // A local checkout's label follows its branch and dirty state in dev.
@@ -534,6 +552,8 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
       dismissHint()
     } else if (button.classList.contains('search')) {
       palette.open()
+    } else if (button === tabOrderButton) {
+      tabOrder.toggle()
     } else if (button === copy) {
       navigator.clipboard.writeText(shareUrl(prefs.effective())).then(() => 'Copied', () => 'Copy failed').then(text => {
         copy.textContent = text

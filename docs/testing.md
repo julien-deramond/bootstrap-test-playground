@@ -97,13 +97,27 @@ npm run test:smoke
 npm run test:smoke -- -g "shadcn menu"   # one config and component
 ```
 
-A scenario that fails because of an open upstream bug goes in [`tests/smoke/known-issues.js`](../tests/smoke/known-issues.js) with its tracking issue. It's marked `test.fail()`, so the run fails as soon as it passes again, and the entry gets removed. NavOverflow has no kitchen sink example yet, so it has no scenario. A config that loads only some partials, like [`configs/partial/`](../configs/partial/), skips the scenarios of the components it leaves out (`PARTIALS` in the spec).
+A scenario that fails because of an open upstream bug goes in [`tests/smoke/known-issues.js`](../tests/smoke/known-issues.js) with its tracking issue. It's marked `test.fail()`, so the run fails as soon as it passes again, and the entry gets removed. NavOverflow has no kitchen sink example yet, so it has no scenario. A config that loads only some partials, like [`configs/partial/`](../configs/partial/), skips the scenarios and walkthroughs of the components it leaves out (`PARTIALS` in [`shared.js`](../tests/smoke/shared.js)).
 
-The full suite runs 19 scenarios with 39 variants, and every new config adds 19 tests per engine. [`.github/workflows/smoke.yml`](../.github/workflows/smoke.yml) runs one job per engine. On pull requests, Chromium runs what [`npm run test-scope`](#console-crawl) finds, with the same rules as the console crawl: the working copy and dist on every scenario, the changed configs on every scenario, and a scenario with every config when its kitchen sink page changes (`PAGES` in the spec). A change to `tests/smoke/` runs everything. Firefox and WebKit run the working copy and dist only, since engine differences seldom depend on the config. Every variant runs in all three engines every night, on demand from the *Actions* tab, and in the canary on every Bootstrap update. Locally, limit a run the same way:
+The full suite runs 19 scenarios and 13 keyboard walkthroughs, the latter in both directions, with every variant: every new config adds 45 tests per engine. [`.github/workflows/smoke.yml`](../.github/workflows/smoke.yml) runs one job per engine. On pull requests, Chromium runs what [`npm run test-scope`](#console-crawl) finds, with the same rules as the console crawl: the working copy and dist on every scenario, the changed configs on every scenario, and a scenario and a walkthrough with every config when its kitchen sink page changes (`PAGES` in `shared.js`). A change to `tests/smoke/` runs everything. Firefox and WebKit run the working copy and dist only, since engine differences seldom depend on the config. Every variant runs in all three engines every night, on demand from the *Actions* tab, and in the canary on every Bootstrap update. Locally, limit a run the same way:
 
 ```sh
 SMOKE_SCOPE='{"full":false,"configs":["pill"],"urls":[]}' npm run test:smoke
 ```
+
+### Keyboard walkthroughs
+
+The scenarios open each component once. [`keyboard.spec.js`](../tests/smoke/keyboard.spec.js) goes through every key the docs document for menu, tab, dialog, drawer, chips, combobox, datepicker, OTP input, carousel, toast, tooltip, popover and collapse, in LTR and in RTL (`?dir=rtl`). It tabs into the component, presses each key and checks where focus lands, the `aria-*` state (`aria-expanded`, `aria-selected`, roving `tabindex`), and that focus is back on the trigger once the component closes. In RTL, the arrows along the inline axis flip: ← moves to the next item, as the ARIA Authoring Practices ask and as Bootstrap's submenus already do. The stepper has no JavaScript, so it has no walkthrough.
+
+A walkthrough is a list of named steps, like *Escape closes the menu and focuses the toggle*, that each set up what they need, so one failing step doesn't hide the others: the test reports every step that failed. It's part of the smoke suite, so it runs with the same variants, engines and `SMOKE_SCOPE`, as `<variant> keyboard › <component> <dir>`:
+
+```sh
+npm run test:smoke -- -g "working keyboard menu rtl"
+```
+
+WebKit on macOS only tabs to text fields and selects, like Safari unless *Press Tab to highlight each item* is on, so there the steps that tab to a button or a link focus it directly. Its walkthroughs still check every key once focus is there.
+
+A step that fails because of an open upstream bug goes in [`tests/smoke/known-issues.js`](../tests/smoke/known-issues.js) with `walkthrough`, `step` (its exact name), the tracking issue and, when it only fails in one direction, `dirs: ['rtl']`. The walkthrough fails as soon as a listed step passes again, so the entry gets removed.
 
 ## Accessibility scan
 
