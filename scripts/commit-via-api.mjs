@@ -7,7 +7,8 @@
 //
 // The branch is only updated while it still points to <expected-head-sha>
 // (`expectedHeadOid`), the same guard as `git push --force-with-lease`.
-// Prints the new commit's sha. Exit codes: 0 committed, 2 the branch moved,
+// A change too large for one request is split into consecutive commits.
+// Prints the last new commit's sha. Exit codes: 0 committed, 2 the branch moved,
 // 1 any other failure. With nothing staged, the commit is empty.
 import { execFileSync, spawnSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
@@ -33,35 +34,58 @@ for (let i = 0; i < entries.length; i += 2) {
   else additions.push({ path, contents: readFileSync(path).toString('base64') })
 }
 
+// GitHub refuses a request payload over 45MB, so a large change is split into
+// consecutive commits whose base64 contents stay under MAX_BATCH_BYTES. The
+// deletions go in the first one. A single commit is made when it all fits.
+const MAX_BATCH_BYTES = 30 * 1024 * 1024
+const batches = [{ additions: [], deletions, bytes: 0 }]
+for (const addition of additions) {
+  let batch = batches.at(-1)
+  if (batch.bytes > 0 && batch.bytes + addition.contents.length > MAX_BATCH_BYTES) {
+    batch = { additions: [], deletions: [], bytes: 0 }
+    batches.push(batch)
+  }
+
+  batch.additions.push(addition)
+  batch.bytes += addition.contents.length
+}
+
 const query = `mutation($input: CreateCommitOnBranchInput!) {
   createCommitOnBranch(input: $input) { commit { oid } }
 }`
-const input = {
-  branch: { repositoryNameWithOwner: repository, branchName: branch },
-  expectedHeadOid,
-  message: { headline: message },
-  fileChanges: { additions, deletions }
-}
 
-const result = spawnSync('gh', ['api', 'graphql', '--input', '-'], {
-  input: JSON.stringify({ query, variables: { input } }),
-  encoding: 'utf8',
-  maxBuffer: 1 << 28
+let head = expectedHeadOid
+batches.forEach((batch, index) => {
+  const headline = batches.length > 1 ? `${message} (${index + 1}/${batches.length})` : message
+  const input = {
+    branch: { repositoryNameWithOwner: repository, branchName: branch },
+    expectedHeadOid: head,
+    message: { headline },
+    fileChanges: { additions: batch.additions, deletions: batch.deletions }
+  }
+
+  const result = spawnSync('gh', ['api', 'graphql', '--input', '-'], {
+    input: JSON.stringify({ query, variables: { input } }),
+    encoding: 'utf8',
+    maxBuffer: 1 << 28
+  })
+
+  let response
+  try {
+    response = JSON.parse(result.stdout)
+  } catch {
+    console.error(result.stderr || result.stdout || 'No response from the GitHub API.')
+    process.exit(1)
+  }
+
+  const oid = response.data?.createCommitOnBranch?.commit?.oid
+  if (!oid) {
+    const errors = (response.errors || [{ message: result.stderr }]).map(error => error.message).join('; ')
+    console.error(errors)
+    process.exit(/expected branch to point to|is at .* but expected/i.test(errors) ? 2 : 1)
+  }
+
+  head = oid
 })
 
-let response
-try {
-  response = JSON.parse(result.stdout)
-} catch {
-  console.error(result.stderr || result.stdout || 'No response from the GitHub API.')
-  process.exit(1)
-}
-
-const oid = response.data?.createCommitOnBranch?.commit?.oid
-if (!oid) {
-  const errors = (response.errors || [{ message: result.stderr }]).map(error => error.message).join('; ')
-  console.error(errors)
-  process.exit(/expected branch to point to|is at .* but expected/i.test(errors) ? 2 : 1)
-}
-
-console.log(oid)
+console.log(head)
