@@ -1,27 +1,11 @@
 {
-  "date": "2026-10-02T06:02:51.982Z",
-  "from": "3824fb30e51c8d8158675aaae47e0676f1876c1e",
-  "to": "0632eaa44acd9c8ba4a1bf70786d2930c6d1b745",
+  "date": "2026-10-04T16:21:25.152Z",
+  "from": "0632eaa44acd9c8ba4a1bf70786d2930c6d1b745",
+  "to": "ebb53da4fa94b7891a1ee5fe5a624d30fe72aee8",
   "commits": [
     {
-      "sha": "e4a821b8a951bd671fa2eb444277a8a79799946c",
-      "subject": "Bump the GitHub Actions dependencies with 4 updates (#42964)"
-    },
-    {
-      "sha": "6e78706040a59a0f383f1ffd9f598e0d87fd4ad3",
-      "subject": "Bump dependencies with 2 updates (#42963)"
-    },
-    {
-      "sha": "d62b03b9c27c34ec2b4e3876fbb02ef94af18ebc",
-      "subject": "Bump fast-uri from 3.1.6 to 3.1.8 (#42959)"
-    },
-    {
-      "sha": "992b495cb178879ab8d118e89df53814da725a80",
-      "subject": "Fix Vite dependency scan error in docs dev server (#42970)"
-    },
-    {
-      "sha": "0632eaa44acd9c8ba4a1bf70786d2930c6d1b745",
-      "subject": "Bump brace-expansion from 1.1.18 to 1.1.21 (#42972)"
+      "sha": "ebb53da4fa94b7891a1ee5fe5a624d30fe72aee8",
+      "subject": "Fix `.btn-group-divider` position in RTL (#42976)"
     }
   ],
   "rendering": true,

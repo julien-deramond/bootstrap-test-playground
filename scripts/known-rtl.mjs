@@ -12,7 +12,6 @@ export default [
   { selector: '.form-range-input::-', properties: ['background-image'], issue: 133 },
   { selector: '.form-range-bubble', properties: ['left', 'transform'], issue: 133 },
   { selector: /^\.form-control/, properties: ['--control-select-bg-position'], issue: 134 },
-  { selector: '.btn-group:where(.btn-group-divider)', properties: ['left'], issue: 135 },
   { selector: '.avatar-stack .avatar', properties: ['margin-left'], issue: 136 },
   { selector: '.avatar-status', properties: ['right'], issue: 136 },
   { selector: /^\.translate-middle(-x)?$/, properties: ['transform'], issue: 137 },
