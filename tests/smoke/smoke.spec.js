@@ -48,6 +48,53 @@ async function pin(page, locator, name) {
   return page.locator(`[data-smoke="${name}"]`)
 }
 
+// '' when the tab order overlay draws its stop `index` over `selector` (the
+// focused element by default), else where both are. The page may still be
+// scrolling to the control (the overlay only draws the boxes in the viewport,
+// a frame later), so both are measured together on every attempt, and
+// sub-pixel text widths differ slightly between them in WebKit.
+const drawnOver = (layer, index, selector) => layer.evaluate((layer, [index, selector]) => {
+  const target = selector ? document.querySelector(selector) : document.activeElement
+  const box = layer.querySelector(`.box[data-index="${index}"]`)
+  const rect = element => {
+    const { left, top, width, height } = element.getBoundingClientRect()
+    return { left, top, width, height }
+  }
+
+  if (box && target && Object.entries(rect(target)).every(([key, value]) => Math.abs(rect(box)[key] - value) < 0.5)) {
+    return ''
+  }
+
+  const where = element => Object.values(rect(element)).map(value => Math.round(value * 10) / 10).join(', ')
+  const name = target ? `${target.localName}${target.id ? `#${target.id}` : ''} at ${where(target)}` : 'nothing'
+  return `${name}, box ${box ? `at ${where(box)}` : 'not drawn'}`
+}, [index, selector])
+
+// In the page, given the element focused before Tab: whether Tab went from a
+// radio without a name past the next one of the same form. Marks that radio
+// `data-skipped-radio` and scrolls it into view.
+function skipsUnnamedRadio(from) {
+  const unnamed = element => element?.matches?.('input[type="radio"]:not([name]), input[type="radio"][name=""]')
+  if (!unnamed(from)) {
+    return false
+  }
+
+  const to = document.activeElement
+  const follows = (a, b) => Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING)
+  // Focus left the page's stops: Tab wrapped around, or went to the browser.
+  const end = !to || to === document.body || !follows(from, to)
+  const skipped = [...document.querySelectorAll('input[type="radio"]')].find(radio =>
+    unnamed(radio) && radio.form === from.form && follows(from, radio) && (end || follows(radio, to)) &&
+    !radio.disabled && radio.tabIndex >= 0 && !radio.closest('[inert]') && radio.checkVisibility({ visibilityProperty: true }))
+  if (!skipped) {
+    return false
+  }
+
+  skipped.dataset.skippedRadio = ''
+  skipped.scrollIntoView({ block: 'center' })
+  return true
+}
+
 const SCENARIOS = {
   async dialog(page) {
     await load(page, PAGES.dialog, page.config)
@@ -503,7 +550,7 @@ test.describe('playground', () => {
 
   // The tab order overlay (src/js/tab-order.js) numbers the tab stops in the
   // order Tab visits them: roving tabindex, disabled controls, radio groups.
-  test('tab order', async ({ page }) => {
+  test('tab order', async ({ page, browserName }) => {
     await page.goto('/kitchen-sink/components-button.html?freeze')
     await page.waitForFunction(() => window.bootstrap)
     const toolbar = page.locator('#playground-toolbar')
@@ -523,21 +570,20 @@ test.describe('playground', () => {
       await expect(layer).toHaveAttribute('data-count', /^\d+$/)
       const count = Math.min(Number(await layer.getAttribute('data-count')), 60)
       for (let index = 1; index <= count; index++) {
+        const previous = await page.evaluateHandle(() => document.activeElement)
         await page.keyboard.press('Tab')
-        // The page may still be scrolling to the focused control (the overlay
-        // only draws boxes in the viewport, and redraws a frame after), and
-        // sub-pixel text widths differ slightly between the control and its
-        // box in WebKit: measure both together, on every attempt.
-        await expect.poll(() => layer.locator(`.box[data-index="${index}"]`).evaluate(box => {
-          const rect = element => {
-            const { left, top, width, height } = element.getBoundingClientRect()
-            return { left, top, width, height }
-          }
+        // WebKit's Tab never goes from a radio without a name to another one
+        // of the same form: it takes them all for a single group, where HTML
+        // puts each in a group of its own, as the overlay, Chromium and Firefox
+        // do. Check that the overlay's stop is the radio WebKit skipped; the
+        // rest of the page no longer lines up.
+        if (browserName === 'webkit' && await previous.evaluate(skipsUnnamedRadio)) {
+          await expect.poll(() => drawnOver(layer, index, '[data-skipped-radio]'), `tab stop ${index} of ${url}, skipped by WebKit`).toBe('')
+          test.info().annotations.push({ type: 'WebKit skips unnamed radios', description: `${url}: walked ${index - 1} of ${count} stops` })
+          break
+        }
 
-          const focused = rect(document.activeElement)
-          const drawn = rect(box)
-          return Math.max(...Object.keys(focused).map(key => Math.abs(drawn[key] - focused[key]))) < 0.5
-        }).catch(() => false), `tab stop ${index} of ${url}`).toBe(true)
+        await expect.poll(() => drawnOver(layer, index), `tab stop ${index} of ${url}`).toBe('')
       }
     }
 

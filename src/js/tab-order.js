@@ -9,8 +9,10 @@
 // and outside a modal <dialog> when one is open. Of a group of radios, only
 // the checked one is a stop, or the first one when none is. Browsers can still
 // differ: WebKit on macOS only tabs to text fields and selects unless Safari's
-// "Press Tab to highlight each item" is on, and Chromium also stops on
-// scrollable areas without a focusable child, which the overlay doesn't count.
+// "Press Tab to highlight each item" is on, and takes every radio without a
+// name in a form (or outside forms) for one group, so Tab skips the next ones
+// after one of them. Chromium also stops on scrollable areas without a
+// focusable child, which the overlay doesn't count.
 //
 // The overlay lives in the top layer, in a shadow root, and ignores the
 // pointer, so it neither covers nor changes what it numbers.
