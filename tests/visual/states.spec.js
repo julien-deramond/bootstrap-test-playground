@@ -41,6 +41,9 @@ const STATES = (process.env.VISUAL_STATES || [...PSEUDO_STATES, ...MARKUP_STATES
 // pages/states.html, and every form page.
 const KITCHEN_SINK = new Set(['accordion', 'breadcrumb', 'button', 'button-group', 'card', 'close-button', 'list-group', 'menu', 'nav', 'navbar', 'pagination', 'tab'].map(name => `components-${name}`))
 
+// Pseudo-elements Bootstrap transitions that `*` doesn't match.
+const CONTROL_PSEUDO_ELEMENTS = ['::-webkit-slider-thumb', '::-webkit-slider-runnable-track', '::file-selector-button', '::details-content']
+
 const STATES_URL = '/pages/states.html'
 const TABLES = [...fs.readFileSync(path.join(root, STATES_URL), 'utf8').matchAll(/data-states="([^"]+)"/g)].map(([, name]) => name)
 
@@ -235,8 +238,18 @@ for (const variant of VARIANTS) {
         await openPage(page, url, variant)
         // No transitions or caret, so each screenshot shows the end state at
         // once, without Playwright's `animations` option restyling the page
-        // for every screenshot. The mouse rests where it hovers nothing.
-        await page.addStyleTag({ content: '*, ::before, ::after { transition: none !important; animation: none !important; caret-color: transparent !important; }' })
+        // for every screenshot. `*` doesn't reach the pseudo-elements that
+        // form controls draw, such as the range thumb, which would otherwise
+        // be caught halfway between two colors. Each gets its own rule: a
+        // selector Chromium doesn't know would drop the whole list. The
+        // mouse rests where it hovers nothing.
+        const still = 'transition: none !important; animation: none !important;'
+        await page.addStyleTag({
+          content: [
+            `*, ::before, ::after { ${still} caret-color: transparent !important; }`,
+            ...CONTROL_PSEUDO_ELEMENTS.map(selector => `${selector} { ${still} }`)
+          ].join('\n')
+        })
         await page.mouse.move(0, 0)
         await page.evaluate(() => document.activeElement?.blur())
 
