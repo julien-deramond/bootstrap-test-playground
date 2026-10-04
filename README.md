@@ -58,7 +58,7 @@ The test suites need Playwright's browsers once: `npx playwright install chromiu
 - [Pages and tools](docs/pages.md): page search, screens, kitchen sink, reproductions, toolbar, compare and matrix views
 - [Bootstrap versions and updates](docs/bootstrap.md): updates, comparing commits, the nightly canary, source or dist
 - [Test suites](docs/testing.md): visual, console, smoke, accessibility, browser engines
-- [Checks and audits](docs/audits.md): configs, HTML, dist, tokens, sizes, options, RTL, motion, layers, partials
+- [Checks and audits](docs/audits.md): configs, HTML, dist, tokens, sizes, options, RTL, motion, layers, partials, Sass against tokens.css
 
 ## Upstream bugs
 
