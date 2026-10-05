@@ -104,7 +104,7 @@ jobs:
         with:
           node-version-file: .nvmrc
 
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           pattern: a11y-report-*
           merge-multiple: true
