@@ -5,6 +5,7 @@ import { defineConfig, loadEnv } from 'vite'
 import { bootstrapSource, gitDir } from './scripts/lib/bootstrap.mjs'
 import { readBootstrapIndex } from './scripts/lib/class-index.mjs'
 import { CATEGORIES, listConfigs, readKnownGaps } from './scripts/lib/configs.mjs'
+import { buildDist } from './scripts/lib/dist.mjs'
 import { EXPORT_FILES, exportIssue, listReproductions } from './scripts/lib/export-issue.mjs'
 import { docsDir, SECTIONS, syncPage } from './scripts/lib/kitchen-sink.mjs'
 import { collectPages, findHtmlFiles, PAGE_GROUPS } from './scripts/lib/pages.mjs'
@@ -172,10 +173,10 @@ function issueExports(env, bootstrap) {
 //   README.md and files), and the URLs of its compiled `main.scss` and
 //   `tokens.css` (hashed assets in builds). `categories` lists the categories
 //   in order.
-function playgroundData(base, bootstrapDir) {
+function playgroundData(base, distDir) {
   const modules = {
     'virtual:playground-pages': () => {
-      const { classes, tokens } = readBootstrapIndex(bootstrapDir)
+      const { classes, tokens } = readBootstrapIndex(distDir)
       const groups = collectPages(base, { bootstrapClasses: classes })
       const used = new Set(groups.flatMap(({ pages }) => pages.flatMap(page => page.classes.map(([name]) => name))))
       const tokenClasses = Object.fromEntries([...tokens]
@@ -339,9 +340,28 @@ export default source`
   }
 }
 
-export default defineConfig(({ mode }) => {
+// Bootstrap's dist files, built from the source under test (see
+// scripts/lib/dist.mjs): the committed ones only follow releases. Outside CI, a
+// failed build (offline on the first run after an update, say) falls back to
+// the committed files with a warning, so the dev server still starts.
+async function builtDist(bootstrap) {
+  const sourceDir = bootstrap.dir ?? path.join(root, 'node_modules/bootstrap')
+  try {
+    return await buildDist(sourceDir)
+  } catch (error) {
+    if (process.env.CI) {
+      throw error
+    }
+
+    console.warn(`Can't build Bootstrap's dist, using the committed one: ${error.message}`)
+    return sourceDir
+  }
+}
+
+export default defineConfig(async ({ mode }) => {
   const env = loadEnv(mode, root, '')
   const bootstrap = bootstrapSource(env)
+  const dist = await builtDist(bootstrap)
   // BASE_PATH serves a build from a subfolder, like `/repo-name/` on GitHub Pages.
   const base = env.BASE_PATH || '/'
 
@@ -363,12 +383,13 @@ export default defineConfig(({ mode }) => {
     appType: 'mpa',
     base,
     resolve: {
-      alias: bootstrap.dir ?
-        [
-          { find: /^bootstrap$/, replacement: path.join(bootstrap.dir, 'js/dist/index.js') },
-          { find: /^bootstrap\//, replacement: `${bootstrap.dir}/` }
-        ] :
-        [],
+      // `import 'bootstrap'` (`?js=dist`) and `bootstrap/dist/…` (`?css=dist`)
+      // load the built dist; the sources come from node_modules or BOOTSTRAP_PATH.
+      alias: [
+        { find: /^bootstrap$/, replacement: path.join(dist, 'js/dist/index.js') },
+        { find: /^bootstrap\/(dist|js\/dist)\//, replacement: `${dist}/$1/` },
+        ...(bootstrap.dir ? [{ find: /^bootstrap\//, replacement: `${bootstrap.dir}/` }] : [])
+      ],
       // Always use this project's copies of Bootstrap's peer dependencies, even
       // when Bootstrap itself comes from a local checkout.
       dedupe: ['@floating-ui/dom', 'vanilla-calendar-pro']
@@ -379,6 +400,8 @@ export default defineConfig(({ mode }) => {
     server: {
       // PORT lets tools that manage dev servers pick a free port.
       port: Number(process.env.PORT) || 5173,
+      // Builds of Bootstrap's dist and fetched commits never change once written.
+      watch: { ignored: ['**/.cache/**'] },
       fs: {
         allow: [root, ...(bootstrap.dir ? [bootstrap.dir] : [])]
       }
@@ -388,6 +411,6 @@ export default defineConfig(({ mode }) => {
       cssTarget,
       rolldownOptions: { input }
     },
-    plugins: [rejectUnreviewedImports(), inlinePrefsScript(), issueExports(env, bootstrap), playgroundData(base, bootstrap.dir ?? undefined), bootstrapSourceData(env, bootstrap), keepStyleMarkers(), ...(base === '/' ? [] : [prefixRootUrls(base)])]
+    plugins: [rejectUnreviewedImports(), inlinePrefsScript(), issueExports(env, bootstrap), playgroundData(base, dist), bootstrapSourceData(env, bootstrap), keepStyleMarkers(), ...(base === '/' ? [] : [prefixRootUrls(base)])]
   }
 })

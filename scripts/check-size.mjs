@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Measures what Bootstrap weighs: each config's CSS, Bootstrap's prebuilt
-// dist files and a bundle of its JavaScript source, minified, gzipped and
+// Measures what Bootstrap weighs: each config's CSS, Bootstrap's dist files
+// and a bundle of its JavaScript source, minified, gzipped and
 // brotli-compressed. Compares them with the last entry of sizes/history.json.
 // Usage: npm run check-size [-- --record]
 //
@@ -8,10 +8,11 @@
 //   (Sass, then postcss.config.js), minified with Lightning CSS at Bootstrap's
 //   browser floors, like `vite build`. The working copy isn't measured: it's
 //   for experiments.
-// - dist/<file>: the prebuilt files the package ships, as users download them.
+// - dist/<file>: the files users download, built from the commit's source like
+//   Bootstrap's `npm run dist` (scripts/lib/dist.mjs), not the committed ones,
+//   which Bootstrap only rebuilds for releases.
 // - src/bootstrap.bundle.js: js/src/index.ts and its dependencies bundled and
-//   minified with Rolldown. Unlike dist/, it follows the source even when
-//   dist/ wasn't rebuilt.
+//   minified with Rolldown's defaults, without Bootstrap's build settings.
 //
 // `--record` writes the sizes to sizes/history.json under the Bootstrap
 // commit, replacing an entry for the same commit. The nightly canary records

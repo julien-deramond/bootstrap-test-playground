@@ -60,7 +60,7 @@ CI only pushes to the branch of an open pull request, and only while it still po
 
 ## Console crawl
 
-[`tests/console/`](../tests/console/console.spec.js) opens every page, including the home and compare pages, in light and dark with the working copy and every saved config, and once more with Bootstrap's prebuilt files (`?css=dist&js=dist`). It fails on anything a page reports:
+[`tests/console/`](../tests/console/console.spec.js) opens every page, including the home and compare pages, in light and dark with the working copy and every saved config, and once more with Bootstrap's dist files, built from the same source (`?css=dist&js=dist`). It fails on anything a page reports:
 
 - uncaught exceptions
 - `console.error` and `console.warn`, which includes Bootstrap's deprecation notices
@@ -99,7 +99,7 @@ Screenshots and the console crawl can't see a menu that no longer opens or a dia
 - closes it and checks that nothing is stuck (focus back on the trigger, no scroll lock, no leftover open dialog or inert content);
 - checks that the expected `*.bs.*` events fired, in order. An init script records every event Bootstrap dispatches, so a test fails when one stops firing.
 
-Every scenario runs with the working copy, every config, and a `dist` variant with Bootstrap's prebuilt files (`?css=dist&js=dist`): neither a config nor the shipped files may break behavior. Pages load with `?chrome=0&freeze`, so transitions are off. Like the other suites, it runs against a production build:
+Every scenario runs with the working copy, every config, and a `dist` variant with Bootstrap's dist files, built from the same source (`?css=dist&js=dist`): neither a config nor the built files may break behavior. Pages load with `?chrome=0&freeze`, so transitions are off. Like the other suites, it runs against a production build:
 
 ```sh
 npm run test:smoke

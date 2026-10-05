@@ -37,7 +37,7 @@ Both searches also take **class names and tokens**, to find where something is u
 - `btn-subtle` or `.btn-subtle` finds every page whose markup uses the class, the most uses first, and jumps to the first example that does. The start of a name works too while typing (`btn-sub`). A word without a dash matches a class (`btn`) only where it matches nothing else.
 - `--alert-padding-x`, with or without `bs-`, or its start (`--alert-`), finds the pages using the classes that declare it, here `.alert`.
 
-Each result lists what matched. The index keeps the Bootstrap classes, those named in Bootstrap's compiled `dist/css/bootstrap.css` (the `BOOTSTRAP_PATH` checkout's when set), and leaves out the playground's own chrome. A token maps to the classes whose rules declare it, so a global token like `--primary` finds nothing. On the home page, kitchen sink cards also link to their docs source.
+Each result lists what matched. The index keeps the Bootstrap classes, those named in Bootstrap's `dist/css/bootstrap.css`, built from the source under test (the `BOOTSTRAP_PATH` checkout's when set), and leaves out the playground's own chrome. A token maps to the classes whose rules declare it, so a global token like `--primary` finds nothing. On the home page, kitchen sink cards also link to their docs source.
 
 Each page describes itself in its `<head>`, and the index picks it up:
 
@@ -213,7 +213,7 @@ The settings panel is a modal dialog, a bottom sheet on small screens. It closes
 | --- | --- | --- | --- |
 | Color mode | Auto (system), Light or Dark, through `data-bs-theme` on `<html>`, plus the custom modes of the current config, like *Sepia* with `configs/color-modes-custom/` | <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd> cycles | `?theme=dark`, `?theme=sepia` |
 | Direction | LTR or RTL, through `dir` on `<html>` | <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> toggles | `?dir=rtl` |
-| CSS, JavaScript | *Source* compiles Bootstrap from `scss/` or `js/src/`, *Dist* loads the prebuilt `dist/css/bootstrap.css` or `js/dist/` (see [Where Bootstrap comes from](bootstrap.md#source-or-dist)) | | `?css=dist`, `?js=dist` |
+| CSS, JavaScript | *Source* compiles Bootstrap from `scss/` or `js/src/`, *Dist* loads `dist/css/bootstrap.css` or `js/dist/`, built from the same source, (see [Where Bootstrap comes from](bootstrap.md#source-or-dist)) | | `?css=dist`, `?js=dist` |
 | Primary | Remaps the `--bs-primary-*` tokens to another hue at runtime | | `?primary=teal` |
 | Show tab order | Numbers every tab stop of the page in the order <kbd>Tab</kbd> visits them, with positive `tabindex` in orange, for a manual review of focus order. It follows opening menus and dialogs, and stays on from page to page for the browser session (see [`src/js/tab-order.js`](../src/js/tab-order.js) for what counts as a stop) | <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>O</kbd> toggles | |
 | Config | Swaps the working copy for a saved config. Configs are grouped by category, with a filter, their description, a *tokens only* badge and their known gaps (see [`configs/README.md`](../configs/README.md#saved-configs)) | | `?config=<name>` |

@@ -1,7 +1,7 @@
 // Measures what Bootstrap weighs for a given Bootstrap folder: each config's
-// CSS, the prebuilt dist files and a bundle of js/src, minified, gzipped and
-// brotli-compressed. Shared by scripts/check-size.mjs and
-// scripts/diff-bootstrap.mjs.
+// CSS, the dist files built from its source (scripts/lib/dist.mjs) and a
+// bundle of js/src, minified, gzipped and brotli-compressed. Shared by
+// scripts/check-size.mjs and scripts/diff-bootstrap.mjs.
 import fs from 'node:fs'
 import path from 'node:path'
 import zlib from 'node:zlib'
@@ -9,6 +9,7 @@ import { transform } from 'lightningcss'
 import { rolldown } from 'rolldown'
 import { compileConfig } from './compile.mjs'
 import { listConfigs, root } from './configs.mjs'
+import { buildDist } from './dist.mjs'
 
 const quiet = { warn() {}, debug() {} }
 
@@ -30,8 +31,9 @@ export async function measureSizes(bootstrapDir) {
     sizes[`css/${name}`] = measure(Buffer.from(code))
   }
 
+  const distDir = await buildDist(bootstrapDir)
   for (const file of ['dist/css/bootstrap.min.css', 'dist/js/bootstrap.min.js', 'dist/js/bootstrap.bundle.min.js']) {
-    sizes[`dist/${path.basename(file)}`] = measure(fs.readFileSync(path.join(bootstrapDir, file)))
+    sizes[`dist/${path.basename(file)}`] = measure(fs.readFileSync(path.join(distDir, file)))
   }
 
   const bundle = await rolldown({ input: path.join(bootstrapDir, 'js/src/index.ts'), logLevel: 'silent' })

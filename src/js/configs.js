@@ -1,7 +1,7 @@
 // Swaps the page's shared stylesheets (the <link data-playground-styles> tags
 // pointing at src/styles/) for a saved config from configs/, and with
-// `css: 'dist'` the compiled main.scss for Bootstrap's prebuilt
-// dist/css/bootstrap.css. The config's tokens.css still applies on top of
+// `css: 'dist'` the compiled main.scss for Bootstrap's dist/css/bootstrap.css,
+// built from the same source (vite.config.js aliases it). The config's tokens.css still applies on top of
 // dist; its Sass options can't. Pages without those links, like issue
 // reproductions, keep their own styles.
 import distCss from 'bootstrap/dist/css/bootstrap.css?url'

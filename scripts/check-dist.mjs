@@ -1,33 +1,32 @@
 #!/usr/bin/env node
-// Checks that the playground's default CSS matches Bootstrap's committed
-// `dist/css/bootstrap.css`, which docs/bootstrap.md promises and which makes
-// findings here transferable upstream.
+// Checks that the playground compiles Bootstrap the way Bootstrap's own build
+// does, which docs/bootstrap.md promises and which makes findings here
+// transferable upstream.
 // Usage: npm run check-dist
 //
 // Compiles `configs/default/main.scss` the way Vite does and compares it with
-// the dist, rule by rule, once both are normalized (comments, banner, source
-// map and formatting removed). When BOOTSTRAP_PATH points to a checkout with
-// its dependencies installed, it also compiles `scss/bootstrap.scss` with that
-// checkout's own Sass and `build/postcss.config.mjs`, to tell which side moved:
-//   - pipeline drift: the playground compiles differently from Bootstrap's build
-//   - dist drift: the source moved and the committed dist wasn't rebuilt
-// Normalized files and full diffs go to reports/dist/. Exits non-zero on drift.
+// `dist/css/bootstrap.css` as Bootstrap's build makes it from the same commit
+// (scripts/lib/dist.mjs: its own npm scripts and `build/postcss.config.mjs`),
+// rule by rule, once both are normalized (comments, banner, source map and
+// formatting removed). Not with the committed dist: Bootstrap only rebuilds it
+// for releases, so between two it lags behind the source. A difference means
+// the playground's pipeline (postcss.config.js, compile.mjs) moved away from
+// Bootstrap's build. Normalized files and the full diff go to reports/dist/.
+// Exits non-zero on drift.
 
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
-import { createRequire } from 'node:module'
 import path from 'node:path'
-import { pathToFileURL } from 'node:url'
 import postcss from 'postcss'
 import { loadEnv } from 'vite'
 import { bootstrapSource } from './lib/bootstrap.mjs'
 import { compileConfig } from './lib/compile.mjs'
+import { buildDist } from './lib/dist.mjs'
 import { normalizeCss as normalize } from './lib/normalize-css.mjs'
 import { configDir, root } from './lib/configs.mjs'
 
 const bootstrap = bootstrapSource(loadEnv('production', root, ''))
 const bootstrapDir = bootstrap.dir ?? path.join(root, 'node_modules/bootstrap')
-const distFile = path.join(bootstrapDir, 'dist/css/bootstrap.css')
 const reportDir = path.join(root, 'reports/dist')
 const quiet = { warn() {}, debug() {} }
 
@@ -107,58 +106,19 @@ function save(name, label, css) {
   return { name, file, label, css: fs.readFileSync(file, 'utf8') }
 }
 
-// Bootstrap's own build (`npm run css-compile css-prefix`), with the
-// checkout's Sass and PostCSS config. Needs its node_modules.
-async function referenceBuild() {
-  const config = path.join(bootstrapDir, 'build/postcss.config.mjs')
-  if (!bootstrap.dir) {
-    return { skipped: 'set BOOTSTRAP_PATH to a Bootstrap checkout to find out' }
-  }
-
-  if (!fs.existsSync(config)) {
-    return { skipped: `${bootstrapDir} has no build/postcss.config.mjs` }
-  }
-
-  let sass
-  try {
-    sass = createRequire(path.join(bootstrapDir, 'package.json'))('sass')
-  } catch {
-    return { skipped: `${bootstrapDir} has no node_modules: run \`npm install\` there` }
-  }
-
-  const { css } = sass.compile(path.join(bootstrapDir, 'scss/bootstrap.scss'), { style: 'expanded', logger: quiet })
-  const { default: makeConfig } = await import(pathToFileURL(config))
-  const { plugins } = makeConfig({ file: { dirname: path.dirname(distFile) } })
-  return { css: (await postcss(plugins).process(css, { from: distFile })).css }
-}
-
 console.log(`Bootstrap: ${bootstrap.label}\n`)
+fs.rmSync(reportDir, { recursive: true, force: true })
 fs.mkdirSync(reportDir, { recursive: true })
 
+const distFile = path.join(await buildDist(bootstrapDir), 'dist/css/bootstrap.css')
+const build = save('build', 'Bootstrap build (dist/css/bootstrap.css)', fs.readFileSync(distFile, 'utf8'))
 const playground = save('playground', 'playground (configs/default)',
   (await compileConfig(path.join(configDir('default'), 'main.scss'), { bootstrapDir, logger: quiet })).css)
-const dist = save('dist', 'dist/css/bootstrap.css', fs.readFileSync(distFile, 'utf8'))
-const reference = await referenceBuild()
-
-let drift
-if (reference.skipped) {
-  const result = compare('playground-vs-dist', playground, dist)
-  print('playground vs dist', result)
-  drift = !result.identical
-  if (drift) {
-    console.log(`\nCan't tell whether the playground's pipeline or the dist moved: ${reference.skipped}.`)
-  }
-} else {
-  const build = save('build', 'Bootstrap build (scss/bootstrap.scss)', reference.css)
-  const pipeline = compare('pipeline', build, playground)
-  const stale = compare('dist', dist, build)
-  print('pipeline (playground vs Bootstrap’s build)', pipeline)
-  print('dist (committed dist vs Bootstrap’s build)', stale)
-  drift = !pipeline.identical || !stale.identical
-  if (!stale.identical) {
-    console.log('\nThe committed dist is out of date upstream: open a tracking issue in this repository labeled `upstream`,')
-    console.log('unless one exists (see "Upstream issue tracking" in CLAUDE.md).')
-  }
+const result = compare('pipeline', build, playground)
+print('playground vs Bootstrap’s build', result)
+if (!result.identical) {
+  console.log('\nThe playground no longer compiles Bootstrap like its build: bring postcss.config.js in line with')
+  console.log('Bootstrap\'s build/postcss.config.mjs (see "Checking the dist" in docs/audits.md).')
 }
 
-process.exitCode = drift ? 1 : 0
+process.exitCode = result.identical ? 0 : 1
