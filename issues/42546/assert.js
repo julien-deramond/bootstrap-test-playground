@@ -3,6 +3,9 @@
 // so that nothing is reserved. Overlay scrollbars take no room, so this can
 // only tell with classic scrollbars (Linux, Windows), as `npm run
 // check-issues` runs in CI. A tall viewport, so that the page doesn't scroll.
+// Headless Chromium doesn't apply the gutter to the viewport even with a
+// classic 15px scrollbar (Playwright Chromium 153), so `stable` with nothing
+// reserved can't be told from a fix: that case is "can't tell", never a pass.
 export const environment = { viewport: { width: 1280, height: 2400 } }
 
 export async function assert() {
@@ -28,5 +31,9 @@ export async function assert() {
     return { pass: null, details: `overlay scrollbars here (0px wide), so the gutter can't show; scrollbar-gutter: ${gutter}` }
   }
 
-  return { pass: reserved === 0, details: `${reserved}px reserved for a ${scrollbar}px scrollbar on a page that doesn't scroll; scrollbar-gutter: ${gutter}` }
+  if (reserved === 0) {
+    return { pass: null, details: `scrollbar-gutter: ${gutter} but 0px reserved for a ${scrollbar}px scrollbar: the browser may ignore the gutter on the viewport (headless Chromium does), so can't tell` }
+  }
+
+  return { pass: false, details: `${reserved}px reserved for a ${scrollbar}px scrollbar on a page that doesn't scroll; scrollbar-gutter: ${gutter}` }
 }
