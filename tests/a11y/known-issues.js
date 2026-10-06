@@ -129,6 +129,7 @@ export default [
       '/kitchen-sink/components-list-group.html',
       '/kitchen-sink/forms-chips.html',
       '/pages/focus.html',
+      '/pages/js-api.html',
       '/pages/states.html'
     ],
     issue: 183
@@ -190,6 +191,7 @@ export default [
       '/kitchen-sink/forms-validation.html',
       '/pages/checkout.html',
       '/pages/focus.html',
+      '/pages/js-api.html',
       '/pages/marketing-pricing.html',
       '/pages/marketing-product.html',
       '/pages/sign-in.html',
@@ -239,6 +241,7 @@ export default [
       '/pages/color-modes.html',
       '/pages/custom-property-prefix.html',
       '/pages/focus.html',
+      '/pages/js-api.html',
       '/pages/states.html',
       '/pages/utility-api.html'
     ],
@@ -268,6 +271,7 @@ export default [
       '/pages/color-modes.html',
       '/pages/custom-property-prefix.html',
       '/pages/focus.html',
+      '/pages/js-api.html',
       '/pages/states.html',
       '/pages/utility-api.html'
     ],
@@ -329,6 +333,7 @@ export default [
       '/pages/color-modes.html',
       '/pages/custom-property-prefix.html',
       '/pages/focus.html',
+      '/pages/js-api.html',
       '/pages/reboot-only.html',
       '/pages/states.html',
       '/pages/utility-api.html',
@@ -413,7 +418,8 @@ export default [
     rule: 'scrollable-region-focusable',
     target: /\.carousel-inner/,
     pages: [
-      '/kitchen-sink/components-carousel.html'
+      '/kitchen-sink/components-carousel.html',
+      '/pages/js-api.html'
     ],
     issue: 255
   },
@@ -959,7 +965,10 @@ export default [
     colors: '#8b8d8e on #ffffff',
     themes: ['light'],
     state: 'open',
-    pages: ['/kitchen-sink/forms-datepicker.html'],
+    pages: [
+      '/kitchen-sink/forms-datepicker.html',
+      '/pages/js-api.html'
+    ],
     issue: 265
   },
   {

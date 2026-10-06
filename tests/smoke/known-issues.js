@@ -11,7 +11,8 @@
 // Either way, remove the entry once it passes. `configs` limits an entry to
 // some configs (or `dist`), and `engines` to some engines (chromium, firefox,
 // webkit): an engine-only failure is usually a browser difference that
-// Bootstrap doesn't handle.
+// Bootstrap doesn't handle. `js-api …` scenarios are the tests of
+// pages/js-api.html, named like the tests.
 export default [
   { scenario: 'datepicker', issue: 155 },
   { scenario: 'combobox', issue: 156 },
@@ -33,5 +34,9 @@ export default [
   { walkthrough: 'collapse', step: 'Space toggles a collapse from a link with role="button"', issue: 328 },
   { walkthrough: 'menu', step: 'Space opens a menu from a link with role="button"', issue: 328 },
   { walkthrough: 'drawer', step: 'Space opens a drawer from a link with role="button"', issue: 328 },
-  { walkthrough: 'otp', step: 'The back and forward arrows move the active slot', dirs: ['rtl'], engines: ['firefox', 'webkit'], issue: 329 }
+  { walkthrough: 'otp', step: 'The back and forward arrows move the active slot', dirs: ['rtl'], engines: ['firefox', 'webkit'], issue: 329 },
+  { scenario: 'js-api datepicker', issue: 324 },
+  { scenario: 'js-api precedence popover', issue: 322 },
+  { scenario: 'js-api precedence tooltip', issue: 322 },
+  { scenario: 'js-api precedence scrollspy', issue: 323 }
 ]
