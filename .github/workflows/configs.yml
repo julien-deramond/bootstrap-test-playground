@@ -3,7 +3,7 @@ name: Configs
 # Compiles the working copy, every config in configs/ and every reproduction in
 # issues/, and fails on a Sass or PostCSS error. Warnings, such as Sass
 # deprecations, show up as annotations on the run and the pull request. Then
-# checks that the default config still compiles to Bootstrap's committed dist,
+# checks that the default config still compiles like Bootstrap's own build,
 # audits the tokens of every config for new undefined or unused ones,
 # compiles Bootstrap under combinations of its $enable-* options, audits the
 # default CSS for new physical left/right declarations, audits its motion

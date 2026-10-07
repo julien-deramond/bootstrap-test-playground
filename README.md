@@ -12,7 +12,7 @@ A test bench for [Bootstrap v6](https://github.com/twbs/bootstrap/tree/v6-dev). 
 - **Toolbar**: color mode, direction, primary hue, source or dist build, on every page, a tab order overlay, plus side-by-side *compare* and multi-config *matrix* views
 - **Issue reproductions**: one folder per bug, each compiling its own isolated copy of Bootstrap
 - **Test suites**: visual regression, a console crawl, interaction smoke tests and keyboard walkthroughs for every JavaScript component, and an accessibility scan (axe-core, focus rings, color contrast), in Chromium, Firefox and WebKit
-- **Audits**: CSS tokens, RTL, reduced motion, cascade layers, partial imports, option combinations, dist drift and bundle sizes
+- **Audits**: CSS tokens, RTL, reduced motion, cascade layers, partial imports, option combinations, drift from Bootstrap's build and bundle sizes
 - **Nightly canary**: follows `v6-dev`, runs every check and opens a pull request with what changed
 
 ## Quick start

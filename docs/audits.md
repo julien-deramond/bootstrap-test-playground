@@ -28,23 +28,18 @@ It lists errors by file, so duplicate ids read per page. The kitchen sink has no
 
 ## Checking the dist
 
-Findings here only carry over upstream if the playground compiles Bootstrap the way Bootstrap does. `npm run check-dist` compiles `configs/default/` the way Vite does and compares the result with Bootstrap's committed `dist/css/bootstrap.css`, rule by rule. It ignores comments, the banner, the source map and formatting:
+Findings here only carry over upstream if the playground compiles Bootstrap the way Bootstrap does. `npm run check-dist` compiles `configs/default/` the way Vite does and compares the result with `dist/css/bootstrap.css` as Bootstrap's own build makes it from the same commit (see [Dist files built from source](bootstrap.md#dist-files-built-from-source)), rule by rule. It ignores comments, the banner, the source map and formatting:
 
 ```
-✗ playground vs dist: 1 changed, 1 only in playground
+✗ playground vs Bootstrap’s build: 1 changed, 1 only in playground
     changed: @layer components > .badge
     only in playground: @layer components > .badge-dot
-    full diff: reports/dist/playground-vs-dist.diff
+    full diff: reports/dist/pipeline.diff
 ```
 
-A difference means one of two things: the playground's pipeline moved away from Bootstrap's build, or Bootstrap's source moved and nobody rebuilt the committed dist, as in [#1](https://github.com/julien-deramond/bootstrap-test-playground/issues/1). With `BOOTSTRAP_PATH` pointing to a checkout that has its dependencies installed, the script also runs Bootstrap's own build, with the checkout's Sass and `build/postcss.config.mjs`, and tells the two apart:
+It doesn't compare with the `dist/` committed upstream: Bootstrap only rebuilds it for releases, so between two it lags behind the source, and the check would fail on every change to the Sass, as in [#354](https://github.com/julien-deramond/bootstrap-test-playground/issues/354). Since both sides compile the same source, a difference means the playground's pipeline moved away from Bootstrap's build: update `postcss.config.js` (or `scripts/lib/compile.mjs`) to match Bootstrap's `build/postcss.config.mjs`. With `BOOTSTRAP_PATH`, both sides use that checkout, so it also checks a branch you're working on.
 
-```
-✓ pipeline (playground vs Bootstrap’s build): no drift
-✗ dist (committed dist vs Bootstrap’s build): 3 changed
-```
-
-The normalized CSS and the full diffs go to `reports/dist/`. `npm run update-bootstrap` runs the check after each update, and so does the *Configs* workflow on every pull request, which uploads `reports/dist/` as the *dist-drift* artifact when it fails. When the `dist` line fails, record it as an upstream issue (see [Upstream issues](../CLAUDE.md#upstream-issue-tracking)). When the `pipeline` line fails, update `postcss.config.js` to match Bootstrap's `build/postcss.config.mjs`.
+The normalized CSS and the full diff go to `reports/dist/`. `npm run update-bootstrap` runs the check after each update, and so does the *Configs* workflow on every pull request, which uploads `reports/dist/` as the *dist-drift* artifact when it fails.
 
 ## Auditing tokens
 
@@ -82,8 +77,8 @@ It takes about four minutes and writes one line per token to `reports/tokens/ren
 A config that adds a theme color or turns on every utility has a size cost, and a jump in output size is an early sign of a Sass loop gone wrong. `npm run check-size` measures, minified, gzipped and brotli-compressed:
 
 - `css/<config>`: each saved config's CSS, compiled like the playground and minified with Lightning CSS at Bootstrap's browser floors, like `vite build`. The working copy isn't measured.
-- `dist/…`: Bootstrap's prebuilt `bootstrap.min.css`, `bootstrap.min.js` and `bootstrap.bundle.min.js`, as users download them.
-- `src/bootstrap.bundle.js`: `js/src` and its dependencies bundled and minified with Rolldown, which follows the source even when `dist/` wasn't rebuilt.
+- `dist/…`: Bootstrap's `bootstrap.min.css`, `bootstrap.min.js` and `bootstrap.bundle.min.js`, as users download them, [built from the commit's source](bootstrap.md#dist-files-built-from-source) rather than the committed ones, which only follow releases.
+- `src/bootstrap.bundle.js`: `js/src` and its dependencies bundled and minified with Rolldown's defaults, without Bootstrap's build settings.
 
 ```
 File                          Minified  Gzip     Brotli   Brotli change

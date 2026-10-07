@@ -7,8 +7,9 @@
 // current view only, without saving: ?theme=dark&dir=rtl&primary=teal&config=name
 //
 // `css` and `js` pick where Bootstrap comes from: `src`, compiled from its Sass
-// and TypeScript (the default), or `dist`, the prebuilt files the package ships
-// (dist/css/bootstrap.css, js/dist/). ?css=dist&js=dist tests what users get.
+// and TypeScript (the default), or `dist`, the files the package ships
+// (dist/css/bootstrap.css, js/dist/), built from the same source by
+// scripts/lib/dist.mjs. ?css=dist&js=dist tests what users get.
 //
 // A page marked `<html data-playground-fixed>`, like the home page, keeps
 // Bootstrap's defaults: none of the preferences apply to it, but it can still

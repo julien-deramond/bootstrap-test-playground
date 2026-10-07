@@ -4,9 +4,9 @@
 //
 // Bootstrap's JavaScript is compiled from its TypeScript source, like the CSS is
 // compiled from Sass, so the playground always runs the branch's current code.
-// With `?js=dist` (or the toolbar's Source switch), it loads the prebuilt
-// js/dist/ modules the package ships instead, what `import 'bootstrap'` gives
-// users. Only one of the two ever loads.
+// With `?js=dist` (or the toolbar's Source switch), it loads the js/dist/
+// modules instead, what `import 'bootstrap'` gives users, built from the same
+// source (vite.config.js aliases it). Only one of the two ever loads.
 import source, { onChange as onSourceChange } from 'virtual:bootstrap-source'
 import { configs, initConfigs } from './configs.js'
 import { initExamples } from './examples.js'

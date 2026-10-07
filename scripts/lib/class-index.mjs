@@ -1,11 +1,10 @@
 // Bootstrap's class and token names, for searching pages by class
 // (`btn-subtle`) or token (`--alert-padding-x`). Read from Bootstrap's
-// compiled `dist/css/bootstrap.css`, which check-dist keeps in step with the
-// Sass. Used by vite.config.js for `virtual:playground-pages`.
+// `dist/css/bootstrap.css` as built from the source under test
+// (scripts/lib/dist.mjs). Used by vite.config.js for `virtual:playground-pages`.
 import fs from 'node:fs'
 import path from 'node:path'
 import postcss from 'postcss'
-import { root } from './configs.mjs'
 
 const CLASS = /\.(-?[_a-zA-Z][\w-]*)/g
 // Functional pseudo-classes, like `:not(.x)`, whose classes aren't the subject.
@@ -14,8 +13,8 @@ const FUNCTIONAL_PSEUDO = /:[\w-]+\((?:[^()]|\([^()]*\))*\)/g
 // `classes`: every class a selector names. `tokens`: each `--bs-*` custom
 // property declared on a class (named without `--bs-`), with the classes whose
 // rules declare it, like `alert-padding-x` → ['alert'].
-export function readBootstrapIndex(bootstrapDir = path.join(root, 'node_modules/bootstrap')) {
-  const file = path.join(bootstrapDir, 'dist/css/bootstrap.css')
+export function readBootstrapIndex(distDir) {
+  const file = path.join(distDir, 'dist/css/bootstrap.css')
   const classes = new Set()
   const tokens = new Map()
   if (!fs.existsSync(file)) {

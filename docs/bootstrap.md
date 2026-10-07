@@ -110,14 +110,23 @@ The toolbar and the home page then show the checkout's branch, commit and state,
 
 The playground builds Bootstrap from **source**, the way Bootstrap's own build does:
 
-- **CSS** is compiled from `scss/`, then `postcss.config.js` applies the same PostCSS step as Bootstrap's `build/postcss.config.mjs`. That step adds the `--bs-` prefix to every custom property and runs Autoprefixer with Bootstrap's `.browserslistrc`. The output matches `dist/css/bootstrap.css` (see [Checking the dist](audits.md#checking-the-dist)), and the builds keep `light-dark()` intact.
-- **JavaScript** is imported from `js/src/index.ts`, so the playground runs the branch's current code even when the committed `js/dist/` hasn't been rebuilt yet.
+- **CSS** is compiled from `scss/`, then `postcss.config.js` applies the same PostCSS step as Bootstrap's `build/postcss.config.mjs`. That step adds the `--bs-` prefix to every custom property and runs Autoprefixer with Bootstrap's `.browserslistrc`. The output matches Bootstrap's `dist/css/bootstrap.css` (see [Checking the dist](audits.md#checking-the-dist)), and the builds keep `light-dark()` intact.
+- **JavaScript** is imported from `js/src/index.ts`.
 
-Users install the package and get its prebuilt files, though, and a stale or broken `dist` is its own kind of bug (#1). The toolbar's **CSS** and **JavaScript** switches, or `?css=dist` and `?js=dist` in the URL, loads those instead:
+Users install the package and get its built files, though: a build step can break what the source gets right. The toolbar's **CSS** and **JavaScript** switches, or `?css=dist` and `?js=dist` in the URL, loads those instead, [built from the same source](#dist-files-built-from-source):
 
-- **`css=dist`** replaces the compiled `main.scss` with `dist/css/bootstrap.css`. `tokens.css` still applies on top, from the working copy or the selected config, but a config's Sass options can't reach a prebuilt file. Issue reproductions compile their own styles, so they keep them.
+- **`css=dist`** replaces the compiled `main.scss` with `dist/css/bootstrap.css`. `tokens.css` still applies on top, from the working copy or the selected config, but a config's Sass options can't reach a built file. Issue reproductions compile their own styles, so they keep them.
 - **`js=dist`** loads `js/dist/index.js`, what `import 'bootstrap'` gives users, instead of `js/src/index.ts`. Only one of the two ever loads. The JavaScript can't be swapped live, so the switch reloads the page.
 
-Both honor `BOOTSTRAP_PATH`. The compare view's *Source / Dist* preset puts the default config compiled from source next to the prebuilt files, and the [console crawl](testing.md#console-crawl) and the [smoke tests](testing.md#interaction-smoke-tests) run a `dist` variant too.
+Both honor `BOOTSTRAP_PATH`. The compare view's *Source / Dist* preset puts the default config compiled from source next to the dist files, and the [console crawl](testing.md#console-crawl) and the [smoke tests](testing.md#interaction-smoke-tests) run a `dist` variant too.
 
 `src/js/main.js` imports Bootstrap dynamically, so it runs after `DOMContentLoaded`, and sometimes after `load`. Several components only initialize from those events ([#160](https://github.com/julien-deramond/bootstrap-test-playground/issues/160)), so `main.js` replays the ones that fired while it loaded. A page's own inline scripts are bundled after `main.js` in a build: have them check `document.readyState` rather than only listen for `load`.
+
+### Dist files built from source
+
+Bootstrap commits its `dist/` and `js/dist/` folders, but only rebuilds them for releases: between two, they lag behind `v6-dev`, and testing them would test the last release rather than the commit under test. So the playground builds them itself, from the commit it tests ([`scripts/lib/dist.mjs`](../scripts/lib/dist.mjs)). It runs Bootstrap's own npm scripts behind `npm run dist` (`css-compile`, `css-prefix-main`, `css-minify-main`, `js-compile-*` and `js-minify-*`, without the type declarations) and its `build/` files, with this project's copies of the tools they call: Sass, PostCSS with the same plugins, Lightning CSS, Rolldown, Terser and globby. The npm package doesn't ship `build/`, so it comes from the `BOOTSTRAP_PATH` checkout, or from a sparse fetch of the locked commit into `.cache/bootstrap-build/` (a few hundred kilobytes, needs `git` and the network once per commit).
+
+The result goes to `.cache/dist/<key>/`, laid out like the package, where `key` hashes the sources, the build files and `package-lock.json`: the first `npm run dev`, `npm run build` or check after an update builds it, in a few seconds, and later ones reuse it. Everything that reads Bootstrap's dist uses it: `?css=dist` and `?js=dist` (Vite aliases `bootstrap/dist/…`, `bootstrap/js/dist/…` and `import 'bootstrap'` to it), [`check-dist`](audits.md#checking-the-dist), [`check-size`](audits.md#sizes) and `diff-bootstrap`, and the class index behind page search. With `BOOTSTRAP_PATH`, edits to the checkout show up in the dist at the next start of the dev server, not live. Outside CI, the dev server falls back to the committed files with a warning when the build fails, such as offline on the first run after an update.
+
+The [issue exports](pages.md#exporting-a-reproduction) are the exception: they load Bootstrap's JavaScript, and the default config's CSS, from jsDelivr at the locked commit, which only serves the committed files.
+
