@@ -62,6 +62,7 @@ const { version, commit } = versionOf(sections, issue.body)
 const majorLabels = issue.labels.filter(label => /^v\d+$/.test(label))
 const v6Evidence = issue.labels.some(label => /^v6\b/.test(label))
   ? `labeled ${issue.labels.filter(label => /^v6\b/.test(label)).join(', ')} upstream`
+  // v6-dev: what older issues call v6 (the branch was renamed main on 2026-10-08)
   : /^v?6\b|v6-dev/i.test(version) ? `reported on ${version}` : ''
 const versionMajor = version.match(/^v?([1-5])\./)?.[1]
 const otherMajor = v6Evidence ? '' : majorLabels[0] ?? (versionMajor ? `v${versionMajor}` : '')

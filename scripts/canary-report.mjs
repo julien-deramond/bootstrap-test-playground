@@ -103,7 +103,7 @@ const range = from === to ?
 
 const escapeCell = text => text.replace(/\|/g, '\\|')
 const report = [
-  `Updates Bootstrap to \`v6-dev\` at ${range}.`,
+  `Updates Bootstrap to \`main\` at ${range}.`,
   '',
   failed.length ? `**${failed.length} ${failed.length === 1 ? 'check fails' : 'checks fail'}:** ${failed.map(({ name }) => `\`${name}\``).join(', ')}.` : '**Every check passes.**',
   stale.length ? `**${stale.length} allowlist ${stale.length === 1 ? 'entry no longer matches' : 'entries no longer match'}**: an upstream fix may have landed.` : '',

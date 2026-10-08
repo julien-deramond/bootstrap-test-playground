@@ -7,7 +7,7 @@ Static checks that compile Bootstrap and read its output. They need no browser, 
 A config only compiles when a page uses it, so a Bootstrap update that renames a Sass variable or a token map can break one without anyone noticing. `npm run check-configs` compiles `main.scss` of the working copy, of every folder in `configs/` and of every reproduction in `issues/`. It uses Sass, then `postcss.config.js`, the way Vite does, and runs `tokens.css` through PostCSS too:
 
 ```
-Bootstrap: twbs/bootstrap#v6-dev @ 624c7b98c
+Bootstrap: twbs/bootstrap#main @ 624c7b98c
 
 ✓ src/styles
 ✓ configs/default

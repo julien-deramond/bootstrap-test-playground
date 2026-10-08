@@ -30,7 +30,7 @@ const resultCount = document.getElementById('result-count')
 const configList = document.getElementById('configs')
 
 const CONFIGS = 'configs'
-const ALL_DESCRIPTION = 'Starter screens, real app screens, every docs example and issue reproductions, all compiled from v6-dev source.'
+const ALL_DESCRIPTION = 'Starter screens, real app screens, every docs example and issue reproductions, all compiled from main source.'
 const CONFIGS_DESCRIPTION = 'Saved styles from `configs/`. The one you apply is used by every example page, like the toolbar’s Config list; this page keeps Bootstrap’s defaults.'
 // How many tags the sidebar shows before "more".
 const TAGS_SHOWN = 12
@@ -95,7 +95,7 @@ function renderLastUpdate() {
   panel.querySelector('.home-update-body').innerHTML = `
     <p class="home-update-range">
       <a href="${compareUrl}" rel="noopener"><code>${short(from)}</code> → <code>${short(to)}</code></a>
-      ${pr ? `· <a href="${escapeHtml(pr.url)}" rel="noopener">${escapeHtml(pr.title)}</a>${pr.behind ? `, ${plural(pr.behind, 'commit')} behind <code>v6-dev</code>` : ''}` : ''}
+      ${pr ? `· <a href="${escapeHtml(pr.url)}" rel="noopener">${escapeHtml(pr.title)}</a>${pr.behind ? `, ${plural(pr.behind, 'commit')} behind <code>main</code>` : ''}` : ''}
     </p>
     <div class="home-update-columns">
       <section aria-labelledby="last-update-commits">

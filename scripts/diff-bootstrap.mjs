@@ -2,7 +2,7 @@
 // Shows what changed between two Bootstrap commits.
 // Usage: npm run diff-bootstrap -- <from> <to> [--no-screens] [--page=<filter>] [--serve]
 //   <from> and <to> are commits (full or short), branches or tags of
-//   twbs/bootstrap, like `npm run diff-bootstrap -- 624c7b9 v6-dev`.
+//   twbs/bootstrap, like `npm run diff-bootstrap -- 624c7b9 main`.
 //
 // `--serve` skips the report: it serves the playground with <from> and, under
 // /b/, with <to>, from one origin, so the compare view can put one commit in
@@ -66,7 +66,7 @@ if (serve) {
   await b.listen()
 
   process.env.BOOTSTRAP_PATH = dirs.from
-  // `bd0a4f6`, or `bd0a4f6 (v6-dev)` for a branch or a tag.
+  // `bd0a4f6`, or `bd0a4f6 (main)` for a branch or a tag.
   const label = (sha, ref) => (/^[\da-f]{7,40}$/.test(ref) ? short(sha) : `${short(sha)} (${ref})`)
   process.env.VITE_BOOTSTRAP_A = label(from, fromRef)
   process.env.VITE_BOOTSTRAP_B = label(to, toRef)

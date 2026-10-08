@@ -306,7 +306,7 @@ ${allPages.filter(page => page.section === dir).map(page => `          <a href="
       <p class="mb-2"><a href="/">Playground</a> / Kitchen sink</p>
       <h1>${escapeHtml(title)}</h1>
       <p class="fs-lg fg-2">${escapeHtml(description)}</p>
-      <p class="mb-0"><a href="https://github.com/twbs/bootstrap/blob/v6-dev/site/src/content/docs/${section}/${slug}.mdx">Docs source</a></p>
+      <p class="mb-0"><a href="https://github.com/twbs/bootstrap/blob/main/site/src/content/docs/${section}/${slug}.mdx">Docs source</a></p>
     </header>
 
     <main class="container pb-5">

@@ -1,8 +1,8 @@
 name: Canary
 
-# Every night: moves Bootstrap to the latest v6-dev commit, resyncs the kitchen
+# Every night: moves Bootstrap to the latest main commit, resyncs the kitchen
 # sink from that commit's docs, runs every check (npm run canary-report) and
-# opens or updates one pull request with the report. Does nothing when v6-dev
+# opens or updates one pull request with the report. Does nothing when main
 # hasn't moved. Never merges.
 #
 # Opening the pull request needs either a CANARY_TOKEN repository secret (a
@@ -21,7 +21,7 @@ on:
   workflow_dispatch:
     inputs:
       force:
-        description: Run the checks even if v6-dev hasn't moved (no pull request without changes)
+        description: Run the checks even if main hasn't moved (no pull request without changes)
         type: boolean
         default: false
 
@@ -49,17 +49,17 @@ jobs:
         with:
           token: ${{ secrets.CANARY_TOKEN || github.token }}
 
-      - name: Check whether v6-dev moved
+      - name: Check whether main moved
         id: check
         run: |
           from=$(node -p "require('./package-lock.json').packages['node_modules/bootstrap'].resolved.split('#')[1]")
-          head=$(git ls-remote https://github.com/twbs/bootstrap.git refs/heads/v6-dev | cut -f1)
+          head=$(git ls-remote https://github.com/twbs/bootstrap.git refs/heads/main | cut -f1)
           echo "from=$from" >> "$GITHUB_OUTPUT"
           if [ "${{ inputs.force }}" = "true" ]; then
             echo "Forced run."
             echo "moved=true" >> "$GITHUB_OUTPUT"
           elif [ "$from" = "$head" ]; then
-            echo "v6-dev is still at ${from:0:7}: nothing to do."
+            echo "main is still at ${from:0:7}: nothing to do."
             echo "moved=false" >> "$GITHUB_OUTPUT"
           elif gh api "repos/$GITHUB_REPOSITORY/pulls?head=$GITHUB_REPOSITORY_OWNER:$BRANCH&state=open" --jq '.[].title' | grep -q "${head:0:7}"; then
             echo "The canary pull request is already at ${head:0:7}: nothing to do."
@@ -82,8 +82,8 @@ jobs:
           # `libc` fields). Node 22's npm 10 would strip them, a diff on every run.
           npm install -g npm@11
           npm ci
-          # Like `npm run update-bootstrap`: package.json keeps `#v6-dev`, the lockfile pins the commit.
-          npm install bootstrap@github:twbs/bootstrap#v6-dev
+          # Like `npm run update-bootstrap`: package.json keeps `#main`, the lockfile pins the commit.
+          npm install bootstrap@github:twbs/bootstrap#main
           to=$(node -p "require('./package-lock.json').packages['node_modules/bootstrap'].resolved.split('#')[1]")
           echo "to=$to" >> "$GITHUB_OUTPUT"
 
@@ -136,10 +136,10 @@ jobs:
           GH_TOKEN: ${{ secrets.CANARY_TOKEN || github.token }}
         run: |
           to="${{ steps.update.outputs.to }}"
-          title="chore(deps): update bootstrap to v6-dev@${to:0:7}"
+          title="chore(deps): update bootstrap to main@${to:0:7}"
           run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
 
-          # A forced run on an unchanged v6-dev has nothing to propose. Compare
+          # A forced run on an unchanged main has nothing to propose. Compare
           # the Bootstrap commit, not the lockfile: other entries can change
           # format with the npm version.
           if [ "$to" = "${{ steps.check.outputs.from }}" ] && [ -z "$(git status --porcelain -- kitchen-sink)" ]; then
@@ -153,7 +153,7 @@ jobs:
           # Someone took the pull request over: don't force-push over their commits.
           if [ -n "$number" ] && git fetch -q origin "$BRANCH" && git log --format=%ae "origin/main..origin/$BRANCH" | grep -Fxqv "$bot"; then
             gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$number/comments" --silent \
-              -f body="v6-dev moved to \`${to:0:7}\`, but this branch has commits of its own, so the canary left it alone. The new report is in the [run's *canary-report* artifact]($run_url). Merge or close this pull request to let the canary take over again."
+              -f body="main moved to \`${to:0:7}\`, but this branch has commits of its own, so the canary left it alone. The new report is in the [run's *canary-report* artifact]($run_url). Merge or close this pull request to let the canary take over again."
             echo "The canary branch has commits of its own: left it alone."
             exit 0
           fi

@@ -60,9 +60,9 @@ function checkoutLabel({ branch, sha, dirty }) {
   return `${short} (detached${dirty ? ', dirty' : ''})`
 }
 
-// Where Bootstrap comes from: the `v6-dev` branch installed from GitHub in
+// Where Bootstrap comes from: the `main` branch installed from GitHub in
 // node_modules (default), or a local checkout when BOOTSTRAP_PATH is set.
-// `label` names it (`local checkout: v6-dev@1a2b3c4 (dirty)`), `path` is its
+// `label` names it (`local checkout: main@1a2b3c4 (dirty)`), `path` is its
 // folder relative to the playground, so builds embed no absolute path, `url`
 // links to the commit or the branch on GitHub when known, `sha` is the full
 // commit when known, and `dirty` says whether the checkout has uncommitted
@@ -93,7 +93,7 @@ export function bootstrapSource(env) {
     const resolved = lock.packages?.['node_modules/bootstrap']?.resolved ?? ''
     sha = resolved.split('#')[1]
     if (sha) {
-      label = `twbs/bootstrap#v6-dev @ ${sha.slice(0, 9)}`
+      label = `twbs/bootstrap#main @ ${sha.slice(0, 9)}`
       url = `https://github.com/${githubRepo(resolved) ?? 'twbs/bootstrap'}/commit/${sha}`
     }
   } catch {}

@@ -2,7 +2,7 @@
   "name": "bootstrap-test-playground",
   "version": "0.0.0",
   "private": true,
-  "description": "A Vite multi-page playground to test and reproduce issues with Bootstrap v6 (v6-dev branch).",
+  "description": "A Vite multi-page playground to test and reproduce issues with Bootstrap v6 (the main branch of twbs/bootstrap).",
   "license": "MIT",
   "author": "Julien Déramond",
   "type": "module",
@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@floating-ui/dom": "^1.8.0",
-    "bootstrap": "github:twbs/bootstrap#v6-dev",
+    "bootstrap": "github:twbs/bootstrap#main",
     "vanilla-calendar-pro": "^3.4.0"
   },
   "devDependencies": {
