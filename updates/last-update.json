@@ -1,13 +1,70 @@
 {
-  "date": "2026-10-05T12:13:23.869Z",
-  "from": "0632eaa44acd9c8ba4a1bf70786d2930c6d1b745",
-  "to": "ebb53da4fa94b7891a1ee5fe5a624d30fe72aee8",
+  "date": "2026-10-08T12:07:07.126Z",
+  "from": "ebb53da4fa94b7891a1ee5fe5a624d30fe72aee8",
+  "to": "f6cc0f2cde9cbf3d73759ada24a39555d2de3a12",
   "commits": [
     {
-      "sha": "ebb53da4fa94b7891a1ee5fe5a624d30fe72aee8",
-      "subject": "Fix `.btn-group-divider` position in RTL (#42976)"
+      "sha": "c8ac8c9f793871acaf03a6a4a3f54558df669119",
+      "subject": "Let .theme-* classes color the range (#42973)"
+    },
+    {
+      "sha": "9212becec2ca8cf7b9760581f5c21c75cf7b8a82",
+      "subject": "Improve JSDoc of `parseSelector`, `reflow` and `getNextActiveElement` in `js/src/util/index.ts` (#42977)"
+    },
+    {
+      "sha": "ced32cbb33e5bbb5d02c20e1367dd8aedf5a03d5",
+      "subject": "Refactor docs to use the shared BUI package (#42980)"
+    },
+    {
+      "sha": "708bc6e7dfc23d9d8560fcfb6cae18ca697ca1bb",
+      "subject": "Bump the GitHub Actions group with 4 updates (#42982)"
+    },
+    {
+      "sha": "0d7e98fbc4c0881012c080939b406f310ed1ae4c",
+      "subject": "Bump the dependencies with 3 updates (#42981)"
+    },
+    {
+      "sha": "68557ae58753b563725af156b3c884a4cfbb25c2",
+      "subject": "Bump js-yaml"
+    },
+    {
+      "sha": "526fc14f4810980451b892832403d3eabda0ab5b",
+      "subject": "Bump source-map-js from 1.2.1 to 1.2.2 (#42986)"
+    },
+    {
+      "sha": "fb2f9ff8d42811a6f330c4d86453421c963761cc",
+      "subject": "Bump devalue from 5.8.1 to 5.9.4"
+    },
+    {
+      "sha": "853b5d650bfa48cabeea7bcb8a2c3ee02324e6ff",
+      "subject": "Bump shell-quote from 1.10.0 to 1.12.0 (#42989)"
+    },
+    {
+      "sha": "d00a5cd33eeca25b87eb535bb25113bc3e83058e",
+      "subject": "Bump http-cache-semantics from 4.2.0 to 4.3.0 (#42990)"
+    },
+    {
+      "sha": "a1bf4f62dc132153ea0b29934802918165bdf426",
+      "subject": "fix(docs): validate Astro types and example assets (#42983)"
+    },
+    {
+      "sha": "ff8866a147d61d0e09db1013ab9bcdd60f56200b",
+      "subject": "Use dotted Bootstrap 6 alpha version (#42984)"
+    },
+    {
+      "sha": "f6cc0f2cde9cbf3d73759ada24a39555d2de3a12",
+      "subject": "fix(docs): reserve space for the masthead ad"
     }
   ],
   "rendering": true,
-  "examples": []
+  "examples": [
+    {
+      "url": "/kitchen-sink/forms-range.html",
+      "id": "theme-colors",
+      "page": "Range",
+      "example": "Theme colors",
+      "markup": "added",
+      "pixels": 27888
+    }
+  ]
 }
