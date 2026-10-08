@@ -16,7 +16,7 @@
 //
 // `--record` writes the sizes to sizes/history.json under the Bootstrap
 // commit, replacing an entry for the same commit. The nightly canary records
-// every update, so the history follows v6-dev; sizes.html charts it. A change
+// every update, so the history follows main; sizes.html charts it. A change
 // of more than 2% is flagged; nothing fails.
 //
 // Changes are measured on the brotli size. Node's gzip output depends on the

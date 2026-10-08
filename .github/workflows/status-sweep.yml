@@ -2,7 +2,7 @@ name: Status sweep
 
 # Every Monday: the status sweep of "Upstream issue tracking" in CLAUDE.md,
 # with `npm run status-sweep -- --apply`. An `upstream-reported` issue fixed on
-# v6-dev moves to `upstream-fixed` and is closed; an `upstream` issue that a
+# main moves to `upstream-fixed` and is closed; an `upstream` issue that a
 # twbs/bootstrap item links to moves to `upstream-reported`. Possible matches
 # and closed-without-a-fix items get a comment for a human. Each reproduction's
 # `data-status` follows its tracking issue's label: the pages that changed go

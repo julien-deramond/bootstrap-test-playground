@@ -1,6 +1,6 @@
 # Bootstrap test playground
 
-A Vite multi-page playground for Bootstrap v6 (`twbs/bootstrap`, branch `v6-dev`). See [README.md](README.md) for an overview, and [docs/](docs/README.md) for how each tool works.
+A Vite multi-page playground for Bootstrap v6 (`twbs/bootstrap`, branch `main`, which was called `v6-dev` until 2026-10-08). See [README.md](README.md) for an overview, and [docs/](docs/README.md) for how each tool works.
 
 ## Conventions
 
@@ -77,7 +77,7 @@ gh label create upstream-fixed --color 0E8A16 --description "Fixed upstream" --f
    If upstream already has an issue or PR, skip to step 2 and label it `upstream-reported` right away.
 2. Create the issue with the `upstream` label. On GitHub, use the *Upstream Bootstrap bug* form; with `gh issue create`, which can't fill a form, write the same sections. The title describes the bug in Bootstrap's terms. The body includes:
    - **Summary**: one or two sentences
-   - **Bootstrap version**: the `v6-dev` commit (from `package-lock.json`, or `git rev-parse HEAD` in a local checkout)
+   - **Bootstrap version**: the `main` commit (from `package-lock.json`, or `git rev-parse HEAD` in a local checkout)
    - **Reproduction**: steps, and the `issues/pg-<number>/` page once it exists
    - **Expected / Actual**
    - **Root cause**: `file:line` in `twbs/bootstrap` with a permalink, when known
@@ -97,7 +97,7 @@ Also put the upstream link in the reproduction page, if there is one. Its `data-
 
 ### 3. Fixed upstream (`upstream-fixed`, then close)
 
-When the upstream fix lands on `v6-dev`, meaning the PR is merged or the issue is closed as completed:
+When the upstream fix lands on `main`, meaning the PR is merged or the issue is closed as completed:
 
 1. Check the fix in the playground when practical (`npm run update-bootstrap`, then the reproduction page), and remove the issue's entries from `tests/console/known-issues.js`, `tests/smoke/known-issues.js`, `tests/a11y/known-issues.js`, `scripts/known-tokens.mjs`, `scripts/known-options.mjs`, `scripts/known-rtl.mjs`, `scripts/known-motion.mjs`, `scripts/known-layers.mjs`, `scripts/known-partials.mjs`, `scripts/known-equivalence.mjs` (and its line in `configs/README.md`) and `scripts/known-html.mjs`, and the `data-issue` of `issues/pg-27/` checks.
 2. Update and close:

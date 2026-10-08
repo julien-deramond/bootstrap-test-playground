@@ -4,9 +4,9 @@
 //
 // - an open `upstream-reported` issue whose upstream items (the twbs/bootstrap
 //   issues and pull requests of its "Reported upstream" comments) are all fixed
-//   on v6-dev moves to `upstream-fixed` and is closed. Fixed means a pull
+//   on main moves to `upstream-fixed` and is closed. Fixed means a pull
 //   request merged, or an issue closed as completed by a commit or with a
-//   merged pull request linked to close it, whose commit is in v6-dev. An item closed without a fix gets a comment for a human.
+//   merged pull request linked to close it, whose commit is in main. An item closed without a fix gets a comment for a human.
 // - an open `upstream` issue that a twbs/bootstrap issue or pull request links
 //   to moves to `upstream-reported`. One updated since --since whose title and
 //   description share its keywords gets a comment as a possible match: a human
@@ -28,7 +28,7 @@ import { LABEL_STATUS, UPSTREAM_LABELS, listReproductions, needsRefs, readReprod
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const UPSTREAM = 'twbs/bootstrap'
-const BRANCH = 'v6-dev'
+const BRANCH = 'main'
 const TRACKING = `${process.env.GITHUB_SERVER_URL ?? 'https://github.com'}/julien-deramond/bootstrap-test-playground/blob/main/CLAUDE.md#upstream-issue-tracking`
 
 // The files whose entries reference a tracking issue (step 3 of CLAUDE.md).
@@ -69,7 +69,7 @@ const repo = process.env.GITHUB_REPOSITORY ?? gh(['repo', 'view', '--json', 'nam
 // --- Upstream items -----------------------------------------------------------
 
 const inBranch = new Map()
-// Whether a twbs/bootstrap commit is in v6-dev.
+// Whether a twbs/bootstrap commit is in main.
 function landed(sha) {
   if (!inBranch.has(sha)) {
     const status = gh(['api', `repos/${UPSTREAM}/compare/${BRANCH}...${sha}`, '--jq', '.status'], { json: false }).trim()

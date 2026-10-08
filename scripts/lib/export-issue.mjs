@@ -31,7 +31,7 @@ const STACKBLITZ_FILE = 'index.html'
 const quiet = { warn() {}, debug() {} }
 const playgroundPackage = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'))
 
-const cdnUrl = (sha, file) => `https://cdn.jsdelivr.net/gh/twbs/bootstrap@${sha ?? 'v6-dev'}/${file}`
+const cdnUrl = (sha, file) => `https://cdn.jsdelivr.net/gh/twbs/bootstrap@${sha ?? 'main'}/${file}`
 
 const read = file => fs.readFileSync(file, 'utf8')
 const sameFile = (a, b) => fs.existsSync(a) && fs.existsSync(b) && read(a) === read(b)
@@ -253,7 +253,7 @@ export async function exportIssue(name, { bootstrap }) {
   const bootstrapDir = bootstrap.dir ?? path.join(root, 'node_modules/bootstrap')
   const { sha } = bootstrap
   if (!sha) {
-    warnings.push('The Bootstrap commit is unknown: the exports use the v6-dev branch from GitHub.')
+    warnings.push('The Bootstrap commit is unknown: the exports use the main branch from GitHub.')
   }
 
   if (bootstrap.dirty) {
@@ -265,7 +265,7 @@ export async function exportIssue(name, { bootstrap }) {
   // Bootstrap's defaults: the same main.scss and _custom.scss as configs/default/.
   const isDefault = ['main.scss', '_custom.scss'].every(file => sameFile(path.join(dir, file), path.join(configDir('default'), file)))
   const useCdn = isDefault && sha && !bootstrap.dirty
-  const commit = sha ? `v6-dev at ${sha.slice(0, 7)} (https://github.com/twbs/bootstrap/commit/${sha})` : 'v6-dev (https://github.com/twbs/bootstrap/tree/v6-dev)'
+  const commit = sha ? `main at ${sha.slice(0, 7)} (https://github.com/twbs/bootstrap/commit/${sha})` : 'main (https://github.com/twbs/bootstrap/tree/main)'
 
   // Each stylesheet of the page, for the HTML export (inlined, or from the
   // CDN) and for the project (a file, by its name).
@@ -405,7 +405,7 @@ function packageJson(name, sha) {
     scripts: { dev: 'vite', build: 'vite build', preview: 'vite preview' },
     dependencies: {
       '@floating-ui/dom': dependencies['@floating-ui/dom'],
-      bootstrap: `https://codeload.github.com/twbs/bootstrap/tar.gz/${sha ?? 'refs/heads/v6-dev'}`,
+      bootstrap: `https://codeload.github.com/twbs/bootstrap/tar.gz/${sha ?? 'refs/heads/main'}`,
       'vanilla-calendar-pro': dependencies['vanilla-calendar-pro']
     },
     devDependencies: {

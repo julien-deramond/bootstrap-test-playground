@@ -1,23 +1,23 @@
 # Bootstrap versions and updates
 
-By default, Bootstrap is installed from GitHub (`github:twbs/bootstrap#v6-dev`), and `package-lock.json` pins the commit. Run `npm run update-bootstrap` to move to the latest commit. The toolbar and home page show which commit is in use.
+By default, Bootstrap is installed from GitHub (`github:twbs/bootstrap#main`), and `package-lock.json` pins the commit. Run `npm run update-bootstrap` to move to the latest commit. The toolbar and home page show which commit is in use.
 
 ## Updating Bootstrap
 
-`npm run update-bootstrap` moves to the latest `v6-dev` commit and does what follows every update:
+`npm run update-bootstrap` moves to the latest `main` commit and does what follows every update:
 
-1. installs it: `package.json` keeps `#v6-dev`, and the lockfile pins the commit;
+1. installs it: `package.json` keeps `#main`, and the lockfile pins the commit;
 2. lists the upstream commits since the one committed, from the `BOOTSTRAP_PATH` checkout when it has both commits, or the GitHub CLI;
 3. resyncs the kitchen sink from that commit's docs, fetched into `.cache/bootstrap/<sha>/` like [`diff-bootstrap`](#comparing-two-commits) does, so no checkout is needed;
 4. runs the checks that need no browser through [`canary-report`](#nightly-canary), against `node_modules` whatever `BOOTSTRAP_PATH` says: `check-configs`, `check-dist`, the static audits, `compile-matrix`, `lint:html` and `check-size`. The report, with the end of each failing check's output and the allowlist entries that no longer match, goes to `reports/canary/report.md`;
 5. records the commit's sizes in `sizes/history.json`;
 6. compares the kitchen sink's rendering at both commits with [`diff-bootstrap`](#comparing-two-commits), a minute or two, unless `--no-diff`;
-7. writes [`updates/last-update.json`](#what-changed-in-the-last-update) and prints the commit message, `chore(deps): update bootstrap to v6-dev@<sha>`, with the files to add.
+7. writes [`updates/last-update.json`](#what-changed-in-the-last-update) and prints the commit message, `chore(deps): update bootstrap to main@<sha>`, with the files to add.
 
 It exits with an error when a check fails. The console crawl, the smoke tests and the visual suite aren't part of it: `npm run canary-report` runs everything.
 
 - `-- --to <ref>` pins a commit (full or short), branch or tag instead, for example to go back after a bad update.
-- `-- --pr <n>` installs the head of twbs/bootstrap#<n>, from a fork too, to test an upstream pull request in the playground. Its sizes aren't recorded, and it says how far the branch is behind `v6-dev`, since a check can fail for what the branch misses. Don't commit it: `npm run update-bootstrap` goes back.
+- `-- --pr <n>` installs the head of twbs/bootstrap#<n>, from a fork too, to test an upstream pull request in the playground. Its sizes aren't recorded, and it says how far the branch is behind `main`, since a check can fail for what the branch misses. Don't commit it: `npm run update-bootstrap` goes back.
 
 ## What changed in the last update
 
@@ -32,7 +32,7 @@ Dependabot updates the playground's other dependencies and its GitHub Actions ev
 
 ## Comparing two commits
 
-After an update, the question is what the upstream commits changed. `npm run diff-bootstrap -- <from> <to>` takes two commits, branches or tags of twbs/bootstrap (`npm run diff-bootstrap -- 624c7b9 v6-dev`) and fetches each into `.cache/bootstrap/<sha>/`, shallowly, reused on later runs. It then compares:
+After an update, the question is what the upstream commits changed. `npm run diff-bootstrap -- <from> <to>` takes two commits, branches or tags of twbs/bootstrap (`npm run diff-bootstrap -- 624c7b9 main`) and fetches each into `.cache/bootstrap/<sha>/`, shallowly, reused on later runs. It then compares:
 
 - the upstream commits between them;
 - the default config's compiled CSS, normalized like [Checking the dist](audits.md#checking-the-dist), as a diff;
@@ -52,21 +52,21 @@ It writes `reports/diff/<from>-<to>/index.html`, a browsable report with the dif
 To look at the two commits yourself, `npm run diff-bootstrap -- <from> <to> --serve` skips the report and serves the playground with `<from>` at <http://localhost:5198/> and with `<to>` under <http://localhost:5198/b/>, from one origin. The [compare view](pages.md#compare) then gets a *Bootstrap* field in each pane and a *Commit A / B* preset, and keeps both panes in sync as usual:
 
 ```sh
-npm run diff-bootstrap -- 624c7b9 v6-dev --serve
+npm run diff-bootstrap -- 624c7b9 main --serve
 # Compare: http://localhost:5198/compare.html?page=%2Fkitchen-sink%2Fcomponents-button.html&a=bootstrap%3Da&b=bootstrap%3Db
 ```
 
 ## Nightly canary
 
-[`.github/workflows/canary.yml`](../.github/workflows/canary.yml) runs every night, and on demand from the *Actions* tab. When `v6-dev` has moved, it:
+[`.github/workflows/canary.yml`](../.github/workflows/canary.yml) runs every night, and on demand from the *Actions* tab. When `main` has moved, it:
 
-1. updates Bootstrap like `npm run update-bootstrap` (`package.json` keeps `#v6-dev`, the lockfile pins the new commit);
+1. updates Bootstrap like `npm run update-bootstrap` (`package.json` keeps `#main`, the lockfile pins the new commit);
 2. fetches that exact commit's docs and resyncs the kitchen sink;
 3. runs every check with `npm run canary-report`, then compares the two commits with `npm run diff-bootstrap`: the compile and dist checks, every audit, `lint:html`, the size check (its table goes into the report, and the new sizes into `sizes/history.json`), the rendered audits, the console crawl, the smoke tests in all three engines, and the visual suite. The console crawl and the smoke tests run the working copy and dist only, like a pull request that changes no config: a Bootstrap update is a shared change, so the pull request's own checks run them with every config;
 4. records the update in [`updates/last-update.json`](#what-changed-in-the-last-update) with `npm run record-update`;
-5. opens a pull request `chore(deps): update bootstrap to v6-dev@<sha>`, or updates the open one. It's labelled `canary`, plus `checks-failing` when a check fails.
+5. opens a pull request `chore(deps): update bootstrap to main@<sha>`, or updates the open one. It's labelled `canary`, plus `checks-failing` when a check fails.
 
-The pull request body is the report: the upstream commits since the last update, one row per check, the kitchen sink pages the sync changed, the end of each failing check's output, and the allowlist entries that no longer match. A stale entry usually means Bootstrap fixed a tracked bug, which is step 3 of [Upstream issues](../CLAUDE.md#upstream-issue-tracking). The visual suite is reported as *changed* rather than failed, since a Bootstrap update can change the rendering on purpose; the run's *canary-report* artifact has the diffs. When `v6-dev` hasn't moved, or the open pull request is already at its head, the workflow stops after one `git ls-remote`. When the pull request's branch has commits of your own, it leaves the branch alone and comments with a link to the new report. It never merges.
+The pull request body is the report: the upstream commits since the last update, one row per check, the kitchen sink pages the sync changed, the end of each failing check's output, and the allowlist entries that no longer match. A stale entry usually means Bootstrap fixed a tracked bug, which is step 3 of [Upstream issues](../CLAUDE.md#upstream-issue-tracking). The visual suite is reported as *changed* rather than failed, since a Bootstrap update can change the rendering on purpose; the run's *canary-report* artifact has the diffs. When `main` hasn't moved, or the open pull request is already at its head, the workflow stops after one `git ls-remote`. When the pull request's branch has commits of your own, it leaves the branch alone and comments with a link to the new report. It never merges.
 
 Upstream pull request numbers in commit subjects are shown as code, not links, so the report doesn't add a cross-reference to twbs/bootstrap every night.
 
@@ -75,7 +75,7 @@ Opening the pull request needs one of these:
 - a `CANARY_TOKEN` repository secret (*Settings › Secrets and variables › Actions*, not an environment secret): a fine-grained token limited to this repository, with *Contents*, *Pull requests* and *Issues* read/write. *Issues* covers the labels and the take-over comment. With it, the pull request also starts the other workflows, and shows the token's owner as its author. When the token expires, the canary fails at checkout until the secret is updated. It isn't allowed to read twbs/bootstrap through the API, so only the checkout and the pull request step use it; the other steps list the upstream commits with `GITHUB_TOKEN`.
 - *Allow GitHub Actions to create and approve pull requests* in the repository's *Settings › Actions › General*. The pull request then comes from `GITHUB_TOKEN`, which doesn't start other workflows, so the report is its only check run. The console crawl and the smoke tests then never run with every config: start *Console crawl* and *Smoke tests* on the `canary/bootstrap` branch by hand.
 
-From the *Actions* tab, *Run workflow* with *force* runs the checks even when `v6-dev` hasn't moved, and uploads the report without opening a pull request when nothing changed.
+From the *Actions* tab, *Run workflow* with *force* runs the checks even when `main` hasn't moved, and uploads the report without opening a pull request when nothing changed.
 
 `npm run canary-report` runs the same checks locally, against `node_modules/bootstrap`, in about four minutes. `-- --only audit-rtl,lint:html` runs a subset, and `-- --from <sha> --to <sha>` adds the upstream commit range.
 
@@ -83,7 +83,7 @@ From the *Actions* tab, *Run workflow* with *force* runs the checks even when `v
 
 [`.github/workflows/status-sweep.yml`](../.github/workflows/status-sweep.yml) runs the status sweep of [Upstream issues](../CLAUDE.md#upstream-issue-tracking) every Monday, after the canary, and on demand from the *Actions* tab. It runs `npm run status-sweep -- --apply`:
 
-- An open `upstream-reported` issue follows the twbs/bootstrap items of its *Reported upstream: twbs/bootstrap#n* comments. When they're all fixed on `v6-dev` (a pull request merged, or an issue closed as completed by a commit or with a merged pull request linked to close it, whose commit is in `v6-dev`), the issue moves to `upstream-fixed` and is closed with *Fixed upstream in twbs/bootstrap#pr (commit)*. The comment says whether the playground already installs the fix, and which allowlists or checks still reference the issue: remove those entries with the update, when the checks report them gone. While an item is open, it waits. When they're all closed but one isn't fixed (a pull request closed without merging, an issue closed as not planned, or closed by hand), it comments for a human instead.
+- An open `upstream-reported` issue follows the twbs/bootstrap items of its *Reported upstream: twbs/bootstrap#n* comments. When they're all fixed on `main` (a pull request merged, or an issue closed as completed by a commit or with a merged pull request linked to close it, whose commit is in `main`), the issue moves to `upstream-fixed` and is closed with *Fixed upstream in twbs/bootstrap#pr (commit)*. The comment says whether the playground already installs the fix, and which allowlists or checks still reference the issue: remove those entries with the update, when the checks report them gone. While an item is open, it waits. When they're all closed but one isn't fixed (a pull request closed without merging, an issue closed as not planned, or closed by hand), it comments for a human instead.
 - An open `upstream` issue that a twbs/bootstrap issue or pull request links to moves to `upstream-reported`, with the *Reported upstream* comment. Otherwise, the twbs/bootstrap items updated in the last eight days (`--since`) whose title shares three keywords with the issue's title, or two backed by code from it or five words of the description, get a comment as possible matches. A human decides: follow step 2 or 3 by hand. These are written as code, not links, so a wrong guess doesn't cross-reference the issue on twbs/bootstrap.
 - Then each reproduction's page follows its tracking issue's label, as the sweep leaves it: `data-status`, and an empty upstream reference (see [Issue reproductions](pages.md#issue-reproductions)). The pages that changed go in one pull request, `chore(issues): sync reproduction statuses with their tracking issues` on the `status-sweep/pages` branch, opened with `CANARY_TOKEN` like the canary's so its checks run, and updated by the next sweep while nobody else has pushed to it. A reproduction now `fixed` is still deleted by hand (step 3).
 
@@ -104,7 +104,7 @@ npm run dev
 
 Vite then resolves every `bootstrap/...` import (Sass and JS) to that folder, and edits there hot-reload too. Delete `.env.local` to go back to GitHub.
 
-The toolbar and the home page then show the checkout's branch, commit and state, like `local checkout: v6-dev@1a2b3c4 (dirty)`, linked to the branch on GitHub when it tracks a GitHub remote. On the home page, the dot turns amber while the checkout has uncommitted changes. In dev, the label follows git operations (checkout, commit, stash…) and edits to the files the playground uses, without reloading the page. Other files, like a new untracked one, show up at the next of those. Editing a docs MDX file also resyncs its [kitchen sink](pages.md#kitchen-sink) page.
+The toolbar and the home page then show the checkout's branch, commit and state, like `local checkout: main@1a2b3c4 (dirty)`, linked to the branch on GitHub when it tracks a GitHub remote. On the home page, the dot turns amber while the checkout has uncommitted changes. In dev, the label follows git operations (checkout, commit, stash…) and edits to the files the playground uses, without reloading the page. Other files, like a new untracked one, show up at the next of those. Editing a docs MDX file also resyncs its [kitchen sink](pages.md#kitchen-sink) page.
 
 ## Source or dist
 
@@ -124,7 +124,7 @@ Both honor `BOOTSTRAP_PATH`. The compare view's *Source / Dist* preset puts the 
 
 ### Dist files built from source
 
-Bootstrap commits its `dist/` and `js/dist/` folders, but only rebuilds them for releases: between two, they lag behind `v6-dev`, and testing them would test the last release rather than the commit under test. So the playground builds them itself, from the commit it tests ([`scripts/lib/dist.mjs`](../scripts/lib/dist.mjs)). It runs Bootstrap's own npm scripts behind `npm run dist` (`css-compile`, `css-prefix-main`, `css-minify-main`, `js-compile-*` and `js-minify-*`, without the type declarations) and its `build/` files, with this project's copies of the tools they call: Sass, PostCSS with the same plugins, Lightning CSS, Rolldown, Terser and globby. The npm package doesn't ship `build/`, so it comes from the `BOOTSTRAP_PATH` checkout, or from a sparse fetch of the locked commit into `.cache/bootstrap-build/` (a few hundred kilobytes, needs `git` and the network once per commit).
+Bootstrap commits its `dist/` and `js/dist/` folders, but only rebuilds them for releases: between two, they lag behind `main`, and testing them would test the last release rather than the commit under test. So the playground builds them itself, from the commit it tests ([`scripts/lib/dist.mjs`](../scripts/lib/dist.mjs)). It runs Bootstrap's own npm scripts behind `npm run dist` (`css-compile`, `css-prefix-main`, `css-minify-main`, `js-compile-*` and `js-minify-*`, without the type declarations) and its `build/` files, with this project's copies of the tools they call: Sass, PostCSS with the same plugins, Lightning CSS, Rolldown, Terser and globby. The npm package doesn't ship `build/`, so it comes from the `BOOTSTRAP_PATH` checkout, or from a sparse fetch of the locked commit into `.cache/bootstrap-build/` (a few hundred kilobytes, needs `git` and the network once per commit).
 
 The result goes to `.cache/dist/<key>/`, laid out like the package, where `key` hashes the sources, the build files and `package-lock.json`: the first `npm run dev`, `npm run build` or check after an update builds it, in a few seconds, and later ones reuse it. Everything that reads Bootstrap's dist uses it: `?css=dist` and `?js=dist` (Vite aliases `bootstrap/dist/…`, `bootstrap/js/dist/…` and `import 'bootstrap'` to it), [`check-dist`](audits.md#checking-the-dist), [`check-size`](audits.md#sizes) and `diff-bootstrap`, and the class index behind page search. With `BOOTSTRAP_PATH`, edits to the checkout show up in the dist at the next start of the dev server, not live. Outside CI, the dev server falls back to the committed files with a warning when the build fails, such as offline on the first run after an update.
 

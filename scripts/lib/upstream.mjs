@@ -11,7 +11,7 @@ const SHA = /^[\da-f]{40}$/
 
 const run = (command, args, options = {}) => spawnSync(command, args, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, ...options })
 
-// The commit package-lock.json pins: package.json keeps `#v6-dev`.
+// The commit package-lock.json pins: package.json keeps `#main`.
 export function lockedSha() {
   const lock = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json'), 'utf8'))
   return lock.packages?.['node_modules/bootstrap']?.resolved?.split('#')[1] ?? ''

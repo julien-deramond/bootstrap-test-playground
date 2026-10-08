@@ -1,6 +1,6 @@
 # Bootstrap test playground
 
-A test bench for [Bootstrap v6](https://github.com/twbs/bootstrap/tree/v6-dev). It puts every docs example, realistic app screens and bug reproductions on one Vite site, compiles Bootstrap from source under 40+ configs, and runs a set of browser tests and audits against each new upstream commit.
+A test bench for [Bootstrap v6](https://github.com/twbs/bootstrap/tree/main) (the `main` branch of twbs/bootstrap, called `v6-dev` until 2026-10-08). It puts every docs example, realistic app screens and bug reproductions on one Vite site, compiles Bootstrap from source under 40+ configs, and runs a set of browser tests and audits against each new upstream commit.
 
 **[Open the live playground →](https://julien-deramond.github.io/bootstrap-test-playground/)**
 
@@ -13,7 +13,7 @@ A test bench for [Bootstrap v6](https://github.com/twbs/bootstrap/tree/v6-dev). 
 - **Issue reproductions**: one folder per bug, each compiling its own isolated copy of Bootstrap
 - **Test suites**: visual regression, a console crawl, interaction smoke tests and keyboard walkthroughs for every JavaScript component, and an accessibility scan (axe-core, focus rings, color contrast), in Chromium, Firefox and WebKit
 - **Audits**: CSS tokens, RTL, reduced motion, cascade layers, partial imports, option combinations, drift from Bootstrap's build and bundle sizes
-- **Nightly canary**: follows `v6-dev`, runs every check and opens a pull request with what changed
+- **Nightly canary**: follows `main`, runs every check and opens a pull request with what changed
 
 ## Quick start
 
@@ -28,7 +28,7 @@ Out of the box, the playground renders **Bootstrap's defaults**. To try a change
 
 ### Test a local Bootstrap checkout
 
-Bootstrap is installed from GitHub (`twbs/bootstrap#v6-dev`, pinned by the lockfile). To test a branch you're working on instead:
+Bootstrap is installed from GitHub (`twbs/bootstrap#main`, pinned by the lockfile). To test a branch you're working on instead:
 
 ```sh
 cp .env.example .env.local   # BOOTSTRAP_PATH=../twbs/bootstrap
@@ -46,7 +46,7 @@ Sass and JavaScript then come from that checkout, and edits there hot-reload too
 | `npm run import-issue <n> [-- --config <name>] [--force]` | Creates `issues/<n>/` from a twbs/bootstrap issue or pull request, its code cleaned and inert until reviewed |
 | `npm run export-issue <name>` | Exports a reproduction as one HTML file and a StackBlitz project, for upstream maintainers |
 | `npm run save-config <name>` / `use-config <name>` | Saves the working copy as a config, or loads one |
-| `npm run update-bootstrap` | Moves to the latest `v6-dev` commit and runs the checks that need no browser |
+| `npm run update-bootstrap` | Moves to the latest `main` commit and runs the checks that need no browser |
 | `npm run test:visual [-- -u]` | Compares every page with its screenshot baselines |
 | `npm run test:console` / `test:smoke` / `test:a11y` | Console crawl, interaction smoke tests, accessibility scan |
 

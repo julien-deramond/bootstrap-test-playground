@@ -1,7 +1,7 @@
 // Builds Bootstrap's dist files from its source, the way `npm run dist` does
 // upstream, so everything that reads them follows the commit under test.
 // Bootstrap only rebuilds its committed `dist/` and `js/dist/` for releases:
-// between two, they lag behind `v6-dev`. Used by vite.config.js (`?css=dist`,
+// between two, they lag behind `main`. Used by vite.config.js (`?css=dist`,
 // `?js=dist`, the class index) and the check scripts (check-dist, check-size).
 //
 // It runs Bootstrap's own npm scripts and `build/` files at that commit, with

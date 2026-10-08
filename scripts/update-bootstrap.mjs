@@ -2,12 +2,12 @@
 // Moves node_modules/bootstrap to another twbs/bootstrap commit, then does
 // what follows every update.
 // Usage: npm run update-bootstrap [-- --to <ref> | --pr <number>] [--no-diff]
-//   (none)       the latest v6-dev commit
+//   (none)       the latest main commit
 //   --to <ref>   a commit (full or short), branch or tag, to pin or go back
 //   --pr <n>     the head of twbs/bootstrap#<n>, forks included, to test it
 //   --no-diff    skips diff-bootstrap's screenshots, a minute or two
 //
-// package.json keeps `#v6-dev` and the lockfile pins the commit, whichever it
+// package.json keeps `#main` and the lockfile pins the commit, whichever it
 // is. After the install, it:
 //   - prints the upstream commits since the previous one (from the local
 //     checkout in BOOTSTRAP_PATH when it has both, or the GitHub CLI)
@@ -28,7 +28,7 @@ import { root } from './lib/configs.mjs'
 import { LAST_UPDATE_FILE, writeLastUpdate } from './lib/last-update.mjs'
 import { fetchCommit, lockedSha, resolveRef, upstreamCommits } from './lib/upstream.mjs'
 
-const SPEC = 'github:twbs/bootstrap#v6-dev'
+const SPEC = 'github:twbs/bootstrap#main'
 // canary-report's checks that need no browser. `npm run canary-report` runs them all.
 const CHECKS = ['check-configs', 'check-dist', 'audit-tokens', 'compile-matrix', 'audit-rtl', 'audit-motion', 'audit-layers', 'audit-partials', 'lint:html', 'check-size']
 
@@ -69,11 +69,11 @@ if (prNumber) {
 
   pr = JSON.parse(view.stdout)
   to = pr.headRefOid
-  // A branch behind v6-dev misses its latest commits: a check can fail for that.
-  const behind = spawnSync('gh', ['api', `repos/twbs/bootstrap/compare/v6-dev...${to}`, '--jq', '.behind_by'], { encoding: 'utf8' }).stdout.trim()
+  // A branch behind main misses its latest commits: a check can fail for that.
+  const behind = spawnSync('gh', ['api', `repos/twbs/bootstrap/compare/main...${to}`, '--jq', '.behind_by'], { encoding: 'utf8' }).stdout.trim()
   pr.behind = Number(behind) || 0
 } else {
-  to = resolveRef(toRef ?? 'v6-dev')
+  to = resolveRef(toRef ?? 'main')
 }
 
 const installed = lockedSha()
@@ -88,8 +88,8 @@ const committedLock = spawnSync('git', ['show', 'HEAD:package-lock.json'], { cwd
 const from = (committedLock.status === 0 && JSON.parse(committedLock.stdout).packages?.['node_modules/bootstrap']?.resolved?.split('#')[1]) || installed
 
 console.log(pr ?
-  `Installing twbs/bootstrap#${pr.number} (${pr.state.toLowerCase()}): ${pr.title}\n  at ${short(to)}, from ${short(installed)}${pr.behind ? `. Its branch is ${pr.behind} ${pr.behind === 1 ? 'commit' : 'commits'} behind v6-dev` : ''}\n` :
-  `Updating Bootstrap from ${short(installed)} to ${short(to)}${toRef ? ` (${toRef})` : ' (v6-dev)'}\n`)
+  `Installing twbs/bootstrap#${pr.number} (${pr.state.toLowerCase()}): ${pr.title}\n  at ${short(to)}, from ${short(installed)}${pr.behind ? `. Its branch is ${pr.behind} ${pr.behind === 1 ? 'commit' : 'commits'} behind main` : ''}\n` :
+  `Updating Bootstrap from ${short(installed)} to ${short(to)}${toRef ? ` (${toRef})` : ' (main)'}\n`)
 
 // --- Install ------------------------------------------------------------------
 
@@ -99,8 +99,8 @@ if (run('npm', ['install', '--no-audit', '--no-fund', `bootstrap@github:twbs/boo
   process.exit(1)
 }
 
-// npm wrote the commit into package.json and the lockfile's root: put `#v6-dev`
-// back, so the lockfile has the shape a plain `npm install` of `#v6-dev` gives.
+// npm wrote the commit into package.json and the lockfile's root: put `#main`
+// back, so the lockfile has the shape a plain `npm install` of `#main` gives.
 const pkg = readJson('package.json')
 pkg.dependencies.bootstrap = SPEC
 writeJson('package.json', pkg)
@@ -146,7 +146,7 @@ run('node', ['scripts/canary-report.mjs', '--from', from, '--to', to, '--only', 
 const summary = readJson('reports/canary/summary.json')
 
 // After the report, which compares with the previous entry, like the canary.
-// A pull request's head isn't a v6-dev commit: its sizes stay out of the
+// A pull request's head isn't a main commit: its sizes stay out of the
 // history. Neither does the commit HEAD has, already in it.
 if (!pr && to !== from) {
   // The size table is in the report already: only its last line, "Recorded under …".
@@ -178,9 +178,9 @@ if (to === from) {
 
 console.log('')
 if (pr) {
-  console.log(`Testing twbs/bootstrap#${pr.number}: don't commit this. \`npm run update-bootstrap\` goes back to v6-dev.`)
+  console.log(`Testing twbs/bootstrap#${pr.number}: don't commit this. \`npm run update-bootstrap\` goes back to main.`)
   if (pr.behind) {
-    console.log(`Its branch is ${pr.behind} ${pr.behind === 1 ? 'commit' : 'commits'} behind v6-dev: a failure can come from what it misses.`)
+    console.log(`Its branch is ${pr.behind} ${pr.behind === 1 ? 'commit' : 'commits'} behind main: a failure can come from what it misses.`)
   }
 } else if (to === from) {
   console.log(`Back at ${short(to)}, the commit HEAD has: nothing to commit.`)
@@ -188,7 +188,7 @@ if (pr) {
   const count = commits ? ` (${commits.length} upstream ${commits.length === 1 ? 'commit' : 'commits'})` : ''
   console.log('Commit it with:\n')
   console.log(`  git add package.json package-lock.json sizes updates${changedPages.length ? ' kitchen-sink' : ''}`)
-  console.log(`  git commit -m "chore(deps): update bootstrap to v6-dev@${short(to)}" -m "From ${short(from)} to ${short(to)}${count}${changedPages.length ? ', and resyncs the kitchen sink' : ''}: ${compareUrl}"`)
+  console.log(`  git commit -m "chore(deps): update bootstrap to main@${short(to)}" -m "From ${short(from)} to ${short(to)}${count}${changedPages.length ? ', and resyncs the kitchen sink' : ''}: ${compareUrl}"`)
 }
 
 if (summary.stale) {
