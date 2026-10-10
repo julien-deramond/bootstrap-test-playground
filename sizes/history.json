@@ -1414,5 +1414,241 @@
         "brotli": 48040
       }
     }
+  },
+  {
+    "commit": "d879672a733a1396b8771218af8605739d30cce5",
+    "date": "2026-10-10T11:08:37.392Z",
+    "sizes": {
+      "css/default": {
+        "min": 381115,
+        "gzip": 51376,
+        "brotli": 36643
+      },
+      "css/brand": {
+        "min": 381094,
+        "gzip": 51397,
+        "brotli": 36439
+      },
+      "css/breakpoints-custom": {
+        "min": 383195,
+        "gzip": 51418,
+        "brotli": 38559
+      },
+      "css/color-mode-data": {
+        "min": 381204,
+        "gzip": 51413,
+        "brotli": 36745
+      },
+      "css/color-modes-custom": {
+        "min": 381115,
+        "gzip": 51376,
+        "brotli": 36643
+      },
+      "css/compact": {
+        "min": 384240,
+        "gzip": 51613,
+        "brotli": 36665
+      },
+      "css/containers-fluid": {
+        "min": 380433,
+        "gzip": 51281,
+        "brotli": 36360
+      },
+      "css/dark-first": {
+        "min": 381115,
+        "gzip": 51376,
+        "brotli": 36643
+      },
+      "css/gray-cool": {
+        "min": 381115,
+        "gzip": 51383,
+        "brotli": 36717
+      },
+      "css/gray-warm": {
+        "min": 381102,
+        "gzip": 51383,
+        "brotli": 36710
+      },
+      "css/grid-16": {
+        "min": 384525,
+        "gzip": 51845,
+        "brotli": 36766
+      },
+      "css/grid-css-only": {
+        "min": 367047,
+        "gzip": 49212,
+        "brotli": 35361
+      },
+      "css/grid-flex-only": {
+        "min": 375735,
+        "gzip": 50581,
+        "brotli": 36037
+      },
+      "css/grid-only": {
+        "min": 64970,
+        "gzip": 8655,
+        "brotli": 4934
+      },
+      "css/high-contrast": {
+        "min": 379769,
+        "gzip": 51198,
+        "brotli": 36336
+      },
+      "css/hue-shift": {
+        "min": 381167,
+        "gzip": 51378,
+        "brotli": 36623
+      },
+      "css/large-type": {
+        "min": 381188,
+        "gzip": 51397,
+        "brotli": 36423
+      },
+      "css/mixins": {
+        "min": 390767,
+        "gzip": 52591,
+        "brotli": 37097
+      },
+      "css/mono": {
+        "min": 381999,
+        "gzip": 51266,
+        "brotli": 36556
+      },
+      "css/no-button-pointers": {
+        "min": 380977,
+        "gzip": 51358,
+        "brotli": 36626
+      },
+      "css/no-containers": {
+        "min": 380412,
+        "gzip": 51286,
+        "brotli": 36515
+      },
+      "css/no-gradients": {
+        "min": 380825,
+        "gzip": 51352,
+        "brotli": 36430
+      },
+      "css/no-reduced-motion": {
+        "min": 374923,
+        "gzip": 50898,
+        "brotli": 36039
+      },
+      "css/no-rounded": {
+        "min": 370421,
+        "gzip": 50334,
+        "brotli": 35885
+      },
+      "css/no-shadows": {
+        "min": 380117,
+        "gzip": 51284,
+        "brotli": 36345
+      },
+      "css/no-transitions": {
+        "min": 366539,
+        "gzip": 49943,
+        "brotli": 35510
+      },
+      "css/partial": {
+        "min": 275240,
+        "gzip": 38093,
+        "brotli": 26157
+      },
+      "css/pill": {
+        "min": 380981,
+        "gzip": 51304,
+        "brotli": 36389
+      },
+      "css/prefix-none": {
+        "min": 364957,
+        "gzip": 50481,
+        "brotli": 36222
+      },
+      "css/prefix-x": {
+        "min": 375729,
+        "gzip": 51055,
+        "brotli": 36518
+      },
+      "css/reboot-only": {
+        "min": 35589,
+        "gzip": 5683,
+        "brotli": 4641
+      },
+      "css/root-62-5": {
+        "min": 380524,
+        "gzip": 51333,
+        "brotli": 36341
+      },
+      "css/serif": {
+        "min": 381115,
+        "gzip": 51376,
+        "brotli": 36643
+      },
+      "css/shadcn": {
+        "min": 381862,
+        "gzip": 51789,
+        "brotli": 36682
+      },
+      "css/smooth-scroll": {
+        "min": 381197,
+        "gzip": 51426,
+        "brotli": 36508
+      },
+      "css/spacers-extended": {
+        "min": 422081,
+        "gzip": 57177,
+        "brotli": 38701
+      },
+      "css/spacious": {
+        "min": 382922,
+        "gzip": 51554,
+        "brotli": 36647
+      },
+      "css/square": {
+        "min": 377937,
+        "gzip": 50535,
+        "brotli": 36235
+      },
+      "css/utilities-custom": {
+        "min": 382803,
+        "gzip": 51713,
+        "brotli": 36680
+      },
+      "css/utilities-only": {
+        "min": 146119,
+        "gzip": 20595,
+        "brotli": 12217
+      },
+      "css/web-font": {
+        "min": 381115,
+        "gzip": 51376,
+        "brotli": 36643
+      },
+      "css/weights": {
+        "min": 381109,
+        "gzip": 51378,
+        "brotli": 36657
+      },
+      "dist/bootstrap.min.css": {
+        "min": 381199,
+        "gzip": 51425,
+        "brotli": 36521
+      },
+      "dist/bootstrap.min.js": {
+        "min": 140748,
+        "gzip": 35747,
+        "brotli": 30177
+      },
+      "dist/bootstrap.bundle.min.js": {
+        "min": 219813,
+        "gzip": 60065,
+        "brotli": 51108
+      },
+      "src/bootstrap.bundle.js": {
+        "min": 192958,
+        "gzip": 55416,
+        "brotli": 48073
+      }
+    }
   }
 ]
