@@ -1,11 +1,63 @@
 {
-  "date": "2026-10-08T16:31:26.252Z",
-  "from": "f6cc0f2cde9cbf3d73759ada24a39555d2de3a12",
-  "to": "3c93e2ce217623806972c1fe4ec722f0ad15cc4e",
+  "date": "2026-10-10T11:10:41.587Z",
+  "from": "3c93e2ce217623806972c1fe4ec722f0ad15cc4e",
+  "to": "d879672a733a1396b8771218af8605739d30cce5",
   "commits": [
     {
-      "sha": "3c93e2ce217623806972c1fe4ec722f0ad15cc4e",
-      "subject": "Fix docs build on Windows (#42991)"
+      "sha": "780627306eb517ca210310a24e10f8186003c127",
+      "subject": "Prepare Bootstrap v6.0.0-alpha.1 release (#42997)"
+    },
+    {
+      "sha": "916458dff36ef24a7e066d1ec1df3fbe8f6c9e6a",
+      "subject": "Fix image source URL in README.md"
+    },
+    {
+      "sha": "01842bb7eb28d8f6cac894ef6de2e1903a466a5a",
+      "subject": "Ignore URL-encoded characters in cspell (#42999)"
+    },
+    {
+      "sha": "e56b03701947c23fbc999b681fb8726cd808c3f9",
+      "subject": "Bump undici from 8.10.0 to 8.11.2 (#42993)"
+    },
+    {
+      "sha": "c2b05e360aa54ec51cc393dcfaae548da2e9ccfe",
+      "subject": "Bump brace-expansion to 5.0.12 (#42994)"
+    },
+    {
+      "sha": "a13ff50e9f02cc49f92581c041e8bd13cf6043ef",
+      "subject": "Bump sharp from 0.35.4 to 0.35.5 (#42996)"
+    },
+    {
+      "sha": "7771f16bec8462e5cb2b4d375352682f15fe94b2",
+      "subject": "Bump @humanfs/node from 0.16.7 to 0.16.8 (#42995)"
+    },
+    {
+      "sha": "3e8137bd42703f4c526bcd20fea67fcd868b51ed",
+      "subject": "Document the labels and use their new names in release notes and Dependabot (#43010)"
+    },
+    {
+      "sha": "f162469fcea716bf105a1f02cec8a319ede538c4",
+      "subject": "Document the html label in the contributing guidelines (#43012)"
+    },
+    {
+      "sha": "ed8fef0137e799fc9bd166c90918600e15313584",
+      "subject": "Ignore TypeScript major updates in Dependabot (#43017)"
+    },
+    {
+      "sha": "6c4271bd9e8ef5c5dda1eed4e4615be1d8fd01f1",
+      "subject": "Bump @floating-ui/dom to 1.8.0 (#42892)"
+    },
+    {
+      "sha": "4dee7a525ff84cb10b9fb928b9c26b49ee4aae18",
+      "subject": "Don't leave focus on a disabled carousel control when the viewport isn't focusable (#43020)"
+    },
+    {
+      "sha": "4983945547421682c5d88436756aa3277e9250c2",
+      "subject": "Remove an unused import in the docs Astro integration (#43021)"
+    },
+    {
+      "sha": "d879672a733a1396b8771218af8605739d30cce5",
+      "subject": "Bump the dependencies with 12 updates (#43019)"
     }
   ],
   "rendering": true,
