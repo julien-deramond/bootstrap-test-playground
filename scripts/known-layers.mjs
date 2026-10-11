@@ -26,9 +26,5 @@ export default [
   { kind: 'important', selector: /^\.navbar(-expand)? \[class\*=drawer\]/, reason: 'an expanded navbar turns its drawer back into inline content, over the UA <dialog> styles and the drawer’s own' },
   { kind: 'important', selector: /^\.navbar-expand \.navbar-toggler$/, reason: 'hides the toggler once the navbar is expanded' },
   { kind: 'important', selector: /^\.drawer( \.drawer-body)?$/, reason: 'a responsive drawer above its breakpoint becomes inline content, over the UA <dialog> styles' },
-  { kind: 'important', selector: /^\.visually-hidden/, reason: 'visually hidden must win whatever the element’s styles' },
-
-  // AGENTS.md (checked only with a BOOTSTRAP_PATH checkout)
-
-  { kind: 'docs', selector: 'AGENTS.md', issue: 150 }
+  { kind: 'important', selector: /^\.visually-hidden/, reason: 'visually hidden must win whatever the element’s styles' }
 ]
