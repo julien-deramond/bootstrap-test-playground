@@ -18,6 +18,7 @@ permissions:
 jobs:
   console:
     runs-on: ubuntu-24.04
+    timeout-minutes: 240
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -29,6 +30,7 @@ jobs:
       - run: npm ci
 
       - run: npx playwright install --with-deps firefox webkit
+        timeout-minutes: 10
 
       - run: npx playwright test --project console-firefox --project console-webkit
 
