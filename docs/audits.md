@@ -169,6 +169,12 @@ The Sass docs offer two ways in: all of Bootstrap, or "Option B", `root` first a
 
 Its output is the dependency map. Known findings are listed in [`scripts/known-partials.mjs`](../scripts/known-partials.mjs), with their tracking issue or the reason. The audit fails on a new finding and on an entry that no longer matches. `npm run update-bootstrap`, the *Configs* workflow and the canary run it.
 
+## Auditing themeable components
+
+The `.theme-*` classes set generic `--theme-*` tokens, and a themeable component reads them with a fallback to its own default (`var(--theme-bg, var(--primary-base))`). The theme docs say "not every component does" without listing which. `npm run audit-themes` reads the Sass partials of `bootstrap/scss/` (or `BOOTSTRAP_PATH`) and reports each one that contains no `var(--theme-`. It leaves out the files that define things rather than style a component: the entry points and folder indexes, `_config`, `_colors`, `_theme`, `_root`, `_functions`, `mixins/`, `layout/` and `utilities/_api`.
+
+[`scripts/known-themes.mjs`](../scripts/known-themes.mjs) lists every such partial, with the `reason` it is intended (a neutral surface, `currentcolor`, a fixed semantic color) or the tracking `issue` when it should react and doesn't. The audit fails on a partial that isn't listed, and on an entry that no longer matches, because the partial reads a theme token now. `npm run update-bootstrap`, the *Configs* workflow and the canary run it.
+
 ## Sass and tokens.css equivalence
 
 Bootstrap's Sass docs offer two ways to change a token: at compile time through `@use "bootstrap/scss/bootstrap" with (…)`, and at runtime with a CSS custom property, which is what a config's `tokens.css` does. They diverge when Sass consumes a value at compile time: a scale folded from `$spacer`, a utility that writes a map's value instead of reading its token, a `$root-tokens` key a loop overwrites, a `null` key that removes a declaration. That's exactly what someone hits when moving a config from one path to the other.
