@@ -3,10 +3,22 @@ name: Visual tests
 # Compares every page with the Linux baselines in tests/visual/screenshots/linux/,
 # in Chromium; engines.yml compares Firefox and WebKit every night. To create or
 # refresh them after an intended change, add the `update-baselines` label to the
-# pull request: the `update` job records them for all three engines, commits them
-# to the pull request's branch and removes the label, and the checks run again
-# on that commit. While the label is on, `compare` fails without comparing, so
-# the pull request can't look ready before the baselines are on its branch.
+# pull request: the `update` job records them, commits them to the pull
+# request's branch and removes the label, and the checks run again on that
+# commit. While the label is on, `compare` fails without comparing, so the pull
+# request can't look ready before the baselines are on its branch.
+#
+# The `update` job only records what the pull request needs:
+# - Chromium: every page, compared like `compare` does.
+# - Firefox and WebKit, much slower: only the pages the pull request changes
+#   (`npm run test-scope`), or every page after a shared change, like
+#   Bootstrap, the working copy in src/styles/, src/js/, the build, Playwright
+#   or the visual specs. The `update-all-baselines` label asks for every page.
+# A baseline is only written when it's missing or fails the comparison
+# (`--update-snapshots=changed`): one that still passes stays as it is, even
+# if a new screenshot of it differs by a few bytes. The baselines no test
+# compares with any more, like a removed page's, are deleted
+# (`npm run prune-baselines`).
 on:
   pull_request:
     types: [opened, synchronize, reopened, labeled, unlabeled]
@@ -20,7 +32,7 @@ permissions:
 
 jobs:
   compare:
-    if: ${{ (github.event.action != 'labeled' && github.event.action != 'unlabeled') || github.event.label.name == 'update-baselines' }}
+    if: ${{ (github.event.action != 'labeled' && github.event.action != 'unlabeled') || contains(fromJSON('["update-baselines", "update-all-baselines"]'), github.event.label.name) }}
     # Pinned, so the fonts that baselines are recorded with don't change under them.
     runs-on: ubuntu-24.04
     concurrency:
@@ -35,8 +47,8 @@ jobs:
       - id: labels
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          if gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name' | grep -qx update-baselines; then
-            message="The \`update-baselines\` label is on: the \`update\` job is recording new baselines. Wait for it, and don't merge before then. It pushes them to this branch, removes the label and runs this comparison again on its commit."
+          if gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name' | grep -qx -e update-baselines -e update-all-baselines; then
+            message="An \`update-baselines\` label is on: the \`update\` job is recording new baselines. Wait for it, and don't merge before then. It pushes them to this branch, removes the label and runs this comparison again on its commit."
             echo "::error title=Baselines are being recorded::$message"
             echo "$message" >> "$GITHUB_STEP_SUMMARY"
             exit 1
@@ -69,7 +81,7 @@ jobs:
 
   update:
     # Only for branches of this repository: a fork's branch can't be pushed to.
-    if: ${{ github.event.action == 'labeled' && github.event.label.name == 'update-baselines' }}
+    if: ${{ github.event.action == 'labeled' && contains(fromJSON('["update-baselines", "update-all-baselines"]'), github.event.label.name) }}
     runs-on: ubuntu-24.04
     permissions:
       actions: write
@@ -78,11 +90,18 @@ jobs:
     env:
       BRANCH: ${{ github.head_ref }}
       GH_TOKEN: ${{ github.token }}
+      LABEL: ${{ github.event.label.name }}
       PR: ${{ github.event.pull_request.number }}
+      # Every baseline the runs compare with, for `npm run prune-baselines`.
+      VISUAL_BASELINES_USED: reports/baselines-used.txt
     steps:
+      # The whole history, without the files' contents, so `npm run
+      # test-scope` finds where the branch started from.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.head_ref }}
+          fetch-depth: 0
+          filter: blob:none
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -93,12 +112,22 @@ jobs:
 
       - run: npx playwright install --with-deps chromium firefox webkit
 
-      # Starting from an empty folder also drops the baselines of removed pages.
-      # Every engine: Chromium's baselines, and Firefox's and WebKit's in their
-      # own folders, which the nightly engines.yml compares against.
+      # Chromium, every page.
+      - run: npm run test:visual -- --update-snapshots=changed
+
+      # Sets VISUAL_SCOPE, which limits the pages of the next step.
       - run: |
-          rm -rf tests/visual/screenshots/linux
-          npm run test:visual:engines -- --update-snapshots=all
+          if [ "$LABEL" = update-all-baselines ]; then
+            echo 'VISUAL_SCOPE={"full":true,"reason":"the update-all-baselines label"}' >> "$GITHUB_ENV"
+          else
+            npm run test-scope -- "origin/$GITHUB_BASE_REF"
+          fi
+
+      # Their baselines are in their own folders, which the nightly engines.yml
+      # compares against.
+      - run: npx playwright test --project visual-firefox --project visual-webkit --update-snapshots=changed --pass-with-no-tests
+
+      - run: npm run prune-baselines
 
       # Commits only to the open pull request's branch, and only while it still
       # points to the commit the baselines were recorded from: a plain push
@@ -134,7 +163,7 @@ jobs:
             fi
             case $state in
               MERGED) fail "#$PR was merged before its new baselines were pushed, so \`main\` is missing them and its visual tests fail. This run's *visual-baselines* artifact holds them: copy it over \`tests/visual/screenshots/linux/\` in a new pull request." ;;
-              CLOSED) fail "#$PR was closed before its new baselines were pushed. To record them, reopen it and add the \`update-baselines\` label again." ;;
+              CLOSED) fail "#$PR was closed before its new baselines were pushed. To record them, reopen it and add the \`$LABEL\` label again." ;;
             esac
           }
 
@@ -144,7 +173,7 @@ jobs:
           if [ "$status" -ne 0 ]; then
             check_state
             if [ "$status" -eq 2 ]; then
-              fail "\`$BRANCH\` moved while the baselines were being recorded. Add the \`update-baselines\` label again to record them from its new commit."
+              fail "\`$BRANCH\` moved while the baselines were being recorded. Add the \`$LABEL\` label again to record them from its new commit."
             fi
             fail "GitHub refused the commit with the new baselines. This run's *visual-baselines* artifact holds them."
           fi
@@ -159,7 +188,7 @@ jobs:
           retention-days: 14
 
       - if: ${{ always() }}
-        run: gh pr edit "$PR" --repo "$GITHUB_REPOSITORY" --remove-label update-baselines
+        run: gh pr edit "$PR" --repo "$GITHUB_REPOSITORY" --remove-label "$LABEL"
 
       # A push made with GITHUB_TOKEN starts the pull request's workflows, but
       # GitHub holds them for approval (action required): github-actions[bot]

@@ -5,7 +5,8 @@ name: Engines
 # and the smoke tests in all three engines (smoke.yml). An engine-only failure
 # is usually a browser difference Bootstrap doesn't handle: track it upstream,
 # and list it in tests/console/known-issues.js with `engines`, or refresh the
-# engine's baselines with the `update-baselines` label once it's tracked.
+# engine's baselines once it's tracked: `update-baselines` on a pull request
+# that changes the page, or `update-all-baselines` on any pull request.
 on:
   schedule:
     - cron: '17 3 * * *'

@@ -1,7 +1,8 @@
-// What the console crawl, the smoke tests and the accessibility scan have to
-// run for a set of changed files. A pull request that changes a config needs
-// every page with that config, and one that changes a page needs that page
-// with every config.
+// What the console crawl, the smoke tests, the accessibility scan and the
+// visual suite have to run for a set of changed files. A pull request that
+// changes a config needs every page with that config, and one that changes a
+// page needs that page with every config. The visual suite only screenshots
+// the working copy, so configs don't reach it, but the working copy does.
 // Anything shared, or not recognized, needs everything. Used by
 // scripts/test-scope.mjs.
 import fs from 'node:fs'
@@ -9,9 +10,10 @@ import path from 'node:path'
 import { configsDir, root } from './configs.mjs'
 import { findHtmlFiles, PAGE_GROUPS } from './pages.mjs'
 
-// Files a suite (`console`, `smoke` or `a11y`) can't see: docs, the other
-// suites and workflows, and the scripts and allowlists that the build doesn't
-// import (scripts/lib/ is). A suite's own tests/<suite>/ and workflow are shared.
+// Files a suite (`console`, `smoke`, `a11y` or `visual`) can't see: docs, the
+// other suites and workflows, and the scripts and allowlists that the build
+// doesn't import (scripts/lib/ is). A suite's own tests/<suite>/ and workflow
+// are shared, and so is what it imports from another suite (SHARED).
 const noEffect = suite => [
   /\.md$/,
   /^LICENSE$/,
@@ -24,9 +26,23 @@ const noEffect = suite => [
   // A reproduction's assertion and spec: `npm run check-issues` and the
   // `issues` project run them, not these suites.
   /^issues\/[^/]+\/(assert\.js|repro\.spec\.js)$/,
-  // The working copy: every page opens with it anyway.
-  /^src\/styles\//
+  ...(suite === 'visual' ?
+    [
+      // The baselines are what the suite records, not what it runs.
+      /^tests\/visual\/screenshots\//,
+      // Screenshots only use the working copy.
+      /^configs\//
+    ] :
+    [
+      // The working copy: every page opens with it anyway.
+      /^src\/styles\//
+    ])
 ]
+
+// What a suite imports from another suite's folder.
+const SHARED = {
+  visual: ['tests/a11y/focus.js']
+}
 
 // Pages outside PAGE_GROUPS, and the data and scripts only they read.
 const ROOT_PAGES = {
@@ -59,6 +75,10 @@ export function testScope(files, suite) {
   const ignored = noEffect(suite)
 
   for (const file of files) {
+    if (SHARED[suite]?.includes(file)) {
+      return { full: true, reason: file }
+    }
+
     if (ignored.some(pattern => pattern.test(file))) {
       continue
     }
