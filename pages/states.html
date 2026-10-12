@@ -274,10 +274,19 @@
         return td
       }
 
-      const th = (text, scope) => {
+      const th = (text, scope, hidden = false) => {
         const element = document.createElement('th')
         element.scope = scope
-        element.textContent = text
+        if (hidden) {
+          // The corner cell of the header row names the row headers.
+          const label = document.createElement('span')
+          label.className = 'visually-hidden'
+          label.textContent = text
+          element.append(label)
+        } else {
+          element.textContent = text
+        }
+
         return element
       }
 
@@ -288,7 +297,7 @@
         element.className = 'pg-states'
         element.setAttribute('aria-labelledby', section.getAttribute('aria-labelledby'))
         const head = element.createTHead().insertRow()
-        head.append(th('', 'col'), ...headings.map(heading => th(heading, 'col')))
+        head.append(th('Variant', 'col', true), ...headings.map(heading => th(heading, 'col')))
 
         const body = element.createTBody()
         for (const row of table.rows) {

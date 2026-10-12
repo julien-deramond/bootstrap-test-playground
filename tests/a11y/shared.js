@@ -8,6 +8,15 @@ import knownIssues from './known-issues.js'
 
 export const THEMES = ['light', 'dark']
 export const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
+// axe's best practices (headings, landmarks, tabindex…): not WCAG failures, so
+// they get a scan and a report of their own.
+export const BEST_PRACTICE_TAGS = ['best-practice']
+export const BEST_PRACTICE = 'best-practice'
+// `page-has-heading-one` looks for a visible <h1>. The kitchen sink's and the
+// pages' only <h1> is in the playground's own header, which `?chrome=0` hides
+// and the scan leaves out, so the rule can't tell anything there. The screens
+// have no such header and keep it.
+export const bestPracticeRulesOff = url => /^\/(kitchen-sink|pages)\//.test(url) ? ['page-has-heading-one'] : []
 
 // Builds of part of Bootstrap leave most pages unstyled on purpose, where
 // unstyled links and controls fail target-size and contrast for no reason.
@@ -19,7 +28,7 @@ export const ALL_CONFIGS = listConfigs().map(({ name }) => name).filter(name => 
 // Every entry names the axe rule, the pages it happens on, and either the
 // tracking issue of an upstream bug or the reason it's intended, never both
 // (see "Upstream issue tracking" in CLAUDE.md). `configs` must name existing
-// configs, and `state` can only be `open`.
+// configs, and `state` can only be `open` or `best-practice`.
 for (const entry of knownIssues) {
   if (!entry.rule || !entry.pages?.length || Boolean(entry.issue) === Boolean(entry.reason)) {
     throw new Error(`tests/a11y/known-issues.js: each entry needs a \`rule\`, \`pages\` and either an \`issue\` or a \`reason\` (${entry.rule})`)
@@ -30,8 +39,8 @@ for (const entry of knownIssues) {
     throw new Error(`tests/a11y/known-issues.js: \`configs\` must list existing configs (${entry.rule}: ${unknown.join(', ')})`)
   }
 
-  if (entry.state !== undefined && entry.state !== 'open') {
-    throw new Error(`tests/a11y/known-issues.js: \`state\` can only be 'open' (${entry.rule}: ${entry.state})`)
+  if (entry.state !== undefined && !['open', BEST_PRACTICE].includes(entry.state)) {
+    throw new Error(`tests/a11y/known-issues.js: \`state\` can only be 'open' or '${BEST_PRACTICE}' (${entry.rule}: ${entry.state})`)
   }
 }
 
@@ -50,7 +59,8 @@ export const CONTRAST_RULE = 'pairing-contrast'
 // An entry without `configs` is expected with the default config and allowed
 // with every other one, since most configs keep its palette. An entry with
 // `configs` is expected with exactly those. An entry with `state: 'open'`
-// belongs to the open overlays' scan, a FOCUS_RULE entry to the focus ring
+// belongs to the open overlays' scan, one with `state: 'best-practice'` to the
+// best practices scan, a FOCUS_RULE entry to the focus ring
 // check (`focus`), a CONTRAST_RULE entry to the pairing contrast check
 // (`contrast`), the others to the page's.
 const appliesTo = (entry, config) => !entry.configs || entry.configs.includes(config)
@@ -91,7 +101,7 @@ export const toNodes = violations => violations.flatMap(({ id, impact, help, hel
 }))
 
 // Attaches the violations to the test and writes them to
-// reports/a11y/<config>/<theme>/[open/|focus/|contrast/]<page>.json.
+// reports/a11y/<config>/<theme>/[open/|focus/|contrast/|best-practice/]<page>.json.
 export async function report(testInfo, { config, theme, url, state = 'closed' }, nodes) {
   const json = JSON.stringify(nodes, null, 2)
   await testInfo.attach('violations.json', { body: json, contentType: 'application/json' })

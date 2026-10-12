@@ -1,6 +1,6 @@
 // Scans every page of the playground with axe-core, in light and dark, with
 // Bootstrap's default config (configs/default/) or the configs A11Y_CONFIGS
-// names, and fails on any WCAG 2.2 A or AA violation. Pages load with `?chrome=0`, and whatever is still marked
+// names, and fails on any WCAG 2.2 A or AA violation, then on any axe best practice violation (`<page> best practices`, apart). Pages load with `?chrome=0`, and whatever is still marked
 // `data-playground-chrome` is left out of the scan: only Bootstrap's markup is
 // checked, not the playground's own UI. Reproductions (issues/) are left out
 // too, since they show bugs on purpose. axe skips what's hidden, so the
@@ -21,7 +21,7 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 import { collectPages } from '../../scripts/lib/pages.mjs'
-import { ALL_CONFIGS, TAGS, THEMES, describe, describeEntry, expectedWith, goneMessage, knownOn, load, matches, report, toNodes, unexpectedMessage } from './shared.js'
+import { ALL_CONFIGS, BEST_PRACTICE, BEST_PRACTICE_TAGS, TAGS, THEMES, bestPracticeRulesOff, describe, describeEntry, expectedWith, goneMessage, knownOn, load, matches, report, toNodes, unexpectedMessage } from './shared.js'
 
 const list = (name, fallback) => (process.env[name] || fallback).split(',').map(value => value.trim()).filter(Boolean)
 
@@ -36,10 +36,11 @@ const inScope = (config, url) => scope.full || config === 'default' || scope.con
 
 // Loads a page with a config and returns what axe finds, one node per
 // violating element.
-async function scan(page, url, theme, config) {
+async function scan(page, url, theme, config, tags = TAGS) {
   const params = await load(page, url, theme, config)
   const { violations } = await new AxeBuilder({ page })
-    .withTags(TAGS)
+    .withTags(tags)
+    .disableRules(tags === BEST_PRACTICE_TAGS ? bestPracticeRulesOff(url) : [])
     .exclude('[data-playground-chrome]')
     // pages/contrast.html's tables, which show failing pairings on purpose:
     // contrast.spec.js checks them.
@@ -91,6 +92,27 @@ for (const config of CONFIGS) {
           expect(unexpected.map(node => `${describe(node)}: ${node.help}`), unexpectedMessage(`${url}?${params}`)).toEqual([])
           expect(gone.map(describeEntry), goneMessage).toEqual([])
         })
+      }
+
+      // axe's best practices, apart from the WCAG scan, with the default
+      // config only: the pages' structure doesn't change with a config.
+      if (config === 'default') {
+        for (const url of urls.filter(url => inScope(config, url))) {
+          test(`${url} best practices`, async ({ page }, testInfo) => {
+            const { params, nodes } = await scan(page, url, theme, config, BEST_PRACTICE_TAGS)
+            const known = knownOn(url, theme, config, BEST_PRACTICE)
+            const unexpected = nodes.filter(node => !known.some(entry => matches(entry, node)))
+            const gone = known.filter(entry => !nodes.some(node => matches(entry, node)))
+
+            await report(testInfo, { config, theme, url, state: BEST_PRACTICE }, nodes.map(node => {
+              const entry = known.find(entry => matches(entry, node))
+              return { ...node, known: entry ? entry.issue ?? entry.reason : null }
+            }))
+
+            expect(unexpected.map(node => `${describe(node)}: ${node.help}`), unexpectedMessage(`${url}?${params}`)).toEqual([])
+            expect(gone.map(describeEntry), goneMessage).toEqual([])
+          })
+        }
       }
     })
   }
