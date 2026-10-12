@@ -19,6 +19,7 @@
     "a11y-summary": "node scripts/a11y-summary.mjs",
     "report:contrast": "node scripts/report-contrast.mjs",
     "test-scope": "node scripts/test-scope.mjs",
+    "prune-baselines": "node scripts/prune-baselines.mjs",
     "test:smoke": "playwright test --project smoke",
     "test:smoke:engines": "playwright test --project \"smoke*\"",
     "test:issues": "playwright test --project issues",

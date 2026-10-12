@@ -6,7 +6,7 @@
 // image, the rest state first, each under its state's name:
 // <variant>/kitchen-sink/<page>/states/<example>.png and
 // <variant>/pages/states/<table>.png, with the same VISUAL_THEMES,
-// VISUAL_DIRS and VISUAL_CONFIGS matrix as visual.spec.js.
+// VISUAL_DIRS, VISUAL_CONFIGS and VISUAL_SCOPE as visual.spec.js.
 //
 // - hover, focus and active force `:hover`, `:focus` + `:focus-visible` and
 //   `:hover` + `:active` on every interactive element through the DevTools
@@ -31,7 +31,7 @@ import path from 'node:path'
 import { expect, test } from '@playwright/test'
 import { root } from '../../scripts/lib/configs.mjs'
 import { collectPages } from '../../scripts/lib/pages.mjs'
-import { VARIANTS, openPage, snapshotPath } from './shared.js'
+import { VARIANTS, baseline, inScope, openPage, snapshotPath } from './shared.js'
 
 const PSEUDO_STATES = ['hover', 'focus', 'active']
 const MARKUP_STATES = ['selected', 'disabled', 'invalid', 'checked']
@@ -66,7 +66,7 @@ const targets = [
     sections: TABLES.map(name => ({ name, selector: `[data-states="${name}"]` })),
     states: STATES.filter(state => PSEUDO_STATES.includes(state))
   }
-]
+].filter(({ url }) => inScope(url))
 
 // Runs in the browser. Marks what a pseudo-class state forces on, inside the
 // section `selector` (excluded): each interactive element and its ancestors,
@@ -291,7 +291,7 @@ for (const variant of VARIANTS) {
             continue
           }
 
-          expect.soft(await stackStates(sheet, rows), `#${name}`).toMatchSnapshot([variant.name, ...folder, `${name}.png`])
+          expect.soft(await stackStates(sheet, rows), `#${name}`).toMatchSnapshot(baseline([variant.name, ...folder, `${name}.png`], 'snapshot'))
         }
       })
     }

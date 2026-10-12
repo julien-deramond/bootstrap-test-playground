@@ -3,12 +3,12 @@
 // the pixels its focus changes are pasted onto the unfocused surface (see
 // tests/a11y/focus.js). The images compare with baselines like the rest of the
 // visual suite, as <variant>/pages/focus/focused-<surface>.png, with the same
-// VISUAL_THEMES, VISUAL_DIRS and VISUAL_CONFIGS matrix as visual.spec.js.
+// VISUAL_THEMES, VISUAL_DIRS, VISUAL_CONFIGS and VISUAL_SCOPE as visual.spec.js.
 import { expect, test } from '@playwright/test'
 import { FOCUS_URL, SURFACES, captureSurface, compositeRings, toBase64 } from '../a11y/focus.js'
-import { VARIANTS } from './shared.js'
+import { VARIANTS, baseline, inScope } from './shared.js'
 
-for (const { theme, dir, config, name: variant } of VARIANTS) {
+for (const { theme, dir, config, name: variant } of inScope(FOCUS_URL) ? VARIANTS : []) {
   test.describe(variant, () => {
     test.use({ colorScheme: theme === 'dark' ? 'dark' : 'light' })
 
@@ -25,7 +25,7 @@ for (const { theme, dir, config, name: variant } of VARIANTS) {
 
         const capture = await captureSurface(page, surface)
         const image = Buffer.from(await page.evaluate(compositeRings, toBase64(capture)), 'base64')
-        expect.soft(image).toMatchSnapshot([variant, 'pages', 'focus', `focused-${surface}.png`])
+        expect.soft(image).toMatchSnapshot(baseline([variant, 'pages', 'focus', `focused-${surface}.png`], 'snapshot'))
         expect(capture.items.filter(item => !item.focusVisible).map(({ name }) => name), 'Components that don\'t match :focus-visible once focused').toEqual([])
       })
     }

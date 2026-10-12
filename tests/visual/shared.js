@@ -1,9 +1,17 @@
-// What the visual specs share: the matrix of variants from the environment,
-// and how a page is loaded for a screenshot.
+// What the visual specs share: the matrix of variants and the pages to open
+// from the environment, how a page is loaded for a screenshot, and the list
+// of the baselines a run compares with.
 //   VISUAL_THEMES=light,dark   (default: light,dark)
 //   VISUAL_DIRS=ltr,rtl        (default: ltr)
 //   VISUAL_CONFIGS=working,shadcn, or `all` for every config (default: working)
-import { listConfigs } from '../../scripts/lib/configs.mjs'
+//   VISUAL_SCOPE, which `npm run test-scope` prints: only the pages a pull
+//     request changes (default: every page)
+//   VISUAL_BASELINES_USED=reports/baselines-used.txt: where to list them, for
+//     `node scripts/prune-baselines.mjs` (default: no list)
+import fs from 'node:fs'
+import path from 'node:path'
+import { test } from '@playwright/test'
+import { listConfigs, root } from '../../scripts/lib/configs.mjs'
 
 const list = (name, fallback) => (process.env[name] || fallback).split(',').map(value => value.trim()).filter(Boolean)
 
@@ -15,6 +23,25 @@ const CONFIGS = process.env.VISUAL_CONFIGS === 'all' ?
 
 // Every combination, named like the baselines' first folder: light-ltr-working.
 export const VARIANTS = THEMES.flatMap(theme => DIRS.flatMap(dir => CONFIGS.map(config => ({ theme, dir, config, name: `${theme}-${dir}-${config}` }))))
+
+// The visual suite only screenshots the working copy, so its scope is pages.
+const scope = process.env.VISUAL_SCOPE ? JSON.parse(process.env.VISUAL_SCOPE) : { full: true }
+export const inScope = url => scope.full || scope.urls.includes(url)
+
+// Takes a baseline's name, as toHaveScreenshot() and toMatchSnapshot() do, and
+// adds its path to the VISUAL_BASELINES_USED list, one per line. Every test
+// lists the baselines it compares with, passing or not, so after a run of
+// every page the baselines left out of the list are the ones no test uses
+// any more.
+const usedList = process.env.VISUAL_BASELINES_USED && path.resolve(root, process.env.VISUAL_BASELINES_USED)
+export function baseline(name, kind = 'screenshot') {
+  if (usedList) {
+    fs.mkdirSync(path.dirname(usedList), { recursive: true })
+    fs.appendFileSync(usedList, `${test.info().snapshotPath(...name, { kind })}\n`)
+  }
+
+  return name
+}
 
 // Stand-in for remote images (the docs examples use https://github.com/mdo.png
 // as an avatar), so a changed or unreachable image never shows up as a diff.
