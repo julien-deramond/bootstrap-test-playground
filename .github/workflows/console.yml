@@ -30,6 +30,7 @@ jobs:
   # for everything.
   scope:
     runs-on: ubuntu-24.04
+    timeout-minutes: 5
     outputs:
       scope: ${{ steps.shards.outputs.scope }}
       shards: ${{ steps.shards.outputs.shards }}
@@ -62,6 +63,7 @@ jobs:
   crawl:
     needs: scope
     runs-on: ubuntu-24.04
+    timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
@@ -79,6 +81,7 @@ jobs:
       - run: npm ci
 
       - run: npx playwright install --with-deps chromium
+        timeout-minutes: 10
 
       # Four workers, one per vCPU: the crawl takes no screenshots, so
       # parallelism can't make it flaky. Playwright's default is half the cores.

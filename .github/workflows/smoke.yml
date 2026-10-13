@@ -33,6 +33,7 @@ concurrency:
 jobs:
   smoke:
     runs-on: ubuntu-24.04
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
@@ -57,6 +58,7 @@ jobs:
       - run: npm ci
 
       - run: npx playwright install --with-deps ${{ matrix.engine }}
+        timeout-minutes: 10
 
       - run: npm run test-scope -- HEAD^1
         if: ${{ github.event_name == 'pull_request' }}
