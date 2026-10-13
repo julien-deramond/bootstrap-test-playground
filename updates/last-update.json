@@ -1,44 +1,64 @@
 {
-  "date": "2026-10-12T12:49:18.168Z",
-  "from": "d879672a733a1396b8771218af8605739d30cce5",
-  "to": "565d7ce52baa3673e8fc165268f03e073a1bf4cf",
+  "date": "2026-10-13T12:38:31.523Z",
+  "from": "565d7ce52baa3673e8fc165268f03e073a1bf4cf",
+  "to": "9c41000c1b10a68629db709db74c08a14d05874d",
   "commits": [
     {
-      "sha": "5c8346da8513a1bfe7090639ccccce058e8e28c8",
-      "subject": "Update immutable and postcss-selector-parser to fix security alerts (#43022)"
+      "sha": "6fd8427edf8bcd4a69d395f3f8133705814bda0d",
+      "subject": "Add flex display to nav-fill and nav-justified classes (#43047)"
     },
     {
-      "sha": "04c2d30cddb534466a70227880e763ac26884ae4",
-      "subject": "Docs: remove the $enable-negative-margins option (#43027)"
+      "sha": "56c93e556f662165830312842610f3caec4cf4bb",
+      "subject": "Docs: make the flex utilities nav example fill the width from sm (#43055)"
     },
     {
-      "sha": "7ec940cb583fa8ba8065e2ae8d42d55bba34b9da",
-      "subject": "Add link to Bootstrap OpenSSF Scorecard Report in README (#43037)"
+      "sha": "21ae14f6e26776bcd9bb756d2b5791b0ea290c18",
+      "subject": "Docs: use bootstrap-utilities for the utility-only build (#43056)"
     },
     {
-      "sha": "a5bd99cd0d449ed4f25df140ebd710698ffb0a0d",
-      "subject": "Remove the nonexistent theme layer from the AGENTS.md layers list (#43038)"
+      "sha": "8a350789689484bf76b9e1d981505ba1acfcec8a",
+      "subject": "Fix drawer backdrop exit transition on close (#43028)"
     },
     {
-      "sha": "a365d67ba8cef6ff13a6978525d07296aabf2bc5",
-      "subject": "Docs: add href to active pagination sizing links (#42709) (#43039)"
-    },
-    {
-      "sha": "10c5e4f099657e4d5b2bd751c2a17ecbacc3f4f2",
-      "subject": "Docs: move `aria-current` to the active link in the cheatsheet pagination (#43040)"
-    },
-    {
-      "sha": "565d7ce52baa3673e8fc165268f03e073a1bf4cf",
-      "subject": "Docs: Remove outdated card dependency reference from collapse parent option (#43042)"
+      "sha": "9c41000c1b10a68629db709db74c08a14d05874d",
+      "subject": "Docs: fix typo in Field component page (#43068)"
     }
   ],
   "rendering": true,
   "examples": [
     {
-      "url": "/kitchen-sink/components-pagination.html",
-      "id": "sizing",
-      "page": "Pagination",
-      "example": "Sizing",
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "fill-and-justify",
+      "page": "Nav",
+      "example": "Fill and justify",
+      "pixels": 7241
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "fill-and-justify-2",
+      "page": "Nav",
+      "example": "Fill and justify",
+      "pixels": 7241
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "fill-and-justify-3",
+      "page": "Nav",
+      "example": "Fill and justify",
+      "pixels": 8082
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "fill-and-justify-4",
+      "page": "Nav",
+      "example": "Fill and justify",
+      "pixels": 8082
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "working-with-flex-utilities",
+      "page": "Nav",
+      "example": "Working with flex utilities",
       "markup": "changed"
     }
   ]
