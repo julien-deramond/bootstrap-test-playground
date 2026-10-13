@@ -8,8 +8,8 @@
 export default [
   // Should react to `.theme-*`
 
-  // The selected day hard-codes `--primary-bg` and `--primary-contrast`. The tracking issue is opened when the branch ships.
-  { partial: 'datepicker', issue: 'TODO' },
+  // The selected day hard-codes `--primary-bg` and `--primary-contrast`.
+  { partial: 'datepicker', issue: 372 },
 
   // Neutral surfaces and controls
 
