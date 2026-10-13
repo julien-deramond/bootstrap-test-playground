@@ -66,6 +66,20 @@ export async function openPage(page, url, { theme, dir, config }) {
   // (markers drawn after `load`) or pages/color-modes.html (overlays,
   // color modes), mark <html> until they're done.
   await page.waitForFunction(() => !('playgroundBusy' in document.documentElement.dataset), null, { timeout: 30_000 })
+
+  // WebKit draws today's date, from the system clock that `page.clock` doesn't
+  // reach, in an empty date or time input, so its baseline would only match
+  // on the day it was recorded. Hide the empty fields' text.
+  if (page.context().browser()?.browserType().name() === 'webkit') {
+    await page.addStyleTag({ content: `
+      input:is([type="date"], [type="datetime-local"], [type="month"], [type="time"], [type="week"]):not([data-pg-filled])::-webkit-datetime-edit { visibility: hidden; }
+    ` })
+    await page.evaluate(() => {
+      for (const input of document.querySelectorAll('input[type="date"], input[type="datetime-local"], input[type="month"], input[type="time"], input[type="week"]')) {
+        if (input.value) input.dataset.pgFilled = ''
+      }
+    })
+  }
 }
 
 // `issues/pg-1/` → issues/pg-1, `kitchen-sink/forms-radio.html` → kitchen-sink/forms-radio
