@@ -5,8 +5,9 @@
 // to limit it to light or dark, and `configs` to limit it to some configs.
 // `state: 'open'` puts an entry in the scan of open overlays
 // (overlays.spec.js) instead of the page scan, `rule: 'focus-appearance'`
-// in the focus ring check (focus.spec.js), and `rule: 'pairing-contrast'` in
-// the pairing contrast check (contrast.spec.js).
+// in the focus ring check (focus.spec.js), `rule: 'pairing-contrast'` in
+// the pairing contrast check (contrast.spec.js), and `state: 'best-practice'`
+// in the best practices scan (a11y.spec.js, `<page> best practices`).
 // Without `configs`, an entry is expected with the default config and allowed
 // with every other one; with it, it's expected with exactly those. An
 // element that violates the same rule with the default config, under an
@@ -1191,5 +1192,46 @@ export default [
     configs: ['shadcn'],
     pages: ['/pages/contrast.html'],
     reason: 'shadcn config: shadcn/ui\'s own neutral and destructive colors, under 4.5:1 in these pairings'
+  },
+  {
+    rule: 'landmark-unique',
+    state: 'best-practice',
+    pages: [
+      '/kitchen-sink/components-avatar.html',
+      '/kitchen-sink/components-badge.html',
+      '/kitchen-sink/components-breadcrumb.html',
+      '/kitchen-sink/components-button-group.html',
+      '/kitchen-sink/components-button.html',
+      '/kitchen-sink/components-card.html',
+      '/kitchen-sink/components-dialog.html',
+      '/kitchen-sink/components-drawer.html',
+      '/kitchen-sink/components-list-group.html',
+      '/kitchen-sink/components-menu.html',
+      '/kitchen-sink/components-nav.html',
+      '/kitchen-sink/components-navbar.html',
+      '/kitchen-sink/components-pagination.html',
+      '/kitchen-sink/components-progress.html',
+      '/kitchen-sink/components-scrollspy.html',
+      '/kitchen-sink/components-spinner.html',
+      '/kitchen-sink/components-stepper.html',
+      '/kitchen-sink/components-tab.html',
+      '/kitchen-sink/components-toasts.html',
+      '/kitchen-sink/components-tooltip.html',
+      '/kitchen-sink/forms-chips.html',
+      '/kitchen-sink/forms-datepicker.html',
+      '/kitchen-sink/forms-floating-labels.html',
+      '/kitchen-sink/forms-form-adorn.html',
+      '/kitchen-sink/forms-form-control.html',
+      '/kitchen-sink/forms-layout.html'
+    ],
+    issue: 375
+  },
+  {
+    rule: 'heading-order',
+    state: 'best-practice',
+    pages: [
+      '/kitchen-sink/components-carousel.html'
+    ],
+    issue: 376
   }
 ]
