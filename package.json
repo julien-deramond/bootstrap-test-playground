@@ -35,6 +35,7 @@
     "audit-motion": "node scripts/audit-motion.mjs",
     "audit-layers": "node scripts/audit-layers.mjs",
     "audit-partials": "node scripts/audit-partials.mjs",
+    "audit-themes": "node scripts/audit-themes.mjs",
     "new-issue": "node scripts/new-issue.mjs",
     "save-config": "node scripts/save-config.mjs",
     "use-config": "node scripts/use-config.mjs",

@@ -56,6 +56,7 @@ jobs:
         if: ${{ !cancelled() }}
 
       - run: npm run audit-partials
+      - run: npm run audit-themes
         if: ${{ !cancelled() }}
 
       - run: npm run lint:html

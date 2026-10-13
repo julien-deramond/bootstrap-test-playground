@@ -30,7 +30,7 @@ import { fetchCommit, lockedSha, resolveRef, upstreamCommits } from './lib/upstr
 
 const SPEC = 'github:twbs/bootstrap#main'
 // canary-report's checks that need no browser. `npm run canary-report` runs them all.
-const CHECKS = ['check-configs', 'check-dist', 'audit-tokens', 'compile-matrix', 'audit-rtl', 'audit-motion', 'audit-layers', 'audit-partials', 'lint:html', 'check-size']
+const CHECKS = ['check-configs', 'check-dist', 'audit-tokens', 'compile-matrix', 'audit-rtl', 'audit-motion', 'audit-layers', 'audit-partials', 'audit-themes', 'lint:html', 'check-size']
 
 const args = process.argv.slice(2)
 const options = {}

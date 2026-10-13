@@ -44,6 +44,7 @@ const CHECKS = [
   { name: 'audit-motion', command: 'npm run -s audit-motion' },
   { name: 'audit-layers', command: 'npm run -s audit-layers' },
   { name: 'audit-partials', command: 'npm run -s audit-partials' },
+  { name: 'audit-themes', command: 'npm run -s audit-themes' },
   { name: 'lint:html', command: 'npm run -s lint:html' },
   // Compares with the last recorded entry; the workflow records the new one after the report.
   { name: 'check-size', command: 'npm run -s check-size', table: true },
