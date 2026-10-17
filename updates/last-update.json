@@ -1,64 +1,88 @@
 {
-  "date": "2026-10-13T12:38:31.523Z",
-  "from": "565d7ce52baa3673e8fc165268f03e073a1bf4cf",
-  "to": "9c41000c1b10a68629db709db74c08a14d05874d",
+  "date": "2026-10-17T09:19:54.730Z",
+  "from": "9c41000c1b10a68629db709db74c08a14d05874d",
+  "to": "548f671d0f701f9fab311b945dad27cafa92b59b",
   "commits": [
     {
-      "sha": "6fd8427edf8bcd4a69d395f3f8133705814bda0d",
-      "subject": "Add flex display to nav-fill and nav-justified classes (#43047)"
+      "sha": "9dfcd354acb52add99f0339a3c1b77a79891cd8c",
+      "subject": "Docs: fix typo in Quickstart page (#43059)"
     },
     {
-      "sha": "56c93e556f662165830312842610f3caec4cf4bb",
-      "subject": "Docs: make the flex utilities nav example fill the width from sm (#43055)"
+      "sha": "88e6c23522dfaef784a515744218e51f2fb35870",
+      "subject": "Fix invalid division in the list-inline-item margin (#43071)"
     },
     {
-      "sha": "21ae14f6e26776bcd9bb756d2b5791b0ea290c18",
-      "subject": "Docs: use bootstrap-utilities for the utility-only build (#43056)"
+      "sha": "1531588bc37296a5f588e1d4620f25b6b1832bcd",
+      "subject": "Fix the docs \"View & Edit\" link: add the .mdx extension and point it at main (#43073)"
     },
     {
-      "sha": "8a350789689484bf76b9e1d981505ba1acfcec8a",
-      "subject": "Fix drawer backdrop exit transition on close (#43028)"
+      "sha": "ebd627c654c49dbe929b11ebfe9b67e459e5d127",
+      "subject": "Keep a `--radius-pill` value passed through `$root-tokens` (#43074)"
     },
     {
-      "sha": "9c41000c1b10a68629db709db74c08a14d05874d",
-      "subject": "Docs: fix typo in Field component page (#43068)"
+      "sha": "ae735c30fc80b91a1d4976773cf54ef467496d44",
+      "subject": "Docs: give unlabelled checkbox, radio and switch examples an `aria-label=\"...\"` and explain how to fill it (#43079)"
+    },
+    {
+      "sha": "7b3d885733fb7bbf85f93577aeec791b222d19c5",
+      "subject": "Chore(deps): Bump the github-actions group with 2 updates (#43081)"
+    },
+    {
+      "sha": "564fc6d992e2356b33661ca1ff1e6f8dd7e1f3d5",
+      "subject": "Chore(deps-dev): Bump the development-dependencies group across 1 directory with 6 updates (#43082)"
+    },
+    {
+      "sha": "cc127d888efbca82ec829cbb0733d8908f00f8c8",
+      "subject": "Docs: replace the `<vstack>` element with `.vstack` in the alert examples and keep their `<hr>` spacing (#43087)"
+    },
+    {
+      "sha": "fac983e5f267afb2f8d3ca80a887bd4f3de8c21e",
+      "subject": "Docs: precise that card title and text need no styles of their own (#43103)"
+    },
+    {
+      "sha": "54f2d26c9523194cd1fd7e477d05c8908df3bf02",
+      "subject": "Docs: add a `<main>` landmark to the homepage and the 404 page (#43105)"
+    },
+    {
+      "sha": "548f671d0f701f9fab311b945dad27cafa92b59b",
+      "subject": "Menu: use physical keywords for transform-origin (#43106)"
     }
   ],
   "rendering": true,
   "examples": [
     {
-      "url": "/kitchen-sink/components-nav.html",
-      "id": "fill-and-justify",
-      "page": "Nav",
-      "example": "Fill and justify",
-      "pixels": 7241
+      "url": "/kitchen-sink/components-alert.html",
+      "id": "additional-content",
+      "page": "Alert",
+      "example": "Additional content",
+      "markup": "changed"
     },
     {
-      "url": "/kitchen-sink/components-nav.html",
-      "id": "fill-and-justify-2",
-      "page": "Nav",
-      "example": "Fill and justify",
-      "pixels": 7241
+      "url": "/kitchen-sink/forms-checkbox.html",
+      "id": "basic-checkbox",
+      "page": "Checkbox",
+      "example": "Basic checkbox",
+      "markup": "changed"
     },
     {
-      "url": "/kitchen-sink/components-nav.html",
-      "id": "fill-and-justify-3",
-      "page": "Nav",
-      "example": "Fill and justify",
-      "pixels": 8082
+      "url": "/kitchen-sink/forms-checkbox.html",
+      "id": "indeterminate",
+      "page": "Checkbox",
+      "example": "Indeterminate",
+      "markup": "changed"
     },
     {
-      "url": "/kitchen-sink/components-nav.html",
-      "id": "fill-and-justify-4",
-      "page": "Nav",
-      "example": "Fill and justify",
-      "pixels": 8082
+      "url": "/kitchen-sink/forms-radio.html",
+      "id": "basic-radio",
+      "page": "Radio",
+      "example": "Basic radio",
+      "markup": "changed"
     },
     {
-      "url": "/kitchen-sink/components-nav.html",
-      "id": "working-with-flex-utilities",
-      "page": "Nav",
-      "example": "Working with flex utilities",
+      "url": "/kitchen-sink/forms-switch.html",
+      "id": "basic-switch",
+      "page": "Switch",
+      "example": "Basic switch",
       "markup": "changed"
     }
   ]
