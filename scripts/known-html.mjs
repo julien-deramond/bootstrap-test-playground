@@ -6,7 +6,6 @@
 // When an upstream fix lands, remove its entries: the lint fails on an entry
 // that no longer matches anything (see "Upstream issue tracking" in CLAUDE.md).
 export default [
-  { rule: 'element-name', file: 'kitchen-sink/components-alert.html', message: /<vstack>/, issue: 153 },
   { rule: 'element-permitted-content', file: 'kitchen-sink/components-menu.html', message: /<div> element is not permitted as content under <button>/, issue: 153 },
   { rule: 'element-permitted-content', file: /^kitchen-sink\/forms-(form-adorn|validation)\.html$/, message: /<div> element is not permitted as content under <label>/, issue: 153 },
   {
