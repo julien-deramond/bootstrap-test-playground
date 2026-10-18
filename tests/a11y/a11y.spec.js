@@ -6,7 +6,8 @@
 // too, since they show bugs on purpose. axe skips what's hidden, so the
 // overlays (menus, dialogs, tooltips…) get a scan of their own, open:
 // overlays.spec.js. Focus rings get a check of their own too: focus.spec.js,
-// and color pairings: contrast.spec.js.
+// color pairings: contrast.spec.js, and the Tab key's path through each page:
+// tab-walk.spec.js.
 //
 // Violations caused by an open upstream bug, or intended, are listed in
 // known-issues.js. Each page's violations, known ones included, are attached
@@ -20,16 +21,13 @@
 //   config. It needs A11Y_CONFIGS=all.
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
-import { collectPages } from '../../scripts/lib/pages.mjs'
-import { ALL_CONFIGS, BEST_PRACTICE, BEST_PRACTICE_TAGS, TAGS, THEMES, bestPracticeRulesOff, describe, describeEntry, expectedWith, goneMessage, knownOn, load, matches, report, toNodes, unexpectedMessage } from './shared.js'
+import { ALL_CONFIGS, BEST_PRACTICE, BEST_PRACTICE_TAGS, PAGES, TAGS, THEMES, bestPracticeRulesOff, describe, describeEntry, expectedWith, goneMessage, knownOn, load, matches, report, toNodes, unexpectedMessage } from './shared.js'
 
 const list = (name, fallback) => (process.env[name] || fallback).split(',').map(value => value.trim()).filter(Boolean)
 
 const CONFIGS = process.env.A11Y_CONFIGS === 'all' ? ALL_CONFIGS : list('A11Y_CONFIGS', 'default')
 
-const SKIPPED_GROUPS = ['issues']
-
-const urls = collectPages('/').filter(({ dir }) => !SKIPPED_GROUPS.includes(dir)).flatMap(({ pages }) => pages.map(({ url }) => url))
+const urls = PAGES
 
 const scope = process.env.A11Y_SCOPE ? JSON.parse(process.env.A11Y_SCOPE) : { full: true }
 const inScope = (config, url) => scope.full || config === 'default' || scope.configs.includes(config) || scope.urls.includes(url)
