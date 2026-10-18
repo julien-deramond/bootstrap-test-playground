@@ -1097,6 +1097,14 @@ export default [
     ],
     issue: 272
   },
+  // The docs' Ghost example wraps the input in a plain div.border, and
+  // .form-ghost draws no ring of its own.
+  {
+    rule: 'focus-not-visible',
+    target: /^#exampleGhostInput$/,
+    pages: ['/kitchen-sink/forms-form-control.html'],
+    issue: 380
+  },
   // Tab from a popup datepicker's last control leaves the page, so the stops
   // after it are never reached and Shift+Tab finds them.
   {

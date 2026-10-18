@@ -562,7 +562,7 @@ test.describe('tab', () => {
             const gone = known.filter(entry => expectedWith(entry, CONFIG) && !nodes.some(node => matches(entry, node)))
 
             expect(nodes.every(node => TAB_RULES.includes(node.rule))).toBe(true)
-            expect(unexpected.map(node => `${describe(node)}: ${node.summary}`), unexpectedMessage(`${url}?${params} walked with ${dir === 'rtl' ? 'Shift+Tab and Tab in RTL' : 'Tab and Shift+Tab'}`)).toEqual([])
+            expect(unexpected.map(node => `${describe(node)}: ${node.summary}`), unexpectedMessage(`${url}?${params} walked with Tab and Shift+Tab${dir === 'rtl' ? ' in RTL' : ''}`)).toEqual([])
             expect(gone.map(describeEntry), goneMessage).toEqual([])
           })
         }
