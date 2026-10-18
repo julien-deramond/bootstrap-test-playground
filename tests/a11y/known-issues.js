@@ -1310,6 +1310,12 @@ export default [
   },
   {
     rule: 'reflow',
+    target: /div\.otp-slots$/,
+    pages: ['/kitchen-sink/forms-otp-input.html'],
+    issue: 382
+  },
+  {
+    rule: 'reflow',
     target: /table\.pg-states$/,
     pages: ['/pages/states.html'],
     reason: 'two-dimensional content: the state matrices are tables, which WCAG 1.4.10 lets scroll both ways'
