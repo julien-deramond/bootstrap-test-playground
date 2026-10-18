@@ -11,7 +11,7 @@
 // date or time input, so consecutive presses on the same element count as one
 // stop, and the trap limit counts distinct stops: the page's predicted stops
 // plus 20, with a cap on presses. Focus coming back to an earlier stop is a
-// trap too.
+// trap too, and so is an element that keeps focus through 40 presses.
 //
 // `tabOrder()` from src/js/tab-order.js, which draws the toolbar's "Show tab
 // order" overlay, predicts the stops the HTML spec gives. A predicted stop Tab
@@ -63,10 +63,11 @@ const scope = process.env.A11Y_SCOPE ? JSON.parse(process.env.A11Y_SCOPE) : { fu
 const urls = PAGES.filter(url => scope.full || scope.urls.includes(url))
 
 // How many distinct stops past the predicted ones before a walk is a trap,
-// and how many presses per allowed stop: a datetime-local input takes up to
-// six.
+// how many presses per allowed stop, and how many presses on one element
+// before it's a trap: a datetime-local input takes up to six.
 const EXTRA_STOPS = 20
 const PRESSES_PER_STOP = 8
+const PRESSES_ON_ONE_STOP = 40
 
 // Room around a stop for its ring in the pixel check, like focus.js.
 const PADDING = 8
@@ -100,7 +101,7 @@ const tabOrderSource = `${fs.readFileSync(path.join(root, 'src/js/tab-order.js')
 // Runs in the browser, once per page. Installs `window.a11yWalk`: the
 // predicted stops with their unfocused styles, the sentinels, and the methods
 // the walk calls between key presses.
-function install({ properties, extraStops, hosts }) {
+function install({ properties, extraStops, pressesOnOne, hosts }) {
   // Nothing focused while the unfocused styles are read: pages/color-modes.html
   // focuses a control on load.
   document.activeElement?.blur()
@@ -272,7 +273,7 @@ function install({ properties, extraStops, hosts }) {
 
       if (last && last.element === element) {
         last.presses++
-        return { same: true }
+        return last.presses > pressesOnOne ? { trap: `${last.presses} presses on ${last.selector} without leaving it` } : { same: true }
       }
 
       const seen = current.stops.findIndex(stop => stop.element === element)
@@ -456,7 +457,7 @@ async function check(page, url, theme, dir) {
   await page.waitForFunction(() => window.bootstrap, null, { timeout: 30_000 })
   await page.addScriptTag({ type: 'module', content: tabOrderSource })
   await page.waitForFunction(() => window.a11yTabOrder, null, { timeout: 30_000 })
-  const { limit } = await page.evaluate(install, { properties: INDICATOR_PROPERTIES, extraStops: EXTRA_STOPS, hosts: PLAYGROUND_HOSTS })
+  const { limit } = await page.evaluate(install, { properties: INDICATOR_PROPERTIES, extraStops: EXTRA_STOPS, pressesOnOne: PRESSES_ON_ONE_STOP, hosts: PLAYGROUND_HOSTS })
   const predicted = await page.evaluate(() => window.a11yWalk.predicted)
 
   const forward = await walk(page, 'Tab', limit)
