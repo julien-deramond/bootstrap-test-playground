@@ -434,15 +434,6 @@ export default [
     issue: 255
   },
   {
-    rule: 'label',
-    pages: [
-      '/kitchen-sink/forms-checkbox.html',
-      '/kitchen-sink/forms-radio.html',
-      '/kitchen-sink/forms-switch.html'
-    ],
-    issue: 256
-  },
-  {
     rule: 'link-name',
     pages: [
       '/kitchen-sink/components-breadcrumb.html'
