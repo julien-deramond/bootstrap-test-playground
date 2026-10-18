@@ -6,6 +6,14 @@
  */
 
 @layer custom {
+  /* The docs size every Bootstrap Icon (getbootstrap.com/docs/6.0, `ScssProd.*.css`): without it, an inline `<svg class="bi">` with no width or height, like the alert's "With icons" example or the input group's split toggle, takes a replaced element's default 300px. */
+  :where(.bi) {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    fill: currentcolor;
+  }
+
   .bd-kitchen-sink-section {
     margin-block-end: 3rem;
   }

@@ -7,8 +7,10 @@
 // (overlays.spec.js) instead of the page scan, `rule: 'focus-appearance'`
 // in the focus ring check (focus.spec.js), `rule: 'pairing-contrast'` in
 // the pairing contrast check (contrast.spec.js), `rule: 'focus-obscured'`
-// in the focus obscured check (focus-obscured.spec.js), `state: 'best-practice'`
-// in the best practices scan (a11y.spec.js, `<page> best practices`), and
+// in the focus obscured check (focus-obscured.spec.js), `rule: 'reflow'`,
+// `'text-spacing'` or `'resize-text'` in the reflow check (reflow.spec.js:
+// 320px wide, text spacing and 200% text), `state: 'best-practice'` in the
+// best practices scan (a11y.spec.js, `<page> best practices`), and
 // `keyboard-trap`, `hidden-stop`, `skipped-stop`, `focus-not-visible` or
 // `reverse-order` in the Tab walk (tab-walk.spec.js), where `dirs` limits an
 // entry to `ltr` or `rtl`.
@@ -1275,5 +1277,122 @@ export default [
       '/kitchen-sink/components-carousel.html'
     ],
     issue: 376
+  },
+  {
+    rule: 'reflow',
+    target: /^#(images|list-groups(-\d)?|kitchen-sink|custom-css|translucent-cards(-\d)?) (div\.card|ul\.list-group)/,
+    pages: ['/kitchen-sink/components-card.html'],
+    reason: 'docs examples built for a desktop width: `width: 18rem` cards and list groups, 5px wider than a 320px viewport with the example\'s padding'
+  },
+  {
+    rule: 'reflow',
+    target: /^#(example|multiple-toggles-and-targets) p\.d-inline-flex/,
+    pages: ['/kitchen-sink/components-collapse.html'],
+    reason: 'docs examples built for a desktop width: a `d-inline-flex` row of toggle buttons that can\'t wrap'
+  },
+  {
+    rule: 'reflow',
+    target: /^#(variants|forms) div\.menu\.show\.position-static/,
+    pages: ['/kitchen-sink/components-menu.html'],
+    reason: 'docs examples built for a desktop width: static menus shown side by side in an `hstack`'
+  },
+  {
+    rule: 'reflow',
+    target: /^#complex-2 li\.stepper-item/,
+    pages: ['/kitchen-sink/components-stepper.html'],
+    reason: 'docs example built for a desktop width: `.stepper-horizontal` without its responsive `md:` form keeps its steps in one row'
+  },
+  {
+    rule: 'reflow',
+    target: /^#dividers div\.btn-group\.btn-group-divider/,
+    pages: ['/kitchen-sink/components-button-group.html'],
+    reason: 'docs example built for a desktop width: the divider example\'s buttons stay in one row'
+  },
+  {
+    rule: 'reflow',
+    target: /table\.pg-states$/,
+    pages: ['/pages/states.html'],
+    reason: 'two-dimensional content: the state matrices are tables, which WCAG 1.4.10 lets scroll both ways'
+  },
+  {
+    rule: 'resize-text',
+    target: /table\.pg-states$/,
+    pages: ['/pages/states.html'],
+    reason: 'two-dimensional content: the state matrices are tables, which WCAG 1.4.10 lets scroll both ways'
+  },
+  {
+    rule: 'reflow',
+    target: /^#(mixin-checks|mode-checks) table\.table/,
+    pages: ['/pages/color-modes.html'],
+    reason: 'two-dimensional content: the check tables, which WCAG 1.4.10 lets scroll both ways'
+  },
+  {
+    rule: 'resize-text',
+    target: /^#mode-checks table\.table/,
+    pages: ['/pages/color-modes.html'],
+    reason: 'two-dimensional content: the check tables, which WCAG 1.4.10 lets scroll both ways'
+  },
+  {
+    rule: 'reflow',
+    target: /^#case-responsive div\.col-12/,
+    pages: ['/pages/grid-only.html'],
+    issue: 238
+  },
+  {
+    rule: 'resize-text',
+    target: /^#case-container div\.container/,
+    pages: ['/pages/grid-only.html'],
+    issue: 238
+  },
+  {
+    rule: 'reflow',
+    target: /^#case-css-grid div\.g-col-4/,
+    pages: ['/pages/grid-only.html'],
+    reason: 'the CSS grid check lays 12 `.grid` columns with the config\'s 2rem gap, whose 11 gaps alone are wider than a 320px viewport'
+  },
+  {
+    rule: 'resize-text',
+    target: /^#drawer dialog\.drawer/,
+    pages: ['/pages/marketing-product.html'],
+    reason: 'Bootstrap\'s product example: the navbar expands from the `md` breakpoint, in px, so at 200% text its links are wider than the container'
+  },
+  {
+    rule: 'text-spacing',
+    target: /span\.text-truncate$/,
+    pages: ['/screens/cards.html'],
+    reason: 'application screen ported from shadcn/ui: the navigation cards truncate their labels on purpose (`.text-truncate`), and letter spacing makes more of them reach the limit at 1280px'
+  },
+  {
+    rule: 'resize-text',
+    target: /(span\.text-truncate|div\.bg-white\.border\.rounded-7|span\.fw-semibold\.cards-tabular|svg\.bi\.fg-3\.align-self-center)$/,
+    pages: ['/screens/cards.html'],
+    reason: 'application screen ported from shadcn/ui, laid out for a wide desktop (five columns from 1536px): at 200% text, 1280px keeps the three-column layout its truncated labels, amounts, QR code and icons were sized for'
+  },
+  {
+    rule: 'text-spacing',
+    target: /span\.combobox-value/,
+    pages: [
+      '/screens/cards.html',
+      '/screens/dashboard.html'
+    ],
+    reason: 'a combobox shows its value on one line, like a native select, so letter spacing cuts a value as long as the control (#6 covers the missing ellipsis)'
+  },
+  {
+    rule: 'resize-text',
+    target: /span\.combobox-value/,
+    pages: ['/screens/cards.html'],
+    reason: 'a combobox shows its value on one line, like a native select, so at 200% text it cuts a value as long as the control (#6 covers the missing ellipsis)'
+  },
+  {
+    rule: 'resize-text',
+    target: /^#appInset div\.btn-group\.btn-group-sm/,
+    pages: ['/screens/dashboard.html'],
+    reason: 'the visitors card\'s time range buttons show from the `xl` breakpoint, in px, so at 200% text the group is wider than its card'
+  },
+  {
+    rule: 'text-spacing',
+    target: /span\.tasks-title\.text-truncate/,
+    pages: ['/screens/tasks.html'],
+    reason: 'the tasks screen truncates long titles on purpose, like the shadcn/ui original (`.text-truncate` under a 31.25rem max width), and letter spacing makes two more titles reach the limit'
   }
 ]

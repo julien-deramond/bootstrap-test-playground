@@ -20,7 +20,7 @@
 /* Two-column layout: editor + 200px settings column (md:grid-cols-[1fr_200px]) */
 .playground-grid { display: grid; gap: 1.5rem; align-items: stretch; }
 @media (min-width: 768px) {
-  .playground-grid { grid-template-columns: minmax(0, 1fr) 200px; }
+  .playground-grid { grid-template-columns: minmax(0, 1fr) 12.5rem; } /* 200px, scaling with the text size */
 }
 
 /* Slider value readout */
