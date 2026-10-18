@@ -6,7 +6,8 @@
 // `state: 'open'` puts an entry in the scan of open overlays
 // (overlays.spec.js) instead of the page scan, `rule: 'focus-appearance'`
 // in the focus ring check (focus.spec.js), `rule: 'pairing-contrast'` in
-// the pairing contrast check (contrast.spec.js), `state: 'best-practice'`
+// the pairing contrast check (contrast.spec.js), `rule: 'focus-obscured'`
+// in the focus obscured check (focus-obscured.spec.js), `state: 'best-practice'`
 // in the best practices scan (a11y.spec.js, `<page> best practices`), and
 // `keyboard-trap`, `hidden-stop`, `skipped-stop`, `focus-not-visible` or
 // `reverse-order` in the Tab walk (tab-walk.spec.js), where `dirs` limits an
