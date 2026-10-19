@@ -168,6 +168,7 @@ export default [
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button-group.html',
       '/kitchen-sink/components-button.html',
+      '/kitchen-sink/components-card.html',
       '/kitchen-sink/components-carousel.html',
       '/kitchen-sink/components-collapse.html',
       '/kitchen-sink/components-dialog.html',
@@ -235,6 +236,7 @@ export default [
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button-group.html',
       '/kitchen-sink/components-button.html',
+      '/kitchen-sink/components-card.html',
       '/kitchen-sink/components-carousel.html',
       '/kitchen-sink/components-menu.html',
       '/kitchen-sink/components-progress.html',
@@ -267,6 +269,7 @@ export default [
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button-group.html',
       '/kitchen-sink/components-button.html',
+      '/kitchen-sink/components-card.html',
       '/kitchen-sink/components-menu.html',
       '/kitchen-sink/components-progress.html',
       '/pages/color-modes.html',
@@ -327,6 +330,7 @@ export default [
     themes: ['light'],
     pages: [
       '/kitchen-sink/components-button.html',
+      '/kitchen-sink/components-card.html',
       '/kitchen-sink/components-pagination.html',
       '/kitchen-sink/components-scrollspy.html',
       '/kitchen-sink/components-stepper.html',
@@ -733,6 +737,7 @@ export default [
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button-group.html',
       '/kitchen-sink/components-button.html',
+      '/kitchen-sink/components-card.html',
       '/pages/focus.html',
       '/pages/states.html'
     ],
@@ -805,6 +810,7 @@ export default [
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button-group.html',
       '/kitchen-sink/components-button.html',
+      '/kitchen-sink/components-card.html',
       '/kitchen-sink/components-progress.html',
       '/pages/focus.html',
       '/pages/states.html'
@@ -874,14 +880,6 @@ export default [
   },
   {
     rule: 'color-contrast',
-    target: /#overlay-datepicker/,
-    themes: ['light'],
-    configs: ['shadcn'],
-    pages: ['/pages/color-modes.html'],
-    reason: 'shadcn config: shadcn/ui\'s translucent dark input background (`dark:bg-input/30`) shows the light page through when only the input is dark'
-  },
-  {
-    rule: 'color-contrast',
     colors: '#737373 on #ededed',
     themes: ['light'],
     configs: ['shadcn'],
@@ -909,9 +907,19 @@ export default [
     configs: ['shadcn'],
     pages: [
       '/kitchen-sink/components-alert.html',
-      '/kitchen-sink/components-avatar.html',
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button.html',
+      '/kitchen-sink/forms-chips.html'
+    ],
+    reason: 'shadcn config: shadcn/ui\'s own neutral and destructive colors, under 4.5:1 in these pairings'
+  },
+  {
+    rule: 'color-contrast',
+    colors: '#e7000b on #fde5e7',
+    themes: ['light'],
+    configs: ['shadcn'],
+    pages: [
+      '/kitchen-sink/components-avatar.html',
       '/kitchen-sink/components-list-group.html',
       '/kitchen-sink/forms-chips.html',
       '/pages/states.html'
@@ -973,6 +981,14 @@ export default [
   },
   {
     rule: 'color-contrast',
+    colors: '#ffffff on #339ffe',
+    themes: ['light'],
+    state: 'open',
+    pages: ['/kitchen-sink/components-menu.html'],
+    issue: 389
+  },
+  {
+    rule: 'color-contrast',
     colors: '#cddeed on #026ece',
     themes: ['dark'],
     state: 'open',
@@ -1023,7 +1039,7 @@ export default [
   },
   {
     rule: 'color-contrast',
-    colors: '#de0000 on #fde6e7',
+    colors: '#de0000 on #fde5e7',
     themes: ['light'],
     configs: ['shadcn'],
     pages: [
