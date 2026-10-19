@@ -36,6 +36,8 @@ export const ALL_CONFIGS = listConfigs().map(({ name }) => name).filter(name => 
 // doesn't have.
 export const FOCUS_RULE = 'focus-appearance'
 export const CONTRAST_RULE = 'pairing-contrast'
+// The focus obscured check's (focus-obscured.spec.js, WCAG 2.4.11).
+export const OBSCURED_RULE = 'focus-obscured'
 export const TAB_RULES = ['keyboard-trap', 'hidden-stop', 'skipped-stop', 'focus-not-visible', 'reverse-order']
 export const DIRS = ['ltr', 'rtl']
 
@@ -76,12 +78,13 @@ export const matches = (entry, node) => entry.rule === node.rule &&
 // belongs to the open overlays' scan, one with `state: 'best-practice'` to the
 // best practices scan, a FOCUS_RULE entry to the focus ring
 // check (`focus`), a CONTRAST_RULE entry to the pairing contrast check
-// (`contrast`), a TAB_RULES entry to the Tab walk (`tab`, where `dir` picks
+// (`contrast`), an OBSCURED_RULE entry to the focus obscured check
+// (`obscured`), a TAB_RULES entry to the Tab walk (`tab`, where `dir` picks
 // the entries whose `dirs` include the walk's direction), the others to the
 // page's.
 const appliesTo = (entry, config) => !entry.configs || entry.configs.includes(config)
 export const expectedWith = (entry, config) => entry.configs ? entry.configs.includes(config) : config === 'default'
-const scanOf = entry => ({ [FOCUS_RULE]: 'focus', [CONTRAST_RULE]: 'contrast' })[entry.rule] ?? (TAB_RULES.includes(entry.rule) ? 'tab' : entry.state ?? 'closed')
+const scanOf = entry => ({ [FOCUS_RULE]: 'focus', [CONTRAST_RULE]: 'contrast', [OBSCURED_RULE]: 'obscured' })[entry.rule] ?? (TAB_RULES.includes(entry.rule) ? 'tab' : entry.state ?? 'closed')
 
 export const knownOn = (url, theme, config, state = 'closed', dir = undefined) => knownIssues.filter(entry => entry.pages.includes(url) &&
   scanOf(entry) === state && appliesTo(entry, config) && (!entry.themes || entry.themes.includes(theme)) && (!entry.dirs || !dir || entry.dirs.includes(dir)))
@@ -118,7 +121,7 @@ export const toNodes = violations => violations.flatMap(({ id, impact, help, hel
 }))
 
 // Attaches the violations to the test and writes them to
-// reports/a11y/<config>/<theme>/[open/|focus/|contrast/|best-practice/|tab/|tab-rtl/]<page>.json.
+// reports/a11y/<config>/<theme>/[open/|focus/|contrast/|obscured/|best-practice/|tab/|tab-rtl/]<page>.json.
 export async function report(testInfo, { config, theme, url, state = 'closed' }, nodes) {
   const json = JSON.stringify(nodes, null, 2)
   await testInfo.attach('violations.json', { body: json, contentType: 'application/json' })
