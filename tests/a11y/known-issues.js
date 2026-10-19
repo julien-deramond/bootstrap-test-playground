@@ -6,8 +6,12 @@
 // `state: 'open'` puts an entry in the scan of open overlays
 // (overlays.spec.js) instead of the page scan, `rule: 'focus-appearance'`
 // in the focus ring check (focus.spec.js), `rule: 'pairing-contrast'` in
-// the pairing contrast check (contrast.spec.js), and `state: 'best-practice'`
-// in the best practices scan (a11y.spec.js, `<page> best practices`).
+// the pairing contrast check (contrast.spec.js), `rule: 'focus-obscured'`
+// in the focus obscured check (focus-obscured.spec.js), `state: 'best-practice'`
+// in the best practices scan (a11y.spec.js, `<page> best practices`), and
+// `keyboard-trap`, `hidden-stop`, `skipped-stop`, `focus-not-visible` or
+// `reverse-order` in the Tab walk (tab-walk.spec.js), where `dirs` limits an
+// entry to `ltr` or `rtl`.
 // Without `configs`, an entry is expected with the default config and allowed
 // with every other one; with it, it's expected with exactly those. An
 // element that violates the same rule with the default config, under an
@@ -1088,6 +1092,53 @@ export default [
     target: / (?!(chip-input-chip|menu-item|list-group-action|carousel-indicator)(-|$)|(btn-close|(card-stretched-)?link|range)$)/,
     pages: ['/pages/focus.html'],
     issue: 270
+  },
+  // The Tab walk (tab-walk.spec.js): `target` matches the stop's selector,
+  // and `dirs` limits an entry to `ltr` or `rtl`.
+  {
+    rule: 'focus-not-visible',
+    target: /(^|[ >])(span|button)\.chip(\.[\w-]+)*$/,
+    pages: [
+      '/kitchen-sink/forms-chips.html',
+      '/pages/states.html'
+    ],
+    issue: 7
+  },
+  {
+    rule: 'focus-not-visible',
+    target: /a\.menu-item(\.[\w-]+)*\.active(\.[\w-]+)*$/,
+    pages: [
+      '/kitchen-sink/components-menu.html',
+      '/pages/focus.html',
+      '/pages/states.html'
+    ],
+    issue: 272
+  },
+  // The docs' Ghost example wraps the input in a plain div.border, and
+  // .form-ghost draws no ring of its own.
+  {
+    rule: 'focus-not-visible',
+    target: /^#exampleGhostInput$/,
+    pages: ['/kitchen-sink/forms-form-control.html'],
+    issue: 380
+  },
+  // Tab from a popup datepicker's last control leaves the page, so the stops
+  // after it are never reached and Shift+Tab finds them.
+  {
+    rule: 'skipped-stop',
+    pages: [
+      '/kitchen-sink/forms-datepicker.html',
+      '/pages/js-api.html'
+    ],
+    issue: 356
+  },
+  {
+    rule: 'reverse-order',
+    pages: [
+      '/kitchen-sink/forms-datepicker.html',
+      '/pages/js-api.html'
+    ],
+    issue: 356
   },
   // The pairing contrast check (contrast.spec.js): `target` matches the
   // pairing or component as pages/contrast.html names them (`primary fg on
