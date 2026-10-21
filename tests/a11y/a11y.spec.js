@@ -6,7 +6,8 @@
 // too, since they show bugs on purpose. axe skips what's hidden, so the
 // overlays (menus, dialogs, tooltips…) get a scan of their own, open:
 // overlays.spec.js. Focus rings get a check of their own too: focus.spec.js,
-// color pairings: contrast.spec.js, and the Tab key's path through each page:
+// color pairings: contrast.spec.js, reflow at 320px, text spacing and 200%
+// text: reflow.spec.js, and the Tab key's path through each page:
 // tab-walk.spec.js.
 //
 // Violations caused by an open upstream bug, or intended, are listed in

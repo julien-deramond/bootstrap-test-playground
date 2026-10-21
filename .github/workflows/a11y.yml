@@ -2,8 +2,10 @@ name: Accessibility scan
 
 # Scans every page with axe-core at WCAG 2.2 AA, in light and dark, with every
 # config but the partial builds, then every menu, dialog, tooltip and other
-# overlay open with the default config, walks every page with the Tab key in
-# LTR and RTL, and fails on a violation that isn't listed in
+# overlay open with the default config, every page at 320px wide, with text
+# spacing and at 200% text (what axe can't judge: WCAG 1.4.10, 1.4.12 and
+# 1.4.4), walks every page with the Tab key in LTR and RTL, and fails on a
+# violation that isn't listed in
 # tests/a11y/known-issues.js, or on an entry that no longer happens.
 #
 # Pull requests scan what they change (`npm run test-scope`): the default

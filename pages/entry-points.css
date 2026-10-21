@@ -25,6 +25,8 @@
 
 .pg-checks {
   display: grid;
+  /* Lets a check shrink below its content's width, so what sticks out at a narrow viewport is the check itself, not the whole list */
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.5rem;
   padding: 0;
   margin: 0 0 3rem;
