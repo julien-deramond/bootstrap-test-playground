@@ -36,7 +36,7 @@
           Every place where Bootstrap's JavaScript reads or writes a custom property that the CSS also uses, checked under the prefix the page's styles were compiled with.
         </p>
         <p class="fg-2">
-          Upstream: <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/196">#196</a> (the JavaScript hard-codes <code>--bs-</code>) and <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/197">#197</a> (the strength text never takes its color), not reported yet
+          Upstream: <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/196">#196</a> (the JavaScript hard-codes <code>--bs-</code>), not reported yet
         </p>
       </header>
 
@@ -89,11 +89,11 @@
             </div>
           </li>
 
-          <li data-prefix-case="strength" data-expect="Password strength colors its text feedback like the meter, with {p}strength-strong-color for a strong password" data-issue="197">
+          <li data-prefix-case="strength" data-expect="Password strength colors its text feedback by level, with {p}success-fg-emphasis for a strong password">
             <div class="pg-marker"></div>
             <div class="pg-narrow">
               <label for="case-strength-input" class="form-label">Password</label>
-              <input type="password" class="form-control" id="case-strength-input" value="Correct-Horse-Battery-9" autocomplete="off">
+              <input type="password" class="form-control" id="case-strength-input" value="Correct!Horse#Battery9" autocomplete="off">
               <div class="strength" id="case-strength">
                 <div class="strength-segment"></div>
                 <div class="strength-segment"></div>
@@ -180,11 +180,18 @@
             return items.length === 2 && [...items].every(item => item.dataset.bsNavOverflow === 'true')
           },
           strength: () => {
+            // The text sits next to the meter, so it takes its color from its
+            // own `data-bs-strength`, not from the meter's tokens. A probe
+            // resolves the level's token the way the text would.
             Strength.getOrCreateInstance(element('strength'))
-            const meter = element('strength')
-            const active = meter.querySelector('.strength-segment.active')
-            return meter.dataset.bsStrength === 'strong' && Boolean(active) &&
-              getComputedStyle(element('strength-text')).color === getComputedStyle(active).backgroundColor
+            const text = element('strength-text')
+            const probe = document.createElement('span')
+            probe.style.color = `var(${p('success-fg-emphasis')})`
+            text.after(probe)
+            const expected = getComputedStyle(probe).color
+            probe.remove()
+            return element('strength').dataset.bsStrength === 'strong' && text.dataset.bsStrength === 'strong' &&
+              getComputedStyle(text).color === expected
           }
         }
 
