@@ -1,13 +1,57 @@
 {
-  "date": "2026-10-19T10:50:45.526Z",
-  "from": "548f671d0f701f9fab311b945dad27cafa92b59b",
-  "to": "38e57e5b64cbe598295bbaee8bde4a2d75991f4f",
+  "date": "2026-10-22T10:08:37.110Z",
+  "from": "38e57e5b64cbe598295bbaee8bde4a2d75991f4f",
+  "to": "0a7d4423c00e3dab021ec70570224f7d41466f4f",
   "commits": [
     {
-      "sha": "38e57e5b64cbe598295bbaee8bde4a2d75991f4f",
-      "subject": "Docs: fix the JavaScript of the StackBlitz examples (#43110)"
+      "sha": "d1ca2bb91b6b4ecbd9ed69d11d33a3787beefeed",
+      "subject": "Fix the password strength text color (#43122)"
+    },
+    {
+      "sha": "59b78284b5d8cc9fe606277f3e7eecf651a1adae",
+      "subject": "Chore(deps): Bump the github-actions group with 5 updates (#43125)"
+    },
+    {
+      "sha": "b2ecd59eef3763829c1d64824241e1345c19c22c",
+      "subject": "Chore(deps-dev): Bump the development-dependencies group across 1 directory with 14 updates (#43124)"
+    },
+    {
+      "sha": "42e97f144a07dd51f7af8b92071cb2fc91286128",
+      "subject": "Chore(deps-dev): Bump markdown-it from 14.3.1 to 14.3.3 (#43132)"
+    },
+    {
+      "sha": "095da5e67a19b8f713c8946bb87aaa368d795b03",
+      "subject": "Chore(deps-dev): Bump js-yaml from 5.4.3 to 5.5.0 (#43130)"
+    },
+    {
+      "sha": "6f284eab9306bacb94dd7c2de88ced397b0dd789",
+      "subject": "Chore(deps-dev): Bump follow-redirects from 1.16.0 to 1.16.1 (#43129)"
+    },
+    {
+      "sha": "cf1da65fa638fcad8ac156877f9b794ae302a360",
+      "subject": "Docs: pre-bundle clipboard for the dev server (#43135)"
+    },
+    {
+      "sha": "4651e0d511d7e37fc9ade61ecce8c78b947830a8",
+      "subject": "Docs: add a datepicker example with the icon at the end (#43144)"
+    },
+    {
+      "sha": "487c5c396f44d7517af9ffca307a6e8f624eba2e",
+      "subject": "New breadcrumb variable for divider spacing (#43091)"
+    },
+    {
+      "sha": "0a7d4423c00e3dab021ec70570224f7d41466f4f",
+      "subject": "Docs: document the menu option in the Menu options table (#43140)"
     }
   ],
   "rendering": true,
-  "examples": []
+  "examples": [
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "with-icon-2",
+      "page": "Datepicker",
+      "example": "With icon",
+      "markup": "added"
+    }
+  ]
 }

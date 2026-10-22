@@ -277,7 +277,6 @@ export default [
       '/kitchen-sink/components-menu.html',
       '/kitchen-sink/components-progress.html',
       '/pages/color-modes.html',
-      '/pages/custom-property-prefix.html',
       '/pages/focus.html',
       '/pages/js-api.html',
       '/pages/states.html',
@@ -538,6 +537,13 @@ export default [
   },
   {
     rule: 'color-contrast',
+    colors: '#ffffff on #e62845',
+    configs: ['breakpoints-custom', 'prefix-none', 'prefix-x'],
+    pages: ['/pages/custom-property-prefix.html'],
+    issue: 183
+  },
+  {
+    rule: 'color-contrast',
     colors: '#ffffff on #00b15a',
     themes: ['light'],
     configs: ['shadcn'],
@@ -591,7 +597,6 @@ export default [
       '/kitchen-sink/components-tooltip.html',
       '/kitchen-sink/forms-datepicker.html',
       '/kitchen-sink/forms-password-strength.html',
-      '/pages/custom-property-prefix.html',
       '/screens/cards.html',
       '/screens/dashboard.html',
       '/screens/playground.html',
@@ -646,7 +651,6 @@ export default [
       '/kitchen-sink/components-tooltip.html',
       '/kitchen-sink/forms-datepicker.html',
       '/kitchen-sink/forms-password-strength.html',
-      '/pages/custom-property-prefix.html',
       '/screens/cards.html',
       '/screens/dashboard.html',
       '/screens/playground.html',
