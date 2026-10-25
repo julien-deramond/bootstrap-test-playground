@@ -18,6 +18,7 @@ export default [
       '/kitchen-sink/forms-field.html',
       '/issues/pg-2/',
       '/issues/pg-6/',
+      '/issues/pg-261/',
       '/pages/js-api.html'
     ]
   }
