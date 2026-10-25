@@ -3,13 +3,14 @@
 // reports/a11y/<config>/<theme>/<page>.json: how many pages were scanned, and
 // for each axe rule how many elements violate it, light and dark together.
 // Violations inside open overlays (tests/a11y/overlays.spec.js), focus rings
-// that fail (tests/a11y/focus.spec.js), the best practices (`<page> best
-// practices` in tests/a11y/a11y.spec.js) and the Tab walk's findings
-// (tests/a11y/tab-walk.spec.js) count with their page's. Known violations
-// (tests/a11y/known-issues.js) are counted too, and the "Not allowlisted"
-// column says how many aren't, so configs compare at a glance; the walk's
-// order warnings (`warning: true`) have their `focus-order` column and never
-// count there. In GitHub Actions, the table also goes to the job summary.
+// that fail (tests/a11y/focus.spec.js), color pairings (tests/a11y/contrast.spec.js),
+// reflow, text spacing and 200% text (tests/a11y/reflow.spec.js), the best
+// practices (`<page> best practices` in tests/a11y/a11y.spec.js) and the Tab
+// walk's findings (tests/a11y/tab-walk.spec.js) count with their page's. Known
+// violations (tests/a11y/known-issues.js) are counted too, and the "Not
+// allowlisted" column says how many aren't, so configs compare at a glance; the
+// walk's order warnings (`warning: true`) have their `focus-order` column and
+// never count there. In GitHub Actions, the table also goes to the job summary.
 // Usage: npm run a11y-summary
 
 import fs from 'node:fs'
@@ -46,9 +47,10 @@ const configs = fs.readdirSync(reportsDir, { withFileTypes: true })
     }
 
     // Pages, not page × theme, and a page's open overlays (<theme>/open/),
-    // focus rings (<theme>/focus/), best practices (<theme>/best-practice/)
-    // and Tab walks (<theme>/tab/, <theme>/tab-rtl/) count with it.
-    return { name, pages: new Set(reports.map(file => path.relative(path.join(reportsDir, name), file).split(path.sep).slice(1).filter((part, index) => index > 0 || !['open', 'focus', 'best-practice', 'tab', 'tab-rtl'].includes(part)).join('/'))).size, rules, unknown }
+    // focus rings (<theme>/focus/), color pairings (<theme>/contrast/), reflow
+    // (<theme>/reflow/), best practices (<theme>/best-practice/) and Tab walks
+    // (<theme>/tab/, <theme>/tab-rtl/) count with it.
+    return { name, pages: new Set(reports.map(file => path.relative(path.join(reportsDir, name), file).split(path.sep).slice(1).filter((part, index) => index > 0 || !['open', 'focus', 'contrast', 'reflow', 'best-practice', 'tab', 'tab-rtl'].includes(part)).join('/'))).size, rules, unknown }
   })
   .sort((a, b) => (a.name === 'default' ? -1 : b.name === 'default' ? 1 : a.name.localeCompare(b.name)))
 
