@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-196: JavaScript hard-codes the --bs- prefix</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="Bootstrap's JavaScript reads and writes --bs-* custom properties by name, so a styles build with another PostCSS prefix breaks the range fill, the carousel interval and loop, and nav overflow.">
+    <meta name="playground-tags" content="components, forms, carousel, nav, javascript">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#196">
+    <meta name="playground-bootstrap" content="38e57e5b64cbe598295bbaee8bde4a2d75991f4f">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <style>
+      .pg-narrow {
+        max-inline-size: 20rem;
+      }
+
+      .pg-slide {
+        block-size: 4rem;
+        background-color: #777;
+      }
+
+      .pg-slide:nth-child(even) {
+        background-color: #555;
+      }
+    </style>
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <!-- Before filing, the tracking issue needs (see CLAUDE.md, "Record a
+         potential bug"):
+         - [ ] Summary: one or two sentences, also the description above
+         - [ ] Bootstrap version: Bootstrap's main commit, shown in the header
+         - [ ] Reproduction: the steps below, and a link to this page
+         - [ ] Expected / Actual, below
+         - [ ] Root cause: file:line in twbs/bootstrap with a permalink, when known
+         - [ ] Possible fix, when known
+         And an assert.js next to this page, when "fixed" can be measured, or
+         a repro.spec.js (`new-issue -- --spec`) when it takes the keyboard or
+         the viewport: `npm run check-issues` then tells when the fix lands
+         (see "Assertions" in docs/pages.md). -->
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-196</h1>
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Compile Bootstrap with another PostCSS custom property prefix, as the docs allow (this page uses <code>--x-*</code>, see <a href="/pages/custom-property-prefix.html">Custom property prefix</a> for the unprefixed and default builds).</li>
+          <li>Initialize a form range, a carousel and a nav overflow below.</li>
+          <li>Read the custom properties the CSS uses and what the JavaScript did with them.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">The JavaScript follows the prefix of the styles: the range fills to 30%, the carousel times its indicator with its interval, <code>ends: loop</code> falls back to wrap with three items shown, and the nav moves its items into the menu below <code>2xl</code>.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p class="mb-0">The JavaScript uses <code>--bs-range-fill</code>, <code>--bs-carousel-interval</code>, <code>--bs-carousel-items</code> and <code>--bs-breakpoint-*</code>, which the CSS doesn't define under <code>--x-</code>: the checks below fail.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <p class="fg-2" data-playground-chrome>These styles define <code id="prefix-detected">…</code>.</p>
+        <ol class="list-unstyled vstack gap-5" id="prefix-cases">
+          <li data-prefix-case="range" data-expect="Range writes the fill ratio to {p}range-fill, which the track's gradient reads" data-issue="196">
+            <div class="pg-marker"></div>
+            <div class="form-range pg-narrow" id="case-range">
+              <input type="range" class="form-range-input" min="0" max="100" value="30" aria-label="Range at 30%">
+            </div>
+          </li>
+
+          <li data-prefix-case="carousel-interval" data-expect="Carousel autoplay writes its interval to {p}carousel-interval, which times the active indicator's fill" data-issue="196">
+            <div class="pg-marker"></div>
+            <div class="carousel slide pg-narrow" id="case-carousel-interval" data-bs-interval="1234">
+              <div class="carousel-inner">
+                <div class="carousel-item active"><div class="pg-slide"></div></div>
+                <div class="carousel-item"><div class="pg-slide"></div></div>
+              </div>
+            </div>
+          </li>
+
+          <li data-prefix-case="carousel-loop" data-expect="With {p}carousel-items: 3, a carousel with ends: loop falls back to wrap, since seamless looping only supports one item at a time" data-issue="196">
+            <div class="pg-marker"></div>
+            <div class="carousel slide pg-narrow" id="case-carousel-loop" data-bs-ends="loop">
+              <div class="carousel-inner">
+                <div class="carousel-item active"><div class="pg-slide"></div></div>
+                <div class="carousel-item"><div class="pg-slide"></div></div>
+                <div class="carousel-item"><div class="pg-slide"></div></div>
+                <div class="carousel-item"><div class="pg-slide"></div></div>
+                <div class="carousel-item"><div class="pg-slide"></div></div>
+              </div>
+            </div>
+          </li>
+
+          <li data-prefix-case="nav-overflow" data-expect="Nav overflow with collapseBelow: '2xl' reads {p}breakpoint-2xl and moves every item into its menu, since the nav is narrower" data-issue="196">
+            <div class="pg-marker"></div>
+            <div class="nav-overflow pg-narrow" id="case-nav-overflow" data-bs-collapse-below="2xl">
+              <ul class="nav nav-pills">
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="#case-nav-overflow">One</a></li>
+                <li class="nav-item"><a class="nav-link" href="#case-nav-overflow">Two</a></li>
+              </ul>
+            </div>
+          </li>
+        </ol>
+      </section>
+    </main>
+
+    <script type="module">
+      // Each case gets its component from Bootstrap's JavaScript (options come
+      // from data attributes), compares what it wrote or read with the custom
+      // properties the compiled CSS uses, and writes data-result on its <li>.
+      const html = document.documentElement
+      const element = id => document.getElementById(`case-${id}`)
+      const token = (node, name) => getComputedStyle(node).getPropertyValue(name).trim()
+
+      // The prefix of the page's styles, from the `:root, :host` rule that
+      // defines the breakpoints, which every build has, the grid entry point
+      // included: `--bs-breakpoint-md` → `bs-`, `--breakpoint-md` → ''.
+      const detectPrefix = () => {
+        const walk = list => {
+          for (const rule of list) {
+            if (rule instanceof CSSStyleRule && rule.selectorText.split(',').some(selector => selector.trim() === ':root')) {
+              const match = [...rule.style].map(property => property.match(/^--([a-z0-9-]*?)breakpoint-[a-z0-9]+$/)).find(Boolean)
+              if (match) {
+                return match[1]
+              }
+            } else if (rule.cssRules) {
+              const found = walk(rule.cssRules)
+              if (found !== undefined) {
+                return found
+              }
+            }
+          }
+        }
+
+        for (const sheet of document.styleSheets) {
+          try {
+            const found = walk(sheet.cssRules)
+            if (found !== undefined) {
+              return found
+            }
+          } catch {
+            // Cross-origin stylesheets can't be read.
+          }
+        }
+      }
+
+      const run = ({ Carousel, NavOverflow, Range }) => {
+        const prefix = detectPrefix()
+        if (prefix === undefined) {
+          throw new Error('No `:root` rule defines the breakpoints: are Bootstrap\'s styles loaded?')
+        }
+
+        const p = name => `--${prefix}${name}`
+        document.getElementById('prefix-detected').textContent = prefix ? `--${prefix}*` : 'unprefixed custom properties'
+
+        const CHECKS = {
+          range: () => {
+            Range.getOrCreateInstance(element('range'))
+            return token(element('range'), p('range-fill')) === '0.3'
+          },
+          'carousel-interval': () => {
+            const carousel = Carousel.getOrCreateInstance(element('carousel-interval'))
+            carousel.cycle()
+            carousel.pause()
+            return token(element('carousel-interval'), p('carousel-interval')) === '1234ms'
+          },
+          'carousel-loop': () => {
+            element('carousel-loop').style.setProperty(p('carousel-items'), '3')
+            // `_canLoop()` decides between the seamless loop and the `wrap` jump.
+            return Carousel.getOrCreateInstance(element('carousel-loop'))._canLoop() === false
+          },
+          'nav-overflow': () => {
+            NavOverflow.getOrCreateInstance(element('nav-overflow'))
+            const items = element('nav-overflow').querySelectorAll('.nav > .nav-item:not(:has(.nav-overflow-toggle))')
+            return items.length === 2 && [...items].every(item => item.dataset.bsNavOverflow === 'true')
+          }
+        }
+
+        for (const item of document.querySelectorAll('[data-prefix-case]')) {
+          let pass = false
+          try {
+            pass = CHECKS[item.dataset.prefixCase]()
+          } catch (error) {
+            console.error(error)
+          }
+
+          item.dataset.result = pass ? 'pass' : 'fail'
+          const issue = item.dataset.issue
+          const marker = item.querySelector('.pg-marker')
+          marker.className = 'pg-marker hstack gap-2 mb-2'
+          marker.innerHTML = `<span class="badge ${pass ? 'theme-success' : 'theme-danger'}">${pass ? 'Pass' : 'Fail'}</span>
+            <span>${item.dataset.expect.replaceAll('{p}', `--${prefix}`)}</span>
+            ${issue ? `<a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/${issue}">#${issue}</a>` : ''}`
+        }
+
+        html.dataset.prefixCases = 'done'
+        // The visual suite waits for this to go before its screenshot. It's in
+        // the markup: this script can run after `load`, too late to set it.
+        delete html.dataset.playgroundBusy
+      }
+
+      // src/js/main.js exposes Bootstrap as `window.bootstrap` once its dynamic
+      // import resolves, which may come after `load`. Timers rather than requestAnimationFrame, which stops in hidden
+      // tabs.
+      const start = () => {
+        if (window.bootstrap && document.readyState === 'complete') {
+          setTimeout(() => run(window.bootstrap), 50)
+        } else {
+          setTimeout(start, 50)
+        }
+      }
+
+      start()
+    </script>
+  </body>
+</html>
