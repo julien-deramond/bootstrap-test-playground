@@ -5,8 +5,8 @@
 
 /* Preset combobox: grows on small screens, capped like md:max-w-[200px] lg:max-w-[300px] */
 .playground-preset { flex: 1 1 auto; min-width: 0; }
-@media (min-width: 768px) { .playground-preset { max-width: 200px; } }
-@media (min-width: 1024px) { .playground-preset { max-width: 300px; } }
+@media (min-width: 768px) { .playground-preset { max-width: 12.5rem; } } /* 200px, scaling with the text size */
+@media (min-width: 1024px) { .playground-preset { max-width: 18.75rem; } } /* 300px */
 .playground-preset-menu { --bs-menu-min-width: 300px; }
 
 /* Share "popover" width */
@@ -20,7 +20,7 @@
 /* Two-column layout: editor + 200px settings column (md:grid-cols-[1fr_200px]) */
 .playground-grid { display: grid; gap: 1.5rem; align-items: stretch; }
 @media (min-width: 768px) {
-  .playground-grid { grid-template-columns: minmax(0, 1fr) 200px; }
+  .playground-grid { grid-template-columns: minmax(0, 1fr) 12.5rem; } /* 200px, scaling with the text size */
 }
 
 /* Slider value readout */

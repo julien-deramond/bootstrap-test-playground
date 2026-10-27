@@ -677,10 +677,11 @@ test.describe('playground', () => {
   // page and in the page switcher.
   test('search by class and token', async ({ page }) => {
     await page.goto('/?q=btn-subtle')
-    const first = page.locator('#results .page-card').first()
-    await expect(first.getByRole('heading')).toHaveText('Button')
-    await expect(first.locator('.page-card-matches')).toHaveText('.btn-subtle')
-    await expect(first.locator('.page-card-section')).toHaveText('Variants')
+    // Reproductions that use .btn-subtle match too and can rank above the
+    // component page, so look for its card instead of taking the first one.
+    const card = page.locator('#results .page-card').filter({ has: page.getByRole('heading', { name: 'Button', exact: true }) })
+    await expect(card.locator('.page-card-matches')).toHaveText('.btn-subtle')
+    await expect(card.locator('.page-card-section')).toHaveText('Variants')
 
     await page.goto('/kitchen-sink/components-button.html?freeze')
     await page.waitForFunction(() => window.bootstrap)
