@@ -19,4 +19,4 @@ Category: color
 
 ## Known gaps
 
-- [#182](https://github.com/julien-deramond/bootstrap-test-playground/issues/182): the strength meter's "good" level reads `--info-bg` and loses its color, and disabled radio labels read `--secondary-fg`.
+- [#182](https://github.com/julien-deramond/bootstrap-test-playground/issues/182): the strength meter's "good" level reads `--info-bg` and its text `--info-fg-emphasis`, so both lose their color, and disabled radio labels read `--secondary-fg`.

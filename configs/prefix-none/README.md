@@ -18,5 +18,4 @@ Category: sass
 ## Known gaps
 
 - The range, the carousel and nav overflow use `--bs-*` names in the JavaScript, and the npm and webpack guides don't add the prefix the JavaScript needs: [#196](https://github.com/julien-deramond/bootstrap-test-playground/issues/196).
-- The password strength text never takes its level's color, whatever the prefix: [#197](https://github.com/julien-deramond/bootstrap-test-playground/issues/197).
 - Playground limits, not Bootstrap's: the toolbar's *Primary* menu sets `--bs-primary-*` tokens, so it has no effect here, and `?css=dist` swaps in the `--bs-` dist, so the prefix no longer applies.
