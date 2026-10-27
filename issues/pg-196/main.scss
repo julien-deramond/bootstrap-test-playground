@@ -1,0 +1,10 @@
+// Custom property prefix `x-` instead of `bs-`, the way the CSS variables docs
+// say to change it: the `prefix` option of postcss-prefix-custom-properties.
+// PostCSS runs for the whole project, so this marker, which Sass keeps as a
+// loud comment, tells the playground's postcss.config.js to use `x-` here.
+// Bootstrap's JavaScript hard-codes a few `--bs-*` names, so the carousel,
+// the form range and nav overflow lose what they read or set.
+/*! playground-prefix: "x-" */
+
+@use "bootstrap/scss/bootstrap";
+@use "custom";
