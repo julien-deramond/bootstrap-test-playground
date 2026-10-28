@@ -6,7 +6,7 @@ Four [Playwright](https://playwright.dev) suites check what Bootstrap renders an
 
 [`tests/visual/`](../tests/visual/visual.spec.js) screenshots every page with [Playwright](https://playwright.dev) and compares each screenshot with a baseline, pixel for pixel. Kitchen sink pages get one screenshot per example, other pages one full-page screenshot. Pages load with `?chrome=0&freeze` (see [Screenshot and embed flags](pages.md#screenshot-and-embed-flags)), and remote images are replaced with a local placeholder, so two runs on the same machine produce identical pixels. A page that is still working on itself after it loads, like a check page that draws its pass/fail markers after `load` or [`pages/color-modes.html`](../pages/color-modes.html), which opens overlays and switches color modes, has `data-playground-busy` on `<html>` until it's done, and the suite waits for that. Put the attribute in the markup (`<html lang="en" data-playground-busy>`) and remove it from the page's script once it's done. Setting it from that script can come too late: in a build, the page's module waits for `src/js/main.js`, whose top-level `await` can push it past `load`. The entry point pages set it from [`pages/entry-points.js`](../pages/entry-points.js), a module they share that doesn't wait for `main.js`.
 
-The suite runs against a production build served by `vite preview`, which it starts on port 4179. It builds with your `.env.local`, so `BOOTSTRAP_PATH` works here too. Once, after `npm install`:
+The suite runs against a production build served by `vite preview`, which it starts on port 4179 (see [Running two suites at once](#running-two-suites-at-once) to change it). It builds with your `.env.local`, so `BOOTSTRAP_PATH` works here too. Once, after `npm install`:
 
 ```sh
 npx playwright install chromium
@@ -73,7 +73,7 @@ CI only pushes to the branch of an open pull request, and only while it still po
 - `console.error` and `console.warn`, which includes Bootstrap's deprecation notices
 - requests to the playground itself that fail or return an error status, like a missing asset
 
-Remote resources, such as avatars and web fonts, are blocked, so an unreachable host never fails the run. Firefox's "Layout was forced before the page was fully loaded" warning is ignored: it depends on how fast the machine loads stylesheets, not on the page. Like the visual suite, the crawl runs against a production build on port 4179, with your `.env.local`:
+Remote resources, such as avatars and web fonts, are blocked, so an unreachable host never fails the run. Firefox's "Layout was forced before the page was fully loaded" warning is ignored: it depends on how fast the machine loads stylesheets, not on the page. Like the visual suite, the crawl runs against a production build on port 4179 (or `PLAYWRIGHT_PORT`), with your `.env.local`:
 
 ```sh
 npm run test:console
@@ -244,3 +244,13 @@ In CI, pull requests run the smoke tests in all three engines, scoped to what th
 A baseline records whatever an engine renders, bugs included, so it's worth comparing engines before trusting one. Comparing every kitchen sink example across the three, with text hidden, found one engine-only difference that isn't font metrics or native controls: WebKit leaves a `<legend>` in a `fieldset.row` above the row ([#169](https://github.com/julien-deramond/bootstrap-test-playground/issues/169)).
 
 To add a device preset, such as a phone viewport with touch, add it to `ENGINES` in [`playwright.config.js`](../playwright.config.js), like `iphone: devices['iPhone 15']`. Every console and smoke scenario then also runs as `console-iphone` and `smoke-iphone`.
+
+## Running two suites at once
+
+Every suite serves its build on port 4179 and stops with "http://localhost:4179 is already used" when another run holds it. To run suites in two worktrees at the same time, give each its own port with `PLAYWRIGHT_PORT`:
+
+```sh
+PLAYWRIGHT_PORT=4180 npm run test:a11y
+```
+
+Without it the port stays 4179, which is what CI uses. `PLAYWRIGHT_BASE_URL` still wins when set: the suite then uses that server and starts none.
