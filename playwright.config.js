@@ -4,7 +4,9 @@
 // honored like in dev.
 import { defineConfig, devices } from '@playwright/test'
 
-const PORT = 4179
+// Two worktrees can't share a port: set PLAYWRIGHT_PORT to run a suite in each
+// at the same time. CI leaves it unset.
+const PORT = Number(process.env.PLAYWRIGHT_PORT) || 4179
 // `npm run check-issues` runs the reproductions' specs against its own dev
 // server: PLAYWRIGHT_BASE_URL then replaces the build and preview below.
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || `http://localhost:${PORT}`
