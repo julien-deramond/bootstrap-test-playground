@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-209: Issue reproduction</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="Disabled switches, chips and the combobox toggle keep a translucent opacity when --control-disabled-opacity is 1.">
+    <meta name="playground-tags" content="switch, chip, combobox, forms, tokens, high-contrast">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#209">
+    <meta name="playground-bootstrap" content="0a7d4423c00e3dab021ec70570224f7d41466f4f">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <!-- Before filing, the tracking issue needs (see CLAUDE.md, "Record a
+         potential bug"):
+         - [ ] Summary: one or two sentences, also the description above
+         - [ ] Bootstrap version: Bootstrap's main commit, shown in the header
+         - [ ] Reproduction: the steps below, and a link to this page
+         - [ ] Expected / Actual, below
+         - [ ] Root cause: file:line in twbs/bootstrap with a permalink, when known
+         - [ ] Possible fix, when known
+         And an assert.js next to this page, when "fixed" can be measured, or
+         a repro.spec.js (`new-issue -- --spec`) when it takes the keyboard or
+         the viewport: `npm run check-issues` then tells when the fix lands
+         (see "Assertions" in docs/pages.md). -->
+    <main class="container py-5">
+      <!-- data-playground-chrome: hidden by ?chrome=0, which shows the
+           markup under test alone (screenshots, embeds). -->
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-209</h1>
+        <!-- Filled from the metadata above: status, upstream and tracking
+             links, and the Bootstrap commit. -->
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>This page uses the <code>high-contrast</code> config, which sets <code>--control-disabled-opacity: 1</code> (and <code>--btn-disabled-opacity: 1</code>).</li>
+          <li>Look at the disabled switches, the chip and the combobox toggle below, then at the disabled check and the chip inside a disabled chip input.</li>
+          <li>Inspect the computed <code>opacity</code> of each.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">Every disabled control follows <code>--control-disabled-opacity</code>, directly or through a component token that defaults to it, so all of them are fully opaque here.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p class="mb-0">The disabled checked switch, the chip and the combobox toggle stay at <code>.65</code>, and the indicator of the unchecked switch at <code>.4</code>. The check, the chip input and the button read their tokens and are opaque.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <div data-playground-repro>
+          <div class="vstack gap-3 align-items-start">
+            <div class="form-field">
+              <div class="switch">
+                <input type="checkbox" id="switchDisabled" role="switch" switch disabled>
+              </div>
+              <label for="switchDisabled">Disabled switch</label>
+            </div>
+
+            <div class="form-field">
+              <div class="switch">
+                <input type="checkbox" id="switchCheckedDisabled" role="switch" switch disabled checked>
+              </div>
+              <label for="switchCheckedDisabled">Disabled checked switch</label>
+            </div>
+
+            <span class="chip disabled" id="chipDisabled">Disabled chip</span>
+
+            <div>
+              <button class="form-control combobox-toggle" id="comboboxDisabled" type="button"
+                      data-bs-toggle="combobox"
+                      data-bs-placeholder="Cannot interact…"
+                      disabled>
+                <span class="combobox-value">Cannot interact…</span>
+                <svg class="combobox-caret" width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.46967 5.46967C0.762563 5.17678 1.23744 5.17678 1.53033 5.46967L5 8.93934L8.46967 5.46967C8.76256 5.17678 9.23744 5.17678 9.53033 5.46967C9.82322 5.76256 9.82322 6.23744 9.53033 6.53033L5.53033 10.5303C5.23744 10.8232 4.76256 10.8232 4.46967 10.5303L0.46967 6.53033C0.176777 6.23744 0.176777 5.76256 0.46967 5.46967Z" fill="currentcolor"/></svg>
+              </button>
+              <div class="menu">
+                <button class="menu-item" type="button" data-bs-value="1">Option one</button>
+              </div>
+            </div>
+
+            <!-- Controls that already read the token. -->
+            <div class="form-field">
+              <input type="checkbox" id="checkDisabled" class="check" checked disabled>
+              <label for="checkDisabled">Disabled checked check</label>
+            </div>
+
+            <div class="chip-input theme-primary" id="chipInputDisabled" data-bs-chips>
+              <span class="chip">
+                Read only
+                <button type="button" class="chip-dismiss" aria-label="Remove" disabled>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>
+                </button>
+              </span>
+              <input type="text" class="form-ghost" placeholder="Disabled..." disabled>
+            </div>
+
+            <!-- Informational: the button has its own token, set to 1 by this config. -->
+            <button type="button" class="btn-solid theme-primary" id="buttonDisabled" disabled>Disabled button</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Reproduction-specific JavaScript. Bootstrap is available as `window.bootstrap`.
+    </script>
+  </body>
+</html>
