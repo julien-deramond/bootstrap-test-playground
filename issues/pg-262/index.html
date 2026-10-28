@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-262: Scrollable stepper can't be scrolled from the keyboard</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="A stepper wrapped in .stepper-overflow scrolls horizontally (overflow-x: auto) but has no tabindex and holds nothing focusable, so axe reports scrollable-region-focusable (WCAG 2.1.1).">
+    <meta name="playground-tags" content="stepper, a11y">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#262">
+    <meta name="playground-bootstrap" content="0a7d4423c00e3dab021ec70570224f7d41466f4f">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <!-- Before filing, the tracking issue needs (see CLAUDE.md, "Record a
+         potential bug"):
+         - [ ] Summary: one or two sentences, also the description above
+         - [ ] Bootstrap version: Bootstrap's main commit, shown in the header
+         - [ ] Reproduction: the steps below, and a link to this page
+         - [ ] Expected / Actual, below
+         - [ ] Root cause: file:line in twbs/bootstrap with a permalink, when known
+         - [ ] Possible fix, when known
+         And an assert.js next to this page, when "fixed" can be measured, or
+         a repro.spec.js (`new-issue -- --spec`) when it takes the keyboard or
+         the viewport: `npm run check-issues` then tells when the fix lands
+         (see "Assertions" in docs/pages.md). -->
+    <main class="container py-5">
+      <!-- data-playground-chrome: hidden by ?chrome=0, which shows the
+           markup under test alone (screenshots, embeds). -->
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-262: scrollable stepper</h1>
+        <!-- Filled from the metadata above: status, upstream and tracking
+             links, and the Bootstrap commit. -->
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Start from the <a href="/kitchen-sink/components-stepper.html#overflow">Stepper: Overflow</a> docs example, copied below.</li>
+          <li>The wrapper below is 20rem wide, so the six steps overflow it and <code>.stepper-overflow</code> scrolls horizontally (<code>overflow-x: auto</code>).</li>
+          <li>The wrapper has no <code>tabindex</code>, role or label, and the <code>&lt;li&gt;</code> steps aren't focusable.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <!-- A sentence, and when it helps a screenshot next to this page
+                   (<img src="./expected.png" alt="…">) or markup that renders
+                   the expected result. -->
+              <p class="mb-0">The scroll container can be reached and scrolled from the keyboard in every browser: it has a <code>tabindex</code> other than <code>-1</code> or contains a focusable element, and a name (<code>role="region"</code> with an <code>aria-label</code>).</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p>The container has no <code>tabindex</code> and no focusable descendant. axe reports <code>scrollable-region-focusable</code> (WCAG 2.1.1).</p>
+              <p class="mb-0">Chromium and Firefox make such a container focusable on their own, so Tab may reach it there anyway. Safari may not.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <!-- Paste the markup under test here. data-playground-repro shows it in
+             light and dark side by side: the dark copy is a clone, with `-dark`
+             added to its ids, the references to them and its radio and
+             <details> names. The
+             clone exists before this page's own scripts run, so they can set
+             up both with querySelectorAll('[data-playground-repro]'). Remove
+             the attribute when the markup needs the whole page (a fixed navbar,
+             a page-level theme). -->
+        <div data-playground-repro>
+          <div style="max-inline-size: 20rem">
+          <div class="stepper-overflow">
+            <ol class="stepper stepper-horizontal">
+              <li class="stepper-item active">Create account</li>
+              <li class="stepper-item active">Verify email address</li>
+              <li class="stepper-item">Complete profile setup</li>
+              <li class="stepper-item">Add payment method</li>
+              <li class="stepper-item">Review and confirm</li>
+              <li class="stepper-item">Finish onboarding</li>
+            </ol>
+          </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Reproduction-specific JavaScript. Bootstrap is available as `window.bootstrap`.
+    </script>
+  </body>
+</html>
