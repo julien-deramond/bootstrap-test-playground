@@ -1,0 +1,12 @@
+// Custom Sass rules, compiled after Bootstrap into the `custom` cascade layer
+// (after components, before helpers and utilities). Empty by default.
+//
+// Bootstrap's mixins and functions are available if you need them:
+// @use "bootstrap/scss/mixins" as *;
+// @use "bootstrap/scss/functions" as *;
+
+@layer custom {
+  // .my-component {
+  //   padding: var(--spacer);
+  // }
+}

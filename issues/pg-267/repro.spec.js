@@ -1,0 +1,42 @@
+// Fixed when the scrollable dialog body can be reached from the keyboard by its
+// markup: a `tabindex` other than -1 on `.dialog-body`, or a focusable element
+// inside it. That is what axe's `scrollable-region-focusable` checks.
+//
+// Chromium (130+) and Firefox focus a scroll container on their own, so whether
+// Tab reaches the body here is recorded as information only: it never decides
+// the verdict, or the bug would read as fixed while the a11y scan still fails.
+import { test } from '../../tests/issues/fixtures.js'
+
+test('a scrollable dialog body is focusable from its markup', async ({ page, repro }) => {
+  await repro.open()
+  const block = page.locator('[data-playground-repro]').first()
+  await block.locator('[data-repro-open]').click()
+
+  const dialog = block.locator('dialog.dialog-scrollable')
+  await dialog.waitFor({ state: 'visible', timeout: 10_000 })
+
+  const markup = await dialog.locator('.dialog-body').evaluate(body => {
+    const tabindex = body.getAttribute('tabindex')
+    const focusable = body.querySelector('a[href], button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"]), [contenteditable]')
+    return {
+      scrolls: body.scrollHeight > body.clientHeight,
+      tabindex,
+      focusable: focusable ? focusable.tagName.toLowerCase() : null
+    }
+  })
+
+  // Info only: press Tab through the dialog and note whether the body (or a
+  // descendant) took focus in this engine.
+  let reached = false
+  for (let index = 0; index < 5 && !reached; index++) {
+    await page.keyboard.press('Tab')
+    reached = await dialog.locator('.dialog-body').evaluate(body => body.contains(document.activeElement))
+  }
+
+  await repro.screenshot('scrollable body dialog', { clip: await dialog.boundingBox() })
+
+  const hasTabindex = markup.tabindex !== null && markup.tabindex.trim() !== '' && markup.tabindex.trim() !== '-1'
+  const reachable = hasTabindex || markup.focusable !== null
+  repro.verdict(markup.scrolls && reachable,
+    `body ${markup.scrolls ? 'scrolls' : 'doesn\'t scroll'}, tabindex: ${markup.tabindex ?? 'none'}, focusable descendant: ${markup.focusable ?? 'none'}; Tab ${reached ? 'reached' : 'didn\'t reach'} the body in this engine (information only)`)
+})
