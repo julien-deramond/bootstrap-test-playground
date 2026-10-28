@@ -46,11 +46,26 @@ export const TEXT_SPACING_RULE = 'text-spacing'
 export const RESIZE_TEXT_RULE = 'resize-text'
 export const DIRS = ['ltr', 'rtl']
 
+// A comma-separated environment variable as a list.
+export const list = (name, fallback) => (process.env[name] || fallback).split(',').map(value => value.trim()).filter(Boolean)
+
+// The directions the page scan, the open overlays' scan and the focus ring
+// check run in: A11Y_DIRS (default: ltr). The Tab walk runs in both, always.
+export const A11Y_DIRS = list('A11Y_DIRS', 'ltr')
+const unknownDirs = A11Y_DIRS.filter(dir => !DIRS.includes(dir))
+if (!A11Y_DIRS.length || unknownDirs.length) {
+  throw new Error(`A11Y_DIRS takes 'ltr', 'rtl' or both, separated by a comma (${process.env.A11Y_DIRS})`)
+}
+
+// The theme's folder and test name suffix: unchanged in LTR, so existing
+// report paths and `-g` patterns keep working.
+export const dirSuffix = dir => dir === 'rtl' ? '-rtl' : ''
+
 // Every entry names the axe rule, the pages it happens on, and either the
 // tracking issue of an upstream bug or the reason it's intended, never both
 // (see "Upstream issue tracking" in CLAUDE.md). `configs` must name existing
-// configs, `state` can only be `open` or `best-practice`, and `dirs`, for the
-// Tab walk's rules only, `ltr` or `rtl`.
+// configs, `state` can only be `open` or `best-practice`, and `dirs`, for any
+// rule, `ltr` or `rtl` (default: both).
 for (const entry of knownIssues) {
   if (!entry.rule || !entry.pages?.length || Boolean(entry.issue) === Boolean(entry.reason)) {
     throw new Error(`tests/a11y/known-issues.js: each entry needs a \`rule\`, \`pages\` and either an \`issue\` or a \`reason\` (${entry.rule})`)
@@ -65,8 +80,8 @@ for (const entry of knownIssues) {
     throw new Error(`tests/a11y/known-issues.js: \`state\` can only be 'open' or '${BEST_PRACTICE}' (${entry.rule}: ${entry.state})`)
   }
 
-  if (entry.dirs !== undefined && (!TAB_RULES.includes(entry.rule) || !entry.dirs.length || entry.dirs.some(dir => !DIRS.includes(dir)))) {
-    throw new Error(`tests/a11y/known-issues.js: \`dirs\` only goes with the Tab walk's rules (${TAB_RULES.join(', ')}) and lists 'ltr' or 'rtl' (${entry.rule}: ${entry.dirs})`)
+  if (entry.dirs !== undefined && (!entry.dirs.length || entry.dirs.some(dir => !DIRS.includes(dir)))) {
+    throw new Error(`tests/a11y/known-issues.js: \`dirs\` lists 'ltr' or 'rtl' (${entry.rule}: ${entry.dirs})`)
   }
 }
 
@@ -84,10 +99,10 @@ export const matches = (entry, node) => entry.rule === node.rule &&
 // best practices scan, a FOCUS_RULE entry to the focus ring
 // check (`focus`), a CONTRAST_RULE entry to the pairing contrast check
 // (`contrast`), an OBSCURED_RULE entry to the focus obscured check
-// (`obscured`), a TAB_RULES entry to the Tab walk (`tab`, where `dir` picks
-// the entries whose `dirs` include the walk's direction), a REFLOW_RULE,
+// (`obscured`), a TAB_RULES entry to the Tab walk (`tab`), a REFLOW_RULE,
 // TEXT_SPACING_RULE or RESIZE_TEXT_RULE entry to the reflow check (`reflow`),
-// the others to the page's.
+// the others to the page's. `dir` picks the entries whose `dirs` include the
+// scan's direction; an entry without `dirs` applies to both.
 const appliesTo = (entry, config) => !entry.configs || entry.configs.includes(config)
 export const expectedWith = (entry, config) => entry.configs ? entry.configs.includes(config) : config === 'default'
 const scanOf = entry => ({ [FOCUS_RULE]: 'focus', [CONTRAST_RULE]: 'contrast', [OBSCURED_RULE]: 'obscured', [REFLOW_RULE]: 'reflow', [TEXT_SPACING_RULE]: 'reflow', [RESIZE_TEXT_RULE]: 'reflow' })[entry.rule] ?? (TAB_RULES.includes(entry.rule) ? 'tab' : entry.state ?? 'closed')
@@ -127,12 +142,12 @@ export const toNodes = violations => violations.flatMap(({ id, impact, help, hel
 }))
 
 // Attaches the violations to the test and writes them to
-// reports/a11y/<config>/<theme>/[open/|focus/|contrast/|obscured/|reflow/|best-practice/|tab/|tab-rtl/]<page>.json.
-export async function report(testInfo, { config, theme, url, state = 'closed' }, nodes) {
+// reports/a11y/<config>/<theme>[-rtl]/[open/|focus/|contrast/|obscured/|reflow/|best-practice/|tab/|tab-rtl/]<page>.json.
+export async function report(testInfo, { config, theme, url, state = 'closed', dir = 'ltr' }, nodes) {
   const json = JSON.stringify(nodes, null, 2)
   await testInfo.attach('violations.json', { body: json, contentType: 'application/json' })
   const name = `${url.replace(/^\/|\/$|\.html$/g, '') || 'index'}.json`
-  const file = path.join(root, 'reports/a11y', config, theme, ...(state === 'closed' ? [] : [state]), name)
+  const file = path.join(root, 'reports/a11y', config, `${theme}${dirSuffix(dir)}`, ...(state === 'closed' ? [] : [state]), name)
   fs.mkdirSync(path.dirname(file), { recursive: true })
   fs.writeFileSync(file, json)
 }

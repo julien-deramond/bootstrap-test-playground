@@ -12,9 +12,12 @@
 // rings shows in the visual suite's captures (tests/visual/focus.spec.js).
 // Known violations are the `focus-appearance` entries of known-issues.js, and
 // the report goes to reports/a11y/default/<theme>/focus/pages/focus.json.
+// A11Y_DIRS=ltr,rtl measures the rings in RTL too (tests ending in `-rtl`,
+// reports in <theme>-rtl/), where a flipped layout can move a ring under a
+// neighbor.
 import { expect, test } from '@playwright/test'
 import { FOCUS_URL, SURFACES, captureSurface, measureRings, toBase64 } from './focus.js'
-import { FOCUS_RULE, THEMES, describe, describeEntry, expectedWith, goneMessage, knownOn, load, matches, report, unexpectedMessage } from './shared.js'
+import { A11Y_DIRS, FOCUS_RULE, THEMES, describe, describeEntry, dirSuffix, expectedWith, goneMessage, knownOn, load, matches, report, unexpectedMessage } from './shared.js'
 
 const CONFIG = 'default'
 const runs = process.env.A11Y_CONFIGS === 'all' || (process.env.A11Y_CONFIGS || CONFIG).split(',').map(value => value.trim()).includes(CONFIG)
@@ -23,8 +26,8 @@ const HELP = 'Focus indicator must change at least a 2px perimeter of the compon
 
 // Loads the page with a config and measures every ring. Returns the rings that
 // fail, as violations, and the components that didn't get :focus-visible.
-async function check(page, theme, config) {
-  const params = await load(page, FOCUS_URL, theme, config)
+async function check(page, theme, config, dir) {
+  const params = await load(page, FOCUS_URL, theme, config, { dir })
   const nodes = []
   const unfocusable = []
   for (const surface of SURFACES) {
@@ -52,27 +55,29 @@ async function check(page, theme, config) {
 test.describe('focus', () => {
   test.skip(!runs, `A11Y_CONFIGS leaves out the ${CONFIG} config`)
 
-  for (const theme of THEMES) {
-    test.describe(`${theme}-${CONFIG}`, () => {
-      test.use({ colorScheme: theme, reducedMotion: 'reduce' })
+  for (const dir of A11Y_DIRS) {
+    for (const theme of THEMES) {
+      test.describe(`${theme}-${CONFIG}${dirSuffix(dir)}`, () => {
+        test.use({ colorScheme: theme, reducedMotion: 'reduce' })
 
-      test(FOCUS_URL, async ({ page }, testInfo) => {
-        test.setTimeout(180_000)
-        const { params, nodes, unfocusable } = await check(page, theme, CONFIG)
-        const known = knownOn(FOCUS_URL, theme, CONFIG, 'focus')
-        const entryOf = new Map(nodes.map(node => [node, known.find(entry => matches(entry, node))]))
-        await report(testInfo, { config: CONFIG, theme, url: FOCUS_URL, state: 'focus' }, nodes.map(node => {
-          const entry = entryOf.get(node)
-          return { ...node, known: entry ? entry.issue ?? entry.reason : null }
-        }))
+        test(FOCUS_URL, async ({ page }, testInfo) => {
+          test.setTimeout(180_000)
+          const { params, nodes, unfocusable } = await check(page, theme, CONFIG, dir)
+          const known = knownOn(FOCUS_URL, theme, CONFIG, 'focus', dir)
+          const entryOf = new Map(nodes.map(node => [node, known.find(entry => matches(entry, node))]))
+          await report(testInfo, { config: CONFIG, theme, url: FOCUS_URL, dir, state: 'focus' }, nodes.map(node => {
+            const entry = entryOf.get(node)
+            return { ...node, known: entry ? entry.issue ?? entry.reason : null }
+          }))
 
-        const unexpected = nodes.filter(node => !entryOf.get(node))
-        const gone = known.filter(entry => expectedWith(entry, CONFIG) && !nodes.some(node => matches(entry, node)))
+          const unexpected = nodes.filter(node => !entryOf.get(node))
+          const gone = known.filter(entry => expectedWith(entry, CONFIG) && !nodes.some(node => matches(entry, node)))
 
-        expect(unfocusable, 'Components that don\'t match :focus-visible once focused').toEqual([])
-        expect(unexpected.map(node => `${describe(node)}: ${node.summary}`), unexpectedMessage(`${FOCUS_URL}?${params} with each component focused`)).toEqual([])
-        expect(gone.map(describeEntry), goneMessage).toEqual([])
+          expect(unfocusable, 'Components that don\'t match :focus-visible once focused').toEqual([])
+          expect(unexpected.map(node => `${describe(node)}: ${node.summary}`), unexpectedMessage(`${FOCUS_URL}?${params} with each component focused`)).toEqual([])
+          expect(gone.map(describeEntry), goneMessage).toEqual([])
+        })
       })
-    })
+    }
   }
 })
