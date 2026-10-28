@@ -12,7 +12,10 @@ name: Accessibility scan
 # config on every page, the changed configs on every page and the changed
 # pages with every config, or everything after a shared change. Everything
 # runs every night and on demand, split across four parallel jobs, and the
-# canary's pull request runs it on every Bootstrap update. Each page's
+# canary's pull request runs it on every Bootstrap update. The page scan, the
+# open overlays and the focus rings run in LTR and RTL (A11Y_DIRS); a scoped
+# pull request checks RTL with the default config only.
+# Each page's
 # violations, known ones included, are in the a11y-report artifacts, and the
 # summary job sums them up per config and rule.
 on:
@@ -73,6 +76,7 @@ jobs:
         shard: ${{ fromJSON(needs.scope.outputs.shards) }}
     env:
       A11Y_CONFIGS: all
+      A11Y_DIRS: ltr,rtl
       A11Y_SCOPE: ${{ needs.scope.outputs.scope }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

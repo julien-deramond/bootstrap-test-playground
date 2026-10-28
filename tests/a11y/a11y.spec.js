@@ -16,15 +16,18 @@
 // `npm run a11y-summary` sums up per config.
 //
 //   A11Y_CONFIGS=default,shadcn, or `all` for every config (default: default)
+//   A11Y_DIRS=ltr,rtl, to scan in right-to-left too (default: ltr). RTL tests
+//   are named `<theme>-<config>-rtl` and report to
+//   reports/a11y/<config>/<theme>-rtl/. With A11Y_SCOPE, RTL only runs with
+//   the default config. Entries of known-issues.js with `dirs` limit
+//   themselves to one direction.
 //   A11Y_SCOPE, which `npm run test-scope` prints and a11y.yml sets on pull
 //   requests, limits the run to what changed: the default config on every
 //   page, the changed configs on every page, and the changed pages with every
 //   config. It needs A11Y_CONFIGS=all.
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
-import { ALL_CONFIGS, BEST_PRACTICE, BEST_PRACTICE_TAGS, PAGES, TAGS, THEMES, bestPracticeRulesOff, describe, describeEntry, expectedWith, goneMessage, knownOn, load, matches, report, toNodes, unexpectedMessage } from './shared.js'
-
-const list = (name, fallback) => (process.env[name] || fallback).split(',').map(value => value.trim()).filter(Boolean)
+import { A11Y_DIRS, ALL_CONFIGS, BEST_PRACTICE, BEST_PRACTICE_TAGS, PAGES, TAGS, THEMES, bestPracticeRulesOff, describe, describeEntry, dirSuffix, expectedWith, goneMessage, knownOn, list, load, matches, report, toNodes, unexpectedMessage } from './shared.js'
 
 const CONFIGS = process.env.A11Y_CONFIGS === 'all' ? ALL_CONFIGS : list('A11Y_CONFIGS', 'default')
 
@@ -32,11 +35,13 @@ const urls = PAGES
 
 const scope = process.env.A11Y_SCOPE ? JSON.parse(process.env.A11Y_SCOPE) : { full: true }
 const inScope = (config, url) => scope.full || config === 'default' || scope.configs.includes(config) || scope.urls.includes(url)
+// A scoped run (pull requests) checks RTL with the default config only.
+const dirsOf = config => A11Y_DIRS.filter(dir => dir === 'ltr' || scope.full || config === 'default')
 
 // Loads a page with a config and returns what axe finds, one node per
 // violating element.
-async function scan(page, url, theme, config, tags = TAGS) {
-  const params = await load(page, url, theme, config)
+async function scan(page, url, theme, config, dir, tags = TAGS) {
+  const params = await load(page, url, theme, config, { dir })
   const { violations } = await new AxeBuilder({ page })
     .withTags(tags)
     .disableRules(tags === BEST_PRACTICE_TAGS ? bestPracticeRulesOff(url) : [])
@@ -50,69 +55,71 @@ async function scan(page, url, theme, config, tags = TAGS) {
 }
 
 for (const config of CONFIGS) {
-  for (const theme of THEMES) {
-    test.describe(`${theme}-${config}`, () => {
-      // Reduced motion, so no transition is caught halfway through.
-      test.use({ colorScheme: theme, reducedMotion: 'reduce' })
+  for (const dir of dirsOf(config)) {
+    for (const theme of THEMES) {
+      test.describe(`${theme}-${config}${dirSuffix(dir)}`, () => {
+        // Reduced motion, so no transition is caught halfway through.
+        test.use({ colorScheme: theme, reducedMotion: 'reduce' })
 
-      for (const url of urls.filter(url => inScope(config, url))) {
-        test(url, async ({ page }, testInfo) => {
-          const { params, nodes } = await scan(page, url, theme, config)
-          const known = knownOn(url, theme, config)
-          const entryOf = new Map(nodes.map(node => [node, known.find(entry => matches(entry, node))]))
+        for (const url of urls.filter(url => inScope(config, url))) {
+          test(url, async ({ page }, testInfo) => {
+            const { params, nodes } = await scan(page, url, theme, config, dir)
+            const known = knownOn(url, theme, config, 'closed', dir)
+            const entryOf = new Map(nodes.map(node => [node, known.find(entry => matches(entry, node))]))
 
-          // Most configs only shift the colors of the default config's
-          // violations, which the entries' `colors` then miss. An element that
-          // violates the same rule with the default config, under a known
-          // entry, is that entry's here too, whatever its colors.
-          if (config !== 'default' && nodes.some(node => !entryOf.get(node))) {
-            const defaults = knownOn(url, theme, 'default')
-            const inherited = new Map()
-            for (const node of (await scan(page, url, theme, 'default')).nodes) {
-              const entry = defaults.find(entry => matches(entry, node))
-              if (entry) {
-                inherited.set(`${node.rule} ${node.selector}`, entry)
+            // Most configs only shift the colors of the default config's
+            // violations, which the entries' `colors` then miss. An element that
+            // violates the same rule with the default config, under a known
+            // entry, is that entry's here too, whatever its colors.
+            if (config !== 'default' && nodes.some(node => !entryOf.get(node))) {
+              const defaults = knownOn(url, theme, 'default', 'closed', dir)
+              const inherited = new Map()
+              for (const node of (await scan(page, url, theme, 'default', dir)).nodes) {
+                const entry = defaults.find(entry => matches(entry, node))
+                if (entry) {
+                  inherited.set(`${node.rule} ${node.selector}`, entry)
+                }
+              }
+
+              for (const node of nodes) {
+                entryOf.set(node, entryOf.get(node) ?? inherited.get(`${node.rule} ${node.selector}`))
               }
             }
 
-            for (const node of nodes) {
-              entryOf.set(node, entryOf.get(node) ?? inherited.get(`${node.rule} ${node.selector}`))
-            }
-          }
-
-          await report(testInfo, { config, theme, url }, nodes.map(node => {
-            const entry = entryOf.get(node)
-            return { ...node, known: entry ? entry.issue ?? entry.reason : null }
-          }))
-
-          const unexpected = nodes.filter(node => !entryOf.get(node))
-          const gone = known.filter(entry => expectedWith(entry, config) && !nodes.some(node => matches(entry, node)))
-
-          expect(unexpected.map(node => `${describe(node)}: ${node.help}`), unexpectedMessage(`${url}?${params}`)).toEqual([])
-          expect(gone.map(describeEntry), goneMessage).toEqual([])
-        })
-      }
-
-      // axe's best practices, apart from the WCAG scan, with the default
-      // config only: the pages' structure doesn't change with a config.
-      if (config === 'default') {
-        for (const url of urls.filter(url => inScope(config, url))) {
-          test(`${url} best practices`, async ({ page }, testInfo) => {
-            const { params, nodes } = await scan(page, url, theme, config, BEST_PRACTICE_TAGS)
-            const known = knownOn(url, theme, config, BEST_PRACTICE)
-            const unexpected = nodes.filter(node => !known.some(entry => matches(entry, node)))
-            const gone = known.filter(entry => !nodes.some(node => matches(entry, node)))
-
-            await report(testInfo, { config, theme, url, state: BEST_PRACTICE }, nodes.map(node => {
-              const entry = known.find(entry => matches(entry, node))
+            await report(testInfo, { config, theme, url, dir }, nodes.map(node => {
+              const entry = entryOf.get(node)
               return { ...node, known: entry ? entry.issue ?? entry.reason : null }
             }))
+
+            const unexpected = nodes.filter(node => !entryOf.get(node))
+            const gone = known.filter(entry => expectedWith(entry, config) && !nodes.some(node => matches(entry, node)))
 
             expect(unexpected.map(node => `${describe(node)}: ${node.help}`), unexpectedMessage(`${url}?${params}`)).toEqual([])
             expect(gone.map(describeEntry), goneMessage).toEqual([])
           })
         }
-      }
-    })
+
+        // axe's best practices, apart from the WCAG scan, with the default
+        // config only: the pages' structure doesn't change with a config.
+        if (config === 'default') {
+          for (const url of urls.filter(url => inScope(config, url))) {
+            test(`${url} best practices`, async ({ page }, testInfo) => {
+              const { params, nodes } = await scan(page, url, theme, config, dir, BEST_PRACTICE_TAGS)
+              const known = knownOn(url, theme, config, BEST_PRACTICE, dir)
+              const unexpected = nodes.filter(node => !known.some(entry => matches(entry, node)))
+              const gone = known.filter(entry => !nodes.some(node => matches(entry, node)))
+
+              await report(testInfo, { config, theme, url, dir, state: BEST_PRACTICE }, nodes.map(node => {
+                const entry = known.find(entry => matches(entry, node))
+                return { ...node, known: entry ? entry.issue ?? entry.reason : null }
+              }))
+
+              expect(unexpected.map(node => `${describe(node)}: ${node.help}`), unexpectedMessage(`${url}?${params}`)).toEqual([])
+              expect(gone.map(describeEntry), goneMessage).toEqual([])
+            })
+          }
+        }
+      })
+    }
   }
 }
