@@ -12,8 +12,10 @@
 // 320px wide, text spacing and 200% text), `state: 'best-practice'` in the
 // best practices scan (a11y.spec.js, `<page> best practices`), and
 // `keyboard-trap`, `hidden-stop`, `skipped-stop`, `focus-not-visible` or
-// `reverse-order` in the Tab walk (tab-walk.spec.js), where `dirs` limits an
-// entry to `ltr` or `rtl`.
+// `reverse-order` in the Tab walk (tab-walk.spec.js). `dirs` limits an entry to
+// `ltr` or `rtl` (the Tab walk, and A11Y_DIRS for the page scan, the open
+// overlays and the focus rings); without it, an entry applies to both, so a
+// violation that happens in one direction only needs it.
 // Without `configs`, an entry is expected with the default config and allowed
 // with every other one; with it, it's expected with exactly those. An
 // element that violates the same rule with the default config, under an

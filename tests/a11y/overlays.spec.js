@@ -10,14 +10,16 @@
 //
 // Known violations are listed in known-issues.js with `state: 'open'`, and each
 // page's go to reports/a11y/default/<theme>/open/<page>.json. It runs when
-// A11Y_CONFIGS includes the default config, which `all` does.
+// A11Y_CONFIGS includes the default config, which `all` does, in the
+// directions A11Y_DIRS names (default: ltr). RTL reports go to
+// reports/a11y/default/<theme>-rtl/open/ and its tests end in `-rtl`.
 import fs from 'node:fs'
 import path from 'node:path'
 import { createRequire } from 'node:module'
 import { expect, test } from '@playwright/test'
 import { root } from '../../scripts/lib/configs.mjs'
 import { collectPages } from '../../scripts/lib/pages.mjs'
-import { TAGS, THEMES, describe, describeEntry, expectedWith, goneMessage, knownOn, load, matches, report, toNodes, unexpectedMessage } from './shared.js'
+import { A11Y_DIRS, TAGS, THEMES, describe, describeEntry, dirSuffix, expectedWith, goneMessage, knownOn, load, matches, report, toNodes, unexpectedMessage } from './shared.js'
 
 const CONFIG = 'default'
 const runs = process.env.A11Y_CONFIGS === 'all' || (process.env.A11Y_CONFIGS || CONFIG).split(',').map(value => value.trim()).includes(CONFIG)
@@ -142,38 +144,40 @@ async function visit(page, triggers, { found, silent }, depth = 0) {
 test.describe('open', () => {
   test.skip(!runs, `A11Y_CONFIGS leaves out the ${CONFIG} config`)
 
-  for (const theme of THEMES) {
-    test.describe(`${theme}-${CONFIG}`, () => {
-      test.use({ colorScheme: theme, reducedMotion: 'reduce' })
+  for (const dir of A11Y_DIRS) {
+    for (const theme of THEMES) {
+      test.describe(`${theme}-${CONFIG}${dirSuffix(dir)}`, () => {
+        test.use({ colorScheme: theme, reducedMotion: 'reduce' })
 
-      for (const url of urls) {
-        test(url, async ({ page }, testInfo) => {
-          const params = await load(page, url, theme, CONFIG)
-          await page.waitForFunction(() => window.bootstrap)
-          await page.addScriptTag({ content: axeSource })
+        for (const url of urls) {
+          test(url, async ({ page }, testInfo) => {
+            const params = await load(page, url, theme, CONFIG, { dir })
+            await page.waitForFunction(() => window.bootstrap)
+            await page.addScriptTag({ content: axeSource })
 
-          const found = new Map()
-          const silent = []
-          await visit(page, await page.$$(ENABLED_TRIGGERS), { found, silent })
-          if (silent.length) {
-            await testInfo.attach('opens-nothing', { body: silent.join('\n'), contentType: 'text/plain' })
-          }
+            const found = new Map()
+            const silent = []
+            await visit(page, await page.$$(ENABLED_TRIGGERS), { found, silent })
+            if (silent.length) {
+              await testInfo.attach('opens-nothing', { body: silent.join('\n'), contentType: 'text/plain' })
+            }
 
-          const nodes = [...found.values()]
-          const known = knownOn(url, theme, CONFIG, 'open')
-          const entryOf = new Map(nodes.map(node => [node, known.find(entry => matches(entry, node))]))
-          await report(testInfo, { config: CONFIG, theme, url, state: 'open' }, nodes.map(node => {
-            const entry = entryOf.get(node)
-            return { ...node, known: entry ? entry.issue ?? entry.reason : null }
-          }))
+            const nodes = [...found.values()]
+            const known = knownOn(url, theme, CONFIG, 'open', dir)
+            const entryOf = new Map(nodes.map(node => [node, known.find(entry => matches(entry, node))]))
+            await report(testInfo, { config: CONFIG, theme, url, dir, state: 'open' }, nodes.map(node => {
+              const entry = entryOf.get(node)
+              return { ...node, known: entry ? entry.issue ?? entry.reason : null }
+            }))
 
-          const unexpected = nodes.filter(node => !entryOf.get(node))
-          const gone = known.filter(entry => expectedWith(entry, CONFIG) && !nodes.some(node => matches(entry, node)))
+            const unexpected = nodes.filter(node => !entryOf.get(node))
+            const gone = known.filter(entry => expectedWith(entry, CONFIG) && !nodes.some(node => matches(entry, node)))
 
-          expect(unexpected.map(node => `${describe(node)}, opened by ${node.trigger}: ${node.help}`), unexpectedMessage(`${url}?${params} with its overlays open`)).toEqual([])
-          expect(gone.map(describeEntry), goneMessage).toEqual([])
-        })
-      }
-    })
+            expect(unexpected.map(node => `${describe(node)}, opened by ${node.trigger}: ${node.help}`), unexpectedMessage(`${url}?${params} with its overlays open`)).toEqual([])
+            expect(gone.map(describeEntry), goneMessage).toEqual([])
+          })
+        }
+      })
+    }
   }
 })

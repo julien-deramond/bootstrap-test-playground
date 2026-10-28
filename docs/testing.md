@@ -154,9 +154,14 @@ npm run test:a11y
 npm run test:a11y -- -g "dark-default /kitchen-sink/components-alert"
 A11Y_CONFIGS=shadcn,high-contrast npm run test:a11y
 A11Y_CONFIGS=all npm run test:a11y
+A11Y_DIRS=ltr,rtl npm run test:a11y
 ```
 
 `A11Y_CONFIGS` takes a list of configs, or `all`; without it, only the default config is scanned. `all` leaves out the builds of part of Bootstrap (`grid-only`, `partial`, `reboot-only` and `utilities-only`), which leave most pages unstyled on purpose; their own pages load their config whatever `?config` says, so the default run scans them. Custom palettes, radii and type scales are where contrast and focus rings break, and a config can fix a default violation as well as add one.
+
+`A11Y_DIRS` takes `ltr`, `rtl` or both (`ltr,rtl`); without it, only LTR is scanned. It applies to the page scan, the open overlays' scan and the focus ring check, which load their pages with `?dir=rtl`; the Tab walk always runs in both. RTL tests are named like the LTR ones with `-rtl` after the config (`dark-default-rtl /kitchen-sink/components-alert`), so existing `-g` patterns keep matching only LTR, and their reports go to `reports/a11y/<config>/<theme>-rtl/` (`reports/a11y/default/dark-rtl/open/` for the overlays), next to the LTR ones. `a11y-summary` counts the RTL violations with their config. The color pairing check (`contrast.spec.js`) has no RTL run: it measures palette pairings on `pages/contrast.html`, which don't depend on the direction. On pull requests, a scoped run checks RTL with the default config only; the nightly and on-demand runs set `A11Y_DIRS: ltr,rtl` with every config.
+
+An entry of `known-issues.js` applies to both directions unless it has `dirs: ['ltr']` or `dirs: ['rtl']`, and the scan fails with "no longer happens" when a listed violation is missing in a direction its entry covers. A violation that only happens in one direction needs `dirs`. In an RTL run with another config than the default, a violation that the default config's RTL page has under a known entry is inherited from it, like in LTR.
 
 Each failure names the page, the rule, the element's selector and, for contrast, the colors axe measured. Every page's violations, known ones included, go to `reports/a11y/<config>/<theme>/<page>.json` and are attached to the test in the Playwright report. `npm run a11y-summary` sums them up in a table with one row per config and one column per axe rule, to compare configs at a glance.
 

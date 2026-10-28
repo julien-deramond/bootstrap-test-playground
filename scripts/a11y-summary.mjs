@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Sums up the accessibility scan per config, from the reports it writes to
-// reports/a11y/<config>/<theme>/<page>.json: how many pages were scanned, and
-// for each axe rule how many elements violate it, light and dark together.
+// reports/a11y/<config>/<theme>[-rtl]/<page>.json: how many pages were scanned, and
+// for each axe rule how many elements violate it, light and dark together, RTL scans (`<theme>-rtl/`) included.
 // Violations inside open overlays (tests/a11y/overlays.spec.js), focus rings
 // that fail (tests/a11y/focus.spec.js), color pairings (tests/a11y/contrast.spec.js),
 // reflow, text spacing and 200% text (tests/a11y/reflow.spec.js), the best
