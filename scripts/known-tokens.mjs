@@ -90,15 +90,16 @@ export default [
     issue: 125,
     tokens: [
       '--card-subtitle-color',
-      '--check-active-bg', '--check-active-border-color', '--check-indeterminate-bg', '--check-indeterminate-border-color',
+      '--check-indeterminate-bg', '--check-indeterminate-border-color',
       '--form-text-margin-top',
-      '--menu-spacer',
       '--nav-tabs-border-radius',
       '--navbar-toggler-width', '--navbar-toggler-padding-y', '--navbar-toggler-padding-x', '--navbar-toggler-font-size', '--navbar-toggler-border-color', '--navbar-toggler-border-radius',
       '--switch-checked-indicator-bg',
       '--table-active-bg', '--table-hover-bg', '--table-striped-bg'
     ]
   },
+  { kind: 'unused', issue: 422, tokens: ['--menu-spacer'] },
+  { kind: 'unused', issue: 423, tokens: ['--check-active-bg', '--check-active-border-color'] },
 
   // Defined on a component, read on an unrelated selector
 
