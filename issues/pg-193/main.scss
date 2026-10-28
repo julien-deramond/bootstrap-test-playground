@@ -1,0 +1,87 @@
+// Pushes every option of the utility API (`$utilities`, scss/_utilities.scss):
+// new utilities with `state`, `child-selector` and `variables`, default ones
+// made responsive, printable or `dark:`, one disabled and one removed.
+//
+// Modifying a default utility reads its definition, so `$utilities` can't be
+// passed with `@use ... with (...)`. As the docs' two-file pattern does, load
+// the config module and the default definitions first, write the new map back
+// to `$utilities`, then load Bootstrap, which reuses the same config module.
+// pages/utility-api.html checks each utility.
+
+@use "sass:map";
+@use "bootstrap/scss/config" as *;
+@use "bootstrap/scss/utilities";
+
+$utilities: map.merge(
+  $utilities,
+  (
+    // Modify: `responsive` and `print` on a default utility
+    "opacity": map.merge(map.get($utilities, "opacity"), (responsive: true, print: true)),
+    // Modify: `dark:` variants of the background colors
+    "bg-color": map.merge(map.get($utilities, "bg-color"), (dark: true)),
+    // Disable, keeping the definition
+    "float": map.merge(map.get($utilities, "float"), (enabled: false)),
+    // Remove
+    "object-fit": null,
+    // Add: `state` variants, `.hover\:cursor-pointer:hover` and `.focus\:…:focus`
+    "cursor": (
+      property: cursor,
+      class: cursor,
+      state: hover focus,
+      values: auto pointer grab not-allowed,
+    ),
+    // Add: `child-selector`, zero specificity through :where()
+    "striped": (
+      property: background-color,
+      class: striped,
+      child-selector: "> :nth-child(odd)",
+      values: (
+        null: var(--bg-2),
+        3: var(--bg-3),
+      ),
+    ),
+    // Add: `variables` as a list, each variable receives the value
+    "text-shadow": (
+      property: text-shadow,
+      class: text-shadow,
+      variables: text-shadow,
+      values: (
+        sm: 0 1px 2px rgb(0 0 0 / .3),
+        lg: 0 2px 8px rgb(0 0 0 / .4),
+        none: none,
+      ),
+    ),
+    // Add: a property map with `variables` as a map, static on every class
+    "ring": (
+      property: (
+        "--ring-color": null,
+        "box-shadow": 0 0 0 var(--ring-width) var(--ring-color),
+      ),
+      class: ring,
+      variables: (
+        "ring-width": 3px,
+      ),
+      values: (
+        primary: var(--primary-base),
+        danger: var(--danger-base),
+      ),
+    ),
+    // Add: a utility that sets global tokens for its subtree, the radii that
+    // buttons (`--radius-5`) and cards (`--radius-7`) read
+    "radius": (
+      property: (
+        "--radius-5": null,
+        "--radius-7": null,
+      ),
+      class: radius,
+      values: (
+        sm: .25rem,
+        lg: 1.5rem,
+      ),
+    ),
+  )
+);
+
+@use "bootstrap/scss/bootstrap";
+
+@use "custom";
