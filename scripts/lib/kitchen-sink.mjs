@@ -321,12 +321,12 @@ ${toc.map(([heading, id]) => `          <a href="#${id}">${escapeHtml(plainText(
         </p>
       </nav>
 
-${blocks.map(({ id, heading, className, html }) => `      <section class="bd-kitchen-sink-section" aria-labelledby="${id}">
+${blocks.map(({ id, heading, className, html }) => `      <div class="bd-kitchen-sink-section" role="group" aria-labelledby="${id}">
         <h2 class="h5" id="${id}" data-playground-chrome>${escapeHtml(plainText(heading))}</h2>
         <div class="bd-example${className ? ` ${className}` : ''}">
 ${indent(html, 10)}
         </div>
-      </section>`).join('\n\n')}
+      </div>`).join('\n\n')}
     </main>
   </body>
 </html>
@@ -338,7 +338,7 @@ ${indent(html, 10)}
 // (`html` indented for its section), or `{ ids }`, every example id, when `id`
 // isn't one of them.
 export function readExample(page, id) {
-  const section = /<section class="bd-kitchen-sink-section" aria-labelledby="([^"]+)">\n {8}<h2 class="h5" id="\1" data-playground-chrome>(.*?)<\/h2>\n {8}<div class="bd-example(?: ([^"]*))?">\n([\s\S]*?)\n {8}<\/div>\n {6}<\/section>/g
+  const section = /<div class="bd-kitchen-sink-section" role="group" aria-labelledby="([^"]+)">\n {8}<h2 class="h5" id="\1" data-playground-chrome>(.*?)<\/h2>\n {8}<div class="bd-example(?: ([^"]*))?">\n([\s\S]*?)\n {8}<\/div>\n {6}<\/div>/g
   const examples = [...page.matchAll(section)]
   const example = examples.find(([, exampleId]) => exampleId === id)
   if (!example) {

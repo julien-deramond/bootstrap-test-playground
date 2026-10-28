@@ -79,7 +79,7 @@ export function pageClasses(html, bootstrapClasses) {
   const found = new Map()
   let section
   for (const [tag] of body.matchAll(/<[a-z][^>]*>/gi)) {
-    // A section starts at its heading, or at its <section aria-labelledby>
+    // A section starts at its heading, or at its section element (aria-labelledby)
     // when the heading is chrome.
     const id = tag.match(/^<h2\b[^>]*\bid="([^"]+)"/i)?.[1] ?? tag.match(/\baria-labelledby="([^"]+)"/)?.[1]
     if (id && headings.includes(id)) {
