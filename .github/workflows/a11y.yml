@@ -11,7 +11,7 @@ name: Accessibility scan
 # Pull requests scan what they change (`npm run test-scope`): the default
 # config on every page, the changed configs on every page and the changed
 # pages with every config, or everything after a shared change. Everything
-# runs every night and on demand, split across four parallel jobs, and the
+# runs every night and on demand, split across eight parallel jobs, and the
 # canary's pull request runs it on every Bootstrap update. The page scan, the
 # open overlays and the focus rings run in LTR and RTL (A11Y_DIRS); a scoped
 # pull request checks RTL with the default config only.
@@ -32,8 +32,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # What to scan, and in how many shards: one for a scoped pull request, four
-  # for everything.
+  # What to scan, and in how many shards: one for a scoped pull request, eight
+  # for everything. Since the full scan runs in RTL too, it is about 12,500
+  # tests: eight shards of about 1,560 keep each one near 15 minutes, half of
+  # its timeout.
   scope:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -61,7 +63,7 @@ jobs:
         run: |
           echo "scope=$A11Y_SCOPE" >> "$GITHUB_OUTPUT"
           if [ -z "$A11Y_SCOPE" ] || [ "$(jq -r .full <<< "$A11Y_SCOPE")" = true ]; then
-            echo 'shards=[1, 2, 3, 4]' >> "$GITHUB_OUTPUT"
+            echo 'shards=[1, 2, 3, 4, 5, 6, 7, 8]' >> "$GITHUB_OUTPUT"
           else
             echo 'shards=[1]' >> "$GITHUB_OUTPUT"
           fi
@@ -121,3 +123,15 @@ jobs:
           merge-multiple: true
 
       - run: npm run a11y-summary
+
+      # A shard that fails, times out or is cancelled leaves the table above
+      # without its pages, and a timed-out job counts as cancelled, which
+      # `!cancelled()` doesn't see: fail the run instead of passing on a
+      # partial scan.
+      - name: Check that every shard finished
+        if: ${{ needs.scan.result != 'success' }}
+        env:
+          SCAN_RESULT: ${{ needs.scan.result }}
+        run: |
+          echo "::error::The scan's result is $SCAN_RESULT, not success: at least one shard failed or didn't finish, so the summary above is incomplete."
+          exit 1
