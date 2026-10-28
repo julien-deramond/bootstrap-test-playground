@@ -31,6 +31,6 @@ Category: themes
 ## Known gaps
 
 - Menu item descriptions, the combobox placeholder and datepicker days outside the month hard-code translucent text: [#208](https://github.com/julien-deramond/bootstrap-test-playground/issues/208).
-- Disabled switches, chips and the combobox toggle ignore `--control-disabled-opacity`: [#209](https://github.com/julien-deramond/bootstrap-test-playground/issues/209).
+- Disabled switches, chips and the combobox toggle ignore `--control-disabled-opacity`: [#209](https://github.com/julien-deramond/bootstrap-test-playground/issues/209), reproduced in [`issues/pg-209/`](../../issues/pg-209/).
 - `--form-floating-label-opacity: .65` isn't a valid `color-mix()` percentage, so floating labels ignore it (this config sets `100%`): [#210](https://github.com/julien-deramond/bootstrap-test-playground/issues/210).
 - The default palette's contrast, which this config replaces: [#183](https://github.com/julien-deramond/bootstrap-test-playground/issues/183).
