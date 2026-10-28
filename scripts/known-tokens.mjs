@@ -26,6 +26,7 @@ export default [
 
   { kind: 'hook', reason: 'set inline by Bootstrap’s JavaScript', tokens: ['--carousel-interval', '--range-fill'] },
   { kind: 'hook', configs: ['reboot-only'], reason: 'set by the `.theme-*` helpers and the shadow utilities, which bootstrap-reboot leaves out, so the fallback applies', tokens: ['--sc', '--so', '--theme-fg', '--theme-fg-emphasis'] },
+  { kind: 'hook', configs: ['reboot-only'], reason: 'set by `.form-control`, which bootstrap-reboot leaves out, so the date and time pickers’ indicator falls back to its default offset', tokens: ['--control-padding-x'] },
   {
     kind: 'hook',
     reason: 'customization hook with a default',
