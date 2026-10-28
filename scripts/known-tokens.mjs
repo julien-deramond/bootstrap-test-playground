@@ -53,7 +53,7 @@ export default [
   { kind: 'unused', reason: 'color scale, for users and utilities', pattern: /^--[a-z]+-\d{3}$/ },
   { kind: 'unused', reason: 'scale step, for users and utilities', pattern: /^--(spacer|radius|z|font-size|line-height)-(n?\d+|\d*x[sl])$/ },
   { kind: 'unused', reason: 'scale step, for users and utilities', tokens: ['--box-shadow-xs', '--font-weight-light', '--font-weight-lighter'] },
-  { kind: 'unused', configs: ['utilities-custom'], reason: 'the config’s `variables` list exposes each .text-shadow-* value, for users', tokens: ['--text-shadow'] },
+  { kind: 'unused', configs: ['utilities-custom', 'pg-193'], reason: 'the config’s `variables` list exposes each .text-shadow-* value, for users', tokens: ['--text-shadow'] },
   { kind: 'unused', configs: ['partial'], reason: 'global tokens for the components the config leaves out', tokens: ['--box-shadow', '--box-shadow-xl', '--z-dialog', '--z-drawer', '--z-popover', '--z-toast', '--z-tooltip'] },
   { kind: 'unused', configs: ['reboot-only', 'utilities-only'], reason: 'root defines every global token, and the entry point leaves out the components that read them', pattern: /^--/ },
   { kind: 'unused', configs: ['weights'], reason: 'the weight the config adds to $font-weights, for users (the .fw-black utility uses the raw value)', tokens: ['--font-weight-black'] },

@@ -211,7 +211,7 @@ npm run test:a11y -- -g reflow
 npm run test:a11y -- -g "reflow light-default /kitchen-sink/components-alert"
 ```
 
-With every config, the scan loads about 5,500 pages. On pull requests, [`.github/workflows/a11y.yml`](../.github/workflows/a11y.yml) scans what [`npm run test-scope`](#console-crawl) finds, with the same rules as the console crawl: the default config on every page, the changed configs on every page and the changed pages with every config, or everything after a shared change like a `tests/a11y/` edit. Everything runs every night, on demand and on the canary's pull request, split across four parallel jobs. Each job uploads its `reports/a11y/` as an artifact, and a summary job writes the `a11y-summary` table to the run's summary. Locally, limit a run the same way:
+With every config, the scan loads about 6,000 pages in each direction. On pull requests, [`.github/workflows/a11y.yml`](../.github/workflows/a11y.yml) scans what [`npm run test-scope`](#console-crawl) finds, with the same rules as the console crawl: the default config on every page, the changed configs on every page and the changed pages with every config, or everything after a shared change like a `tests/a11y/` edit. Everything runs every night, on demand and on the canary's pull request, split across eight parallel jobs of about 15 minutes each. Each job uploads its `reports/a11y/` as an artifact, and a summary job writes the `a11y-summary` table to the run's summary, then fails when a job failed or didn't finish, since a job that hits its 30-minute timeout counts as cancelled rather than failed. Locally, limit a run the same way:
 
 ```sh
 A11Y_CONFIGS=all A11Y_SCOPE='{"full":false,"configs":["pill"],"urls":[]}' npm run test:a11y

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-218: color-contrast() fails to compile</title>
+    <meta name="description" content="color-contrast() and contrast-ratio() fail to compile for every color: opaque() returns a CSS color-mix(), and luminance() can't read channels from it.">
+    <meta name="playground-tags" content="theme, colors, accessibility">
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#218">
+    <meta name="playground-bootstrap" content="0632eaa44acd9c8ba4a1bf70786d2930c6d1b745">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <!-- data-playground-chrome: hidden by ?chrome=0, which shows the
+           markup under test alone (screenshots, embeds). -->
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-218: color-contrast() fails to compile</h1>
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <p>This page can't call <code>color-contrast()</code> in its own Sass: the build would break. The verdict comes from <code>repro.spec.js</code>, which compiles these two snippets in Node with the Bootstrap this playground builds with (<code>npm run check-issues -- pg-218</code>).</p>
+        <pre><code>@use "bootstrap/scss/functions" as *;
+.a { color: color-contrast(#0d6efd); }</code></pre>
+        <pre><code>@use "bootstrap/scss/functions" as *;
+@use "bootstrap/scss/colors" as *;
+.a { color: color-contrast($blue); }</code></pre>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">Both compile and return the most readable of <code>$color-contrast-light</code>, <code>$color-contrast-dark</code>, white and black, as the Sass functions documentation says.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p class="mb-0">Neither compiles. The first fails with <code>$color: color-mix(in srgb, white, #0d6efd, 100%) is not a color.</code>: <code>opaque()</code> returns a CSS <code>color-mix()</code>, which <code>luminance()</code> can't read.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

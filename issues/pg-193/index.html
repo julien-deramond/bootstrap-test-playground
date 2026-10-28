@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-193: Issue reproduction</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="Utilities with a dark: variant (dark: true) only follow prefers-color-scheme, so they contradict data-bs-theme when it forces the other color mode.">
+    <meta name="playground-tags" content="utilities, utility api, dark, color modes, data-bs-theme, sass">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#193">
+    <meta name="playground-bootstrap" content="0a7d4423c00e3dab021ec70570224f7d41466f4f">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <!-- Before filing, the tracking issue needs (see CLAUDE.md, "Record a
+         potential bug"):
+         - [ ] Summary: one or two sentences, also the description above
+         - [ ] Bootstrap version: Bootstrap's main commit, shown in the header
+         - [ ] Reproduction: the steps below, and a link to this page
+         - [ ] Expected / Actual, below
+         - [ ] Root cause: file:line in twbs/bootstrap with a permalink, when known
+         - [ ] Possible fix, when known
+         And an assert.js next to this page, when "fixed" can be measured, or
+         a repro.spec.js (`new-issue -- --spec`) when it takes the keyboard or
+         the viewport: `npm run check-issues` then tells when the fix lands
+         (see "Assertions" in docs/pages.md). -->
+    <main class="container py-5">
+      <!-- data-playground-chrome: hidden by ?chrome=0, which shows the
+           markup under test alone (screenshots, embeds). -->
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-193</h1>
+        <!-- Filled from the metadata above: status, upstream and tracking
+             links, and the Bootstrap commit. -->
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Compile Bootstrap with <code>dark: true</code> on the <code>bg-color</code> utility, as this page's <code>utilities-custom</code> config does, so <code>.dark:bg-primary</code> exists.</li>
+          <li>Put <code>.bg-2 .dark:bg-primary</code> in a subtree forced to a color mode with <code>data-bs-theme</code>. The plain <code>.bg-2</code> and <code>.bg-primary</code> boxes next to it show what each mode should give.</li>
+          <li>Open the page once with the system in light mode and once in dark mode. In one of the two, a forced subtree gets the other mode's background.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">Each <code>.dark:bg-primary</code> box looks like the plain reference of its own color mode: <code>.bg-primary</code> under <code>data-bs-theme="dark"</code>, <code>.bg-2</code> under <code>data-bs-theme="light"</code>, whatever the system prefers. The <a href="https://github.com/twbs/bootstrap/blob/bd0a4f63ce5cc444063c28a6946bdae3dacdce20/site/src/content/docs/customize/color-modes.mdx#L70">color modes docs</a> say <code>data-bs-theme="dark"</code> forces dark mode regardless of the system setting.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p class="mb-2">The <code>dark:</code> rules sit in a bare <code>@media (prefers-color-scheme: dark)</code>, which can't see <code>data-bs-theme</code>. The box follows the system, not the element's color mode, so some cases fail on any system.</p>
+              <p class="mb-0">Measured here: <code id="measured">…</code></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <!-- Not wrapped in data-playground-repro: the cases force their own
+             color modes, and a dark clone would only repeat them. -->
+        <div class="row g-3" id="cases">
+          <div class="md:col-6" data-bs-theme="dark">
+            <div class="p-3 border rounded bg-body fg-body" data-case="dark-forced" data-mode="dark">
+              <h3 class="h6">Forced dark</h3>
+              <div class="p-2 mb-2 bg-2 dark:bg-primary" data-box>.bg-2 .dark:bg-primary</div>
+              <div class="p-2 mb-2 bg-primary" data-ref-dark>.bg-primary (reference)</div>
+              <div class="p-2 bg-2" data-ref-light>.bg-2 (reference)</div>
+            </div>
+          </div>
+          <div class="md:col-6" data-bs-theme="light">
+            <div class="p-3 border rounded bg-body fg-body" data-case="light-forced" data-mode="light">
+              <h3 class="h6">Forced light</h3>
+              <div class="p-2 mb-2 bg-2 dark:bg-primary" data-box>.bg-2 .dark:bg-primary</div>
+              <div class="p-2 mb-2 bg-primary" data-ref-dark>.bg-primary (reference)</div>
+              <div class="p-2 bg-2" data-ref-light>.bg-2 (reference)</div>
+            </div>
+          </div>
+          <div class="md:col-6" data-bs-theme="dark">
+            <div class="p-3 border rounded bg-body fg-body">
+              <h3 class="h6">Dark</h3>
+              <div data-bs-theme="light">
+                <div class="p-3 border rounded bg-body fg-body" data-case="light-in-dark" data-mode="light">
+                  <h4 class="h6">Light nested in dark</h4>
+                  <div class="p-2 mb-2 bg-2 dark:bg-primary" data-box>.bg-2 .dark:bg-primary</div>
+                  <div class="p-2 mb-2 bg-primary" data-ref-dark>.bg-primary (reference)</div>
+                  <div class="p-2 bg-2" data-ref-light>.bg-2 (reference)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="md:col-6" data-bs-theme="light">
+            <div class="p-3 border rounded bg-body fg-body">
+              <h3 class="h6">Light</h3>
+              <div data-bs-theme="dark">
+                <div class="p-3 border rounded bg-body fg-body" data-case="dark-in-light" data-mode="dark">
+                  <h4 class="h6">Dark nested in light</h4>
+                  <div class="p-2 mb-2 bg-2 dark:bg-primary" data-box>.bg-2 .dark:bg-primary</div>
+                  <div class="p-2 mb-2 bg-primary" data-ref-dark>.bg-primary (reference)</div>
+                  <div class="p-2 bg-2" data-ref-light>.bg-2 (reference)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      import { measure } from './assert.js'
+
+      const { details } = await measure()
+      document.getElementById('measured').textContent = details
+    </script>
+  </body>
+</html>
