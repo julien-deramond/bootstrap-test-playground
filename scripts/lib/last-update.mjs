@@ -12,8 +12,8 @@ import { collectPages } from './pages.mjs'
 export const LAST_UPDATE_FILE = path.join(root, 'updates/last-update.json')
 
 // sync-kitchen-sink indents each section by six spaces; an example can hold a
-// <section> of its own, deeper.
-const SECTION = /<section class="bd-kitchen-sink-section" aria-labelledby="([^"]+)">([\s\S]*?)\n {6}<\/section>/g
+// <div> of its own, deeper.
+const SECTION = /<div class="bd-kitchen-sink-section" role="group" aria-labelledby="([^"]+)">([\s\S]*?)\n {6}<\/div>/g
 
 // `id` → the section's example markup, without its playground heading.
 const sections = html => new Map([...html.matchAll(SECTION)].map(([, id, body]) => [id, body.replace(/<h2\b[\s\S]*?<\/h2>/, '').trim()]))

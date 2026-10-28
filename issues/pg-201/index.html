@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-201: color-mode() mixin follows neither the system nor data-bs-theme</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="The color-mode() mixin can't follow v6 color modes: media-query ignores data-bs-theme, data ignores the system preference, nested modes and the element itself.">
+    <meta name="playground-tags" content="components">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#201">
+    <meta name="playground-bootstrap" content="548f671d0f701f9fab311b945dad27cafa92b59b">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <link rel="stylesheet" href="./probe-media-query.scss">
+    <link rel="stylesheet" href="./probe-data.scss">
+    <style>
+      /* No Bootstrap tokens here, so the checks don't depend on the prefix. */
+      .pg-probe {
+        display: block;
+        padding: .25rem .5rem;
+        border: 1px dashed;
+        /* Resolves to the element's used color scheme: rgb(0, 0, 1) in light,
+           rgb(0, 0, 2) in dark. Invisible without columns. */
+        column-rule-color: light-dark(rgb(0, 0, 1), rgb(0, 0, 2));
+      }
+
+      .pg-context {
+        padding: .5rem;
+        background-color: Canvas;
+        color: CanvasText;
+      }
+    </style>
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <!-- data-playground-chrome: hidden by ?chrome=0, which shows the
+           markup under test alone (screenshots, embeds). -->
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-201</h1>
+        <!-- Filled from the metadata above: status, upstream and tracking
+             links, and the Bootstrap commit. -->
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Compile <code>@include color-mode(dark) { .probe { outline: 3px solid; } }</code> once with <code>$color-mode-type: "media-query"</code> and once with <code>"data"</code>.</li>
+          <li>Look at the probes below with the system in light, then in dark (the toolbar's color mode only sets <code>data-bs-theme</code> on <code>&lt;html&gt;</code>, so use the browser's emulation for the system).</li>
+          <li>Compare the outline with the probe's own color mode.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">The outline shows exactly where the probe is in dark mode, where <code>light-dark()</code> tokens resolve to their dark value, with either type and either system preference.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p class="mb-0"><code>media-query</code> follows the system and ignores <code>data-bs-theme</code>. <code>data</code> ignores the system, takes any dark ancestor for the nearest one and never matches the element itself.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>The <code>color-mode()</code> mixin</h2>
+        <table class="table" id="mixin-checks">
+          <thead>
+            <tr>
+              <th scope="col">Context</th>
+              <th scope="col"><code>media-query</code> (default)</th>
+              <th scope="col"><code>data</code></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-context="page">
+              <th scope="row">No <code>data-bs-theme</code></th>
+              <td><span class="pg-probe pg-probe-media-query">Probe</span></td>
+              <td><span class="pg-probe pg-probe-data">Probe</span></td>
+            </tr>
+            <tr data-context="dark">
+              <th scope="row"><code>data-bs-theme="dark"</code> subtree</th>
+              <td><div class="pg-context" data-bs-theme="dark"><span class="pg-probe pg-probe-media-query">Probe</span></div></td>
+              <td><div class="pg-context" data-bs-theme="dark"><span class="pg-probe pg-probe-data">Probe</span></div></td>
+            </tr>
+            <tr data-context="light">
+              <th scope="row"><code>data-bs-theme="light"</code> subtree</th>
+              <td><div class="pg-context" data-bs-theme="light"><span class="pg-probe pg-probe-media-query">Probe</span></div></td>
+              <td><div class="pg-context" data-bs-theme="light"><span class="pg-probe pg-probe-data">Probe</span></div></td>
+            </tr>
+            <tr data-context="nested">
+              <th scope="row"><code>light</code> nested in <code>dark</code></th>
+              <td><div class="pg-context" data-bs-theme="dark"><div class="pg-context" data-bs-theme="light"><span class="pg-probe pg-probe-media-query">Probe</span></div></div></td>
+              <td><div class="pg-context" data-bs-theme="dark"><div class="pg-context" data-bs-theme="light"><span class="pg-probe pg-probe-data">Probe</span></div></div></td>
+            </tr>
+            <tr data-context="self">
+              <th scope="row"><code>data-bs-theme="dark"</code> on the element itself</th>
+              <td><span class="pg-probe pg-probe-media-query" data-bs-theme="dark">Probe</span></td>
+              <td><span class="pg-probe pg-probe-data" data-bs-theme="dark">Probe</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <script type="module">
+      // Nothing to run: repro.spec.js reads the probes.
+    </script>
+  </body>
+</html>
