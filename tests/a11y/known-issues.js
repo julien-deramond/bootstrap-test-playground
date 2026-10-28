@@ -1261,6 +1261,7 @@ export default [
     rule: 'landmark-unique',
     state: 'best-practice',
     pages: [
+      '/kitchen-sink/components-alert.html',
       '/kitchen-sink/components-avatar.html',
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-breadcrumb.html',
