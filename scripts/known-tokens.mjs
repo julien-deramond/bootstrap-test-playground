@@ -12,7 +12,7 @@ export default [
 
   { kind: 'undefined', issue: 8, tokens: ['--font-weight-base'] },
   { kind: 'undefined', issue: 9, tokens: ['--nav-link-font-weight', '--range-track-box-shadow'] },
-  { kind: 'undefined', issue: 182, configs: ['brand'], tokens: ['--info-bg', '--info-fg-emphasis', '--secondary-fg'] },
+  { kind: 'undefined', issue: 182, configs: ['brand', 'pg-182'], tokens: ['--info-bg', '--info-fg-emphasis', '--secondary-fg'] },
   { kind: 'undefined', issue: 187, configs: ['weights'], tokens: ['--font-weight-semibold'] },
   { kind: 'undefined', issue: 216, configs: ['partial'], tokens: ['--tooltip-arrow-height', '--tooltip-border-radius', '--tooltip-padding-x', '--tooltip-padding-y'] },
   { kind: 'undefined', configs: ['partial'], reason: '`.card-header-tabs` is a nav, and the config leaves the nav partial out', tokens: ['--nav-tabs-border-width'] },
