@@ -1,0 +1,30 @@
+// Custom breakpoints: add `3xl: 1920px`, remove `2xl` and rename `md` to
+// `tablet`. Responsive classes follow the names, so `md:d-none` becomes
+// `tablet:d-none` and any markup that hard-codes `md:` stops responding.
+//
+// `$breakpoints` isn't merged over its defaults like the other layout maps:
+// whatever map you pass replaces it, so it lists every tier. `null` doesn't
+// remove a key; leaving the key out does.
+//
+// `$container-max-widths` is merged, so its `md` and `2xl` defaults stay
+// unless they are removed with `null`.
+
+@use "bootstrap/scss/bootstrap" with (
+  $breakpoints: (
+    xs: 0,
+    sm: 576px,
+    tablet: 768px,
+    lg: 1024px,
+    xl: 1280px,
+    3xl: 1920px,
+  ),
+
+  $container-max-widths: (
+    md: null,
+    2xl: null,
+    tablet: 720px,
+    3xl: 1800px,
+  ),
+);
+
+@use "custom";
