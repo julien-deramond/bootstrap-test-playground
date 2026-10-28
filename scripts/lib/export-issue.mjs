@@ -293,7 +293,8 @@ export async function exportIssue(name, { bootstrap }) {
       const css = await trimTokens(read(file), file)
       styles.push({ html: css && `<!-- The reproduction's own CSS (tokens.css). -->\n<style>\n${indent(css, '  ')}\n</style>`, link: './tokens.css' })
     } else {
-      const css = (await processCss(read(file), file)).css.trim()
+      // A Sass file, like a page's own probe compiled with another option than main.scss, is compiled like main.scss.
+      const css = (file.endsWith('.scss') ? await compileConfig(file, { bootstrapDir, logger: quiet, style: 'compressed' }) : await processCss(read(file), file)).css.trim()
       styles.push({ html: `<!-- ${path.relative(root, file)}, from the playground. -->\n<style>\n${indent(css, '  ')}\n</style>`, link: `./${fileName}`, fileName, content: read(file) })
       warnings.push(`The page loads ${path.relative(root, file)}, the playground's own styles: the exports include them.`)
     }
