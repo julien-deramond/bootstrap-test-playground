@@ -1,0 +1,10 @@
+// `$enable-shadows: false`: Bootstrap stops emitting the `box-shadow`
+// declarations of its components (cards, menus, dialogs, drawers, popovers,
+// buttons' active state, form controls, range, progress, thumbnails) and of
+// `.hover-lift`. Focus rings, the `.shadow-*` utilities and `.btn-styled`,
+// which opt in, aren't concerned. Toasts, the datepicker popup and switches
+// keep theirs (#173).
+
+@use "bootstrap/scss/bootstrap" with (
+  $enable-shadows: false
+);

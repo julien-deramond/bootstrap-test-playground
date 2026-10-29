@@ -76,7 +76,7 @@ export default [
   },
   {
     kind: 'unused',
-    configs: ['no-shadows'],
+    configs: ['no-shadows', 'pg-173'],
     reason: '$enable-shadows: false removes the box-shadow declarations, not their tokens',
     pattern: /-box-shadow$/
   },
