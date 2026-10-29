@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-160: Components that start on window load never do when Bootstrap loads late</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="Bootstrap imported after window load: the autoplaying carousel and scrollspy, which only start from a load listener, stay inert.">
+    <meta name="playground-tags" content="carousel, scrollspy, javascript, data-api, load">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#160">
+    <meta name="playground-bootstrap" content="0cc905752787140cca5c94a72e2e21362b5b1a78">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <!-- No /src/js/main.js: it replays DOMContentLoaded and load after its own
+         dynamic import, which hides this bug. The script at the bottom does
+         the same setup, without the replay. -->
+  </head>
+  <body>
+    <!-- Before filing, the tracking issue needs (see CLAUDE.md, "Record a
+         potential bug"):
+         - [ ] Summary: one or two sentences, also the description above
+         - [ ] Bootstrap version: Bootstrap's main commit, shown in the header
+         - [ ] Reproduction: the steps below, and a link to this page
+         - [ ] Expected / Actual, below
+         - [ ] Root cause: file:line in twbs/bootstrap with a permalink, when known
+         - [ ] Possible fix, when known
+         And an assert.js next to this page, when "fixed" can be measured, or
+         a repro.spec.js (`new-issue -- --spec`) when it takes the keyboard or
+         the viewport: `npm run check-issues` then tells when the fix lands
+         (see "Assertions" in docs/pages.md). -->
+    <main class="container py-5">
+      <!-- data-playground-chrome: hidden by ?chrome=0, which shows the
+           markup under test alone (screenshots, embeds). -->
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-160: late Bootstrap never starts the load-time data APIs</h1>
+        <!-- Filled from the metadata above: status, upstream and tracking
+             links, and the Bootstrap commit. -->
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Open this page. Its script waits for <code>window.load</code> plus 100&nbsp;ms, then calls <code>import('bootstrap')</code>, as a lazily loaded chunk or a late-hydrated island would. The playground's shared <code>main.js</code> isn't loaded, because it replays <code>DOMContentLoaded</code> and <code>load</code> after its own dynamic import.</li>
+          <li>Check whether the autoplaying carousel and the scrollspy have an instance (<code>getInstance()</code>) without any <code>getOrCreateInstance()</code> call. The chip input and the range are controls: their data APIs run once the document is parsed, so they must have one.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">Every component has an instance as soon as Bootstrap has loaded, whenever that is: the carousel slides by itself and the scrollspy marks the link of the visible heading.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p class="mb-0">The carousel and the scrollspy stay inert, with no instance, until something calls <code>getOrCreateInstance()</code> on them. They wait for a <code>load</code> event on <code>window</code> that has already fired.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <!-- Paste the markup under test here. data-playground-repro shows it in
+             light and dark side by side: the dark copy is a clone, with `-dark`
+             added to its ids, the references to them and its radio and
+             <details> names. The
+             clone exists before this page's own scripts run, so they can set
+             up both with querySelectorAll('[data-playground-repro]'). Remove
+             the attribute when the markup needs the whole page (a fixed navbar,
+             a page-level theme). -->
+        <div data-playground-repro>
+          <div class="chip-input" data-bs-chips>
+            <label class="chip-input-label" for="skillsInput">Skills (control):</label>
+            <span class="chip">JavaScript</span>
+            <input type="text" class="form-ghost" id="skillsInput" placeholder="Add more…">
+          </div>
+
+          <div class="mt-4">
+            <label for="range1" class="form-label">Range (control)</label>
+            <div class="form-range">
+              <input type="range" class="form-range-input" id="range1">
+            </div>
+          </div>
+
+          <div id="carouselAutoplaying" class="carousel slide mt-4" data-bs-autoplay="true" data-bs-interval="1500" role="region" aria-label="Autoplaying carousel">
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <svg aria-label="Placeholder: First slide" class="d-block w-100 rounded-5" height="120" preserveAspectRatio="xMidYMid slice" role="img" width="800" xmlns="http://www.w3.org/2000/svg"><title>Placeholder</title><rect width="100%" height="100%" fill="#777" /><text x="50%" y="50%" fill="#fff" dy=".3em">First slide</text></svg>
+              </div>
+              <div class="carousel-item">
+                <svg aria-label="Placeholder: Second slide" class="d-block w-100 rounded-5" height="120" preserveAspectRatio="xMidYMid slice" role="img" width="800" xmlns="http://www.w3.org/2000/svg"><title>Placeholder</title><rect width="100%" height="100%" fill="#555" /><text x="50%" y="50%" fill="#fff" dy=".3em">Second slide</text></svg>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselAutoplaying" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselAutoplaying" data-bs-slide-to="1" aria-label="Slide 2"></button>
+              </div>
+              <div>
+                <button class="btn-icon btn-sm carousel-control-play-pause" type="button" data-bs-target="#carouselAutoplaying" aria-label="Pause" data-bs-pause-label="Pause" data-bs-play-label="Play">
+                  <span class="carousel-icon-pause" aria-hidden="true"></span>
+                  <span class="carousel-icon-play" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <nav id="navbarSpy" class="nav nav-pills mt-4" aria-label="Scrollspy sections">
+            <a class="nav-link" href="#spyHeading1">First</a>
+            <a class="nav-link" href="#spyHeading2">Second</a>
+            <a class="nav-link" href="#spyHeading3">Third</a>
+          </nav>
+          <div class="bg-1 p-3 rounded-2 mt-2" style="height: 8rem; overflow-y: auto;" data-bs-spy="scroll" data-bs-target="#navbarSpy" data-bs-root-margin="0px 0px -40%" tabindex="0" role="region" aria-label="Scrollspy content">
+            <h4 id="spyHeading1">First heading</h4>
+            <p>Placeholder content for the scrollspy. Scroll down: the link of the visible heading should be highlighted above.</p>
+            <h4 id="spyHeading2">Second heading</h4>
+            <p>Placeholder content for the scrollspy. Scroll down: the link of the visible heading should be highlighted above.</p>
+            <h4 id="spyHeading3">Third heading</h4>
+            <p>Placeholder content for the scrollspy. Scroll down: the link of the visible heading should be highlighted above.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Same setup as /src/js/main.js, except that Bootstrap is imported after
+      // window.load and nothing replays the events it missed.
+      import { configs, initConfigs } from '/src/js/configs.js'
+      import { initReproduction } from '/src/js/reproduction.js'
+      import { mountToolbar } from '/src/js/toolbar.js'
+      import source, { onChange as onSourceChange } from 'virtual:bootstrap-source'
+
+      const { swappable } = window.playgroundPrefs ? initConfigs(window.playgroundPrefs) : { swappable: false }
+
+      // Before the delay: the dark copy has to exist before this script awaits.
+      initReproduction()
+
+      if (document.readyState !== 'complete') {
+        await new Promise(resolve => window.addEventListener('load', resolve, { once: true }))
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      const bootstrap = window.playgroundPrefs?.effective().js === 'dist' ? await import('bootstrap') : await import('bootstrap/js/src/index.ts')
+      window.bootstrap = bootstrap
+
+      mountToolbar({ source, onSourceChange, configs, swappable })
+    </script>
+  </body>
+</html>
