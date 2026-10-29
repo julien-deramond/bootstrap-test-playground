@@ -32,9 +32,15 @@ export const changedExamples = pathname =>
   record.examples.filter(example => withoutHtml(pageUrl(example.url)) === withoutHtml(pathname))
 
 // Adds the labels of each changed example to its section heading, which is
-// playground chrome, so `?chrome=0` hides them with it. They link to the home
-// page's panel.
+// playground chrome. They link to the home page's panel. With `?chrome=0` they
+// aren't added at all: hidden, they would still be part of the section's
+// accessible name, which the heading gives, so the accessibility scan would
+// find different landmarks after each update.
 export function markChangedSections() {
+  if (new URLSearchParams(location.search).get('chrome') === '0') {
+    return
+  }
+
   for (const example of changedExamples(location.pathname)) {
     const heading = document.getElementById(example.id)
     if (!heading || heading.tagName !== 'H2') {

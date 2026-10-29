@@ -24,7 +24,7 @@ It exits with an error when a check fails. The console crawl, the smoke tests an
 [`updates/last-update.json`](../updates/last-update.json) records the last update: its two commits, the upstream commits between them, and the kitchen sink examples it changed. An example changed when the sync changed its markup (*New example*, *Markup changed*), or when `diff-bootstrap`'s screenshots differ with the same markup (*Renders differently*). It's committed with the update, so the deployed playground has it too.
 
 - The home page shows it under the commit in use: *Last update*, the date, the number of upstream commits and of changed examples. Expanded (or opened with `/#last-update`), it lists the commits, linked with their pull requests, and the changed examples by page.
-- On kitchen sink pages, each changed section's heading gets the same labels, linked to that panel. They're playground chrome: `?chrome=0` hides them, so screenshots don't change.
+- On kitchen sink pages, each changed section's heading gets the same labels, linked to that panel. They're playground chrome: with `?chrome=0` they aren't added, so neither screenshots nor the accessibility scan, which reads each section's name from its heading, change after an update.
 
 `npm run update-bootstrap` and the [nightly canary](#nightly-canary) write it with `npm run record-update -- --from <sha> --to <sha>`, after the sync and `diff-bootstrap`, before committing: markup changes are the sections that differ from `HEAD` (`--base <ref>` for another commit). Without a `diff-bootstrap` report for the same two commits, only markup changes are listed, and the panel says so. After `--pr`, it describes the pull request, which the panel shows as *Testing twbs/bootstrap#n*.
 
