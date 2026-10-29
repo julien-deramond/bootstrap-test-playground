@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-146: $enable-reduced-motion: false leaves four prefers-reduced-motion queries</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="With $enable-reduced-motion: false, the accordion, collapse and carousel still hard-code a prefers-reduced-motion: no-preference query.">
+    <meta name="playground-tags" content="accordion, collapse, carousel, motion, accessibility">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#146">
+    <meta name="playground-bootstrap" content="0cc905752787140cca5c94a72e2e21362b5b1a78">
+    <!-- The config the style files next to this page were copied from
+         (`new-issue -- --config`). The entries of scripts/known-tokens.mjs
+         limited to that config apply to this page too. -->
+    <meta name="playground-config" content="no-reduced-motion">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <!-- Before filing, the tracking issue needs (see CLAUDE.md, "Record a
+         potential bug"):
+         - [ ] Summary: one or two sentences, also the description above
+         - [ ] Bootstrap version: Bootstrap's main commit, shown in the header
+         - [ ] Reproduction: the steps below, and a link to this page
+         - [ ] Expected / Actual, below
+         - [ ] Root cause: file:line in twbs/bootstrap with a permalink, when known
+         - [ ] Possible fix, when known
+         And an assert.js next to this page, when "fixed" can be measured, or
+         a repro.spec.js (`new-issue -- --spec`) when it takes the keyboard or
+         the viewport: `npm run check-issues` then tells when the fix lands
+         (see "Assertions" in docs/pages.md). -->
+    <main class="container py-5">
+      <!-- data-playground-chrome: hidden by ?chrome=0, which shows the
+           markup under test alone (screenshots, embeds). -->
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-146: reduced-motion queries left by the option</h1>
+        <!-- Filled from the metadata above: status, upstream and tracking
+             links, and the Bootstrap commit. -->
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Compile Bootstrap with <code>$enable-reduced-motion: false</code>, as this page's <code>main.scss</code> does (the playground's <code>configs/no-reduced-motion</code>).</li>
+          <li>Search the compiled CSS for <code>prefers-reduced-motion</code>, or run <code>npm run audit-motion</code>.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">No <code>prefers-reduced-motion</code> query: the option says motion ignores the reader's setting.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p>Four queries remain, all <code>no-preference</code>: the accordion's and collapse's <code>interpolate-size: allow-keywords</code>, the carousel's <code>scroll-behavior: smooth</code> and its autoplay progress indicator.</p>
+              <p class="mb-0">Found here: <code id="measured">…</code></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <!-- Paste the markup under test here. data-playground-repro shows it in
+             light and dark side by side: the dark copy is a clone, with `-dark`
+             added to its ids, the references to them and its radio and
+             <details> names. The
+             clone exists before this page's own scripts run, so they can set
+             up both with querySelectorAll('[data-playground-repro]'). Remove
+             the attribute when the markup needs the whole page (a fixed navbar,
+             a page-level theme). -->
+        <div data-playground-repro>
+          <div class="accordion">
+            <details class="accordion-item" name="accordion146">
+              <summary class="accordion-header">
+                Accordion item
+                <svg class="accordion-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m2 5 6 6 6-6"/></svg>
+              </summary>
+              <div class="accordion-body">Its block-size transition can't interpolate to <code>auto</code> when the reader asks for reduced motion.</div>
+            </details>
+          </div>
+          <p class="mt-3">
+            <button class="btn-outline theme-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse146" aria-expanded="false" aria-controls="collapse146">Toggle collapse</button>
+          </p>
+          <div class="collapse" id="collapse146">
+            <div class="card card-body">Same <code>interpolate-size</code> query as the accordion.</div>
+          </div>
+          <div id="carousel146" class="carousel slide mt-3">
+            <div class="carousel-inner rounded-5">
+              <div class="carousel-item active"><svg aria-label="Placeholder: First slide" class="d-block w-100" height="160" preserveAspectRatio="xMidYMid slice" role="img" width="800" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#777" /><text x="50%" y="50%" fill="#fff" dy=".3em">First slide</text></svg></div>
+              <div class="carousel-item"><svg aria-label="Placeholder: Second slide" class="d-block w-100" height="160" preserveAspectRatio="xMidYMid slice" role="img" width="800" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#666" /><text x="50%" y="50%" fill="#fff" dy=".3em">Second slide</text></svg></div>
+            </div>
+            <div class="carousel-indicators">
+              <button type="button" data-bs-target="#carousel146" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+              <button type="button" data-bs-target="#carousel146" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      import { assert } from './assert.js'
+
+      const show = async () => {
+        document.getElementById('measured').textContent = (await assert()).details
+      }
+
+      if (document.readyState === 'complete') {
+        show()
+      } else {
+        window.addEventListener('load', show, { once: true })
+      }
+    </script>
+  </body>
+</html>
