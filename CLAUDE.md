@@ -35,7 +35,7 @@ A Vite multi-page playground for Bootstrap v6 (`twbs/bootstrap`, branch `main`, 
 ## Commits and pull requests
 
 - Commit messages and PR titles follow [Conventional Commits](https://www.conventionalcommits.org/): `feat`, `fix`, `docs`, `test`, `ci`, `refactor`, `chore`, and `chore(deps)` for dependency and Bootstrap updates. Add a scope when one area is concerned, as in `feat(home):` or `fix(configs):`. Then a lowercase, imperative summary.
-- One issue per pull request. Pull requests are squash-merged, so the PR title becomes the commit on `main`. Reference the issue in the body (`Closes #n`, or `Refs #n` for partial work).
+- One issue per pull request. Pull requests are squash-merged, so the PR title becomes the commit on `main`. Reference the issue in the body: `Closes #n` when the pull request fixes an issue in this repository, `Refs #n` for partial work and for a reproduction of an upstream issue, whose tracking issue stays open until the fix lands on twbs/bootstrap main.
 - Don't apply the `good first issue` label.
 
 ## Upstream issue tracking
