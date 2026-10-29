@@ -1,0 +1,10 @@
+// `$enable-rounded: false`: Bootstrap stops emitting the `border-radius`
+// declarations of its components and forms. The `--radius-*` tokens and the
+// `.rounded-*` utilities stay, so what still looks rounded either reads a
+// token directly or hard-codes its radius: the checkbox (#4) and the
+// datepicker's day buttons (#174). Radios, switches and spinners stay round
+// on purpose.
+
+@use "bootstrap/scss/bootstrap" with (
+  $enable-rounded: false
+);
