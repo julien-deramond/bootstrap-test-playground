@@ -17,6 +17,7 @@ export default [
       '/kitchen-sink/forms-combobox.html',
       '/kitchen-sink/forms-field.html',
       '/issues/pg-2/',
+      '/issues/pg-156/',
       '/issues/pg-6/',
       '/issues/pg-209/',
       '/issues/pg-261/',
