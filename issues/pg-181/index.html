@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-181: Issue reproduction</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="The datepicker calendar sets color-scheme: light dark on itself, so it ignores a page made dark with color-scheme and stays white when the system is light.">
+    <meta name="playground-tags" content="datepicker, color-scheme, color modes, dark mode">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#181">
+    <meta name="playground-bootstrap" content="05331e182f29d02a684516bd804b80a53f9fdfc3">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body class="color-scheme-dark">
+    <!-- Before filing, the tracking issue needs (see CLAUDE.md, "Record a
+         potential bug"):
+         - [ ] Summary: one or two sentences, also the description above
+         - [ ] Bootstrap version: Bootstrap's main commit, shown in the header
+         - [ ] Reproduction: the steps below, and a link to this page
+         - [ ] Expected / Actual, below
+         - [ ] Root cause: file:line in twbs/bootstrap with a permalink, when known
+         - [ ] Possible fix, when known
+         And an assert.js next to this page, when "fixed" can be measured, or
+         a repro.spec.js (`new-issue -- --spec`) when it takes the keyboard or
+         the viewport: `npm run check-issues` then tells when the fix lands
+         (see "Assertions" in docs/pages.md). -->
+    <main class="container py-5">
+      <!-- data-playground-chrome: hidden by ?chrome=0, which shows the
+           markup under test alone (screenshots, embeds). -->
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-181</h1>
+        <!-- Filled from the metadata above: status, upstream and tracking
+             links, and the Bootstrap commit. -->
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <p>The same calendar is in <a href="/kitchen-sink/forms-datepicker.html">the Datepicker kitchen sink page</a>, and <a href="/pages/color-modes.html">the color modes page</a> measures it per mode.</p>
+        <ol>
+          <li>Set the system to light mode. The page is dark: <code>&lt;body&gt;</code> has <code>class="color-scheme-dark"</code>, Bootstrap's own utility, and the color mode is not set through <code>data-bs-theme</code>.</li>
+          <li>Look at the first calendar. It sits straight on the dark page. The second sits in a wrapper that only has <code>style="color-scheme: dark"</code>, which the proposed fix would also cover. The third is the control: <code>data-bs-theme="dark"</code> on its wrapper.</li>
+          <li>The Playwright spec measures each calendar's computed <code>color-scheme</code> and <code>background-color</code> with the system forced to light, and takes the second calendar with the page itself left light, so the wrapper is the only thing that makes it dark.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">The calendar inherits the color scheme of where it is rendered, so it is dark on a dark page and inside a dark wrapper.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p class="mb-0">The first two calendars are white: <code>[data-vc="calendar"]</code> sets <code>color-scheme: light dark</code>, which resets what it inherits back to the system preference. Only the control, which carries a <code>data-bs-theme</code>, is dark.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <div class="row g-4">
+          <div class="md:col-4" data-case="page">
+            <h3 class="h6" data-playground-chrome>1. Page made dark with <code>.color-scheme-dark</code> on the body</h3>
+            <div data-bs-toggle="datepicker" data-bs-inline="true"></div>
+          </div>
+          <div class="md:col-4" data-case="wrapper">
+            <h3 class="h6" data-playground-chrome>2. Wrapper made dark with <code>style="color-scheme: dark"</code></h3>
+            <div style="color-scheme: dark" data-wrapper>
+              <div data-bs-toggle="datepicker" data-bs-inline="true"></div>
+            </div>
+          </div>
+          <div class="md:col-4" data-case="control">
+            <h3 class="h6" data-playground-chrome>3. Control: <code>data-bs-theme="dark"</code> on a wrapper</h3>
+            <div data-bs-theme="dark" data-wrapper>
+              <div data-bs-toggle="datepicker" data-bs-inline="true"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Reproduction-specific JavaScript. Bootstrap is available as `window.bootstrap`.
+    </script>
+  </body>
+</html>
