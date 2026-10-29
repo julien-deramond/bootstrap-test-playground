@@ -17,13 +17,17 @@
 // `test.fail()`, so Playwright reports it when it starts passing. The suite
 // runs in each engine (`smoke`, `smoke-firefox`, `smoke-webkit`), and an
 // entry can be limited to some of them.
+import { spawnSync } from 'node:child_process'
+import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import { expect, test } from '@playwright/test'
 import { loadEnv } from 'vite'
 import { bootstrapSource } from '../../scripts/lib/bootstrap.mjs'
-import { root } from '../../scripts/lib/configs.mjs'
+import { configDir, root } from '../../scripts/lib/configs.mjs'
 import { listReproductions } from '../../scripts/lib/export-issue.mjs'
 import { readReproductionMeta } from '../../scripts/lib/repro-status.mjs'
+import { renderTemplate, writeReproduction } from '../../scripts/lib/reproduction.mjs'
 import { PAGES, PARTIALS, VARIANTS, clearEvents, events, expectEvents, first, inScope, known, knownFor, leftOut, load, tabsToControls } from './shared.js'
 
 // What a closed overlay could leave behind: open dialogs (some docs examples
@@ -762,6 +766,35 @@ test.describe('playground', () => {
     expect(posts[0].method()).toBe('POST')
     expect(fields.get('project[template]')).toBe('node')
     expect(fields.get('project[files][main.scss]')).toContain('bootstrap/scss/bootstrap')
+  })
+
+  // A reproduction made with `new-issue -- --config no-shadows` records its
+  // config in <meta name="playground-config">, so audit-tokens applies that
+  // config's known findings to it: the tokens `$enable-shadows: false` leaves
+  // unread pass without a scripts/known-tokens.mjs entry naming the page.
+  // Without the tag, the same files fail. Made in a temporary folder with
+  // new-issue's own steps, so the build and the other tests never see it.
+  test('reproduction audited as its config', async ({ browserName }) => {
+    test.skip(browserName !== 'chromium', 'No browser involved: once is enough')
+    test.setTimeout(120_000)
+
+    const folder = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'playground-audit-')), 'pg-0')
+    try {
+      writeReproduction({ sourceDir: configDir('no-shadows'), targetDir: folder, html: renderTemplate('pg-0', 'no-shadows') })
+      const audit = () => spawnSync(process.execPath, ['scripts/audit-tokens.mjs', folder], { cwd: root, encoding: 'utf8' })
+
+      const recorded = audit()
+      expect(recorded.stdout + recorded.stderr).toMatch(/✓ .*pg-0: 0 new/)
+      expect(recorded.status).toBe(0)
+
+      const page = path.join(folder, 'index.html')
+      fs.writeFileSync(page, fs.readFileSync(page, 'utf8').replace('<meta name="playground-config" content="no-shadows">', '<meta name="playground-config" content="">'))
+      const unrecorded = audit()
+      expect(unrecorded.stdout).toContain('--card-box-shadow')
+      expect(unrecorded.status).toBe(1)
+    } finally {
+      fs.rmSync(path.dirname(folder), { recursive: true, force: true })
+    }
   })
 
   // The tab order overlay (src/js/tab-order.js) numbers the tab stops in the

@@ -165,7 +165,7 @@ const repeated = duplicateIds(markup.join('\n'))
 // --- The page ---------------------------------------------------------------
 
 const link = (reference, text) => `<a href="https://github.com/twbs/bootstrap/issues/${reference}">${escapeHtml(text)}</a>`
-let html = renderTemplate(number)
+let html = renderTemplate(number, values.config)
 html = replaceOnce(html, `<title>#${number}: Issue reproduction</title>`, `<title>#${number}: ${escapeHtml(issue.title)}</title>`)
 html = replaceOnce(html, '<meta name="description" content="">', `<meta name="description" content="${escapeHtml(description)}">`)
 html = setTags(html, [...tags].join(', ') || 'components')

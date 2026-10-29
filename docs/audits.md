@@ -62,7 +62,9 @@ A token that is read but never defined silently drops its declaration. A token t
       .probe  configs/rounded/_custom.scss:14
 ```
 
-`-- --all` lists the known findings too. The audit fails on a new finding, and on a known entry that no longer matches anything, so a fix upstream gets noticed. `npm run update-bootstrap` runs it after each update, and the *Configs* workflow on every pull request. Record a new bug as an upstream issue (see [Upstream issues](../CLAUDE.md#upstream-issue-tracking)) and add it to `known-tokens.mjs` with the issue number.
+An entry can be limited to some configs with `configs: ['no-shadows']`. It then also applies to the reproductions copied from them. `npm run new-issue pg-173 -- --config no-shadows` records the config in the page as `<meta name="playground-config" content="no-shadows">`, and the audit reads it. So the tokens `$enable-shadows: false` leaves unread are known in `issues/pg-173/` too, with no entry that names it.
+
+`-- --all` lists the known findings too. `-- issues/pg-173` audits only the folders given, which is quicker on a new reproduction, but can't tell which known entries no longer match anywhere: run the whole audit before you push. The audit fails on a new finding, and on a known entry that no longer matches anything, so a fix upstream gets noticed. `npm run update-bootstrap` runs it after each update, and the *Configs* workflow on every pull request. Record a new bug as an upstream issue (see [Upstream issues](../CLAUDE.md#upstream-issue-tracking)) and add it to `known-tokens.mjs` with the issue number.
 
 The static audit can't see a token that is read but shadowed, like the hard-coded radius next to `--check-border-radius` ([#4](https://github.com/julien-deramond/bootstrap-test-playground/issues/4)). `npm run audit-tokens -- --render` checks the rendering instead. It starts a dev server, and for each of the ~630 component tokens of `configs/default`:
 

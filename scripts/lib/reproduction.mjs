@@ -31,8 +31,10 @@ export function resolveTarget(name, configName) {
 
 // The template with its placeholders filled. `42928`: an upstream issue, so
 // reported. `pg-12`: tracked here, not reported yet. Any other slug: neither,
-// until the page's metadata says otherwise.
-export function renderTemplate(name) {
+// until the page's metadata says otherwise. `configName`, the config the
+// style files are copied from, goes in <meta name="playground-config">, which
+// audit-tokens reads.
+export function renderTemplate(name, configName) {
   const isUpstream = /^\d+$/.test(name)
   const tracking = name.match(/^pg-(\d+)$/)?.[1]
   const { sha } = bootstrapSource(loadEnv('production', root, ''))
@@ -42,6 +44,7 @@ export function renderTemplate(name) {
     .replaceAll('__STATUS__', isUpstream ? 'reported' : 'unreported')
     .replaceAll('__TRACKING__', tracking ? `${TRACKING_REPO}#${tracking}` : '')
     .replaceAll('__COMMIT__', sha ?? '')
+    .replaceAll('__CONFIG__', configName)
 }
 
 // Replaces one known part of the template, and fails loudly when the template

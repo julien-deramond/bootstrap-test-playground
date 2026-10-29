@@ -1,7 +1,10 @@
 // Findings of scripts/audit-tokens.mjs that are known: tracked as an upstream
 // bug (`issue`, a tracking issue in this repository) or intended (`reason`).
 // Each entry matches one kind and either a list of tokens or a pattern, in
-// every config or only in the ones `configs` names.
+// every config or only in the ones `configs` names. A reproduction copied from
+// a config (`npm run new-issue pg-173 -- --config no-shadows`) records it in
+// its page's `<meta name="playground-config">`, so the entries of that config
+// apply to it too: don't add reproductions to `configs`.
 // Tokens are named like in the Sass source, without the `bs-` prefix.
 //
 // When an upstream fix lands, remove its tokens here: the audit fails on an
@@ -12,8 +15,8 @@ export default [
 
   { kind: 'undefined', issue: 8, tokens: ['--font-weight-base'] },
   { kind: 'undefined', issue: 9, tokens: ['--nav-link-font-weight', '--range-track-box-shadow'] },
-  { kind: 'undefined', issue: 182, configs: ['brand', 'pg-182'], tokens: ['--info-bg', '--info-fg-emphasis', '--secondary-fg'] },
-  { kind: 'undefined', issue: 187, configs: ['weights', 'pg-187'], tokens: ['--font-weight-semibold'] },
+  { kind: 'undefined', issue: 182, configs: ['brand'], tokens: ['--info-bg', '--info-fg-emphasis', '--secondary-fg'] },
+  { kind: 'undefined', issue: 187, configs: ['weights'], tokens: ['--font-weight-semibold'] },
   { kind: 'undefined', issue: 216, configs: ['partial'], tokens: ['--tooltip-arrow-height', '--tooltip-border-radius', '--tooltip-padding-x', '--tooltip-padding-y'] },
   { kind: 'undefined', configs: ['partial'], reason: '`.card-header-tabs` is a nav, and the config leaves the nav partial out', tokens: ['--nav-tabs-border-width'] },
   {
@@ -53,10 +56,10 @@ export default [
   { kind: 'unused', reason: 'color scale, for users and utilities', pattern: /^--[a-z]+-\d{3}$/ },
   { kind: 'unused', reason: 'scale step, for users and utilities', pattern: /^--(spacer|radius|z|font-size|line-height)-(n?\d+|\d*x[sl])$/ },
   { kind: 'unused', reason: 'scale step, for users and utilities', tokens: ['--box-shadow-xs', '--font-weight-light', '--font-weight-lighter'] },
-  { kind: 'unused', configs: ['utilities-custom', 'pg-193'], reason: 'the config’s `variables` list exposes each .text-shadow-* value, for users', tokens: ['--text-shadow'] },
+  { kind: 'unused', configs: ['utilities-custom'], reason: 'the config’s `variables` list exposes each .text-shadow-* value, for users', tokens: ['--text-shadow'] },
   { kind: 'unused', configs: ['partial'], reason: 'global tokens for the components the config leaves out', tokens: ['--box-shadow', '--box-shadow-xl', '--z-dialog', '--z-drawer', '--z-popover', '--z-toast', '--z-tooltip'] },
   { kind: 'unused', configs: ['reboot-only', 'utilities-only'], reason: 'root defines every global token, and the entry point leaves out the components that read them', pattern: /^--/ },
-  { kind: 'unused', configs: ['weights', 'pg-187'], reason: 'the weight the config adds to $font-weights, for users (the .fw-black utility uses the raw value)', tokens: ['--font-weight-black'] },
+  { kind: 'unused', configs: ['weights'], reason: 'the weight the config adds to $font-weights, for users (the .fw-black utility uses the raw value)', tokens: ['--font-weight-black'] },
   { kind: 'unused', reason: 'read by Bootstrap’s JavaScript (NavOverflow)', pattern: /^--breakpoint-/ },
   { kind: 'unused', reason: 'generated from the color maps and the theme API, for users', tokens: ['--bg-inherit', '--fg-inherit', '--theme-base'] },
   { kind: 'unused', reason: 'the shadcn config sets --btn-font-weight directly', tokens: ['--btn-input-font-weight'] },
@@ -70,7 +73,7 @@ export default [
   },
   {
     kind: 'unused',
-    configs: ['no-rounded', 'pg-174'],
+    configs: ['no-rounded'],
     reason: '$enable-rounded: false removes the border-radius declarations, not their tokens',
     pattern: /-radius$/
   },

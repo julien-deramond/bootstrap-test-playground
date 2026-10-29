@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Audits the `--bs-*` custom properties of every config's compiled CSS: the
 // working copy, configs/<name>/ and issues/<name>/, each with its tokens.css.
-// Usage: npm run audit-tokens [-- --all | --render]
+// Usage: npm run audit-tokens [-- [--all] [<folder>…]]
+//        npm run audit-tokens -- --render
 //
 // Four kinds of findings, each with the Sass file and line that causes it:
 //   - undefined: read without a fallback and never defined, so the whole
@@ -15,6 +16,8 @@
 // Known findings are listed in scripts/known-tokens.mjs. The report only shows
 // the others, or all of them with --all. Exits non-zero when there is a new
 // finding or when a known one no longer happens anywhere.
+// Folders as arguments (`-- issues/pg-173`) audit only those, without the
+// check for known entries that no longer happen, which needs every folder.
 // Tokens are named like in the Sass source, without the `bs-` prefix.
 //
 // --render checks what the static audit can't: that overriding each component
@@ -39,6 +42,13 @@ for (const entry of known) {
 }
 
 const showAll = process.argv.includes('--all')
+const targets = process.argv.slice(2).filter(argument => !argument.startsWith('--')).map(argument => path.resolve(argument))
+const folders = targets.length ? targets : styleFolders()
+for (const folder of targets) {
+  if (!fs.existsSync(path.join(folder, 'main.scss'))) {
+    throw new Error(`${path.relative(root, folder)} has no main.scss: pass a config's folder, like configs/no-shadows or issues/pg-173`)
+  }
+}
 const bootstrap = bootstrapSource(loadEnv('production', root, ''))
 const bootstrapDir = bootstrap.dir ?? path.join(root, 'node_modules/bootstrap')
 const quiet = { warn() {}, debug() {} }
@@ -75,7 +85,7 @@ function where(node) {
 // Token maps are written out by one mixin, so a definition's source map points
 // to `mixins/_tokens.scss`. Point to the map entry (`--chip-bg: …,`) instead.
 const declarations = new Map()
-const configFiles = styleFolders().flatMap(dir => fs.readdirSync(dir, { withFileTypes: true, recursive: true })
+const configFiles = folders.flatMap(dir => fs.readdirSync(dir, { withFileTypes: true, recursive: true })
   .filter(entry => entry.isFile() && /\.(scss|css)$/.test(entry.name))
   .map(entry => path.join(entry.parentPath, entry.name)))
 for (const file of [...bootstrapScssFiles(bootstrapDir), ...configFiles]) {
@@ -154,9 +164,23 @@ function analyze(roots, unprefix) {
   return { findings: findings.sort((a, b) => a.token.localeCompare(b.token)), defined, reads }
 }
 
-// `configs` limits an entry to some folders, by name: `no-transitions`.
-const matches = (entry, finding, folder) => entry.kind === finding.kind &&
-  (!entry.configs || entry.configs.includes(path.basename(folder))) &&
+// The config a reproduction's style files were copied from, which new-issue
+// and import-issue record in its page: `<meta name="playground-config"
+// content="no-shadows">`. Empty for configs/<name>/, the working copy and a
+// reproduction without the tag.
+function sourceConfig(folder) {
+  const page = path.join(folder, 'index.html')
+  const tag = fs.existsSync(page) ? fs.readFileSync(page, 'utf8').match(/<meta name="playground-config"[^>]*>/)?.[0] : undefined
+  return tag?.match(/\scontent="([^"]*)"/)?.[1].trim() ?? ''
+}
+
+// `configs` limits an entry to some folders, by name: `no-transitions`. A
+// reproduction answers to its own name and to the config it was copied from
+// (`new-issue pg-173 -- --config no-shadows`), so the entries of that config
+// apply to it without naming it.
+const namesOf = folder => [path.basename(folder), sourceConfig(folder)].filter(Boolean)
+const matches = (entry, finding, names) => entry.kind === finding.kind &&
+  (!entry.configs || entry.configs.some(name => names.includes(name))) &&
   (entry.tokens?.includes(finding.token) || entry.pattern?.test(finding.token))
 
 async function audit(folder) {
@@ -197,10 +221,11 @@ if (process.argv.includes('--render')) {
 const used = new Set()
 let problems = 0
 
-for (const folder of styleFolders()) {
+for (const folder of folders) {
   const name = path.relative(root, folder)
   const { findings } = await audit(folder)
-  const entryOf = finding => known.find(entry => matches(entry, finding, folder))
+  const names = namesOf(folder)
+  const entryOf = finding => known.find(entry => matches(entry, finding, names))
   for (const finding of findings) {
     const entry = entryOf(finding)
     if (entry) {
@@ -225,7 +250,7 @@ for (const folder of styleFolders()) {
   }
 }
 
-const stale = known.filter(entry => !used.has(entry))
+const stale = targets.length ? [] : known.filter(entry => !used.has(entry))
 for (const entry of stale) {
   console.log(`\n✗ Known entry no longer found anywhere, remove it from scripts/known-tokens.mjs: ${entry.kind} ${entry.tokens?.join(', ') ?? entry.pattern}${entry.issue ? ` (#${entry.issue})` : ''}`)
   if (entry.issue) {
