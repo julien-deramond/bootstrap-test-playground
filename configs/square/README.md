@@ -19,5 +19,5 @@ Category: shape
 ## Known gaps
 
 - [#176](https://github.com/julien-deramond/bootstrap-test-playground/issues/176): `$root-tokens: (--radius-pill: 0)` is overwritten, so `tokens.css` sets it at runtime.
-- [#177](https://github.com/julien-deramond/bootstrap-test-playground/issues/177): nav pills keep `3rem` and ranges `1rem`.
+- [#177](https://github.com/julien-deramond/bootstrap-test-playground/issues/177): nav pills keep `3rem` and ranges `1rem`. [Reproduction](../../issues/pg-177/).
 - [#4](https://github.com/julien-deramond/bootstrap-test-playground/issues/4): the checkbox keeps its hard-coded `33%`.
