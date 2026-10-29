@@ -1,0 +1,9 @@
+// `$enable-reduced-motion: false`: Bootstrap stops wrapping its transitions in
+// `@media (prefers-reduced-motion: no-preference)` and drops the
+// `prefers-reduced-motion: reduce` rules that stop or slow its animations.
+// Motion then ignores the reader's setting. `npm run audit-motion` checks that
+// no `prefers-reduced-motion` query survives.
+
+@use "bootstrap/scss/bootstrap" with (
+  $enable-reduced-motion: false
+);
