@@ -1,0 +1,14 @@
+// Weights: `$font-weights` with three values no component hard-codes, 450, 550
+// and 650, and no `null`, so every `--font-weight-*` token still exists. A
+// component that reads a token follows the map. One that hard-codes 400, 500 or
+// 600 doesn't.
+
+@use "bootstrap/scss/bootstrap" with (
+  $font-weights: (
+    normal: 450,
+    medium: 550,
+    semibold: 650,
+  ),
+);
+
+@use "custom";
