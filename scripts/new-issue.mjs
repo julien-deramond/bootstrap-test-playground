@@ -57,7 +57,7 @@ if (values.from) {
   example.url = `/kitchen-sink/${page}.html#${id}`
 }
 
-let html = renderTemplate(name)
+let html = renderTemplate(name, configName)
 if (example) {
   html = fromExample(html, example)
 }
