@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-186: Stepper, datepicker, OTP input and prose hard-code font weights</title>
+    <meta name="description" content="Stepper, datepicker, OTP input and prose hard-code font weights of 400, 500 and 600 instead of reading the --font-weight-* tokens.">
+    <meta name="playground-tags" content="typography, stepper, datepicker, otp-input, prose">
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#186">
+    <meta name="playground-bootstrap" content="05331e182f29d02a684516bd804b80a53f9fdfc3">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-186: hard-coded font weights</h1>
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Compile Bootstrap with <code>$font-weights: (normal: 450, medium: 550, semibold: 650)</code>, as this reproduction's <code>main.scss</code> does. Unlike the <code>weights</code> config, it removes no weight, so <code>--font-weight-semibold</code> still exists.</li>
+          <li>Look at the stepper numbers, the inline datepicker, the OTP input slots and the prose headings and <code>dt</code>, copied below from the <a href="/kitchen-sink/components-stepper.html#basic">stepper</a>, <a href="/kitchen-sink/forms-datepicker.html#inline-mode">datepicker</a> and <a href="/kitchen-sink/forms-otp-input.html#how-it-works">OTP input</a> docs examples.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">Each one reads the token that matches its weight: <code>normal</code> (450), <code>medium</code> (550) or <code>semibold</code> (650).</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p>They keep <code>400</code>, <code>500</code> and <code>600</code>, whatever <code>$font-weights</code> says.</p>
+              <p class="mb-0">Measured here: <code id="measured">…</code></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <div data-playground-repro>
+          <ol class="stepper">
+            <li class="stepper-item active">Create account</li>
+            <li class="stepper-item active">Confirm email</li>
+            <li class="stepper-item">Finish</li>
+          </ol>
+
+          <div class="my-4" data-bs-toggle="datepicker" data-bs-inline="true"></div>
+
+          <div class="otp my-4" data-bs-otp>
+            <input type="text" class="otp-input" maxlength="6" aria-label="Verification code" value="123">
+          </div>
+
+          <div class="prose">
+            <h2>A heading with <code>code</code></h2>
+            <dl>
+              <dt>Term</dt>
+              <dd>Description</dd>
+            </dl>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      import { assert } from './assert.js'
+
+      assert().then(({ details }) => {
+        document.getElementById('measured').textContent = details
+      })
+    </script>
+  </body>
+</html>
