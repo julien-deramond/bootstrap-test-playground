@@ -18,4 +18,4 @@ Category: typography
 ## Known gaps
 
 - [#186](https://github.com/julien-deramond/bootstrap-test-playground/issues/186): the stepper, datepicker, OTP input and prose hard-code `400`, `500` and `600`.
-- [#187](https://github.com/julien-deramond/bootstrap-test-playground/issues/187): badges, alert links, selected menu items and stacked table labels read `--font-weight-semibold` without a fallback.
+- [#187](https://github.com/julien-deramond/bootstrap-test-playground/issues/187): badges, alert links, selected menu items and stacked table labels read `--font-weight-semibold` without a fallback. [Reproduction](../../issues/pg-187/).

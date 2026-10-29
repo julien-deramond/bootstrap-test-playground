@@ -1,0 +1,17 @@
+// Weights: a custom `$font-weights` map. `semibold` is removed with `null`,
+// `black` (900) is added, and `medium` moves to 550, a weight only variable
+// fonts have. Bootstrap outputs a `--font-weight-*` token and an `.fw-*`
+// utility for each entry, so `.fw-black` exists and `.fw-semibold` doesn't.
+// What still reads `--font-weight-semibold` has no weight left:
+// `npm run audit-tokens` lists it. What hard-codes a number instead of reading
+// a token keeps its weight whatever the map says.
+
+@use "bootstrap/scss/bootstrap" with (
+  $font-weights: (
+    medium: 550,
+    semibold: null,
+    black: 900,
+  ),
+);
+
+@use "custom";
