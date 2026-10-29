@@ -19,4 +19,4 @@ Category: options
 
 ## Known gaps
 
-- [#173](https://github.com/julien-deramond/bootstrap-test-playground/issues/173): toasts, the datepicker popup and switches keep their shadows.
+- [#173](https://github.com/julien-deramond/bootstrap-test-playground/issues/173): toasts, the datepicker popup and switches keep their shadows. [Reproduction](../../issues/pg-173/).
