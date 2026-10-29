@@ -240,7 +240,7 @@ npm run test:visual:engines             # the visual suite in all three
 npx playwright test --project smoke-webkit -g dialog
 ```
 
-Failures are reported per project, so an engine-only failure stands out. It's usually a browser difference that Bootstrap doesn't handle, like WebKit leaving focus behind a dialog that opens ([#158](https://github.com/julien-deramond/bootstrap-test-playground/issues/158)). It gets a tracking issue like any other bug, and its entry in `known-issues.js` takes `engines: ['webkit']` so it only applies there.
+Failures are reported per project, so an engine-only failure stands out. It's usually a browser difference that Bootstrap doesn't handle, like WebKit leaving focus behind a drawer that opens ([#158](https://github.com/julien-deramond/bootstrap-test-playground/issues/158)). It gets a tracking issue like any other bug, and its entry in `known-issues.js` takes `engines: ['webkit']` so it only applies there.
 
 Visual baselines are per engine, since fonts and native controls render differently: Chromium's in `tests/visual/screenshots/<platform>/`, the others' in `tests/visual/screenshots/<platform>/visual-firefox/` and `visual-webkit/`. The `update-baselines` label records all three, Firefox and WebKit only on the pages a pull request changes, and `update-all-baselines` on every page (see [In CI](#in-ci)).
 

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-190: Issue reproduction</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="Container max-widths follow the order and the keys of $container-max-widths instead of $breakpoints, so a renamed or added breakpoint leaves .container narrower than the viewport allows.">
+    <meta name="playground-tags" content="containers, layout, breakpoints, sass, container-max-widths">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#190">
+    <meta name="playground-bootstrap" content="0a7d4423c00e3dab021ec70570224f7d41466f4f">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container-fluid py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-190</h1>
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>This page uses the <code>breakpoints-custom</code> config: <code>md</code> is renamed <code>tablet</code> and <code>3xl</code> is added, with <code>$container-max-widths: (md: null, 2xl: null, tablet: 720px, 3xl: 1800px)</code>.</li>
+          <li>Resize the window to 800px, 1100px, then 1400px wide (or run <code>npm run check-issues</code>) and read the width of the two samples below.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">The containers widen with the viewport: 720px at 800px, 960px at 1100px, 1200px at 1400px, and the two samples have the same width.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p class="mb-0">The merged map is <code>sm, lg, xl, tablet, 3xl</code>, so the <code>tablet</code> rule (720px) comes after the <code>lg</code> and <code>xl</code> ones and wins from 768px up. <code>.container</code> stays 720px wide at 1400px while <code>.xl:container</code> is 1200px.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <div data-playground-repro>
+          <div class="container border" data-container="plain">
+            <p class="mb-0 p-2"><code>.container</code>: <span data-width></span></p>
+          </div>
+          <div class="xl:container border mt-3" data-container="xl">
+            <p class="mb-0 p-2"><code>.xl:container</code>: <span data-width></span></p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      const show = () => {
+        document.querySelectorAll('[data-container]').forEach(element => {
+          element.querySelector('[data-width]').textContent = `${Math.round(element.getBoundingClientRect().width)}px at a ${innerWidth}px viewport`
+        })
+      }
+      show()
+      addEventListener('resize', show)
+    </script>
+  </body>
+</html>

@@ -16,12 +16,8 @@
 export default [
   { scenario: 'datepicker', issue: 155 },
   { scenario: 'combobox', issue: 156 },
-  { scenario: 'dialog', engines: ['webkit'], issue: 158 },
 
   { walkthrough: 'combobox', step: 'Escape on the toggle closes the list', issue: 156 },
-  { walkthrough: 'dialog', step: 'Enter opens the dialog and moves focus into it', engines: ['webkit'], issue: 158 },
-  { walkthrough: 'dialog', step: 'Space opens the dialog and moves focus into it', engines: ['webkit'], issue: 158 },
-  { walkthrough: 'dialog', step: 'Enter opens a non-modal dialog and moves focus into it', engines: ['webkit'], issue: 158 },
   { walkthrough: 'drawer', step: 'Enter opens the drawer and moves focus into it', engines: ['webkit'], issue: 158 },
   { walkthrough: 'drawer', step: 'Enter opens a non-modal drawer and moves focus into it', engines: ['webkit'], issue: 158 },
   { walkthrough: 'tab', step: 'The forward arrow selects the next tab', dirs: ['rtl'], issue: 325 },
