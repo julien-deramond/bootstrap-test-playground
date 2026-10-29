@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-191: Responsive placement ignores custom breakpoints</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="Tooltip, popover and menu responsive placement only knows the default breakpoints: tablet: and 3xl: are ignored, md: still applies.">
+    <meta name="playground-tags" content="tooltip, popover, menu, breakpoints, placement">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#191">
+    <meta name="playground-bootstrap" content="0a7d4423c00e3dab021ec70570224f7d41466f4f">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <!-- Before filing, the tracking issue needs (see CLAUDE.md, "Record a
+         potential bug"):
+         - [ ] Summary: one or two sentences, also the description above
+         - [ ] Bootstrap version: Bootstrap's main commit, shown in the header
+         - [ ] Reproduction: the steps below, and a link to this page
+         - [ ] Expected / Actual, below
+         - [ ] Root cause: file:line in twbs/bootstrap with a permalink, when known
+         - [ ] Possible fix, when known
+         And an assert.js next to this page, when "fixed" can be measured, or
+         a repro.spec.js (`new-issue -- --spec`) when it takes the keyboard or
+         the viewport: `npm run check-issues` then tells when the fix lands
+         (see "Assertions" in docs/pages.md). -->
+    <main class="container py-5">
+      <!-- data-playground-chrome: hidden by ?chrome=0, which shows the
+           markup under test alone (screenshots, embeds). -->
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Responsive placement ignores custom <code>$breakpoints</code></h1>
+        <!-- Filled from the metadata above: status, upstream and tracking
+             links, and the Bootstrap commit. -->
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Open this page at 1400px wide. This page uses the <code>breakpoints-custom</code> config: <code>md</code> is renamed <code>tablet</code> (768px), <code>2xl</code> is removed and <code>3xl</code> is 1920px.</li>
+          <li>Show each tooltip, popover and menu. The placement of every one starts at <code>top</code> (<code>bottom</code> for menus) and has a single responsive prefix: <code>tablet:</code>, <code>md:</code> or <code>3xl:</code>.</li>
+          <li>Read the placement Bootstrap applies (<code>data-bs-placement</code> on the tooltip, the popover and the menu), then widen the window to 1920px and read it again.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="tablet:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">The prefixes are the breakpoints of the compiled CSS. At 1400px the <code>tablet:</code> case is placed to the right, while <code>md:</code> (no longer a breakpoint) and <code>3xl:</code> stay on top. At 1920px the <code>3xl:</code> case is placed to the right too.</p>
+            </div>
+          </div>
+          <div class="tablet:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p class="mb-0">Only <code>sm</code>, <code>md</code>, <code>lg</code>, <code>xl</code> and <code>2xl</code> at their default widths are recognized. <code>md:</code> is placed to the right from 768px, while <code>tablet:</code> and <code>3xl:</code> are ignored.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+      <div class="my-5 py-5 d-flex flex-wrap justify-content-center gap-5" data-component="tooltip">
+            <button type="button" class="btn-solid theme-secondary" data-case="tablet" data-bs-toggle="tooltip" data-bs-trigger="manual" data-bs-placement="top tablet:right" data-bs-title="Tooltip top tablet:right">top tablet:right</button>
+            <button type="button" class="btn-solid theme-secondary" data-case="md" data-bs-toggle="tooltip" data-bs-trigger="manual" data-bs-placement="top md:right" data-bs-title="Tooltip top md:right">top md:right</button>
+            <button type="button" class="btn-solid theme-secondary" data-case="3xl" data-bs-toggle="tooltip" data-bs-trigger="manual" data-bs-placement="top 3xl:right" data-bs-title="Tooltip top 3xl:right">top 3xl:right</button>
+      </div>
+      <div class="my-5 py-5 d-flex flex-wrap justify-content-center gap-5" data-component="popover">
+            <button type="button" class="btn-solid theme-secondary" data-case="tablet" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top tablet:right" data-bs-title="Popover" data-bs-content="Popover top tablet:right">top tablet:right</button>
+            <button type="button" class="btn-solid theme-secondary" data-case="md" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top md:right" data-bs-title="Popover" data-bs-content="Popover top md:right">top md:right</button>
+            <button type="button" class="btn-solid theme-secondary" data-case="3xl" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top 3xl:right" data-bs-title="Popover" data-bs-content="Popover top 3xl:right">top 3xl:right</button>
+      </div>
+      <div class="my-5 py-5 d-flex flex-wrap justify-content-center gap-5" data-component="menu">
+            <div>
+              <button type="button" class="btn-solid theme-secondary" data-case="tablet" data-bs-toggle="menu" data-bs-placement="bottom tablet:right" aria-expanded="false">bottom tablet:right</button>
+              <div class="menu">
+                <a class="menu-item" href="#">Action</a>
+                <a class="menu-item" href="#">Another action</a>
+              </div>
+            </div>
+            <div>
+              <button type="button" class="btn-solid theme-secondary" data-case="md" data-bs-toggle="menu" data-bs-placement="bottom md:right" aria-expanded="false">bottom md:right</button>
+              <div class="menu">
+                <a class="menu-item" href="#">Action</a>
+                <a class="menu-item" href="#">Another action</a>
+              </div>
+            </div>
+            <div>
+              <button type="button" class="btn-solid theme-secondary" data-case="3xl" data-bs-toggle="menu" data-bs-placement="bottom 3xl:right" aria-expanded="false">bottom 3xl:right</button>
+              <div class="menu">
+                <a class="menu-item" href="#">Action</a>
+                <a class="menu-item" href="#">Another action</a>
+              </div>
+            </div>
+      </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Triggers are manual: the spec shows each one and reads its placement.
+      for (const element of document.querySelectorAll('[data-bs-toggle="tooltip"]')) {
+        window.bootstrap.Tooltip.getOrCreateInstance(element)
+      }
+
+      for (const element of document.querySelectorAll('[data-bs-toggle="popover"]')) {
+        window.bootstrap.Popover.getOrCreateInstance(element)
+      }
+    </script>
+  </body>
+</html>
