@@ -70,7 +70,7 @@ export default [
   },
   {
     kind: 'unused',
-    configs: ['no-rounded'],
+    configs: ['no-rounded', 'pg-174'],
     reason: '$enable-rounded: false removes the border-radius declarations, not their tokens',
     pattern: /-radius$/
   },
