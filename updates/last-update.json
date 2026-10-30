@@ -1,27 +1,19 @@
 {
-  "date": "2026-10-29T11:40:47.085Z",
-  "from": "05331e182f29d02a684516bd804b80a53f9fdfc3",
-  "to": "0cc905752787140cca5c94a72e2e21362b5b1a78",
+  "date": "2026-10-30T11:43:11.562Z",
+  "from": "0cc905752787140cca5c94a72e2e21362b5b1a78",
+  "to": "2f63a737635d9c8daea42bb5509f4fe81c0e6789",
   "commits": [
     {
-      "sha": "8e2c4e5d3b660e9b390051c1da33de51549949c4",
-      "subject": "Docs: redirect the old borders utilities URL to the border page (#43220)"
+      "sha": "6f754cb2d69936d68935db9cb400c8a6c7633543",
+      "subject": "Docs: explain how to reach Bootstrap's Sass variables and mixins with `@use` (#43235)"
     },
     {
-      "sha": "7e468ee4929fc0beea25b22bfc901565e4b0cc21",
-      "subject": "Docs: improve prose paragraph wrapping (#43209)"
+      "sha": "c967e2cbe9c30d51348fe8d42d34b84c3e7f555c",
+      "subject": "Bump @twbs/bui to 0.1.8 (#43238)"
     },
     {
-      "sha": "18ae69b0f27e84531b35704a664d8a0f455293f5",
-      "subject": "Read the indeterminate and checked indicator tokens in the check and switch (#43221)"
-    },
-    {
-      "sha": "dc620a00a5db5e6711cd1b9cb1a5c5c7b2787775",
-      "subject": "Read the tabs radius and card subtitle color tokens (#43222)"
-    },
-    {
-      "sha": "0cc905752787140cca5c94a72e2e21362b5b1a78",
-      "subject": "Remove table, form text and navbar toggler tokens that no rule reads (#43223)"
+      "sha": "2f63a737635d9c8daea42bb5509f4fe81c0e6789",
+      "subject": "Update re2js through an npm override (#43243)"
     }
   ],
   "rendering": true,
