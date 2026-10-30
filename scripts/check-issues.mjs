@@ -4,7 +4,7 @@
 // issues/<name>/assert.js, a module the page can load:
 //
 //   export async function assert() { …; return { pass, details } }
-//   export const environment = { forcedColors: 'active', viewport: { width, height }, colorScheme: 'dark' }  // optional
+//   export const environment = { forcedColors: 'active', viewport: { width, height }, colorScheme: 'dark', reducedMotion: 'reduce' }  // optional
 //
 // `assert()` runs in the page once Bootstrap is on `window.bootstrap`, with
 // the page's own markup, and returns `pass: true` when the bug is gone, `false`
@@ -117,8 +117,8 @@ async function runAssertions() {
           await page.setViewportSize(environment.viewport)
         }
 
-        if (environment?.forcedColors || environment?.colorScheme) {
-          await page.emulateMedia({ forcedColors: environment.forcedColors, colorScheme: environment.colorScheme })
+        if (environment?.forcedColors || environment?.colorScheme || environment?.reducedMotion) {
+          await page.emulateMedia({ forcedColors: environment.forcedColors, colorScheme: environment.colorScheme, reducedMotion: environment.reducedMotion })
         }
 
         const outcome = await page.evaluate(async url => {
