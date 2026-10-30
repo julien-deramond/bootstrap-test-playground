@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-136: avatar stack overlap in RTL</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="Avatar: .avatar-stack overlaps its avatars with a physical margin-left, so in RTL one pair does not overlap and the first avatar overflows the start of the stack.">
+    <meta name="playground-tags" content="avatar, avatar-stack, rtl">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#136">
+    <meta name="playground-bootstrap" content="2f63a737635d9c8daea42bb5509f4fe81c0e6789">
+    <!-- The config the style files next to this page were copied from
+         (`new-issue -- --config`). The entries of scripts/known-tokens.mjs
+         limited to that config apply to this page too. -->
+    <meta name="playground-config" content="default">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <!-- Before filing, the tracking issue needs (see CLAUDE.md, "Record a
+         potential bug"):
+         - [ ] Summary: one or two sentences, also the description above
+         - [ ] Bootstrap version: Bootstrap's main commit, shown in the header
+         - [ ] Reproduction: the steps below, and a link to this page
+         - [ ] Expected / Actual, below
+         - [ ] Root cause: file:line in twbs/bootstrap with a permalink, when known
+         - [ ] Possible fix, when known
+         And an assert.js next to this page, when "fixed" can be measured, or
+         a repro.spec.js (`new-issue -- --spec`) when it takes the keyboard or
+         the viewport: `npm run check-issues` then tells when the fix lands
+         (see "Assertions" in docs/pages.md). -->
+    <main class="container py-5">
+      <!-- data-playground-chrome: hidden by ?chrome=0, which shows the
+           markup under test alone (screenshots, embeds). -->
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-136: avatar stack overlap in RTL</h1>
+        <!-- Filled from the metadata above: status, upstream and tracking
+             links, and the Bootstrap commit. -->
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Render an <code>.avatar-stack</code> of four avatars once in <code>dir="ltr"</code> and once in <code>dir="rtl"</code> (below), in a container that is exactly as wide as the stack.</li>
+          <li>Compare the gap between each pair of neighbors, and the stack's edges with the container's. This is the pattern of the <a href="/kitchen-sink/components-avatar.html?dir=rtl#avatar-stack">avatar stack examples</a>.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">The RTL stack is the mirror image of the LTR one: every avatar overlaps its neighbor by the same amount (<code>--bs-avatar-size * --bs-avatar-stack-spacing</code>) and the first and last avatars sit flush with the stack's edges.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p>In RTL the negative <code>margin-left</code> lands on the other side: the pair at one end does not overlap, and the first avatar's margin pulls it out of the container at the start edge.</p>
+              <p class="mb-0">Measured here: <code id="measured">…</code></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <!-- Paste the markup under test here. data-playground-repro shows it in
+             light and dark side by side: the dark copy is a clone, with `-dark`
+             added to its ids, the references to them and its radio and
+             <details> names. The
+             clone exists before this page's own scripts run, so they can set
+             up both with querySelectorAll('[data-playground-repro]'). Remove
+             the attribute when the markup needs the whole page (a fixed navbar,
+             a page-level theme). -->
+        <div data-playground-repro>
+          <div class="row g-5 py-4">
+            <div class="col-6" dir="ltr">
+              <p class="small fg-2">LTR</p>
+              <div class="d-inline-block" style="outline: 1px dashed var(--bs-border-color, currentColor)" data-box>
+                <div class="avatar-stack">
+                  <span class="avatar">AB</span>
+                  <span class="avatar theme-primary">CD</span>
+                  <span class="avatar theme-success">EF</span>
+                  <span class="avatar theme-danger">GH</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-6" dir="rtl">
+              <p class="small fg-2">RTL</p>
+              <div class="d-inline-block" style="outline: 1px dashed var(--bs-border-color, currentColor)" data-box>
+                <div class="avatar-stack">
+                  <span class="avatar">AB</span>
+                  <span class="avatar theme-primary">CD</span>
+                  <span class="avatar theme-success">EF</span>
+                  <span class="avatar theme-danger">GH</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Shows the verdict of assert.js on the page.
+      import('./assert.js').then(async ({ assert }) => {
+        const { details } = await assert()
+        document.getElementById('measured').textContent = details
+      })
+    </script>
+  </body>
+</html>
