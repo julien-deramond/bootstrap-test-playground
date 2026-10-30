@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-138: Issue reproduction</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="In RTL, the floated label of a floating label field sits 27px to 31px from the inline start instead of lining up with the input text, because it scales from the left corner.">
+    <meta name="playground-tags" content="forms, floating labels, rtl, direction">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#138">
+    <meta name="playground-bootstrap" content="2f63a737635d9c8daea42bb5509f4fe81c0e6789">
+    <!-- The config the style files next to this page were copied from
+         (`new-issue -- --config`). The entries of scripts/known-tokens.mjs
+         limited to that config apply to this page too. -->
+    <meta name="playground-config" content="default">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <!-- Before filing, the tracking issue needs (see CLAUDE.md, "Record a
+         potential bug"):
+         - [ ] Summary: one or two sentences, also the description above
+         - [ ] Bootstrap version: Bootstrap's main commit, shown in the header
+         - [ ] Reproduction: the steps below, and a link to this page
+         - [ ] Expected / Actual, below
+         - [ ] Root cause: file:line in twbs/bootstrap with a permalink, when known
+         - [ ] Possible fix, when known
+         And an assert.js next to this page, when "fixed" can be measured, or
+         a repro.spec.js (`new-issue -- --spec`) when it takes the keyboard or
+         the viewport: `npm run check-issues` then tells when the fix lands
+         (see "Assertions" in docs/pages.md). -->
+    <main class="container py-5">
+      <!-- data-playground-chrome: hidden by ?chrome=0, which shows the
+           markup under test alone (screenshots, embeds). -->
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-138</h1>
+        <!-- Filled from the metadata above: status, upstream and tracking
+             links, and the Bootstrap commit. -->
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Open this page: each field below holds a value, so its label is already floated. The first block is <code>dir="ltr"</code>, the second <code>dir="rtl"</code>.</li>
+          <li>Compare where the floated label starts with where the text of the input starts, from the inline start edge of the field.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <!-- A sentence, and when it helps a screenshot next to this page
+                   (<img src="./expected.png" alt="…">) or markup that renders
+                   the expected result. -->
+              <p class="mb-0">In RTL the floated label lines up with the start of the input text, within 1px, as it does in LTR (16px from the inline start).</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p class="mb-0">In RTL the floated label starts 35px to 38px from the inline start in Chromium (16px expected): <code>transform-origin: 0 0</code> and <code>translateX(.15rem)</code> are physical, so scaling pulls the label toward the left corner and the nudge goes the wrong way.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <!-- Paste the markup under test here. data-playground-repro shows it in
+             light and dark side by side: the dark copy is a clone, with `-dark`
+             added to its ids, the references to them and its radio and
+             <details> names. The
+             clone exists before this page's own scripts run, so they can set
+             up both with querySelectorAll('[data-playground-repro]'). Remove
+             the attribute when the markup needs the whole page (a fixed navbar,
+             a page-level theme). -->
+        <div data-playground-repro>
+          <div class="vstack gap-4">
+            <div dir="ltr" data-direction="ltr" class="vstack gap-3">
+              <div class="form-floating">
+                <label for="floating-ltr-email">Email address (LTR)</label>
+                <input type="email" class="form-control" id="floating-ltr-email" placeholder="name@example.com" value="name@example.com">
+              </div>
+              <div class="form-floating">
+                <label for="floating-ltr-comments">Comments (LTR)</label>
+                <textarea class="form-control" id="floating-ltr-comments" placeholder="Leave a comment here">Some text</textarea>
+              </div>
+            </div>
+            <div dir="rtl" data-direction="rtl" class="vstack gap-3">
+              <div class="form-floating">
+                <label for="floating-rtl-email">Email address (RTL)</label>
+                <input type="email" class="form-control" id="floating-rtl-email" placeholder="name@example.com" value="name@example.com">
+              </div>
+              <div class="form-floating">
+                <label for="floating-rtl-comments">Comments (RTL)</label>
+                <textarea class="form-control" id="floating-rtl-comments" placeholder="Leave a comment here">Some text</textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Reproduction-specific JavaScript. Bootstrap is available as `window.bootstrap`.
+    </script>
+  </body>
+</html>
