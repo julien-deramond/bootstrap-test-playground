@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-328: Link toggles with role="button" ignore Space</title>
+    <meta name="description" content="Collapse, menu and drawer toggles written as links with role=&quot;button&quot; do nothing on Space and let the page scroll, while a button toggle opens.">
+    <meta name="playground-tags" content="collapse, menu, drawer, a11y, keyboard">
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#328">
+    <meta name="playground-bootstrap" content="2f63a737635d9c8daea42bb5509f4fe81c0e6789">
+    <meta name="playground-config" content="default">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-328: link toggles and Space</h1>
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Start from the <a href="/kitchen-sink/components-collapse.html#example">Collapse</a>, <a href="/kitchen-sink/components-menu.html#examples">Menu</a> and <a href="/kitchen-sink/components-drawer.html#live-demo">Drawer</a> docs examples, copied below.</li>
+          <li>Focus a link toggle (<code>&lt;a role="button"&gt;</code>) with <kbd>Tab</kbd>.</li>
+          <li>Press <kbd>Space</kbd>. Then do the same on the <code>&lt;button&gt;</code> toggle next to it, which works.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">Space toggles a link with <code>role="button"</code>, as it does a <code>&lt;button&gt;</code>, and the page doesn't scroll (WAI-ARIA button pattern).</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p class="mb-0">Nothing toggles, <code>aria-expanded</code> stays <code>false</code> (the drawer stays closed) and the page scrolls. The data APIs only listen to <code>click</code>, which a link fires on <kbd>Enter</kbd> but not on <kbd>Space</kbd>.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <div data-playground-repro>
+          <h3 class="h6" data-playground-chrome>Collapse</h3>
+          <p class="d-inline-flex gap-1">
+            <a id="collapseLink" class="btn-solid theme-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+              Link with href
+            </a>
+            <button id="collapseButton" class="btn-solid theme-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+              Button with data-bs-target
+            </button>
+          </p>
+          <div class="collapse" id="collapseExample">
+            <div class="card card-body">
+              Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+            </div>
+          </div>
+
+          <h3 class="h6 mt-4" data-playground-chrome>Menu</h3>
+          <div class="d-flex flex-wrap gap-2">
+            <div>
+              <a id="menuLink" class="btn-solid theme-primary" href="#" role="button" data-bs-toggle="menu" aria-expanded="false">
+                Toggle menu
+              </a>
+              <div class="menu">
+                <a class="menu-item" href="#">Menu item 1</a>
+                <a class="menu-item" href="#">Menu item 2</a>
+                <a class="menu-item" href="#">Menu item 3</a>
+              </div>
+            </div>
+            <div>
+              <button id="menuButton" class="btn-solid theme-primary" type="button" data-bs-toggle="menu" aria-expanded="false">
+                Toggle menu
+              </button>
+              <div class="menu">
+                <a class="menu-item" href="#">Menu item 1</a>
+                <a class="menu-item" href="#">Menu item 2</a>
+                <a class="menu-item" href="#">Menu item 3</a>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="h6 mt-4" data-playground-chrome>Drawer</h3>
+          <a id="drawerLink" class="btn-solid theme-primary" data-bs-toggle="drawer" href="#drawerExample" role="button" aria-controls="drawerExample">
+            Link with href
+          </a>
+          <button id="drawerButton" class="btn-solid theme-primary" type="button" data-bs-toggle="drawer" data-bs-target="#drawerExample" aria-controls="drawerExample">
+            Button with data-bs-target
+          </button>
+
+          <dialog class="drawer drawer-start" tabindex="-1" id="drawerExample" aria-labelledby="drawerExampleLabel">
+            <div class="drawer-header">
+              <h5 class="drawer-title" id="drawerExampleLabel">Drawer</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="drawer" aria-label="Close"></button>
+            </div>
+            <div class="drawer-body">
+              <div>
+                Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
+              </div>
+            </div>
+          </dialog>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
