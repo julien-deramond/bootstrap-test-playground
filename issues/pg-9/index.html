@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>pg-9: Nav and range read undeclared tokens</title>
-    <meta name="description" content="Nav and range: --nav-link-font-weight and --range-track-box-shadow are read without a fallback but never declared.">
-    <meta name="playground-tags" content="components, forms">
+    <title>pg-9: The range track reads an undeclared shadow token</title>
+    <meta name="description" content="Range: --range-track-box-shadow is read without a fallback but never declared, so the track has no shadow.">
+    <meta name="playground-tags" content="forms">
     <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#9">
     <meta name="playground-bootstrap" content="0632eaa44acd9c8ba4a1bf70786d2930c6d1b745">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -20,28 +20,27 @@
     <main class="container py-5">
       <header class="mb-5" data-playground-chrome>
         <p class="mb-2"><a href="/">Playground</a> / Issues</p>
-        <h1>Issue pg-9: nav and range tokens</h1>
+        <h1>Issue pg-9: range track shadow</h1>
         <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
       </header>
 
       <section class="mb-5" data-playground-chrome>
         <h2 class="h5">Steps to reproduce</h2>
         <ol>
-          <li>Put a <code>.nav</code> in bold text, as below.</li>
           <li>Render a range with the defaults, where <code>$enable-shadows</code> is <code>true</code>.</li>
-          <li>Inspect the nav link's <code>font-weight</code>, and look for <code>--range-track-box-shadow</code> on the range.</li>
+          <li>Look at the track and inspect <code>--range-track-box-shadow</code> on the range.</li>
         </ol>
         <div class="row g-3">
           <div class="md:col-6">
             <div class="h-100 p-3 border rounded border-success">
               <h3 class="h6">Expected</h3>
-              <p class="mb-0">Every token a rule reads without a fallback is declared in a token map: the nav link has a weight of its own, and the range track gets its shadow. Both show up in the docs' token tables.</p>
+              <p class="mb-0">The track either gets its inset shadow back, with <code>--range-track-box-shadow</code> declared in the range token map, or nothing reads that token any more. Either way no rule reads a token that no map declares.</p>
             </div>
           </div>
           <div class="md:col-6">
             <div class="h-100 p-3 border rounded border-danger">
               <h3 class="h6">Actual</h3>
-              <p><code>.nav-link</code> reads <code>var(--nav-link-font-weight)</code> and the range track <code>var(--range-track-box-shadow)</code>, and no map declares them. The link inherits the bold weight, and the track has no shadow.</p>
+              <p>The range track reads <code>var(--range-track-box-shadow)</code> and no map declares it, so the declaration is invalid and the track has no shadow.</p>
               <p class="mb-0">Measured here: <code id="measured">…</code></p>
             </div>
           </div>
@@ -52,12 +51,6 @@
         <h2 class="h5" data-playground-chrome>Reproduction</h2>
         <div data-playground-repro>
           <div class="vstack gap-3">
-            <div class="fw-bold">
-              <ul class="nav">
-                <li class="nav-item"><a class="nav-link" href="#">Link</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Another link</a></li>
-              </ul>
-            </div>
             <div>
               <label for="range" class="form-label">Example range</label>
               <div class="form-range">
@@ -70,13 +63,16 @@
     </main>
 
     <script type="module">
+      const reads = (rules, name) => [...rules].some(rule =>
+        (rule.style ? rule.style.cssText.includes(`var(${name}`) : false) ||
+        (rule.cssRules ? reads(rule.cssRules, name) : false))
+
       const show = () => {
-        const link = getComputedStyle(document.querySelector('.nav-link'))
+        const name = '--bs-range-track-box-shadow'
         const range = getComputedStyle(document.querySelector('.form-range-input'))
-        const token = (style, name) => style.getPropertyValue(name).trim() || '(undefined)'
+        const stillRead = [...document.styleSheets].some(sheet => reads(sheet.cssRules, name))
         document.getElementById('measured').textContent =
-          `--bs-nav-link-font-weight: ${token(link, '--bs-nav-link-font-weight')}, nav link font-weight: ${link.fontWeight}; ` +
-          `--bs-range-track-box-shadow: ${token(range, '--bs-range-track-box-shadow')}`
+          `${name}: ${range.getPropertyValue(name).trim() || '(undefined)'}, still read by a rule: ${stillRead ? 'yes' : 'no'}`
       }
 
       if (document.readyState === 'complete') {
