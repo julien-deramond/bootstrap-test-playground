@@ -59,7 +59,7 @@ function createGetData(bootstrapDir) {
 const getConfig = () => ({ docs_version: 'current' })
 
 // Reads the JS expression in `code={...}`, starting right after the `{`.
-function readExpression(source, start) {
+export function readExpression(source, start) {
   const templateDepths = []
   let depth = 1
   let inTemplate = false
@@ -106,7 +106,7 @@ function readExpression(source, start) {
   throw new Error('Unterminated code={...} expression')
 }
 
-function parseAttributes(source) {
+export function parseAttributes(source) {
   const attributes = {}
   for (const [, name, quoted, expression] of source.matchAll(/([\w-]+)=(?:"([^"]*)"|\{([^}]*)\})/g)) {
     attributes[name] = quoted ?? (expression === 'false' ? false : expression)
@@ -159,7 +159,7 @@ function dedent(html) {
   return [lines[0], ...lines.slice(1).map(line => line.slice(shift))].join('\n')
 }
 
-function cleanHtml(html) {
+export function cleanHtml(html) {
   return dedent(html)
     .replace(/<Placeholder\s+([^>]*?)\/>/g, (match, attrs) => renderPlaceholder(parseAttributes(attrs)))
     .replace(/<CloseButton\s*([^>]*?)\/>/g, (match, attrs) => renderCloseButton(parseAttributes(attrs)))
@@ -227,7 +227,7 @@ function attachTargets(examples, prose, source) {
   return missing
 }
 
-function extractExamples(source, getData) {
+export function extractExamples(source, getData) {
   const examples = []
   const skipped = []
   const blank = (text, start, end) => text.slice(0, start) + text.slice(start, end).replace(/[^\n]/g, ' ') + text.slice(end)

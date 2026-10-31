@@ -5,7 +5,8 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { readPrefix } from '../../postcss.config.js'
 
-export const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
+// PLAYGROUND_ROOT points the scripts at another tree: the unit tests run them in a temp folder.
+export const root = process.env.PLAYGROUND_ROOT ? path.resolve(process.env.PLAYGROUND_ROOT) : path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 export const configsDir = path.join(root, 'configs')
 export const workingDir = path.join(root, 'src/styles')
 export const STYLE_FILES = ['main.scss', '_custom.scss', 'tokens.css']

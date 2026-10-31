@@ -242,6 +242,12 @@ npx playwright test issues/pg-7/repro.spec.js --project issues
 
 A spec whose verdict is true fails with the step to take: the fix landed upstream, so the tracking issue moves to `upstream-fixed` and the reproduction is deleted (step 3 of [Upstream issue tracking](../CLAUDE.md#upstream-issue-tracking)). The Chromium job of [`smoke.yml`](../.github/workflows/smoke.yml) runs the project on every pull request and every night, and `npm run check-issues` runs every reproduction's spec or assertion against the dev server, with each tracking issue's label and the commands of step 3. See [Assertions](pages.md#assertions).
 
+## Unit tests of the scripts
+
+`npm test` runs the unit tests of the scripts with Node's built-in test runner, no browser and no dependency: [`scripts/__tests__/`](../scripts/__tests__/). `kitchen-sink.test.mjs` covers the MDX parser behind `sync-kitchen-sink` (`readExpression`, `parseAttributes`, `cleanHtml`, `extractExamples`) with the samples in [`scripts/__fixtures__/mdx/`](../scripts/__fixtures__/mdx/). `configs.test.mjs` covers the helpers of [`scripts/lib/configs.mjs`](../scripts/lib/configs.mjs), and `scripts.test.mjs` runs `new-issue`, `save-config` and `use-config` as the CLIs they are, in a temporary copy of the minimum tree: `PLAYGROUND_ROOT` points the scripts at it, so they never touch the real `configs/`, `issues/` or `src/styles/`.
+
+`npm run check` runs `check-configs`, `check-dist`, `audit-tokens`, `lint:html` and `npm test` one after the other, keeps going after a failure and sums them up. `npm run check:full` adds `test:smoke`, `test:console` and `test:a11y`. CI runs the same steps in the Configs workflow.
+
 ## Browser engines
 
 v6 leans on features whose support differs between engines at the floors of Bootstrap's `.browserslistrc` (Chrome 130, Firefox 132, Safari 18): `light-dark()`, `color-mix()`, `oklch()`, `:has()`, `@layer`, `<dialog>`. Every suite but the [accessibility scan](#accessibility-scan) runs in each of Playwright's engines, as one project per engine: `visual`, `visual-firefox`, `visual-webkit`, `console`, `console-firefox` and so on. The unsuffixed projects are Chromium, and `npm run test:visual`, `test:console` and `test:smoke` run only those, for speed:

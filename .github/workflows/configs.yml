@@ -9,7 +9,8 @@ name: Configs
 # default CSS for new physical left/right declarations, audits its motion
 # against prefers-reduced-motion and the two motion options, audits its
 # cascade layers, and compiles every partial alone after root (Option B). Also validates the HTML of every page, and checks that the
-# configs table in configs/README.md matches the configs' READMEs.
+# configs table in configs/README.md matches the configs' READMEs. Runs the unit
+# tests of the scripts (`npm test`).
 on:
   pull_request:
   push:
@@ -60,6 +61,9 @@ jobs:
         if: ${{ !cancelled() }}
 
       - run: npm run lint:html
+        if: ${{ !cancelled() }}
+
+      - run: npm test
         if: ${{ !cancelled() }}
 
       - run: npm run configs-table -- --check

@@ -1,0 +1,7 @@
+## Theme buttons
+
+<Example class="d-flex gap-2" code={getData('theme-colors').map((color) => `<button type="button" class="btn-solid theme-${color.name}">${color.title} {braces}</button>`)} />
+
+### Second
+
+<Example code={`<div class="${['a', 'b'].map((x) => `${x}-${'}'}`).join(' ')}">nested</div>`} />
