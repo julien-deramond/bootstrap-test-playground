@@ -1,8 +1,10 @@
 // Page switcher: Ctrl+K (⌘K on macOS) on any page opens a search over every
-// page and its example headings. Like the toolbar, it renders in a shadow root
+// page and its example headings. Not from a text field of the page, which keeps
+// the key (see shortcuts.js). Like the toolbar, it renders in a shadow root
 // so it neither inherits from nor leaks into the page under test.
 import { pages, readRecent, resultUrl, search } from './page-index.js'
 import { STATUSES } from './repro-status.js'
+import { leftToPage } from './shortcuts.js'
 
 const MAX_RESULTS = 50
 
@@ -38,7 +40,7 @@ const styles = `
   input::placeholder { color: rgb(255 255 255 / .4); }
   ul { flex: 1; margin: 0; padding: 6px; overflow-y: auto; list-style: none; }
   li { margin: 0; }
-  .heading { padding: 8px 10px 4px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; opacity: .5; }
+  .heading { padding: 8px 10px 4px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; opacity: .7; }
   a {
     display: flex;
     gap: 10px;
@@ -51,8 +53,8 @@ const styles = `
   a[aria-selected="true"] { background: rgb(255 255 255 / .1); }
   .title { overflow: hidden; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
   .section { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: .75; }
-  .group { flex-shrink: 0; margin-inline-start: auto; font-size: 12px; opacity: .5; }
-  .current { font-size: 11px; opacity: .5; }
+  .group { flex-shrink: 0; margin-inline-start: auto; font-size: 12px; opacity: .7; }
+  .current { font-size: 11px; opacity: .7; }
   .status { flex-shrink: 0; padding: 0 6px; font-size: 11px; border: 1px solid currentcolor; border-radius: 999px; }
   .status-unreported { color: #f5c46b; }
   .status-reported { color: #7cc4f5; }
@@ -193,7 +195,7 @@ export function mountPalette() {
   })
 
   document.addEventListener('keydown', event => {
-    if (event.key.toLowerCase() === 'k' && (event.metaKey || event.ctrlKey) && !event.altKey && !event.shiftKey) {
+    if (event.key.toLowerCase() === 'k' && (event.metaKey || event.ctrlKey) && !event.altKey && !event.shiftKey && !leftToPage(event)) {
       event.preventDefault()
       open()
     }

@@ -12,6 +12,7 @@
 //   D  toggle direction (LTR, RTL)
 //   O  show or hide the tab order (see tab-order.js)
 // Ctrl+K (⌘K on macOS) opens the page switcher, see palette.js.
+// None of them fires while typing in a text field of the page, see shortcuts.js.
 //
 // The panel is a modal <dialog>: it traps focus, and closes on Escape and on
 // a click outside it. Its sections leave room for more axes later.
@@ -23,6 +24,7 @@
 import { groupConfigs } from './configs.js'
 import { mountPalette, paletteShortcut } from './palette.js'
 import { siblings } from './page-index.js'
+import { leftToPage } from './shortcuts.js'
 import { mountTabOrder } from './tab-order.js'
 
 const HUES = ['default', 'indigo', 'violet', 'purple', 'pink', 'red', 'orange', 'amber', 'lime', 'green', 'teal', 'cyan', 'brown', 'gray']
@@ -72,11 +74,11 @@ const styles = `
   button, input { font: inherit; color: inherit; }
   button { background: transparent; border: 0; cursor: pointer; }
   :is(button, a, input):focus-visible, label:has(> input:focus-visible) { outline: 2px solid #7aa7ff; outline-offset: 1px; }
-  kbd { font: inherit; font-size: 10px; opacity: .6; }
+  kbd { font: inherit; font-size: 10px; opacity: .75; }
   .icon { display: inline-grid; place-items: center; min-inline-size: 26px; block-size: 26px; padding: 0 6px; border-radius: 999px; }
   .icon:hover, .summary:hover, .pager a:hover { text-decoration: none; background: rgb(255 255 255 / .1); }
   .pager { display: inline-flex; }
-  .pager a { display: inline-grid; place-items: center; min-inline-size: 22px; block-size: 26px; border-radius: 999px; }
+  .pager a { display: inline-grid; place-items: center; min-inline-size: 24px; block-size: 26px; border-radius: 999px; }
   .pager [aria-disabled] { opacity: .3; pointer-events: none; }
   .summary {
     display: inline-flex;
@@ -225,9 +227,10 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
   // copies of the compare and matrix pages, nor in screenshots.
   const tabOrder = prefs.embedded ? undefined : mountTabOrder({ onChange: on => renderTabOrder(on) })
 
-  // Keyboard shortcuts work even when the toolbar is hidden or embedded.
+  // Keyboard shortcuts work even when the toolbar is hidden or embedded, but
+  // not while typing in the page (see shortcuts.js).
   document.addEventListener('keydown', event => {
-    if (!event.altKey || !event.shiftKey || event.ctrlKey || event.metaKey) {
+    if (!event.altKey || !event.shiftKey || event.ctrlKey || event.metaKey || leftToPage(event)) {
       return
     }
 
@@ -347,7 +350,7 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
         <button type="button" class="summary" aria-haspopup="dialog" aria-expanded="false" aria-controls="panel" aria-keyshortcuts="Alt+Shift+P" title="Playground settings (Alt+Shift+P)">
           ${ICONS.sliders}<span class="summary-text"></span>
         </button>
-        <button type="button" class="icon search" title="Go to another page (${paletteShortcut})" aria-label="Go to another page" aria-keyshortcuts="${paletteShortcut === '⌘K' ? 'Meta+K' : 'Control+K'}">${ICONS.search}<kbd>${paletteShortcut}</kbd></button>
+        <button type="button" class="icon search" title="Go to another page (${paletteShortcut})" aria-label="Go to another page, ${paletteShortcut}" aria-keyshortcuts="${paletteShortcut === '⌘K' ? 'Meta+K' : 'Control+K'}">${ICONS.search}<kbd>${paletteShortcut}</kbd></button>
       </div>
     </div>
     <dialog id="panel" aria-labelledby="panel-title">
