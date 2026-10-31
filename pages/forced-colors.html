@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Forced colors</title>
+    <meta name="description" content="Forced colors (Windows High Contrast): the components whose state Bootstrap draws with a color alone (checkbox, radio, switch, progress bar, active nav pill, selected chip, active list group item, placeholder, button states), each in both states, with the system colors forced colors use and the forced-color-adjust property.">
+    <meta name="playground-tags" content="components, forms, a11y">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <style>
+      .pg-forced-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem 2rem;
+        align-items: center;
+        margin-bottom: 1.25rem;
+      }
+
+      .pg-forced-name {
+        width: 10rem;
+        margin: 0;
+      }
+
+      .pg-forced-cell {
+        width: 12rem;
+      }
+
+      .pg-forced .progress,
+      .pg-forced .nav,
+      .pg-forced .list-group {
+        width: 12rem;
+      }
+
+      .pg-forced-notes {
+        flex: 1 1 16rem;
+        font-size: .875rem;
+      }
+    </style>
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Pages</p>
+        <h1>Forced colors</h1>
+        <p class="fs-lg fg-2">
+          With <code>forced-colors: active</code>, the browser replaces the page's colors with the user's system colors. A component that shows its state with a background color alone then looks the same in both states. Each row below renders one component in both states, so the two can be compared with forced colors on.
+        </p>
+        <p class="fg-2">
+          Turn forced colors on with a Windows contrast theme, or in Chromium's developer tools, Rendering, <q>Emulate CSS media feature forced-colors</q>. The visual suite captures this page and every kitchen sink example with it emulated (<code>tests/visual/forced-colors.spec.js</code>). Bootstrap has no <code>forced-colors</code> rule yet: <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/305">#305</a> tracks it, with <a href="https://github.com/twbs/bootstrap/issues/35941">twbs/bootstrap#35941</a> upstream. Its reproduction is <a href="/issues/35941/">issues/35941</a>. See <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/106">#106</a>.
+        </p>
+        <p class="fg-2 mb-0">
+          Forced colors here: <code id="forcedColorsState">…</code>. The system colors are <code>Canvas</code> (page background), <code>CanvasText</code> (text), <code>LinkText</code>, <code>ButtonFace</code> and <code>ButtonText</code> (buttons), <code>Field</code> and <code>FieldText</code> (inputs), <code>Highlight</code> and <code>HighlightText</code> (selected items) and <code>GrayText</code> (disabled text). <code>forced-color-adjust: none</code> opts an element out of the replacement, and <code>forced-color-adjust: preserve-parent-color</code> keeps its <code>color</code> inherited.
+        </p>
+      </header>
+
+      <div class="pg-forced">
+          <div class="pg-forced-row">
+            <h2 class="h6 pg-forced-name">Checkbox</h2>
+            <div class="pg-forced-cell"><input type="checkbox" class="check" aria-label="Checkbox, unchecked"></div>
+            <div class="pg-forced-cell"><input type="checkbox" class="check" checked aria-label="Checkbox, checked"></div>
+            <p class="pg-forced-notes mb-0">Checked is a filled background with a check mark image. In Chromium's emulation, checked and unchecked look the same.</p>
+            <div class="pg-forced-cell"><a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/305">#305</a></div>
+          </div>
+          <div class="pg-forced-row">
+            <h2 class="h6 pg-forced-name">Radio</h2>
+            <div class="pg-forced-cell"><input type="radio" name="forcedRadio" class="radio" aria-label="Radio, not selected"></div>
+            <div class="pg-forced-cell"><input type="radio" name="forcedRadio" class="radio" checked aria-label="Radio, selected"></div>
+            <p class="pg-forced-notes mb-0">Selected is a filled background with a dot image. In Chromium's emulation, selected and not selected look the same.</p>
+            <div class="pg-forced-cell"><a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/305">#305</a></div>
+          </div>
+          <div class="pg-forced-row">
+            <h2 class="h6 pg-forced-name">Switch</h2>
+            <div class="pg-forced-cell"><div class="switch"><input type="checkbox" role="switch" switch aria-label="Switch, off"></div></div>
+            <div class="pg-forced-cell"><div class="switch"><input type="checkbox" role="switch" switch checked aria-label="Switch, on"></div></div>
+            <p class="pg-forced-notes mb-0">On is a filled track and a thumb that moves. In Chromium's emulation, on and off look the same.</p>
+            <div class="pg-forced-cell"><a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/305">#305</a></div>
+          </div>
+          <div class="pg-forced-row">
+            <h2 class="h6 pg-forced-name">Progress bar</h2>
+            <div class="pg-forced-cell">
+              <div class="progress" role="progressbar" aria-label="Progress, empty" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar" style="width: 0%"></div></div>
+            </div>
+            <div class="pg-forced-cell">
+              <div class="progress" role="progressbar" aria-label="Progress, 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar" style="width: 60%"></div></div>
+            </div>
+            <p class="pg-forced-notes mb-0">The value is a filled bar over a track: both are backgrounds. In Chromium's emulation, neither shows.</p>
+            <div class="pg-forced-cell"><a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/305">#305</a></div>
+          </div>
+          <div class="pg-forced-row">
+            <h2 class="h6 pg-forced-name">Nav pills</h2>
+            <div class="pg-forced-cell">
+              <ul class="nav nav-pills"><li class="nav-item"><a class="nav-link" href="#">Link</a></li></ul>
+            </div>
+            <div class="pg-forced-cell">
+              <ul class="nav nav-pills"><li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Active</a></li></ul>
+            </div>
+            <p class="pg-forced-notes mb-0">The active pill is a filled background. In Chromium's emulation, both pills have the same outline.</p>
+            <div class="pg-forced-cell"><a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/305">#305</a></div>
+          </div>
+          <div class="pg-forced-row">
+            <h2 class="h6 pg-forced-name">Chip</h2>
+            <div class="pg-forced-cell"><span class="chip">Chip</span></div>
+            <div class="pg-forced-cell"><span class="chip active">Selected</span></div>
+            <p class="pg-forced-notes mb-0">Selected is a filled background. In Chromium's emulation, selected and not selected look the same.</p>
+            <div class="pg-forced-cell"><a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/305">#305</a></div>
+          </div>
+          <div class="pg-forced-row">
+            <h2 class="h6 pg-forced-name">List group</h2>
+            <div class="pg-forced-cell">
+              <ul class="list-group"><li class="list-group-item">An item</li></ul>
+            </div>
+            <div class="pg-forced-cell">
+              <ul class="list-group"><li class="list-group-item active" aria-current="true">An active item</li></ul>
+            </div>
+            <p class="pg-forced-notes mb-0">The active item is a filled background. In Chromium's emulation, active and not active look the same.</p>
+            <div class="pg-forced-cell"><a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/305">#305</a></div>
+          </div>
+          <div class="pg-forced-row">
+            <h2 class="h6 pg-forced-name">Placeholder</h2>
+            <div class="pg-forced-cell"><span class="placeholder col-6" role="img" aria-label="Loading"></span></div>
+            <div class="pg-forced-cell"><span class="d-inline-block col-6">Loaded text</span></div>
+            <p class="pg-forced-notes mb-0">The loading placeholder is a bar drawn with a background color, and nothing else. In Chromium's emulation, nothing is drawn.</p>
+            <div class="pg-forced-cell"><a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/305">#305</a></div>
+          </div>
+          <div class="pg-forced-row">
+            <h2 class="h6 pg-forced-name">Solid button</h2>
+            <div class="pg-forced-cell"><button type="button" class="btn-solid theme-primary">Button</button></div>
+            <div class="pg-forced-cell"><button type="button" class="btn-solid theme-primary active" aria-pressed="true">Pressed</button></div>
+            <p class="pg-forced-notes mb-0">Pressed is a darker background. In Chromium's emulation, pressed and not pressed look the same.</p>
+            <div class="pg-forced-cell"><a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/305">#305</a></div>
+          </div>
+          <div class="pg-forced-row">
+            <h2 class="h6 pg-forced-name">Solid button, disabled</h2>
+            <div class="pg-forced-cell"><button type="button" class="btn-solid theme-primary">Button</button></div>
+            <div class="pg-forced-cell"><button type="button" class="btn-solid theme-primary" disabled>Disabled</button></div>
+            <p class="pg-forced-notes mb-0">Disabled is a lighter background. In Chromium's emulation, only the text color (<code>GrayText</code>) tells it apart, which stays visible.</p>
+            <div class="pg-forced-cell"><a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/305">#305</a></div>
+          </div>
+          <div class="pg-forced-row">
+            <h2 class="h6 pg-forced-name">Text button</h2>
+            <div class="pg-forced-cell"><button type="button" class="btn-text theme-primary">Button</button></div>
+            <div class="pg-forced-cell"><button type="button" class="btn-text theme-primary active" aria-pressed="true">Pressed</button></div>
+            <p class="pg-forced-notes mb-0">A text button has no border: pressed is a background alone. In Chromium's emulation, both get a border and look the same.</p>
+            <div class="pg-forced-cell"><a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/305">#305</a></div>
+          </div>
+        </div>
+    </main>
+
+    <script type="module">
+      const forced = window.matchMedia('(forced-colors: active)')
+      const show = () => {
+        document.getElementById('forcedColorsState').textContent = forced.matches ? 'active' : 'off'
+      }
+      forced.addEventListener('change', show)
+      show()
+    </script>
+  </body>
+</html>
