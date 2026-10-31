@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-333: --spacer does not drive --spacer-1 to --spacer-12</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="Spacing: --spacer-1 to --spacer-12 are computed from $spacer when Sass compiles, so overriding --spacer at runtime moves only the components that read it directly.">
+    <meta name="playground-tags" content="customization, tokens, spacing, popover, alert, list group">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#333">
+    <meta name="playground-bootstrap" content="2f63a737635d9c8daea42bb5509f4fe81c0e6789">
+    <!-- The config the style files next to this page were copied from
+         (`new-issue -- --config`). The entries of scripts/known-tokens.mjs
+         limited to that config apply to this page too. -->
+    <meta name="playground-config" content="default">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <script src="/playground-prefs.js"></script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <link rel="stylesheet" href="./main.scss">
+    <link rel="stylesheet" href="./tokens.css">
+    <script type="module" src="/src/js/main.js"></script>
+    <!-- The runtime override under test, after Bootstrap's styles: 12px
+         instead of the 16px that $spacer compiled in. -->
+    <style>
+      :root {
+        --bs-spacer: .75rem;
+      }
+
+      .spacer-probe,
+      .spacer-box {
+        display: block;
+        background-color: color-mix(in srgb, currentColor 30%, transparent);
+      }
+
+      .spacer-probe {
+        width: 0;
+        height: 0;
+        overflow: hidden;
+        padding: var(--bs-spacer);
+      }
+
+      .spacer-box {
+        width: max-content;
+        min-width: 1rem;
+        min-height: 1rem;
+        margin-block-end: .5rem;
+      }
+
+      .spacer-box > span {
+        display: block;
+        width: 1rem;
+        height: 1rem;
+        background-color: currentColor;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Issues</p>
+        <h1>Issue pg-333: --spacer does not drive --spacer-1 to --spacer-12</h1>
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Compile Bootstrap with its defaults: <code>$spacer</code> is <code>1rem</code>.</li>
+          <li>After Bootstrap's stylesheet, override the token at runtime: <code>:root { --bs-spacer: .75rem; }</code>. This page does exactly that.</li>
+          <li>Read the padding of the twelve boxes below, each set to <code>var(--bs-spacer-N)</code> and never to a <code>.p-*</code> utility, then compare the popover, the alert and the list group.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">Every <code>--spacer-N</code> follows <code>--spacer</code>: with a 12px <code>--spacer</code>, step 3 is 6px (its factor, 0.5, times 12px), and every other step scales the same way. The popover, the alert and the list group shrink on both axes.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p>The twelve tokens keep the values Sass computed from the default <code>$spacer</code> (step 3 stays 8px, as <code>.5rem</code>). Only what reads <code>var(--spacer)</code> moves, so a component can follow the override on one axis and not the other.</p>
+              <p class="mb-0">Measured here: <code id="measured">…</code></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <!-- No data-playground-repro: a dark copy would repeat the same
+             measurements. This probe has padding var(--bs-spacer): its
+             computed padding is the runtime --spacer in pixels. -->
+        <div class="spacer-probe" id="spacerProbe" aria-hidden="true"></div>
+
+        <h3 class="h6" data-playground-chrome>The twelve tokens, padding: var(--bs-spacer-N)</h3>
+        <div class="hstack align-items-start flex-wrap gap-3 mb-5">
+          <div class="spacer-box" id="spacerBox1" style="padding: var(--bs-spacer-1);"><span></span></div>
+          <div class="spacer-box" id="spacerBox2" style="padding: var(--bs-spacer-2);"><span></span></div>
+          <div class="spacer-box" id="spacerBox3" style="padding: var(--bs-spacer-3);"><span></span></div>
+          <div class="spacer-box" id="spacerBox4" style="padding: var(--bs-spacer-4);"><span></span></div>
+          <div class="spacer-box" id="spacerBox5" style="padding: var(--bs-spacer-5);"><span></span></div>
+          <div class="spacer-box" id="spacerBox6" style="padding: var(--bs-spacer-6);"><span></span></div>
+          <div class="spacer-box" id="spacerBox7" style="padding: var(--bs-spacer-7);"><span></span></div>
+          <div class="spacer-box" id="spacerBox8" style="padding: var(--bs-spacer-8);"><span></span></div>
+          <div class="spacer-box" id="spacerBox9" style="padding: var(--bs-spacer-9);"><span></span></div>
+          <div class="spacer-box" id="spacerBox10" style="padding: var(--bs-spacer-10);"><span></span></div>
+          <div class="spacer-box" id="spacerBox11" style="padding: var(--bs-spacer-11);"><span></span></div>
+          <div class="spacer-box" id="spacerBox12" style="padding: var(--bs-spacer-12);"><span></span></div>
+        </div>
+
+        <h3 class="h6" data-playground-chrome>Components with mixed axes</h3>
+        <div class="row g-4 align-items-start">
+          <div class="md:col-4">
+            <!-- popover-instant: no fade-in, so the static popover is visible.
+                 Padding-x reads var(--spacer), padding-y var(--spacer-3). -->
+            <div class="popover show popover-instant position-static" id="reproPopover" role="presentation">
+              <h3 class="popover-header">Popover title</h3>
+              <div class="popover-body">Popover body: horizontal padding follows <code>--spacer</code>, vertical padding does not.</div>
+            </div>
+          </div>
+          <div class="md:col-4">
+            <!-- Padding reads var(--spacer), the gap var(--spacer-3). -->
+            <div class="alert" id="reproAlert" role="alert">An alert: its padding follows <code>--spacer</code>, its gap does not.</div>
+          </div>
+          <div class="md:col-4">
+            <!-- Item padding-x reads var(--spacer), padding-y var(--spacer-2). -->
+            <ul class="list-group" id="reproListGroup">
+              <li class="list-group-item">An item</li>
+              <li class="list-group-item">A second item</li>
+              <li class="list-group-item">A third item</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Fill the "Measured here" line with the same numbers assert.js checks.
+      import { measure } from './assert.js'
+
+      const { details } = measure()
+      document.getElementById('measured').textContent = details
+    </script>
+  </body>
+</html>
