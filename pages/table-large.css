@@ -1,0 +1,75 @@
+/*
+ * Large table: a fixed navbar over a 1000-row table. Everything here sizes
+ * the navbar and makes the header sticky.
+ */
+
+:root {
+  --tl-navbar-height: 3.5rem;
+  /* Where the sticky header stops: under the fixed navbar when the page
+     scrolls, at the top of the wrapper when the wrapper scrolls. */
+  --tl-sticky-top: var(--tl-navbar-height);
+}
+
+.tl-navbar {
+  block-size: var(--tl-navbar-height);
+  padding: 0;
+}
+
+.tl-main {
+  padding-block-start: var(--tl-navbar-height);
+}
+
+/*
+ * Stand-in for the sticky table header that twbs/bootstrap#42837 adds. Switch
+ * to Bootstrap's own class once it lands.
+ */
+[data-tl-sticky] thead th {
+  position: sticky;
+  inset-block-start: var(--tl-sticky-top);
+  z-index: 1;
+  background-color: var(--bg-body);
+}
+
+/* A wrapper with a height scrolls on its own, so the header sticks to it. */
+[data-tl-wrapper="box"] .tl-wrapper {
+  --tl-sticky-top: 0px;
+
+  max-block-size: 70vh;
+  overflow: auto;
+}
+
+/*
+ * ?chrome=0 caps the document at one screen, so the visual suite's full-page
+ * screenshot is the top of the table and the page can still be scrolled to the
+ * middle. The main area is the scroll container, with no navbar to clear.
+ */
+[data-tl-capped] body {
+  block-size: 100vh;
+  overflow: hidden;
+}
+
+[data-tl-capped] .tl-main {
+  --tl-sticky-top: 0px;
+
+  block-size: 100vh;
+  overflow-y: auto;
+}
+
+[data-tl-capped] [data-tl-wrapper="box"] .tl-wrapper {
+  max-block-size: 60vh;
+}
+
+.tl-wrapper:focus-visible {
+  outline: 2px solid var(--focus-ring-color, currentcolor);
+  outline-offset: -2px;
+}
+
+.tl-amount {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Keep a focused checkbox out from under the fixed navbar and the sticky header. */
+html,
+.tl-main {
+  scroll-padding-block-start: calc(var(--tl-navbar-height) + 3rem);
+}
