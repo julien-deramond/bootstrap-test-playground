@@ -40,6 +40,7 @@ export default [
       '/kitchen-sink/components-list-group.html',
       '/kitchen-sink/forms-chips.html',
       '/pages/focus.html',
+      '/pages/icons.html',
       '/pages/states.html'
     ],
     issue: 183
@@ -138,6 +139,7 @@ export default [
       '/kitchen-sink/components-list-group.html',
       '/kitchen-sink/forms-chips.html',
       '/pages/focus.html',
+      '/pages/icons.html',
       '/pages/js-api.html',
       '/pages/states.html'
     ],
@@ -347,6 +349,7 @@ export default [
       '/pages/custom-property-prefix.html',
       '/pages/focus.html',
       '/pages/forced-colors.html',
+      '/pages/icons.html',
       '/pages/js-api.html',
       '/pages/reboot-only.html',
       '/pages/states.html',
@@ -617,6 +620,7 @@ export default [
     themes: ['dark'],
     configs: ['gray-cool'],
     pages: [
+      '/pages/icons.html',
       '/screens/cards.html',
       '/screens/dashboard.html'
     ],
@@ -671,6 +675,7 @@ export default [
     themes: ['dark'],
     configs: ['gray-warm'],
     pages: [
+      '/pages/icons.html',
       '/screens/cards.html',
       '/screens/dashboard.html'
     ],
@@ -913,6 +918,7 @@ export default [
     configs: ['shadcn'],
     pages: [
       '/kitchen-sink/forms-field.html',
+      '/pages/icons.html',
       '/screens/dashboard.html'
     ],
     reason: 'shadcn config: shadcn/ui\'s own neutral and destructive colors, under 4.5:1 in these pairings'
