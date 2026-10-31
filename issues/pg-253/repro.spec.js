@@ -30,6 +30,7 @@ test('links are 4.5:1 or more on the body, --bg-1 and --bg-2 in light mode', asy
       const [r, g, b] = context.getImageData(0, 0, 1, 1).data
       return [r, g, b]
     }
+
     const luminance = rgb => {
       const [r, g, b] = rgb.map(channel => {
         const value = channel / 255

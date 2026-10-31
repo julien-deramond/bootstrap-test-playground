@@ -16,8 +16,10 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { chromium } from '@playwright/test'
 import { createServer } from 'vite'
+import {
+  ALL_CONFIGS, CONTRAST_RULE, knownOn, matches
+} from '../tests/a11y/shared.js'
 import { root } from './lib/configs.mjs'
-import { ALL_CONFIGS, CONTRAST_RULE, knownOn, matches } from '../tests/a11y/shared.js'
 
 const URL = '/pages/contrast.html'
 const GROUPS = { theme: 'Theme colors', surface: 'Body and surfaces', component: 'Components' }
@@ -53,7 +55,7 @@ function markdown(config, { themes, modes, results }) {
       for (const result of rows) {
         const entry = failed(result) ? knownFor(config, result) : null
         const known = entry ? (entry.issue ? `#${entry.issue}` : entry.reason) : ''
-        const pass = value => (result.exempt ? 'exempt' : value ? '✓' : '**✗**')
+        const pass = value => (result.exempt ? 'exempt' : (value ? '✓' : '**✗**'))
         lines.push(`| \`${result.name}\` | \`${result.fg}\` on \`${result.bg}\` | ${result.ratio.toFixed(2)} | ${pass(result.aa)} | ${pass(result.aaa)} | ${result.apca.toFixed(1)} | ${known} |`)
       }
 
@@ -85,12 +87,14 @@ try {
     fs.writeFileSync(path.join(reportsDir, `${config}.md`), markdown(config, data))
     for (const mode of data.modes) {
       const failures = data.results.filter(result => result.mode === mode && failed(result))
-      summary.push({ config, mode, failures: failures.length, unknown: failures.filter(result => !knownFor(config, result)).length })
+      summary.push({
+        config, mode, failures: failures.length, unknown: failures.filter(result => !knownFor(config, result)).length
+      })
     }
   }
 } finally {
   if (process.stdout.isTTY) {
-    process.stdout.write('\r'.padEnd(61) + '\r')
+    process.stdout.write(`${'\r'.padEnd(61)}\r`)
   }
 
   await browser.close()

@@ -5,11 +5,11 @@
 //
 // The container is an inline-block, so it is as wide as the stack's layout box:
 // an avatar whose margin pulls it outside shows as an overflow.
-const measure = (scope) => {
+const measure = scope => {
   const stack = scope.querySelector('.avatar-stack')
   const box = scope.querySelector('[data-box]').getBoundingClientRect()
   const avatars = [...stack.querySelectorAll('.avatar')]
-    .map((avatar) => avatar.getBoundingClientRect())
+    .map(avatar => avatar.getBoundingClientRect())
     .sort((a, b) => a.left - b.left)
   const style = getComputedStyle(stack.querySelector('.avatar'))
   const size = Number.parseFloat(style.width)
@@ -27,14 +27,14 @@ const measure = (scope) => {
 export function assert() {
   const ltr = document.querySelector('[dir="ltr"]:has([data-box])')
   const rtl = document.querySelector('[dir="rtl"]:has([data-box])')
-  if (!ltr || !rtl) return { pass: null, details: 'LTR or RTL block not found' }
+  if (!ltr || !rtl) {return { pass: null, details: 'LTR or RTL block not found' }}
 
   const results = Object.entries({ LTR: measure(ltr), RTL: measure(rtl) }).map(([dir, m]) => {
-    const gapsOk = m.gaps.every((gap) => Math.abs(gap - m.expectedGap) <= 1)
+    const gapsOk = m.gaps.every(gap => Math.abs(gap - m.expectedGap) <= 1)
     const flush = Math.abs(m.overflowLeft) <= 1 && Math.abs(m.overflowRight) <= 1
     return {
       pass: gapsOk && flush,
-      details: `${dir}: gaps ${m.gaps.map((gap) => gap.toFixed(1)).join(', ')}px (expected ${m.expectedGap.toFixed(1)}px), overflow ${m.overflowLeft.toFixed(1)}px left and ${m.overflowRight.toFixed(1)}px right`
+      details: `${dir}: gaps ${m.gaps.map(gap => gap.toFixed(1)).join(', ')}px (expected ${m.expectedGap.toFixed(1)}px), overflow ${m.overflowLeft.toFixed(1)}px left and ${m.overflowRight.toFixed(1)}px right`
     }
   })
   return {

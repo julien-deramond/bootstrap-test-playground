@@ -1,18 +1,21 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Entry points: reboot</title>
-    <meta name="description" content="Entry points: checks what bootstrap-reboot.scss, the entry point behind bootstrap-reboot.css, covers alone (root tokens, color modes and the reboot of native elements) and what it leaves out, in the reboot-only config.">
-    <meta name="playground-tags" content="forms, table">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <meta
+      name="description"
+      content="Entry points: checks what bootstrap-reboot.scss, the entry point behind bootstrap-reboot.css, covers alone (root tokens, color modes and the reboot of native elements) and what it leaves out, in the reboot-only config."
+    />
+    <meta name="playground-tags" content="forms, table" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script src="/playground-prefs.js"></script>
     <!-- Always the reboot-only config: the toolbar's config switch doesn't
          apply, since the checks need its build. -->
-    <link rel="stylesheet" href="/configs/reboot-only/main.scss">
-    <link rel="stylesheet" href="/configs/reboot-only/tokens.css">
-    <link rel="stylesheet" href="/pages/entry-points.css">
+    <link rel="stylesheet" href="/configs/reboot-only/main.scss" />
+    <link rel="stylesheet" href="/configs/reboot-only/tokens.css" />
+    <link rel="stylesheet" href="/pages/entry-points.css" />
     <style>
       .pg-ref-mark {
         background-color: light-dark(var(--bs-cyan-100), var(--bs-cyan-900));
@@ -31,25 +34,41 @@
         <p><a href="/">Playground</a> / Pages</p>
         <h1>Entry points: reboot</h1>
         <p>
-          <a href="https://github.com/twbs/bootstrap/blob/main/scss/bootstrap-reboot.scss"><code>scss/bootstrap-reboot.scss</code></a> alone, the entry point behind <code>dist/css/bootstrap-reboot.css</code>: root (every global token, the color modes and the layer order) and the reboot, with no layout, components, helpers or utilities.
-          <a href="https://github.com/julien-deramond/bootstrap-test-playground/tree/main/configs/reboot-only"><code>configs/reboot-only/</code></a> passes <code>$root-tokens</code> and <code>$reboot-mark-tokens</code> through <code>with (…)</code>.
-          This page always uses that config, whatever the toolbar's <em>Styles</em> menu says.
+          <a href="https://github.com/twbs/bootstrap/blob/main/scss/bootstrap-reboot.scss"
+            ><code>scss/bootstrap-reboot.scss</code></a
+          >
+          alone, the entry point behind <code>dist/css/bootstrap-reboot.css</code>: root (every global token, the color
+          modes and the layer order) and the reboot, with no layout, components, helpers or utilities.
+          <a href="https://github.com/julien-deramond/bootstrap-test-playground/tree/main/configs/reboot-only"
+            ><code>configs/reboot-only/</code></a
+          >
+          passes <code>$root-tokens</code> and <code>$reboot-mark-tokens</code> through <code>with (…)</code>. This page
+          always uses that config, whatever the toolbar's <em>Styles</em> menu says.
         </p>
         <h2>Checks</h2>
       </header>
 
       <ol class="pg-checks">
-        <li data-entry-case="root-tokens" data-expect="with ($root-tokens: …) sets --bs-body-font-size: 1.0625rem, which the body uses">
+        <li
+          data-entry-case="root-tokens"
+          data-expect="with ($root-tokens: …) sets --bs-body-font-size: 1.0625rem, which the body uses"
+        >
           <div class="pg-marker"></div>
         </li>
 
-        <li data-entry-case="global-tokens" data-expect="Root defines the global tokens, such as --bs-primary-base, although nothing here reads them">
+        <li
+          data-entry-case="global-tokens"
+          data-expect="Root defines the global tokens, such as --bs-primary-base, although nothing here reads them"
+        >
           <div class="pg-marker"></div>
         </li>
 
         <li data-entry-case="mark" data-expect="with ($reboot-mark-tokens: …) gives &lt;mark&gt; a cyan background">
           <div class="pg-marker"></div>
-          <p>Some <mark id="case-mark">marked text</mark> next to <span class="pg-ref-mark" id="ref-mark">the expected cyan</span>.</p>
+          <p>
+            Some <mark id="case-mark">marked text</mark> next to
+            <span class="pg-ref-mark" id="ref-mark">the expected cyan</span>.
+          </p>
         </li>
 
         <li data-entry-case="body" data-expect="The body has no margin">
@@ -67,7 +86,10 @@
           <p id="case-paragraph">A paragraph.</p>
         </li>
 
-        <li data-entry-case="color-modes" data-expect="data-bs-theme=&quot;dark&quot; switches the color scheme, and --bs-bg-body with it">
+        <li
+          data-entry-case="color-modes"
+          data-expect='data-bs-theme="dark" switches the color scheme, and --bs-bg-body with it'
+        >
           <div class="pg-marker"></div>
           <div data-bs-theme="light"><div class="pg-ref-bg-body" id="case-light"></div></div>
           <div data-bs-theme="dark"><div class="pg-ref-bg-body" id="case-dark"></div></div>
@@ -96,13 +118,18 @@
       <h5>Heading 5</h5>
       <h6>Heading 6</h6>
 
-      <p>A paragraph with a <a href="#native">link</a>, <strong>strong</strong>, <em>emphasis</em>, <small>small</small>, <abbr title="Cascading Style Sheets">CSS</abbr>, <code>code</code>, <kbd>Ctrl</kbd> + <kbd>K</kbd>, H<sub>2</sub>O and E = mc<sup>2</sup>.</p>
+      <p>
+        A paragraph with a <a href="#native">link</a>, <strong>strong</strong>, <em>emphasis</em>, <small>small</small>,
+        <abbr title="Cascading Style Sheets">CSS</abbr>, <code>code</code>, <kbd>Ctrl</kbd> + <kbd>K</kbd>,
+        H<sub>2</sub>O and E = mc<sup>2</sup>.
+      </p>
 
-      <hr>
+      <hr />
 
       <ul>
         <li>An unordered list</li>
-        <li>With a nested list
+        <li>
+          With a nested list
           <ol>
             <li>An ordered item</li>
             <li>Another one</li>
@@ -122,7 +149,9 @@
       <pre><code>&lt;p&gt;Preformatted code&lt;/p&gt;</code></pre>
 
       <table>
-        <caption>A table</caption>
+        <caption>
+          A table
+        </caption>
         <thead>
           <tr>
             <th scope="col">Name</th>
@@ -146,7 +175,7 @@
           <legend>A fieldset</legend>
           <p>
             <label for="native-text">Text</label>
-            <input type="text" id="native-text" name="text" placeholder="Placeholder">
+            <input type="text" id="native-text" name="text" placeholder="Placeholder" />
           </p>
           <p>
             <label for="native-select">Select</label>
@@ -160,7 +189,7 @@
             <textarea id="native-textarea" name="textarea" rows="2"></textarea>
           </p>
           <p>
-            <input type="checkbox" id="native-check" name="check">
+            <input type="checkbox" id="native-check" name="check" />
             <label for="native-check">Checkbox</label>
           </p>
           <p>
@@ -180,14 +209,17 @@
       import { element, findRule, html, rootFontSize, rules, runChecks, style, token } from '/pages/entry-points.js'
 
       runChecks({
-        'root-tokens': () => token(html, '--bs-body-font-size') === '1.0625rem' &&
+        'root-tokens': () =>
+          token(html, '--bs-body-font-size') === '1.0625rem' &&
           Number.parseFloat(getComputedStyle(document.body).fontSize) === 1.0625 * rootFontSize(),
         'global-tokens': () => token(html, '--bs-primary-base') !== '',
-        mark: () => style('mark').backgroundColor === getComputedStyle(document.getElementById('ref-mark')).backgroundColor,
+        mark: () =>
+          style('mark').backgroundColor === getComputedStyle(document.getElementById('ref-mark')).backgroundColor,
         body: () => getComputedStyle(document.body).marginTop === '0px',
         'box-sizing': () => style('box-sizing').boxSizing === 'border-box',
         headings: () => style('headings').marginTop === '0px' && style('paragraph').marginTop === '0px',
-        'color-modes': () => getComputedStyle(element('dark').parentElement).colorScheme === 'dark' &&
+        'color-modes': () =>
+          getComputedStyle(element('dark').parentElement).colorScheme === 'dark' &&
           style('light').backgroundColor !== style('dark').backgroundColor,
         layer: () => rules().some(({ rule, layer }) => layer === 'reboot' && rule.selectorText === 'body'),
         'no-utilities': () => !findRule('.d-none') && style('no-utilities').display === 'block',

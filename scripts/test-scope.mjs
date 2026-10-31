@@ -38,7 +38,9 @@ const SUITES = {
   console: { variable: 'CONSOLE_SCOPE', always: 'The working copy and dist, everywhere.' },
   smoke: { variable: 'SMOKE_SCOPE', always: 'The working copy and dist, everywhere.' },
   a11y: { variable: 'A11Y_SCOPE', always: 'The default config, everywhere.', env: 'A11Y_CONFIGS=all ' },
-  visual: { variable: 'VISUAL_SCOPE', always: 'Every page in Chromium. The scope is what the `update-baselines` label records in Firefox and WebKit.', command: 'npx playwright test --project visual-firefox --project visual-webkit', pagesOnly: true }
+  visual: {
+    variable: 'VISUAL_SCOPE', always: 'Every page in Chromium. The scope is what the `update-baselines` label records in Firefox and WebKit.', command: 'npx playwright test --project visual-firefox --project visual-webkit', pagesOnly: true
+  }
 }
 
 console.log(`${files.length} files changed since ${base}.`)
@@ -48,13 +50,13 @@ for (const [suite, { variable, always, env = '', command = `npm run test:${suite
   const value = JSON.stringify(scope)
   const summary = scope.full ?
     [`Everything: ${scope.reason} changed.`] :
-    pagesOnly ?
+    (pagesOnly ?
       [always, scope.urls.length ? `Changed pages: ${scope.urls.join(', ')}.` : 'No changed page.'] :
       [
         always,
         scope.configs.length ? `Everywhere with: ${scope.configs.join(', ')}.` : 'No changed config.',
         scope.urls.length ? `Every config on: ${scope.urls.join(', ')}.` : 'No changed page.'
-      ]
+      ])
 
   console.log(`\n${suite}:`)
   for (const line of summary) {

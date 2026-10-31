@@ -19,7 +19,9 @@ function measure(element) {
     context.fillStyle = value
     context.fillRect(0, 0, 1, 1)
     const [r, g, b, a] = context.getImageData(0, 0, 1, 1).data
-    return { r, g, b, a: a / 255 }
+    return {
+      r, g, b, a: a / 255
+    }
   }
 
   const chain = []
@@ -61,7 +63,9 @@ function measure(element) {
 
   const [light, dark] = [luminance(foreground), luminance(backdrop)].sort((a, b) => b - a)
   const hex = ({ r, g, b }) => `#${[r, g, b].map(channel => Math.round(channel).toString(16).padStart(2, '0')).join('')}`
-  return { ratio: (light + 0.05) / (dark + 0.05), foreground: hex(foreground), background: hex(backdrop), opacity }
+  return {
+    ratio: (light + 0.05) / (dark + 0.05), foreground: hex(foreground), background: hex(backdrop), opacity
+  }
 }
 
 const days = {

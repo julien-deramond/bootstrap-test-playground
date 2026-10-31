@@ -5,7 +5,9 @@
 // visual suite, as <variant>/pages/focus/focused-<surface>.png, with the same
 // VISUAL_THEMES, VISUAL_DIRS, VISUAL_CONFIGS and VISUAL_SCOPE as visual.spec.js.
 import { expect, test } from '@playwright/test'
-import { FOCUS_URL, SURFACES, captureSurface, compositeRings, toBase64 } from '../a11y/focus.js'
+import {
+  FOCUS_URL, SURFACES, captureSurface, compositeRings, toBase64
+} from '../a11y/focus.js'
 import { VARIANTS, baseline, inScope } from './shared.js'
 
 for (const { theme, dir, config, name: variant } of inScope(FOCUS_URL) ? VARIANTS : []) {
@@ -18,7 +20,9 @@ for (const { theme, dir, config, name: variant } of inScope(FOCUS_URL) ? VARIANT
       test(`${FOCUS_URL} focused ${surface}`, async ({ page }) => {
         // bg-body's 136 components take over 30s in Linux WebKit.
         test.setTimeout(120_000)
-        const params = new URLSearchParams({ theme, dir, config, chrome: '0', freeze: '' })
+        const params = new URLSearchParams({
+          theme, dir, config, chrome: '0', freeze: ''
+        })
         await page.goto(`${FOCUS_URL}?${params}`)
         await page.waitForFunction(() => !document.getElementById('playground-config-pending'))
         await page.evaluate(() => document.fonts.ready)

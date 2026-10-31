@@ -57,7 +57,9 @@ if (fired.has('load')) {
   window.dispatchEvent(new Event('load'))
 }
 
-mountToolbar({ source, onSourceChange, configs, swappable })
+mountToolbar({
+  source, onSourceChange, configs, swappable
+})
 
 // Badges on the kitchen sink sections the last Bootstrap update changed.
 markChangedSections()

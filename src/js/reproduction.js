@@ -7,7 +7,7 @@ import { STATUSES, githubUrl } from './repro-status.js'
 const STORAGE_KEY = 'playground-repro-side-by-side'
 
 // Attributes holding one id or a space-separated list of ids.
-const ID_LIST_ATTRIBUTES = ['for', 'form', 'list', 'headers', 'popovertarget', 'commandfor', 'anchor', 'aria-activedescendant', 'aria-controls', 'aria-describedby', 'aria-details', 'aria-errormessage', 'aria-flowto', 'aria-labelledby', 'aria-owns']
+const ID_LIST_ATTRIBUTES = new Set(['for', 'form', 'list', 'headers', 'popovertarget', 'commandfor', 'anchor', 'aria-activedescendant', 'aria-controls', 'aria-describedby', 'aria-details', 'aria-errormessage', 'aria-flowto', 'aria-labelledby', 'aria-owns'])
 
 const link = (href, text) => {
   const anchor = document.createElement('a')
@@ -77,8 +77,8 @@ export function cloneWithSuffix(element, suffix) {
       node.setAttribute('name', node.getAttribute('name') + suffix)
     }
 
-    for (const attribute of [...node.attributes]) {
-      if (ID_LIST_ATTRIBUTES.includes(attribute.name)) {
+    for (const attribute of node.attributes) {
+      if (ID_LIST_ATTRIBUTES.has(attribute.name)) {
         attribute.value = attribute.value.split(/\s+/).map(token => (ids.has(token) ? token + suffix : token)).join(' ')
       } else if (attribute.name === 'href' || attribute.name.startsWith('data-bs-')) {
         // `#id` references: href="#id", data-bs-target="#id", selectors.

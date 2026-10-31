@@ -12,7 +12,9 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { loadEnv } from 'vite'
 import { root } from './lib/configs.mjs'
-import { docsDir, outDir, pageFile, readPages, renderPage } from './lib/kitchen-sink.mjs'
+import {
+  docsDir, outDir, pageFile, readPages, renderPage
+} from './lib/kitchen-sink.mjs'
 
 const bootstrapPath = process.argv[2] ?? loadEnv('development', root, '').BOOTSTRAP_PATH
 if (!bootstrapPath) {

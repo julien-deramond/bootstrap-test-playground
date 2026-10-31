@@ -44,7 +44,7 @@ for (const entry of known) {
     throw new Error(`scripts/known-equivalence.mjs: ${entry.pair} needs either an \`issue\` or a \`reason\``)
   }
 
-  if (!allPairs.some(pair => pair.name === entry.pair)) {
+  if (allPairs.every(pair => pair.name !== entry.pair)) {
     throw new Error(`scripts/known-equivalence.mjs: no pair named ${entry.pair} in scripts/equivalence-pairs.mjs`)
   }
 }
@@ -106,7 +106,9 @@ async function render() {
   const pages = kitchenSink.filter(({ url }) => !pageFilter || url.includes(pageFilter))
   const pairsOf = url => pairs.filter(pair => !pair.pages || url.includes(pair.pages))
   for (const pair of pairs) {
-    Object.assign(pair, { examples: 0, sassEffect: 0, tokensEffect: 0, differ: [] })
+    Object.assign(pair, {
+      examples: 0, sassEffect: 0, tokensEffect: 0, differ: []
+    })
   }
 
   // Served from memory. The working copy's stylesheets (src/styles/) answer
@@ -122,10 +124,12 @@ async function render() {
   const server = await createServer({ root, logLevel: 'silent', server: { port: 5195, hmr: false } })
   await server.listen()
   const base = server.resolvedUrls.local[0].replace(/\/$/, '')
-  const origin = new URL(base).origin
+  const { origin } = new URL(base)
 
   const browser = await chromium.launch()
-  const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 1, timezoneId: 'UTC', locale: 'en-US' })
+  const context = await browser.newContext({
+    viewport: { width: 1280, height: 900 }, deviceScaleFactor: 1, timezoneId: 'UTC', locale: 'en-US'
+  })
   await context.route(target => target.origin !== origin, route =>
     route.request().resourceType() === 'image' ?
       route.fulfill({ contentType: 'image/svg+xml', body: PLACEHOLDER_IMAGE }) :
@@ -139,10 +143,10 @@ async function render() {
   // A page is given PAGE_TIMEOUT for every pair. Under load, a headless tab
   // sometimes stalls for minutes; then its tabs are replaced and the page is
   // tried once more, and skipped after that.
-  let defaultPage, sassPage, tokensPage, canvasPage
+  let defaultPage; let sassPage; let tokensPage; let canvasPage
   const openTabs = async () => {
-    await Promise.all([defaultPage, sassPage, tokensPage, canvasPage].map(tab => tab?.close().catch(() => {})))
-    ;[defaultPage, sassPage, tokensPage, canvasPage] = await Promise.all(Array.from({ length: 4 }, () => context.newPage()))
+    await Promise.all([defaultPage, sassPage, tokensPage, canvasPage].map(tab => tab?.close().catch(() => {})));
+    [defaultPage, sassPage, tokensPage, canvasPage] = await Promise.all(Array.from({ length: 4 }, () => context.newPage()))
   }
 
   // Swaps a shared stylesheet, like the toolbar's config switch: the new one
@@ -192,7 +196,9 @@ async function render() {
 
     const results = new Map()
     for (const pair of pagePairs) {
-      const result = { examples: 0, sassEffect: 0, tokensEffect: 0, differ: [] }
+      const result = {
+        examples: 0, sassEffect: 0, tokensEffect: 0, differ: []
+      }
       results.set(pair, result)
       await Promise.all([use(sassPage, { main: `${pair.name}-sass` }), use(tokensPage, { tokens: `${pair.name}-tokens` })])
       for (const { id, title: example } of sections) {
@@ -217,7 +223,9 @@ async function render() {
 
         const name = `${pair.name}--${path.basename(url, '.html')}--${id}`
         fs.writeFileSync(path.join(reportDir, 'images', `${name}.png`), Buffer.from(comparison.image, 'base64'))
-        const entry = { url, page: title, id, example, name, pixels: comparison.pixels, resized: comparison.resized }
+        const entry = {
+          url, page: title, id, example, name, pixels: comparison.pixels, resized: comparison.resized
+        }
         result.differ.push(entry)
         // Computed styles, for the first few: the screenshots say where,
         // these say which property.
@@ -276,7 +284,7 @@ async function render() {
     }
   } finally {
     if (process.stdout.isTTY) {
-      process.stdout.write('\r'.padEnd(81) + '\r')
+      process.stdout.write(`${'\r'.padEnd(81)}\r`)
     }
 
     await browser.close()
@@ -318,7 +326,9 @@ function diffStyles(a, b) {
 
     for (const [name, value] of Object.entries(left.style)) {
       if (right.style[name] !== value) {
-        all.push({ element: left.element, name, sass: value, tokens: right.style[name] })
+        all.push({
+          element: left.element, name, sass: value, tokens: right.style[name]
+        })
       }
     }
   }
@@ -367,9 +377,11 @@ const short = (value, length = 60) => (value.length > length ? `${value.slice(0,
 function describeGroup({ layer, kind, prop, list }) {
   const selectors = [...new Set(list.map(change => change.selector))]
   const example = list[0]
-  const value = kind === 'removed' ? `removed (was ${code(short(example.from, 40))})` :
-    kind === 'added' ? `added: ${code(short(example.value, 40))}` :
-      `${code(short(example.from, 30))} → ${code(short(example.value, 30))}`
+  const value = kind === 'removed' ?
+    `removed (was ${code(short(example.from, 40))})` :
+    (kind === 'added' ?
+      `added: ${code(short(example.value, 40))}` :
+      `${code(short(example.from, 30))} → ${code(short(example.value, 30))}`)
   return `${code(prop)} on ${selectors.slice(0, 2).map(selector => code(short(selector, 50))).join(', ')}${selectors.length > 2 ? ` and ${selectors.length - 2} more` : ''} (${layer}): ${value}${list.length > 1 ? `, ${list.length} declarations` : ''}`
 }
 
@@ -441,7 +453,7 @@ fs.writeFileSync(reportFile, `${lines.join('\n')}\n`)
 // --- Console ----------------------------------------------------------------
 
 for (const pair of pairs) {
-  const mark = pair.failed ? '✗' : pair.verdict === 'diverges' || pair.verdict === 'differs in the CSS' ? '!' : '✓'
+  const mark = pair.failed ? '✗' : (pair.verdict === 'diverges' || pair.verdict === 'differs in the CSS' ? '!' : '✓')
   const counts = staticOnly ? '' : `: ${pair.differ.length} of ${pair.examples} examples differ (Sass changes ${pair.sassEffect}, tokens.css ${pair.tokensEffect})`
   const note = pair.known ? `  (${pair.known.issue ? `#${pair.known.issue}` : pair.known.reason})` : ''
   console.log(`${mark} ${pair.name}: ${pair.verdict}${counts}${note}`)
@@ -469,7 +481,7 @@ if (fresh.length) {
 }
 
 if (skipped.length) {
-  console.log(`\n! Skipped after two attempts, so known entries aren't checked for staleness:`)
+  console.log('\n! Skipped after two attempts, so known entries aren\'t checked for staleness:')
   for (const { url, error } of skipped) {
     console.log(`    ${url}: ${error}`)
   }

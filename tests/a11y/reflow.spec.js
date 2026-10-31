@@ -19,8 +19,12 @@
 // Runs when A11Y_CONFIGS includes the default config, which `all` does.
 import { expect, test } from '@playwright/test'
 import { collectPages } from '../../scripts/lib/pages.mjs'
-import { REFLOW_WIDTH, RESIZE_TEXT_CSS, TEXT_SPACING_CSS, TEXT_WIDTH, install } from './reflow.js'
-import { REFLOW_RULE, RESIZE_TEXT_RULE, TEXT_SPACING_RULE, describe, describeEntry, expectedWith, goneMessage, knownOn, load, matches, report, unexpectedMessage } from './shared.js'
+import {
+  REFLOW_WIDTH, RESIZE_TEXT_CSS, TEXT_SPACING_CSS, TEXT_WIDTH, install
+} from './reflow.js'
+import {
+  REFLOW_RULE, RESIZE_TEXT_RULE, TEXT_SPACING_RULE, describe, describeEntry, expectedWith, goneMessage, knownOn, load, matches, report, unexpectedMessage
+} from './shared.js'
 
 const CONFIG = 'default'
 const THEME = 'light'
@@ -33,8 +37,8 @@ const HELP = {
   [RESIZE_TEXT_RULE]: 'Text at 200% must not widen the page or get cut (WCAG 1.4.4)'
 }
 
-const SKIPPED_GROUPS = ['issues']
-const urls = collectPages('/').filter(({ dir }) => !SKIPPED_GROUPS.includes(dir)).flatMap(({ pages }) => pages.map(({ url }) => url))
+const SKIPPED_GROUPS = new Set(['issues'])
+const urls = collectPages('/').filter(({ dir }) => !SKIPPED_GROUPS.has(dir)).flatMap(({ pages }) => pages.map(({ url }) => url))
 
 const nodesOf = (rule, found) => found.map(node => ({ rule, help: HELP[rule], ...node }))
 
@@ -76,7 +80,9 @@ async function spacingAndSize(page, url) {
     const resized = diff(before, snapshot())
     eject()
 
-    return { misses, spaced, doubled, overflow, found, resized }
+    return {
+      misses, spaced, doubled, overflow, found, resized
+    }
   }, { spacing: TEXT_SPACING_CSS, size: RESIZE_TEXT_CSS })
 
   const widened = result.found.length || result.overflow <= 0 ? result.found : [{ selector: 'html', summary: `scrolls ${result.overflow}px sideways, with no element found past the edge` }]
@@ -105,13 +111,15 @@ test.describe(STATE, () => {
         const nodes = [...narrow.nodes, ...wide.nodes]
         const known = knownOn(url, THEME, CONFIG, STATE)
         const entryOf = new Map(nodes.map(node => [node, known.find(entry => matches(entry, node))]))
-        await report(testInfo, { config: CONFIG, theme: THEME, url, state: STATE }, nodes.map(node => {
+        await report(testInfo, {
+          config: CONFIG, theme: THEME, url, state: STATE
+        }, nodes.map(node => {
           const entry = entryOf.get(node)
           return { ...node, known: entry ? entry.issue ?? entry.reason : null }
         }))
 
         const unexpected = nodes.filter(node => !entryOf.get(node))
-        const gone = known.filter(entry => expectedWith(entry, CONFIG) && !nodes.some(node => matches(entry, node)))
+        const gone = known.filter(entry => expectedWith(entry, CONFIG) && nodes.every(node => !matches(entry, node)))
 
         expect(wide.misses, 'Elements whose spacing the injected text spacing styles didn\'t reach (a layered `!important` beats them)').toEqual([])
         expect(wide.doubled, 'The injected `html { font-size: 200% }` didn\'t take').toBe(true)

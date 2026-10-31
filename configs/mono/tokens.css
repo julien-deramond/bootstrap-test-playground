@@ -15,7 +15,7 @@
  */
 :root {
   /* The one color the whole palette derives from (see main.scss). */
-  --mono-base: oklch(55% .2 280);
+  --mono-base: oklch(55% .2 280deg);
 }
 
 /*
@@ -25,6 +25,8 @@
  */
 @layer custom {
   /* .alert { */
+
   /*   --alert-padding-x: 2rem; */
+
   /* } */
 }

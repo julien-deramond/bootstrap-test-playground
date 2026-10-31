@@ -54,7 +54,9 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { expect, test } from '@playwright/test'
 import { root } from '../../scripts/lib/configs.mjs'
-import { DIRS, PAGES, TAB_RULES, THEMES, describe, describeEntry, expectedWith, goneMessage, knownOn, load, matches, report, unexpectedMessage } from './shared.js'
+import {
+  DIRS, PAGES, TAB_RULES, THEMES, describe, describeEntry, expectedWith, goneMessage, knownOn, load, matches, report, unexpectedMessage
+} from './shared.js'
 
 const CONFIG = 'default'
 const runs = process.env.A11Y_CONFIGS === 'all' || (process.env.A11Y_CONFIGS || CONFIG).split(',').map(value => value.trim()).includes(CONFIG)
@@ -166,7 +168,9 @@ function install({ properties, extraStops, pressesOnOne, hosts }) {
 
   const box = element => {
     const { x, y, width, height } = element.getBoundingClientRect()
-    return { x: Math.round(x + window.scrollX), y: Math.round(y + window.scrollY), width: Math.round(width), height: Math.round(height) }
+    return {
+      x: Math.round(x + window.scrollX), y: Math.round(y + window.scrollY), width: Math.round(width), height: Math.round(height)
+    }
   }
 
   // What makes a visited stop hidden: no size, not rendered, inert, outside
@@ -248,8 +252,8 @@ function install({ properties, extraStops, pressesOnOne, hosts }) {
     start(key) {
       document.activeElement?.blur()
       current = { key, stops: [], presses: 0 }
-      walks[key] = current
-      ;(key === 'Tab' ? start : end).focus({ preventScroll: true })
+      walks[key] = current;
+      (key === 'Tab' ? start : end).focus({ preventScroll: true })
       return document.activeElement === (key === 'Tab' ? start : end)
     },
 
@@ -307,7 +311,7 @@ function install({ properties, extraStops, pressesOnOne, hosts }) {
 
     // The walk's stops, for the test.
     stops(key) {
-      const stops = walks[key].stops
+      const { stops } = walks[key]
       if (stops.length > 0) {
         settle(stops.at(-1))
       }
@@ -331,7 +335,9 @@ function install({ properties, extraStops, pressesOnOne, hosts }) {
       const height = document.documentElement.clientHeight
       const x = Math.max(0, Math.floor(rect.left - padding))
       const y = Math.max(0, Math.floor(rect.top - padding))
-      const clip = { x, y, width: Math.min(width, Math.ceil(rect.right + padding)) - x, height: Math.min(height, Math.ceil(rect.bottom + padding)) - y }
+      const clip = {
+        x, y, width: Math.min(width, Math.ceil(rect.right + padding)) - x, height: Math.min(height, Math.ceil(rect.bottom + padding)) - y
+      }
       return clip.width > 0 && clip.height > 0 ? clip : null
     },
 
@@ -395,7 +401,9 @@ async function walk(page, key, limit) {
   }
 
   const { presses, stops } = await page.evaluate(key => window.a11yWalk.stops(key), key)
-  return { key, presses, stops, trap }
+  return {
+    key, presses, stops, trap
+  }
 }
 
 // Screenshots each stop unfocused, then focused, and counts the pixels that
@@ -448,7 +456,9 @@ function orderWarnings(stops, dir) {
   return warnings
 }
 
-const node = (rule, selector, summary) => ({ rule, selector, help: HELP[rule], summary })
+const node = (rule, selector, summary) => ({
+  rule, selector, help: HELP[rule], summary
+})
 
 // Loads the page, walks it both ways, checks the pixels of the stops whose
 // styles don't change, and returns the findings, the warnings and both walks.
@@ -457,7 +467,9 @@ async function check(page, url, theme, dir) {
   await page.waitForFunction(() => window.bootstrap, null, { timeout: 30_000 })
   await page.addScriptTag({ type: 'module', content: tabOrderSource })
   await page.waitForFunction(() => window.a11yTabOrder, null, { timeout: 30_000 })
-  const { limit } = await page.evaluate(install, { properties: INDICATOR_PROPERTIES, extraStops: EXTRA_STOPS, pressesOnOne: PRESSES_ON_ONE_STOP, hosts: PLAYGROUND_HOSTS })
+  const { limit } = await page.evaluate(install, {
+    properties: INDICATOR_PROPERTIES, extraStops: EXTRA_STOPS, pressesOnOne: PRESSES_ON_ONE_STOP, hosts: PLAYGROUND_HOSTS
+  })
   const predicted = await page.evaluate(() => window.a11yWalk.predicted)
 
   const forward = await walk(page, 'Tab', limit)
@@ -472,7 +484,7 @@ async function check(page, url, theme, dir) {
     for (const stop of pending) {
       const count = counts.get(stop.index)
       stop.pixels = count
-      stop.indicator = count === null ? 'unchecked' : count >= MIN_PIXELS ? 'pixels' : 'none'
+      stop.indicator = count === null ? 'unchecked' : (count >= MIN_PIXELS ? 'pixels' : 'none')
       checked.set(stop.selector, stop)
     }
 
@@ -524,14 +536,16 @@ async function check(page, url, theme, dir) {
     const ahead = forward.stops.filter(stop => stop.predicted)
     const back = backward.stops.filter(stop => stop.predicted).reverse()
     const length = Math.max(ahead.length, back.length)
-    const at = [...Array(length).keys()].find(i => ahead[i]?.selector !== back[i]?.selector)
+    const at = [...new Array(length).keys()].find(i => ahead[i]?.selector !== back[i]?.selector)
     if (at !== undefined) {
       const selector = ahead[at]?.selector ?? back[at]?.selector
       add(node('reverse-order', selector, `Tab visited ${ahead.length} of the ${predicted.length} predicted stops and Shift+Tab ${back.length}; they part at the ${at + 1}${['st', 'nd', 'rd'][at] ?? 'th'} one: ${ahead[at]?.selector ?? 'nothing'} forward, ${back[at]?.selector ?? 'nothing'} backward`))
     }
   }
 
-  return { params, nodes, warnings: orderWarnings(forward.stops, dir), walks: { predicted, forward, backward } }
+  return {
+    params, nodes, warnings: orderWarnings(forward.stops, dir), walks: { predicted, forward, backward }
+  }
 }
 
 test.describe('tab', () => {
@@ -550,7 +564,9 @@ test.describe('tab', () => {
 
             const known = knownOn(url, theme, CONFIG, 'tab', dir)
             const entryOf = new Map(nodes.map(node => [node, known.find(entry => matches(entry, node))]))
-            await report(testInfo, { config: CONFIG, theme, url, state: dir === 'rtl' ? 'tab-rtl' : 'tab' }, [
+            await report(testInfo, {
+              config: CONFIG, theme, url, state: dir === 'rtl' ? 'tab-rtl' : 'tab'
+            }, [
               ...nodes.map(node => {
                 const entry = entryOf.get(node)
                 return { ...node, known: entry ? entry.issue ?? entry.reason : null }
@@ -559,7 +575,7 @@ test.describe('tab', () => {
             ])
 
             const unexpected = nodes.filter(node => !entryOf.get(node))
-            const gone = known.filter(entry => expectedWith(entry, CONFIG) && !nodes.some(node => matches(entry, node)))
+            const gone = known.filter(entry => expectedWith(entry, CONFIG) && nodes.every(node => !matches(entry, node)))
 
             expect(nodes.every(node => TAB_RULES.includes(node.rule))).toBe(true)
             expect(unexpected.map(node => `${describe(node)}: ${node.summary}`), unexpectedMessage(`${url}?${params} walked with Tab and Shift+Tab${dir === 'rtl' ? ' in RTL' : ''}`)).toEqual([])

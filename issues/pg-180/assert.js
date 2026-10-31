@@ -23,21 +23,23 @@ const caretColor = style => {
   const stroke = image.match(/stroke='([^']+)'/)?.[1]
   if (stroke) {
     const hex = stroke.replace('#', '')
-    return { source: `stroke ${stroke}`, rgb: [0, 2, 4].map(i => parseInt(hex.slice(i, i + 2), 16)) }
+    return { source: `stroke ${stroke}`, rgb: [0, 2, 4].map(i => Number.parseInt(hex.slice(i, i + 2), 16)) }
   }
+
   const mask = style.maskImage || style.webkitMaskImage
   if (mask && mask !== 'none') {
     const rgb = style.backgroundColor.match(/[\d.]+/g).slice(0, 3).map(Number)
     return { source: `mask ${style.backgroundColor}`, rgb }
   }
+
   return null
 }
 
 // Resolves `light dark` (the default on :root) with the media query.
 const scheme = element => {
   const value = getComputedStyle(element).colorScheme
-  if (value.includes('dark') && !value.includes('light')) return 'dark'
-  if (value.includes('light') && !value.includes('dark')) return 'light'
+  if (value.includes('dark') && !value.includes('light')) {return 'dark'}
+  if (value.includes('light') && !value.includes('dark')) {return 'light'}
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 

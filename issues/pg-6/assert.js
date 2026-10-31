@@ -20,6 +20,7 @@ export async function assert() {
     const computed = getComputedStyle(element)
     return computed.textOverflow === 'ellipsis' && computed.overflowX !== 'visible'
   }
+
   const isBlockContainer = !/(flex|grid)$/.test(style.display)
   const childEllipsis = [...value.children].some(child => clips(child) && !/(flex|grid)$/.test(getComputedStyle(child).display))
   const ellipsis = (clips(value) && isBlockContainer) || childEllipsis

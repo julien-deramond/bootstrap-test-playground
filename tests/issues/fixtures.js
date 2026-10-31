@@ -20,13 +20,11 @@
 // in docs/pages.md.
 import fs from 'node:fs'
 import path from 'node:path'
-import { expect, test as base } from '@playwright/test'
+import { test as base } from '@playwright/test'
 import { root } from '../../scripts/lib/configs.mjs'
 
-export { expect }
-
 export const test = base.extend({
-  repro: async ({ page }, use, testInfo) => {
+  async repro({ page }, use, testInfo) {
     const name = path.basename(path.dirname(testInfo.file))
     const url = `/issues/${name}/`
     const html = fs.readFileSync(path.join(root, 'issues', name, 'index.html'), 'utf8')
@@ -110,3 +108,5 @@ export const test = base.extend({
     }
   }
 })
+
+export { expect } from '@playwright/test'

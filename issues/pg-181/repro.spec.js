@@ -21,6 +21,7 @@ async function measure(page, selector) {
       const unit = value / 255
       return unit <= 0.04045 ? unit / 12.92 : ((unit + 0.055) / 1.055) ** 2.4
     }
+
     return {
       colorScheme: style.colorScheme,
       background: style.backgroundColor,

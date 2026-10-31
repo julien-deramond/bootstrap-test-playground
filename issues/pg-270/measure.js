@@ -8,7 +8,7 @@ function toRgb(color) {
   context.fillStyle = '#000'
   context.fillStyle = color
   context.fillRect(0, 0, 1, 1)
-  return Array.from(context.getImageData(0, 0, 1, 1).data.slice(0, 3))
+  return [...context.getImageData(0, 0, 1, 1).data.slice(0, 3)]
 }
 
 function luminance([r, g, b]) {
@@ -39,7 +39,9 @@ export function measureRings() {
       const ring = toRgb(getComputedStyle(probe).color)
       probe.remove()
       const background = toRgb(getComputedStyle(surface).backgroundColor)
-      results.push({ mode, surface: surface.dataset.surface, ratio: contrast(ring, background), button })
+      results.push({
+        mode, surface: surface.dataset.surface, ratio: contrast(ring, background), button
+      })
     }
   }
 

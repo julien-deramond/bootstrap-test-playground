@@ -4,8 +4,6 @@
 // mark the sections it changed.
 import record from '../../updates/last-update.json'
 
-export { record }
-
 // Record URLs are root-relative; builds can be served from a subfolder.
 export const pageUrl = url => `${import.meta.env.BASE_URL}${url.replace(/^\//, '')}`
 
@@ -57,3 +55,5 @@ export function markChangedSections() {
     }
   }
 }
+
+export { default as record } from '../../updates/last-update.json'

@@ -1,15 +1,18 @@
 <!doctype html>
 <html lang="en" data-playground-busy>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Custom property prefix</title>
-    <meta name="description" content="Custom property prefix: checks that Bootstrap's JavaScript reads and writes the custom properties the CSS uses (carousel, form range, nav overflow, password strength) under the default, x- and empty prefixes, with a pass or fail marker.">
-    <meta name="playground-tags" content="components, forms">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <meta
+      name="description"
+      content="Custom property prefix: checks that Bootstrap's JavaScript reads and writes the custom properties the CSS uses (carousel, form range, nav overflow, password strength) under the default, x- and empty prefixes, with a pass or fail marker."
+    />
+    <meta name="playground-tags" content="components, forms" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script src="/playground-prefs.js"></script>
-    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
-    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main" />
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens" />
     <style>
       /* No Bootstrap tokens here: their prefix is what this page checks. */
       .pg-narrow {
@@ -33,30 +36,55 @@
         <p class="mb-2"><a href="/">Playground</a> / Pages</p>
         <h1>Custom property prefix</h1>
         <p class="fs-lg fg-2">
-          Every place where Bootstrap's JavaScript reads or writes a custom property that the CSS also uses, checked under the prefix the page's styles were compiled with.
+          Every place where Bootstrap's JavaScript reads or writes a custom property that the CSS also uses, checked
+          under the prefix the page's styles were compiled with.
         </p>
         <p class="fg-2">
-          Upstream: <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/196">#196</a> (the JavaScript hard-codes <code>--bs-</code>), not reported yet
+          Upstream: <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/196">#196</a> (the
+          JavaScript hard-codes <code>--bs-</code>), not reported yet
         </p>
       </header>
 
       <section class="mb-5" data-playground-chrome>
         <h2 class="h5">What this checks</h2>
-        <p>The docs say the <code>bs-</code> prefix comes from PostCSS and can be changed with its <code>prefix</code> option, and their npm and webpack guides don't add the prefix at all. Bootstrap's JavaScript, though, uses the <code>--bs-*</code> names. These styles define <code id="prefix-detected">…</code>. Compare with <a href="?config=prefix-x">configs/prefix-x</a> (<code>--x-*</code>), <a href="?config=prefix-none">configs/prefix-none</a> (no prefix) and <a href="?config=default">the defaults</a>, or use the toolbar's <em>Styles</em> menu.</p>
-        <p>The prefix doesn't touch <code>data-bs-*</code> attributes or the <code>.bs-popover-*</code> and <code>.bs-tooltip-auto</code> classes, which aren't custom properties. Responsive placement hard-codes the breakpoints whatever the prefix (<a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/191">#191</a>).</p>
+        <p>
+          The docs say the <code>bs-</code> prefix comes from PostCSS and can be changed with its
+          <code>prefix</code> option, and their npm and webpack guides don't add the prefix at all. Bootstrap's
+          JavaScript, though, uses the <code>--bs-*</code> names. These styles define
+          <code id="prefix-detected">…</code>. Compare with
+          <a href="?config=prefix-x">configs/prefix-x</a> (<code>--x-*</code>),
+          <a href="?config=prefix-none">configs/prefix-none</a> (no prefix) and
+          <a href="?config=default">the defaults</a>, or use the toolbar's <em>Styles</em> menu.
+        </p>
+        <p>
+          The prefix doesn't touch <code>data-bs-*</code> attributes or the <code>.bs-popover-*</code> and
+          <code>.bs-tooltip-auto</code> classes, which aren't custom properties. Responsive placement hard-codes the
+          breakpoints whatever the prefix (<a
+            href="https://github.com/julien-deramond/bootstrap-test-playground/issues/191"
+            >#191</a
+          >).
+        </p>
       </section>
 
       <section>
         <h2 class="h5" data-playground-chrome>Checks</h2>
         <ol class="list-unstyled vstack gap-5" id="prefix-cases">
-          <li data-prefix-case="range" data-expect="Range writes the fill ratio to {p}range-fill, which the track's gradient reads" data-issue="196">
+          <li
+            data-prefix-case="range"
+            data-expect="Range writes the fill ratio to {p}range-fill, which the track's gradient reads"
+            data-issue="196"
+          >
             <div class="pg-marker"></div>
             <div class="form-range pg-narrow" id="case-range">
-              <input type="range" class="form-range-input" min="0" max="100" value="30" aria-label="Range at 30%">
+              <input type="range" class="form-range-input" min="0" max="100" value="30" aria-label="Range at 30%" />
             </div>
           </li>
 
-          <li data-prefix-case="carousel-interval" data-expect="Carousel autoplay writes its interval to {p}carousel-interval, which times the active indicator's fill" data-issue="196">
+          <li
+            data-prefix-case="carousel-interval"
+            data-expect="Carousel autoplay writes its interval to {p}carousel-interval, which times the active indicator's fill"
+            data-issue="196"
+          >
             <div class="pg-marker"></div>
             <div class="carousel slide pg-narrow" id="case-carousel-interval" data-bs-interval="1234">
               <div class="carousel-inner">
@@ -66,7 +94,11 @@
             </div>
           </li>
 
-          <li data-prefix-case="carousel-loop" data-expect="With {p}carousel-items: 3, a carousel with ends: loop falls back to wrap, since seamless looping only supports one item at a time" data-issue="196">
+          <li
+            data-prefix-case="carousel-loop"
+            data-expect="With {p}carousel-items: 3, a carousel with ends: loop falls back to wrap, since seamless looping only supports one item at a time"
+            data-issue="196"
+          >
             <div class="pg-marker"></div>
             <div class="carousel slide pg-narrow" id="case-carousel-loop" data-bs-ends="loop">
               <div class="carousel-inner">
@@ -79,21 +111,36 @@
             </div>
           </li>
 
-          <li data-prefix-case="nav-overflow" data-expect="Nav overflow with collapseBelow: '2xl' reads {p}breakpoint-2xl and moves every item into its menu, since the nav is narrower" data-issue="196">
+          <li
+            data-prefix-case="nav-overflow"
+            data-expect="Nav overflow with collapseBelow: '2xl' reads {p}breakpoint-2xl and moves every item into its menu, since the nav is narrower"
+            data-issue="196"
+          >
             <div class="pg-marker"></div>
             <div class="nav-overflow pg-narrow" id="case-nav-overflow" data-bs-collapse-below="2xl">
               <ul class="nav nav-pills">
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="#case-nav-overflow">One</a></li>
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="#case-nav-overflow">One</a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="#case-nav-overflow">Two</a></li>
               </ul>
             </div>
           </li>
 
-          <li data-prefix-case="strength" data-expect="Password strength colors its text feedback by level, with {p}success-fg-emphasis for a strong password">
+          <li
+            data-prefix-case="strength"
+            data-expect="Password strength colors its text feedback by level, with {p}success-fg-emphasis for a strong password"
+          >
             <div class="pg-marker"></div>
             <div class="pg-narrow">
               <label for="case-strength-input" class="form-label">Password</label>
-              <input type="password" class="form-control" id="case-strength-input" value="Correct!Horse#Battery9" autocomplete="off">
+              <input
+                type="password"
+                class="form-control"
+                id="case-strength-input"
+                value="Correct!Horse#Battery9"
+                autocomplete="off"
+              />
               <div class="strength" id="case-strength">
                 <div class="strength-segment"></div>
                 <div class="strength-segment"></div>
@@ -114,17 +161,22 @@
       // the compiled CSS actually uses, and writes data-result="pass" or
       // "fail" on its <li>.
       const html = document.documentElement
-      const element = id => document.getElementById(`case-${id}`)
+      const element = (id) => document.getElementById(`case-${id}`)
       const token = (node, name) => getComputedStyle(node).getPropertyValue(name).trim()
 
       // The prefix of the page's styles, from the `:root, :host` rule that
       // defines the breakpoints, which every build has, the grid entry point
       // included: `--bs-breakpoint-md` → `bs-`, `--breakpoint-md` → ''.
       const detectPrefix = () => {
-        const walk = list => {
+        const walk = (list) => {
           for (const rule of list) {
-            if (rule instanceof CSSStyleRule && rule.selectorText.split(',').some(selector => selector.trim() === ':root')) {
-              const match = [...rule.style].map(property => property.match(/^--([a-z0-9-]*?)breakpoint-[a-z0-9]+$/)).find(Boolean)
+            if (
+              rule instanceof CSSStyleRule &&
+              rule.selectorText.split(',').some((selector) => selector.trim() === ':root')
+            ) {
+              const match = [...rule.style]
+                .map((property) => property.match(/^--([a-z0-9-]*?)breakpoint-[a-z0-9]+$/))
+                .find(Boolean)
               if (match) {
                 return match[1]
               }
@@ -152,11 +204,13 @@
       const run = ({ Carousel, NavOverflow, Range, Strength }) => {
         const prefix = detectPrefix()
         if (prefix === undefined) {
-          throw new Error('No `:root` rule defines the breakpoints: are Bootstrap\'s styles loaded?')
+          throw new Error("No `:root` rule defines the breakpoints: are Bootstrap's styles loaded?")
         }
 
-        const p = name => `--${prefix}${name}`
-        document.getElementById('prefix-detected').textContent = prefix ? `--${prefix}*` : 'unprefixed custom properties'
+        const p = (name) => `--${prefix}${name}`
+        document.getElementById('prefix-detected').textContent = prefix
+          ? `--${prefix}*`
+          : 'unprefixed custom properties'
 
         const CHECKS = {
           range: () => {
@@ -177,7 +231,7 @@
           'nav-overflow': () => {
             NavOverflow.getOrCreateInstance(element('nav-overflow'))
             const items = element('nav-overflow').querySelectorAll('.nav > .nav-item:not(:has(.nav-overflow-toggle))')
-            return items.length === 2 && [...items].every(item => item.dataset.bsNavOverflow === 'true')
+            return items.length === 2 && [...items].every((item) => item.dataset.bsNavOverflow === 'true')
           },
           strength: () => {
             // The text sits next to the meter, so it takes its color from its
@@ -190,8 +244,11 @@
             text.after(probe)
             const expected = getComputedStyle(probe).color
             probe.remove()
-            return element('strength').dataset.bsStrength === 'strong' && text.dataset.bsStrength === 'strong' &&
+            return (
+              element('strength').dataset.bsStrength === 'strong' &&
+              text.dataset.bsStrength === 'strong' &&
               getComputedStyle(text).color === expected
+            )
           }
         }
 
@@ -224,7 +281,11 @@
       // gone. Timers rather than requestAnimationFrame, which stops in hidden
       // tabs.
       const start = () => {
-        if (window.bootstrap && document.readyState === 'complete' && !document.getElementById('playground-config-pending')) {
+        if (
+          window.bootstrap &&
+          document.readyState === 'complete' &&
+          !document.getElementById('playground-config-pending')
+        ) {
           setTimeout(() => run(window.bootstrap), 50)
         } else {
           setTimeout(start, 50)

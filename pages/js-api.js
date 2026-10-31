@@ -392,10 +392,12 @@ function freshElement(key, optionName) {
   const element = copy.querySelector('[data-jsapi-element]')
   element.removeAttribute('data-bs-config')
   element.removeAttribute(`data-bs-${kebab(optionName)}`)
-  return { element, cleanup: Component => {
-    Component.getInstance(element)?.dispose()
-    copy.remove()
-  } }
+  return {
+    element, cleanup(Component) {
+      Component.getInstance(element)?.dispose()
+      copy.remove()
+    }
+  }
 }
 
 function precedenceRow(key, bootstrap) {
@@ -459,7 +461,9 @@ function precedenceRow(key, bootstrap) {
   const row = document.querySelector('#precedence-checks tbody').insertRow()
   row.dataset.component = key
   // The value from each source, for the smoke suite's own expectations.
-  Object.assign(row.dataset, { default: format(expected.default), config: format(fromConfig), attribute: format(fromAttribute), js: format(fromJs) })
+  Object.assign(row.dataset, {
+    default: format(expected.default), config: format(fromConfig), attribute: format(fromAttribute), js: format(fromJs)
+  })
   row.innerHTML = `<th scope="row"><a href="#${key}">${sections.get(key).querySelector('h2').textContent}</a></th><td><code>${option.name}</code></td>`
   for (const id of ['default', 'config', 'config-attribute', 'attribute-js', 'all', 'existing', 'disposed']) {
     const cell = row.insertCell()

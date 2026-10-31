@@ -12,7 +12,7 @@ test('dark: variants follow data-bs-theme under both system color schemes', asyn
     await page.emulateMedia({ colorScheme })
     const cases = await page.evaluate(() => [...document.querySelectorAll('[data-case]')].map(element => {
       const background = selector => getComputedStyle(element.querySelector(selector)).backgroundColor
-      const mode = element.dataset.mode
+      const { mode } = element.dataset
       const actual = background('[data-box]')
       const expected = background(mode === 'dark' ? '[data-ref-dark]' : '[data-ref-light]')
       return { name: element.dataset.case, mode, pass: actual === expected }

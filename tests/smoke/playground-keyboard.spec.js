@@ -236,7 +236,7 @@ test.describe('playground keyboard', () => {
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
   })
 
-  test("the playground's own fields keep the shortcuts", async ({ page }) => {
+  test('the playground\'s own fields keep the shortcuts', async ({ page }) => {
     await load(page, DIALOG_PAGE)
     await page.keyboard.press('Alt+Shift+KeyP')
     const filter = panel(page).getByRole('searchbox', { name: 'Filter configs' })

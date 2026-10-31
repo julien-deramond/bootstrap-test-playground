@@ -46,7 +46,8 @@ document.getElementById('sizes-summary').innerHTML = latest ?
   `${history.length} ${history.length === 1 ? 'entry' : 'entries'}. Latest: ${commitLink(latest.commit)}, recorded ${latest.date.slice(0, 10)}${previous ? `, compared with ${commitLink(previous.commit)}` : ''}.` :
   'No sizes recorded yet.'
 
-document.getElementById('sizes-rows').innerHTML = latest ? Object.entries(latest.sizes).map(([file, size]) => `
+document.getElementById('sizes-rows').innerHTML = latest ?
+  Object.entries(latest.sizes).map(([file, size]) => `
   <tr>
     <th scope="row"><code>${file}</code></th>
     <td class="num">${kb(size.min)}</td>
@@ -54,4 +55,5 @@ document.getElementById('sizes-rows').innerHTML = latest ? Object.entries(latest
     <td class="num">${kb(size.brotli)}</td>
     <td class="num">${change(size.brotli, previous?.sizes[file]?.brotli)}</td>
     <td>${sparkline(file)}</td>
-  </tr>`).join('') : ''
+  </tr>`).join('') :
+  ''

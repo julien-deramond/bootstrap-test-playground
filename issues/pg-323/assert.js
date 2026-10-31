@@ -17,8 +17,8 @@ export async function assert() {
   const viaConfig = make({ name: 'data-bs-config', value: '{"topMargin":"20%","smoothScroll":true}' })
   const viaOption = make({ name: 'data-bs-top-margin', value: '20%' })
 
-  const topMargin = viaConfig._config.topMargin
-  const smoothScroll = viaConfig._config.smoothScroll
+  const { topMargin } = viaConfig._config
+  const { smoothScroll } = viaConfig._config
   const control = viaOption._config.topMargin
 
   viaConfig.dispose()

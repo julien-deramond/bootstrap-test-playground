@@ -16,12 +16,14 @@ const offsetFromStart = (scope, name, rtl) => {
 export function assert() {
   const ltr = document.querySelector('[dir="ltr"]:has([data-box])')
   const rtl = document.querySelector('[dir="rtl"]:has([data-box])')
-  if (!ltr || !rtl) return { pass: null, details: 'LTR or RTL block not found' }
+  if (!ltr || !rtl) {return { pass: null, details: 'LTR or RTL block not found' }}
 
-  const results = markers.map((name) => {
+  const results = markers.map(name => {
     const expected = offsetFromStart(ltr, name, false)
     const actual = offsetFromStart(rtl, name, true)
-    return { name, expected, actual, diff: actual - expected }
+    return {
+      name, expected, actual, diff: actual - expected
+    }
   })
   return {
     pass: results.every(({ diff }) => Math.abs(diff) <= 1),

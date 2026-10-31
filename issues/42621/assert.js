@@ -35,6 +35,6 @@ export async function assert() {
     pass: scrollsInside || (spills <= 0 && (hidden <= 0 || scrollsWithPage)),
     details: `${spills > 0 ? `the footer ends ${spills}px below the dialog's box` : 'the footer is inside the dialog\'s box'}, ` +
       `${hidden > 0 ? `${hidden}px below a ${window.innerHeight}px viewport` : 'within the viewport'}; ` +
-      `${scrollsInside ? 'the dialog scrolls' : scrollsWithPage ? 'the page scrolls with the dialog' : 'nothing scrolls to it'}`
+      `${scrollsInside ? 'the dialog scrolls' : (scrollsWithPage ? 'the page scrolls with the dialog' : 'nothing scrolls to it')}`
   }
 }

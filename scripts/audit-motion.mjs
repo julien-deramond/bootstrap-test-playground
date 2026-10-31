@@ -74,7 +74,7 @@ function where(node) {
 
 const mediaOf = node => {
   const queries = []
-  for (let parent = node.parent; parent && parent.type !== 'root'; parent = parent.parent) {
+  for (let { parent } = node; parent && parent.type !== 'root'; parent = parent.parent) {
     if (parent.type === 'atrule' && parent.name === 'media') {
       queries.push(parent.params)
     }
@@ -86,7 +86,9 @@ const mediaOf = node => {
 const clean = selector => selector.replace(/\s+/g, ' ').trim()
 
 // The family a motion property belongs to, and whether its value moves.
-const FAMILY = { transition: 'transition', 'transition-duration': 'transition', 'transition-property': 'transition', animation: 'animation', 'animation-name': 'animation', 'scroll-behavior': 'scroll' }
+const FAMILY = {
+  transition: 'transition', 'transition-duration': 'transition', 'transition-property': 'transition', animation: 'animation', 'animation-name': 'animation', 'scroll-behavior': 'scroll'
+}
 const STILL = /^(none|0m?s|auto|initial|unset)(\s*!important)?$/
 
 function moves(decl) {
@@ -102,7 +104,9 @@ function moves(decl) {
 const compile = async name => (await compileConfig(path.join(root, 'configs', name, 'main.scss'), { bootstrapDir, logger: quiet, sourceMap: true })).root
 
 const findings = []
-const counts = { guarded: 0, stopped: 0, slowed: 0, uncovered: 0 }
+const counts = {
+  guarded: 0, stopped: 0, slowed: 0, uncovered: 0
+}
 
 // --- configs/default: each motion against prefers-reduced-motion ------------
 
@@ -149,10 +153,12 @@ css.walkDecls(decl => {
   }
 
   // A `reduce` rule that changes a custom property the value reads.
-  const reads = [...decl.value.matchAll(/var\(\s*(--[\w-]+)/g)].map(match => match[1])
-  const kind = overrides.every(set => Object.keys(set).some(prop => reads.includes(prop))) ? 'slowed' : 'uncovered'
+  const reads = new Set([...decl.value.matchAll(/var\(\s*(--[\w-]+)/g)].map(match => match[1]))
+  const kind = overrides.every(set => Object.keys(set).some(prop => reads.has(prop))) ? 'slowed' : 'uncovered'
   counts[kind]++
-  findings.push({ kind, selector: clean(rule.selector), prop: decl.prop, value: decl.value.replace(/\s+/g, ' '), where: where(decl), infinite: /\binfinite\b/.test(decl.value) })
+  findings.push({
+    kind, selector: clean(rule.selector), prop: decl.prop, value: decl.value.replace(/\s+/g, ' '), where: where(decl), infinite: /\binfinite\b/.test(decl.value)
+  })
 })
 
 // --- configs/no-transitions: nothing may transition ------------------------
@@ -162,7 +168,9 @@ let transitionsLeft = 0
 noTransitions.walkDecls(decl => {
   if (decl.parent.type === 'rule' && FAMILY[decl.prop] === 'transition' && moves(decl)) {
     transitionsLeft++
-    findings.push({ kind: 'transition', selector: clean(decl.parent.selector), prop: decl.prop, value: decl.value.replace(/\s+/g, ' '), where: where(decl) })
+    findings.push({
+      kind: 'transition', selector: clean(decl.parent.selector), prop: decl.prop, value: decl.value.replace(/\s+/g, ' '), where: where(decl)
+    })
   }
 })
 
@@ -179,7 +187,9 @@ noReducedMotion.walkAtRules('media', rule => {
   rule.walkRules(inner => {
     const decls = inner.nodes.filter(node => node.type === 'decl')
     if (decls.length) {
-      findings.push({ kind: 'query', selector: clean(inner.selector), prop: `@media ${rule.params}`, value: decls.map(decl => decl.prop).join(', '), where: where(decls[0]) })
+      findings.push({
+        kind: 'query', selector: clean(inner.selector), prop: `@media ${rule.params}`, value: decls.map(decl => decl.prop).join(', '), where: where(decls[0])
+      })
     }
   })
 })

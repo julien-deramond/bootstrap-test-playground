@@ -4,7 +4,9 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { loadEnv } from 'vite'
 import { bootstrapSource } from './bootstrap.mjs'
-import { NAME_PATTERN, configDir, copyStyles, fail, listConfigs, root, workingDir } from './configs.mjs'
+import {
+  NAME_PATTERN, configDir, copyStyles, fail, listConfigs, root, workingDir
+} from './configs.mjs'
 
 // Tracking issues live in this repository.
 export const TRACKING_REPO = 'julien-deramond/bootstrap-test-playground'
@@ -64,8 +66,7 @@ export const REPRO_PLACEHOLDER = '        <div data-playground-repro>\n         
 export const addSteps = (html, steps) => replaceOnce(html, STEP_PLACEHOLDER, `${steps.map(step => `          <li>${step}</li>\n`).join('')}${STEP_PLACEHOLDER}`)
 
 // The markup under test in the reproduction block, indented for it.
-export const setMarkup = (html, markup, classes = []) => replaceOnce(html, REPRO_PLACEHOLDER,
-  `        <div data-playground-repro${classes.length > 0 ? ` class="${classes.join(' ')}"` : ''}>\n${markup}\n`)
+export const setMarkup = (html, markup, classes = []) => replaceOnce(html, REPRO_PLACEHOLDER, `        <div data-playground-repro${classes.length > 0 ? ` class="${classes.join(' ')}"` : ''}>\n${markup}\n`)
 
 export const setTags = (html, tags) => replaceOnce(html, '<meta name="playground-tags" content="">', `<meta name="playground-tags" content="${tags}">`)
 

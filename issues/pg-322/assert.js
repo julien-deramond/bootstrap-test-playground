@@ -27,7 +27,7 @@ export async function assert() {
     const attributeWins = probe(Component, { 'data-bs-placement': 'left' }, {})
     const optionWins = probe(Component, { 'data-bs-placement': 'left' }, { placement: 'right' })
 
-    seen.push(`${name} ${fromConfig.customClass || "''"}/${fromConfig.placement}`)
+    seen.push(`${name} ${fromConfig.customClass || '\'\''}/${fromConfig.placement}`)
 
     if (fromConfig.customClass !== 'from-config' || fromConfig.placement !== 'bottom') {
       failures.push(`${name} ignores data-bs-config`)

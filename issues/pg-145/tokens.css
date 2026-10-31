@@ -15,7 +15,9 @@
  */
 :root {
   /* --border-radius: .25rem; */
+
   /* --primary-base: oklch(55% .25 260); */
+
   /* --bg-body: #f8f9fa; */
 }
 
@@ -26,6 +28,8 @@
  */
 @layer custom {
   /* .alert { */
+
   /*   --alert-padding-x: 2rem; */
+
   /* } */
 }

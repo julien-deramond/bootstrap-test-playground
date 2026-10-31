@@ -60,7 +60,9 @@ async function render() {
     const page = await browser.newPage()
     await page.goto(`${base}/issues/pg-27/?chrome=0`)
     await page.waitForFunction(() => document.documentElement.dataset.layerCases === 'done')
-    cases = await page.$$eval('[data-layer-case]', items => items.map(item => ({ name: item.dataset.layerCase, expect: item.dataset.expect, result: item.dataset.result, issue: item.dataset.issue })))
+    cases = await page.$$eval('[data-layer-case]', items => items.map(item => ({
+      name: item.dataset.layerCase, expect: item.dataset.expect, result: item.dataset.result, issue: item.dataset.issue
+    })))
   } finally {
     await browser.close()
     await server.close()
@@ -114,7 +116,7 @@ const where = node => {
 
 const layerOf = node => {
   const names = []
-  for (let parent = node.parent; parent && parent.type !== 'root'; parent = parent.parent) {
+  for (let { parent } = node; parent && parent.type !== 'root'; parent = parent.parent) {
     if (parent.type === 'atrule' && parent.name === 'layer') {
       names.unshift(parent.params)
     }
@@ -123,7 +125,7 @@ const layerOf = node => {
   return names.join('.')
 }
 
-const inKeyframes = node => node.parent?.type === 'atrule' && /keyframes$/.test(node.parent.name)
+const inKeyframes = node => node.parent?.type === 'atrule' && node.parent.name.endsWith('keyframes')
 const clean = selector => selector.replace(/\s+/g, ' ').trim()
 
 const { root: css } = await compileConfig(path.join(root, 'configs/default/main.scss'), { bootstrapDir, logger: quiet, sourceMap: true })
@@ -141,7 +143,9 @@ css.walkAtRules('layer', rule => {
   const name = layerOf(rule) ? `${layerOf(rule)}.${rule.params}` : rule.params
   used.set(name, (used.get(name) ?? 0) + rule.nodes.length)
   if (!layerOf(rule) && !declared.includes(rule.params)) {
-    findings.push({ kind: 'undeclared', selector: `@layer ${rule.params}`, detail: 'ordered after every declared layer', where: where(rule) })
+    findings.push({
+      kind: 'undeclared', selector: `@layer ${rule.params}`, detail: 'ordered after every declared layer', where: where(rule)
+    })
   }
 })
 
@@ -160,7 +164,9 @@ css.walkRules(rule => {
   }
 
   const first = rule.nodes.find(node => node.type === 'decl') ?? rule
-  findings.push({ kind: 'unlayered', selector: clean(rule.selector), detail: rule.nodes.filter(node => node.type === 'decl').map(node => node.prop).slice(0, 4).join(', '), where: where(first) })
+  findings.push({
+    kind: 'unlayered', selector: clean(rule.selector), detail: rule.nodes.filter(node => node.type === 'decl').map(node => node.prop).slice(0, 4).join(', '), where: where(first)
+  })
 })
 
 // Files split across layers. Mixins emit into their caller's layer, so only
@@ -187,7 +193,9 @@ css.walkDecls(decl => {
 })
 for (const [file, layers] of layersByFile) {
   if (layers.size > 1) {
-    findings.push({ kind: 'split', selector: file, detail: [...layers.keys()].join(', '), where: [...layers.values()].join(', ') })
+    findings.push({
+      kind: 'split', selector: file, detail: [...layers.keys()].join(', '), where: [...layers.values()].join(', ')
+    })
   }
 }
 
@@ -204,7 +212,9 @@ css.walkDecls(decl => {
   importantCount++
   const selector = withoutBreakpoint(clean(decl.parent.selector))
   const key = `${selector}|${origin(decl)?.file}`
-  const entry = important.get(key) ?? { kind: 'important', selector, props: new Set(), variants: new Set(), where: where(decl), layer: layerOf(decl) || '(unlayered)' }
+  const entry = important.get(key) ?? {
+    kind: 'important', selector, props: new Set(), variants: new Set(), where: where(decl), layer: layerOf(decl) || '(unlayered)'
+  }
   entry.props.add(decl.prop)
   entry.variants.add(decl.parent.selector)
   important.set(key, entry)
@@ -216,10 +226,12 @@ for (const { props, variants, ...entry } of important.values()) {
 // AGENTS.md, in a checkout only.
 const agentsFile = path.join(bootstrapDir, 'AGENTS.md')
 const agents = fs.existsSync(agentsFile) ? fs.readFileSync(agentsFile, 'utf8').match(/CSS layers:\s*`([^`]+)`/)?.[1].split(',').map(name => name.trim()) : null
-if (agents && agents.join() !== declared.join()) {
+if (agents && agents.join(',') !== declared.join(',')) {
   const extra = agents.filter(name => !declared.includes(name))
   const missing = declared.filter(name => !agents.includes(name))
-  findings.push({ kind: 'docs', selector: 'AGENTS.md', detail: [extra.length && `lists ${extra.join(', ')}`, missing.length && `misses ${missing.join(', ')}`, !extra.length && !missing.length && 'different order'].filter(Boolean).join('; '), where: 'AGENTS.md' })
+  findings.push({
+    kind: 'docs', selector: 'AGENTS.md', detail: [extra.length && `lists ${extra.join(', ')}`, missing.length && `misses ${missing.join(', ')}`, !extra.length && !missing.length && 'different order'].filter(Boolean).join('; '), where: 'AGENTS.md'
+  })
 }
 
 // --- Report -----------------------------------------------------------------
@@ -235,7 +247,7 @@ console.log(`configs/default: @layer ${declared.join(', ')}`)
 console.log(`  ${[...used.keys()].length} layers used${empty.length ? `, declared but empty: ${empty.join(', ')}` : ''}`)
 console.log(`  ${globalRules} unlayered global token rules (expected), ${findings.filter(finding => finding.kind === 'unlayered').length} other unlayered rules`)
 console.log(`  ${importantCount} !important declarations in ${important.size} rules`)
-console.log(`  AGENTS.md: ${agents ? (agents.join() === declared.join() ? 'matches' : 'differs') : 'not checked (only in a Bootstrap checkout, with BOOTSTRAP_PATH)'}`)
+console.log(`  AGENTS.md: ${agents ? (agents.join(',') === declared.join(',') ? 'matches' : 'differs') : 'not checked (only in a Bootstrap checkout, with BOOTSTRAP_PATH)'}`)
 console.log(`${fresh.length ? '✗' : '✓'} ${findings.length - fresh.length} known, ${fresh.length} new\n`)
 
 const listed = showAll ? findings : fresh

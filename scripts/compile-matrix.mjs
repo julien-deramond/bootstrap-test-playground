@@ -68,7 +68,9 @@ async function compile(combination, compiler) {
       rules++
     })
     fs.writeFileSync(path.join(reportDir, `${combination.name}.css`), result.css)
-    return { ...combination, css: result.css, size: Buffer.byteLength(result.css), rules, warnings: [...warnings], hash: crypto.createHash('sha1').update(result.css).digest('hex') }
+    return {
+      ...combination, css: result.css, size: Buffer.byteLength(result.css), rules, warnings: [...warnings], hash: crypto.createHash('sha1').update(result.css).digest('hex')
+    }
   } catch (error) {
     return { ...combination, error: (error.sassMessage ?? error.message).split('\n')[0], warnings: [...warnings] }
   }
@@ -81,7 +83,7 @@ fs.mkdirSync(reportDir, { recursive: true })
 
 // One embedded compiler, a few compilations at a time.
 const compiler = await sass.initAsyncCompiler()
-const results = new Array(combinations.length)
+const results = Array.from({ length: combinations.length })
 let next = 0
 await Promise.all(Array.from({ length: 6 }, async () => {
   while (next < combinations.length) {
@@ -160,7 +162,7 @@ for (const result of failed) {
 
 const entryOf = option => known.find(entry => entry.option === option.label)
 const fresh = dead.filter(option => !entryOf(option))
-const stale = known.filter(entry => !dead.some(option => option.label === entry.option))
+const stale = known.filter(entry => dead.every(option => option.label !== entry.option))
 
 for (const option of dead) {
   const entry = entryOf(option)

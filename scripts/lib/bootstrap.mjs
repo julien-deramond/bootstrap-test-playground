@@ -16,7 +16,7 @@ export function checkoutState(dir) {
   try {
     status = git('status', '--porcelain=v2', '--branch')
   } catch {
-    return undefined
+    return
   }
 
   const lines = status.split('\n').filter(Boolean)
@@ -38,16 +38,16 @@ export function checkoutState(dir) {
     } catch {}
   }
 
-  return { branch, sha, dirty, url }
+  return {
+    branch, sha, dirty, url
+  }
 }
 
 // The git directory of a checkout (`.git`, or a worktree's), if any.
 export function gitDir(dir) {
   try {
     return execFileSync('git', ['rev-parse', '--absolute-git-dir'], { cwd: dir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim()
-  } catch {
-    return undefined
-  }
+  } catch {}
 }
 
 // `branch@sha (dirty)`, `sha (detached)` or `sha (detached, dirty)`.
@@ -98,7 +98,9 @@ export function bootstrapSource(env) {
     }
   } catch {}
 
-  return { dir: null, label, path: 'node_modules/bootstrap', url, sha, dirty: false }
+  return {
+    dir: null, label, path: 'node_modules/bootstrap', url, sha, dirty: false
+  }
 }
 
 // Bootstrap's own `.scss` files under `scss/`, as absolute paths. A git

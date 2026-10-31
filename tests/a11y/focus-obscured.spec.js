@@ -19,7 +19,9 @@
 // reports/a11y/default/light/obscured/<page>.json.
 import { expect, test } from '@playwright/test'
 import { collectPages } from '../../scripts/lib/pages.mjs'
-import { OBSCURED_RULE, describe, describeEntry, expectedWith, goneMessage, knownOn, load, matches, report, unexpectedMessage } from './shared.js'
+import {
+  OBSCURED_RULE, describe, describeEntry, expectedWith, goneMessage, knownOn, load, matches, report, unexpectedMessage
+} from './shared.js'
 
 const CONFIG = 'default'
 const THEME = 'light'
@@ -158,7 +160,9 @@ test.describe('focus obscured', () => {
           const entryOf = new Map(nodes.map(node => [node, known.find(entry => matches(entry, node))]))
           await testInfo.attach('partly-obscured.json', { body: JSON.stringify(partly, null, 2), contentType: 'application/json' })
           // One report per page and width.
-          await report(testInfo, { config: CONFIG, theme: THEME, url: `${url.replace(/\.html$/, '')}-${viewport.width}px`, state: 'obscured' }, nodes.map(node => {
+          await report(testInfo, {
+            config: CONFIG, theme: THEME, url: `${url.replace(/\.html$/, '')}-${viewport.width}px`, state: 'obscured'
+          }, nodes.map(node => {
             const entry = entryOf.get(node)
             return { ...node, known: entry ? entry.issue ?? entry.reason : null }
           }))
@@ -166,7 +170,7 @@ test.describe('focus obscured', () => {
           const unexpected = nodes.filter(node => !entryOf.get(node))
           // An entry is gone when it matches nothing at this width. One whose
           // target starts with the other width (`^320px `) is left alone here.
-          const gone = known.filter(entry => expectedWith(entry, CONFIG) && !nodes.some(node => matches(entry, node)) &&
+          const gone = known.filter(entry => expectedWith(entry, CONFIG) && nodes.every(node => !matches(entry, node)) &&
             (/^\^?(\d+)px/.exec(entry.target?.source)?.[1] ?? viewport.width) === String(viewport.width))
 
           expect(unexpected.map(node => `${describe(node)}: ${node.summary}`), unexpectedMessage(`${url}?${params} at ${viewport.width}px`)).toEqual([])

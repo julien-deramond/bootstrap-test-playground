@@ -23,12 +23,13 @@ test('the floated label lines up with the input text in RTL', async ({ page, rep
       const text = range.getBoundingClientRect()
       const rtl = dir === 'rtl'
       const controlBox = control.getBoundingClientRect()
-      const inputStart = rtl
-        ? box.right - (controlBox.right - parseFloat(style.borderRightWidth) - parseFloat(style.paddingRight))
-        : controlBox.left + parseFloat(style.borderLeftWidth) + parseFloat(style.paddingLeft) - box.left
+      const inputStart = rtl ?
+        box.right - (controlBox.right - Number.parseFloat(style.borderRightWidth) - Number.parseFloat(style.paddingRight)) :
+        controlBox.left + Number.parseFloat(style.borderLeftWidth) + Number.parseFloat(style.paddingLeft) - box.left
       const labelStart = rtl ? box.right - text.right : text.left - box.left
       results[name] = { label: Math.round(labelStart * 10) / 10, input: Math.round(inputStart * 10) / 10 }
     }
+
     return results
   }, direction)
 

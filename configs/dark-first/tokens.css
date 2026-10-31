@@ -13,6 +13,7 @@
  * overrides stay unlayered too. They win because this file loads after
  * Bootstrap.
  */
+
 /*
  * Dark first: dark unless the page asks for light. Bootstrap's `:root` has
  * `color-scheme: light dark`, which follows the OS. Without `data-bs-theme`,
@@ -32,6 +33,8 @@
  */
 @layer custom {
   /* .alert { */
+
   /*   --alert-padding-x: 2rem; */
+
   /* } */
 }

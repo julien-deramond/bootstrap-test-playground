@@ -7,7 +7,7 @@
 // passes: `translate`, a physical margin, or logical insets.
 export const environment = { viewport: { width: 1280, height: 600 } }
 
-const opened = (button) => new Promise((resolve) => {
+const opened = button => new Promise(resolve => {
   const popover = window.bootstrap.Popover.getOrCreateInstance(button)
   const tip = () => document.querySelector('#repro .popover.show')
   if (tip()) {
@@ -25,7 +25,7 @@ export async function assert() {
     return { pass: null, details: 'the popover button or Bootstrap is missing' }
   }
 
-  const tip = await Promise.race([opened(button), new Promise((resolve) => setTimeout(resolve, 3000))])
+  const tip = await Promise.race([opened(button), new Promise(resolve => setTimeout(resolve, 3000))])
   const header = tip?.querySelector('.popover-header')
   const arrow = tip?.querySelector('.popover-arrow')
   if (!header || !arrow) {
@@ -33,7 +33,7 @@ export async function assert() {
   }
 
   // Popper positions the arrow once the popover is placed.
-  await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+  await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
 
   if (tip.dataset.bsPlacement !== 'bottom' || getComputedStyle(tip).direction !== 'rtl') {
     return { pass: null, details: 'the popover is not a bottom popover in RTL here' }
@@ -42,13 +42,13 @@ export async function assert() {
   const notch = getComputedStyle(header, '::before')
   const container = getComputedStyle(header).position === 'static' ? tip : header
   const box = container.getBoundingClientRect()
-  const border = parseFloat(getComputedStyle(container).borderLeftWidth)
-  const shift = (value) => (value === 'none' ? 0 : new DOMMatrix(value).m41)
+  const border = Number.parseFloat(getComputedStyle(container).borderLeftWidth)
+  const shift = value => (value === 'none' ? 0 : new DOMMatrix(value).m41)
   // `translate` keeps a percentage as written: it's a share of the gap's own width.
   const [x = '0'] = notch.translate === 'none' ? [] : notch.translate.split(' ')
-  const translate = x.endsWith('%') ? (parseFloat(x) / 100) * parseFloat(notch.width) : parseFloat(x)
-  const left = box.left + border + parseFloat(notch.left) + parseFloat(notch.marginLeft) + translate + shift(notch.transform)
-  const notchCenter = left + (parseFloat(notch.width) / 2)
+  const translate = x.endsWith('%') ? (Number.parseFloat(x) / 100) * Number.parseFloat(notch.width) : Number.parseFloat(x)
+  const left = box.left + border + Number.parseFloat(notch.left) + Number.parseFloat(notch.marginLeft) + translate + shift(notch.transform)
+  const notchCenter = left + (Number.parseFloat(notch.width) / 2)
   const arrowBox = arrow.getBoundingClientRect()
   const arrowCenter = arrowBox.left + (arrowBox.width / 2)
   const offset = notchCenter - arrowCenter

@@ -53,7 +53,7 @@ const versionMarker = line => plain(line.replace(/^#+\s*/, '')).match(/^(?:boots
 // sessions are none of them.
 function sniff(code) {
   const text = code.trim()
-  if (/^</.test(text)) {
+  if (text.startsWith('<')) {
     return 'html'
   }
 
@@ -103,7 +103,9 @@ export function codeBlocks(text) {
     }
 
     const before = source.slice(0, index).trimEnd().split('\n').pop() ?? ''
-    return { language, code: dedent(code), version: versionMarker(before), jsx }
+    return {
+      language, code: dedent(code), version: versionMarker(before), jsx
+    }
   })
 }
 
@@ -161,7 +163,7 @@ export function versionOf(sections, body) {
 // Live demos: links the reviewer opens, never loaded by the page.
 export function demoLinks(body) {
   const pattern = /https:\/\/(?:www\.)?(?:codepen\.io|stackblitz\.com|[\w-]+\.stackblitz\.io|jsfiddle\.net|codesandbox\.io|jsbin\.com)\/[^\s)>\]"'`]+/g
-  return [...new Set(body.match(pattern) ?? [])]
+  return [...new Set(body.match(pattern))]
 }
 
 // Ids the markup uses more than once, as `{ id, count }`: the page's dark clone
@@ -191,6 +193,7 @@ export const closedIssues = body => [...new Set([...body.matchAll(/\b(?:close[sd
 // --- Cleaning -----------------------------------------------------------------
 
 const isRemote = url => /^([a-z][a-z\d+.-]*:|\/\/|\\\\)/i.test(url.trim())
+// eslint-disable-next-line no-control-regex
 const normalized = value => value.replace(/[\u0000- \u007F-\u009F]/g, '').toLowerCase()
 const isScript = value => /(javascript|vbscript|livescript):/.test(normalized(value))
 const isSafeData = value => /^data:image\/(png|gif|jpe?g|webp|avif);/.test(normalized(value))
@@ -272,7 +275,7 @@ export function cleanScss(scss, removed = []) {
 // Cleans a parsed node's children in place: drops what runs code or loads from
 // elsewhere, moves `<style>` to `css` and inline `<script>` to `js`.
 function cleanNodes(parent, found) {
-  for (const node of [...parent.childNodes ?? []]) {
+  for (const node of parent.childNodes ?? []) {
     const name = node.tagName?.toLowerCase()
     if (node.nodeName === '#comment' || node.nodeName === '#documentType') {
       parent.childNodes.splice(parent.childNodes.indexOf(node), 1)
@@ -335,7 +338,9 @@ function cleanNodes(parent, found) {
 // bootstrap, removed }`. `markup` is the cleaned body; `bootstrap` lists the
 // Bootstrap files it loaded, which the reproduction replaces with its own build.
 export function cleanHtml(html) {
-  const found = { css: [], js: [], bootstrap: [], removed: [] }
+  const found = {
+    css: [], js: [], bootstrap: [], removed: []
+  }
   const isDocument = /<!doctype|<html[\s>]|<head[\s>]|<body[\s>]/i.test(html)
   let container
   if (isDocument) {

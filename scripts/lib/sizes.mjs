@@ -14,7 +14,9 @@ import { buildDist } from './dist.mjs'
 const quiet = { warn() {}, debug() {} }
 
 // Bootstrap's `.browserslistrc` floors, as in vite.config.js.
-const TARGETS = { chrome: 130 << 16, edge: 130 << 16, firefox: 132 << 16, safari: 18 << 16 }
+const TARGETS = {
+  chrome: 130 << 16, edge: 130 << 16, firefox: 132 << 16, safari: 18 << 16
+}
 
 const measure = buffer => ({
   min: buffer.length,
@@ -27,7 +29,9 @@ export async function measureSizes(bootstrapDir) {
 
   for (const { name } of listConfigs()) {
     const { css } = await compileConfig(path.join(root, 'configs', name, 'main.scss'), { bootstrapDir, logger: quiet })
-    const { code } = transform({ filename: `${name}.css`, code: Buffer.from(css), minify: true, targets: TARGETS })
+    const { code } = transform({
+      filename: `${name}.css`, code: Buffer.from(css), minify: true, targets: TARGETS
+    })
     sizes[`css/${name}`] = measure(Buffer.from(code))
   }
 

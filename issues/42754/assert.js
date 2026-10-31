@@ -23,7 +23,9 @@ export async function assert() {
     const gap = Math.round(edge === 'left' ? rect.left : document.documentElement.clientWidth - rect.right)
     const height = Math.round(rect.height)
     await once(sheet, 'hidden.bs.drawer', () => drawer.hide())
-    measured.push({ id, edge, gap, height })
+    measured.push({
+      id, edge, gap, height
+    })
   }
 
   const full = Math.round(window.innerHeight)

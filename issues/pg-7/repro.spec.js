@@ -12,9 +12,15 @@ test('a chip focused from the keyboard shows a focus ring', async ({ page, repro
   const chip = block.locator('.chip').last()
   const measured = await chip.evaluate(element => {
     const { outlineStyle, outlineWidth, boxShadow } = getComputedStyle(element)
-    return { focused: document.activeElement === element, visible: element.matches(':focus-visible'), outlineStyle, outlineWidth, boxShadow }
+    return {
+      focused: document.activeElement === element, visible: element.matches(':focus-visible'), outlineStyle, outlineWidth, boxShadow
+    }
   })
-  await repro.screenshot('focused chip', { clip: await chip.boundingBox().then(box => ({ x: box.x - 8, y: box.y - 8, width: box.width + 16, height: box.height + 16 })) })
+  await repro.screenshot('focused chip', {
+    clip: await chip.boundingBox().then(box => ({
+      x: box.x - 8, y: box.y - 8, width: box.width + 16, height: box.height + 16
+    }))
+  })
 
   const ring = (measured.outlineStyle !== 'none' && Number.parseFloat(measured.outlineWidth) > 0) || measured.boxShadow !== 'none'
   repro.verdict(measured.focused && measured.visible && ring,

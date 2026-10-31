@@ -11,7 +11,9 @@
 // entries of known-issues.js, and the report goes to
 // reports/a11y/<config>/<theme>/contrast/pages/contrast.json.
 import { expect, test } from '@playwright/test'
-import { ALL_CONFIGS, CONTRAST_RULE, THEMES, describe, describeEntry, expectedWith, goneMessage, knownOn, load, matches, report, unexpectedMessage } from './shared.js'
+import {
+  ALL_CONFIGS, CONTRAST_RULE, THEMES, describe, describeEntry, expectedWith, goneMessage, knownOn, load, matches, report, unexpectedMessage
+} from './shared.js'
 
 const URL = '/pages/contrast.html'
 const HELP = 'Text must contrast at least 4.5:1 with its background (WCAG 1.4.3)'
@@ -41,13 +43,15 @@ for (const config of CONFIGS.filter(inScope)) {
       }))
       const known = knownOn(URL, theme, config, 'contrast')
       const entryOf = new Map(nodes.map(node => [node, known.find(entry => matches(entry, node))]))
-      await report(testInfo, { config, theme, url: URL, state: 'contrast' }, nodes.map(node => {
+      await report(testInfo, {
+        config, theme, url: URL, state: 'contrast'
+      }, nodes.map(node => {
         const entry = entryOf.get(node)
         return { ...node, known: entry ? entry.issue ?? entry.reason : null }
       }))
 
       unexpected.push(...nodes.filter(node => !entryOf.get(node)).map(node => `${theme}: ${describe(node)}: ${node.summary}`))
-      gone.push(...known.filter(entry => expectedWith(entry, config) && !nodes.some(node => matches(entry, node))).map(entry => `${theme}: ${describeEntry(entry)}`))
+      gone.push(...known.filter(entry => expectedWith(entry, config) && nodes.every(node => !matches(entry, node))).map(entry => `${theme}: ${describeEntry(entry)}`))
     }
 
     expect(unexpected, unexpectedMessage(`${URL}?${params}`)).toEqual([])

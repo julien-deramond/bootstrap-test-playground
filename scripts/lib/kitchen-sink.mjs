@@ -25,7 +25,7 @@ export const pageFile = ({ section, slug }) => path.join(outDir, `${section}-${s
 function readYamlList(bootstrapDir, file) {
   const items = []
   for (const line of fs.readFileSync(path.join(bootstrapDir, 'site/data', file), 'utf8').split('\n')) {
-    const match = line.match(/^(- |  )([\w-]+):\s*(.*)$/)
+    const match = line.match(/^(- | {2})([\w-]+):\s*(.*)$/)
     if (!match) {
       continue
     }
@@ -56,6 +56,8 @@ function createGetData(bootstrapDir) {
   }
 }
 
+// Bootstrap's docs read this key as is
+// eslint-disable-next-line camelcase
 const getConfig = () => ({ docs_version: 'current' })
 
 // Reads the JS expression in `code={...}`, starting right after the `{`.
@@ -82,24 +84,42 @@ export function readExpression(source, start) {
       continue
     }
 
-    if (char === '`') {
-      inTemplate = true
-    } else if (char === '"' || char === "'") {
-      for (i++; source[i] !== char; i++) {
-        if (source[i] === '\\') {
-          i++
-        }
-      }
-    } else if (char === '{') {
-      depth++
-    } else if (char === '}') {
-      depth--
-      if (templateDepths.length > 0 && depth === templateDepths.at(-1)) {
-        templateDepths.pop()
+    switch (char) {
+      case '`': {
         inTemplate = true
-      } else if (depth === 0) {
-        return source.slice(start, i)
+
+        break
       }
+
+      case '"':
+      case '\'': {
+        for (i++; source[i] !== char; i++) {
+          if (source[i] === '\\') {
+            i++
+          }
+        }
+
+        break
+      }
+
+      case '{': {
+        depth++
+
+        break
+      }
+
+      case '}': {
+        depth--
+        if (templateDepths.length > 0 && depth === templateDepths.at(-1)) {
+          templateDepths.pop()
+          inTemplate = true
+        } else if (depth === 0) {
+          return source.slice(start, i)
+        }
+
+        break
+      }
+    // No default
     }
   }
 
@@ -276,10 +296,12 @@ export function renderPage({ section, slug, title, description, examples }, allP
     const count = (seen.get(base) ?? 0) + 1
     seen.set(base, count)
     const id = count > 1 ? `${base}-${count}` : base
-    return { id, heading, className, html }
+    return {
+      id, heading, className, html
+    }
   })
 
-  const toc = [...new Map(blocks.map(block => [block.heading, block.id])).entries()]
+  const toc = [...new Map(blocks.map(block => [block.heading, block.id]))]
   const pageLinks = SECTIONS.map(({ dir, label }) => `        <p class="mb-1 fg-3">${label}</p>
         <p class="d-flex flex-wrap gap-2 mb-3">
 ${allPages.filter(page => page.section === dir).map(page => `          <a href="/kitchen-sink/${page.section}-${page.slug}.html"${page.slug === slug && page.section === section ? ' aria-current="page" class="fw-bold"' : ''}>${escapeHtml(page.title)}</a>`).join('\n')}

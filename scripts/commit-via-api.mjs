@@ -30,8 +30,7 @@ const additions = []
 const deletions = []
 for (let i = 0; i < entries.length; i += 2) {
   const [status, path] = [entries[i], entries[i + 1]]
-  if (status === 'D') deletions.push({ path })
-  else additions.push({ path, contents: readFileSync(path).toString('base64') })
+  if (status === 'D') {deletions.push({ path })} else {additions.push({ path, contents: readFileSync(path).toString('base64') })}
 }
 
 // GitHub refuses a request payload over 45MB, and in practice answers 504 when
@@ -58,7 +57,7 @@ function findCreatedCommit(parentOid, headline) {
   try {
     const commit = JSON.parse(result.stdout)
     const parents = (commit.parents || []).map(parent => parent.sha)
-    if (parents.length === 1 && parents[0] === parentOid && commit.commit.message.split('\n')[0] === headline) return commit.sha
+    if (parents.length === 1 && parents[0] === parentOid && commit.commit.message.split('\n')[0] === headline) {return commit.sha}
   } catch {}
 
   return null
@@ -91,7 +90,7 @@ batches.forEach((batch, index) => {
     }
 
     oid = response?.data?.createCommitOnBranch?.commit?.oid
-    if (oid) break
+    if (oid) {break}
 
     const errors = (response?.errors || [{ message: result.stderr || result.stdout || 'No response from the GitHub API.' }]).map(error => error.message).join('; ')
     const moved = /expected branch to point to|is at .* but expected/i.test(errors)

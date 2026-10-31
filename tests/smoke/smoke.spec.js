@@ -28,7 +28,9 @@ import { configDir, root } from '../../scripts/lib/configs.mjs'
 import { listReproductions } from '../../scripts/lib/export-issue.mjs'
 import { readReproductionMeta } from '../../scripts/lib/repro-status.mjs'
 import { renderTemplate, writeReproduction } from '../../scripts/lib/reproduction.mjs'
-import { PAGES, PARTIALS, VARIANTS, clearEvents, events, expectEvents, first, inScope, known, knownFor, leftOut, load, tabsToControls } from './shared.js'
+import {
+  PAGES, PARTIALS, VARIANTS, clearEvents, events, expectEvents, first, inScope, known, knownFor, leftOut, load, tabsToControls
+} from './shared.js'
 
 // What a closed overlay could leave behind: open dialogs (some docs examples
 // render one open), a scroll lock, inert content.
@@ -62,7 +64,9 @@ const drawnOver = (layer, index, selector) => layer.evaluate((layer, [index, sel
   const box = layer.querySelector(`.box[data-index="${index}"]`)
   const rect = element => {
     const { left, top, width, height } = element.getBoundingClientRect()
-    return { left, top, width, height }
+    return {
+      left, top, width, height
+    }
   }
 
   if (box && target && Object.entries(rect(target)).every(([key, value]) => Math.abs(rect(box)[key] - value) < 0.5)) {

@@ -18,9 +18,13 @@ import { spawnSync } from 'node:child_process'
 import path from 'node:path'
 import { parseArgs } from 'node:util'
 import { fail } from './lib/configs.mjs'
-import { cleanCss, cleanHtml, cleanScss, closedIssues, codeBlocks, commentText, componentsNamed, dedent, demoLinks, duplicateIds, expectedActual, inertScript, pickVersion, readSections, sectionMatching, summary, versionOf } from './lib/issue-body.mjs'
+import {
+  cleanCss, cleanHtml, cleanScss, closedIssues, codeBlocks, commentText, componentsNamed, dedent, demoLinks, duplicateIds, expectedActual, inertScript, pickVersion, readSections, sectionMatching, summary, versionOf
+} from './lib/issue-body.mjs'
 import { listKitchenSinkTags } from './lib/kitchen-sink.mjs'
-import { REPRO_PLACEHOLDER, addSteps, escapeHtml, renderTemplate, replaceOnce, resolveTarget, setMarkup, setTags, writeReproduction } from './lib/reproduction.mjs'
+import {
+  REPRO_PLACEHOLDER, addSteps, escapeHtml, renderTemplate, replaceOnce, resolveTarget, setMarkup, setTags, writeReproduction
+} from './lib/reproduction.mjs'
 
 const USAGE = 'Usage: npm run import-issue <twbs/bootstrap issue or pull request number> [-- --config <config>] [--force]   (e.g. npm run import-issue 42754)'
 
@@ -50,7 +54,9 @@ function fetchIssue(n) {
   }
 
   const issue = JSON.parse(result.stdout)
-  return { number: n, title: issue.title ?? '', body: issue.body ?? '', labels: issue.labels.map(label => label.name), isPullRequest: Boolean(issue.pull_request) }
+  return {
+    number: n, title: issue.title ?? '', body: issue.body ?? '', labels: issue.labels.map(label => label.name), isPullRequest: Boolean(issue.pull_request)
+  }
 }
 
 const issue = fetchIssue(number)
@@ -60,10 +66,10 @@ const { version, commit } = versionOf(sections, issue.body)
 // v6 or not: upstream's version labels, then the version the issue form asks
 // for. A pinned commit can't tell on its own.
 const majorLabels = issue.labels.filter(label => /^v\d+$/.test(label))
-const v6Evidence = issue.labels.some(label => /^v6\b/.test(label))
-  ? `labeled ${issue.labels.filter(label => /^v6\b/.test(label)).join(', ')} upstream`
+const v6Evidence = issue.labels.some(label => /^v6\b/.test(label)) ?
+  `labeled ${issue.labels.filter(label => /^v6\b/.test(label)).join(', ')} upstream` :
   // v6-dev: what older issues call v6 (the branch was renamed main on 2026-10-08)
-  : /^v?6\b|v6-dev/i.test(version) ? `reported on ${version}` : ''
+  (/^v?6\b|v6-dev/i.test(version) ? `reported on ${version}` : '')
 const versionMajor = version.match(/^v?([1-5])\./)?.[1]
 const otherMajor = v6Evidence ? '' : majorLabels[0] ?? (versionMajor ? `v${versionMajor}` : '')
 if (otherMajor && !values.force) {
@@ -106,22 +112,41 @@ const jsx = []
 for (const block of blocks) {
   if (block.jsx) {
     jsx.push(block.code)
-  } else if (block.language === 'html') {
-    const result = cleanHtml(block.code)
-    if (result.markup) {
-      markup.push(result.markup)
-    }
+  } else {
+    switch (block.language) {
+      case 'html': {
+        const result = cleanHtml(block.code)
+        if (result.markup) {
+          markup.push(result.markup)
+        }
 
-    css.push(...result.css)
-    js.push(...result.js)
-    bootstrapFiles.push(...result.bootstrap)
-    removed.push(...result.removed)
-  } else if (block.language === 'css') {
-    css.push(block.code)
-  } else if (block.language === 'scss') {
-    scss.push(block.code)
-  } else if (block.language === 'js') {
-    js.push(block.code)
+        css.push(...result.css)
+        js.push(...result.js)
+        bootstrapFiles.push(...result.bootstrap)
+        removed.push(...result.removed)
+
+        break
+      }
+
+      case 'css': {
+        css.push(block.code)
+
+        break
+      }
+
+      case 'scss': {
+        scss.push(block.code)
+
+        break
+      }
+
+      case 'js': {
+        js.push(block.code)
+
+        break
+      }
+ // No default
+    }
   }
 }
 
@@ -139,7 +164,7 @@ const demos = demoLinks(`${issue.body}\n${codeSource === issue ? '' : codeSource
 // the title names, and the issue's labels.
 const kitchenSink = listKitchenSinkTags().filter(({ slug }) => slug !== 'overview')
 const named = componentsNamed(issue.title, kitchenSink.map(({ slug }) => slug))
-const classes = new Set(markup.join('\n').match(/\bclass="[^"]*"/g)?.flatMap(attribute => attribute.slice(7, -1).split(/\s+/)) ?? [])
+const classes = new Set(markup.join('\n').match(/\bclass="[^"]*"/g)?.flatMap(attribute => attribute.slice(7, -1).split(/\s+/)))
 const tags = new Set()
 for (const { slug, tags: pageTags } of kitchenSink) {
   if ([...classes].some(name => name === slug || name.startsWith(`${slug}-`))) {
@@ -190,9 +215,9 @@ if (version || commit) {
   steps.push(`Reported on ${version ? `<code>${escapeHtml(version)}</code>` : 'Bootstrap'}${commit ? ` at <code>${escapeHtml(commit)}</code>` : ''}.`)
 }
 
-steps.push(v6Evidence
-  ? `A v6 issue: ${escapeHtml(v6Evidence)}.`
-  : `Not known to be a v6 issue${otherMajor ? ` (${escapeHtml(otherMajor)}, imported with --force)` : ''}: check that it applies.`)
+steps.push(v6Evidence ?
+  `A v6 issue: ${escapeHtml(v6Evidence)}.` :
+  `Not known to be a v6 issue${otherMajor ? ` (${escapeHtml(otherMajor)}, imported with --force)` : ''}: check that it applies.`)
 
 for (const demo of demos) {
   steps.push(`The issue's live demo: <a href="${escapeHtml(demo)}">${escapeHtml(demo)}</a>.`)
@@ -265,9 +290,9 @@ const transform = (content, file) => {
 
   if (file === 'main.scss' && configBlock) {
     const line = '@use "bootstrap/scss/bootstrap";\n'
-    return content.includes(line)
-      ? content.replace(line, () => `// ${header('its configuration')}\n${configBlock}\n`)
-      : `${content.trimEnd()}\n\n// ${header('its configuration')}. This config already\n// configures Bootstrap: merge it into the \`@use\` above.\n${configBlock.replace(/^/gm, '// ')}\n`
+    return content.includes(line) ?
+      content.replace(line, () => `// ${header('its configuration')}\n${configBlock}\n`) :
+      `${content.trimEnd()}\n\n// ${header('its configuration')}. This config already\n// configures Bootstrap: merge it into the \`@use\` above.\n${configBlock.replace(/^/gm, '// ')}\n`
   }
 
   if (file === '_custom.scss' && otherScss.length > 0) {
@@ -277,7 +302,9 @@ const transform = (content, file) => {
   return content
 }
 
-writeReproduction({ sourceDir, targetDir, html, transform })
+writeReproduction({
+  sourceDir, targetDir, html, transform
+})
 
 // --- Report -----------------------------------------------------------------
 

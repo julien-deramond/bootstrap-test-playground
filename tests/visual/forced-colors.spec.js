@@ -9,7 +9,9 @@
 // this playground documents, and Windows High Contrast is its main case.
 import { expect, test } from '@playwright/test'
 import { collectPages } from '../../scripts/lib/pages.mjs'
-import { VARIANTS, baseline, inScope, openPage, snapshotPath } from './shared.js'
+import {
+  VARIANTS, baseline, inScope, openPage, snapshotPath
+} from './shared.js'
 
 const FORCED_COLORS_URL = '/pages/forced-colors.html'
 

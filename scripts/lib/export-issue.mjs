@@ -42,7 +42,7 @@ const indent = (text, prefix) => text.split('\n').map(line => (line ? prefix + l
 const commentText = text => text.replace(/--/g, '- -')
 
 function walk(node, visit) {
-  for (const child of [...(node.childNodes ?? [])]) {
+  for (const child of (node.childNodes ?? [])) {
     if (visit(child) !== false) {
       walk(child, visit)
     }
@@ -94,7 +94,7 @@ function readBody(source, document, warnings) {
   }
 
   walk(body, node => {
-    const kept = node.nodeName === '#comment' ? [] : attribute(node, 'data-playground-chrome') !== undefined ? keptInside(node) : undefined
+    const kept = node.nodeName === '#comment' ? [] : (attribute(node, 'data-playground-chrome') === undefined ? undefined : keptInside(node))
     if (kept?.length > 0) {
       const { startOffset, endOffset } = node.sourceCodeLocation
       const indentation = source.slice(source.lastIndexOf('\n', startOffset) + 1, startOffset)
@@ -203,8 +203,8 @@ function optInComponents(body) {
 // The comments the default tokens.css is made of, removed from the export
 // with the rules they leave empty, so only the reproduction's own CSS stays.
 async function trimTokens(css, file) {
-  const defaults = new Set()
-  ;(await processCss(read(path.join(configDir('default'), 'tokens.css')), undefined)).root.walkComments(comment => {
+  const defaults = new Set();
+  (await processCss(read(path.join(configDir('default'), 'tokens.css')))).root.walkComments(comment => {
     defaults.add(comment.text.trim())
   })
 
@@ -295,7 +295,9 @@ export async function exportIssue(name, { bootstrap }) {
     } else {
       // A Sass file, like a page's own probe compiled with another option than main.scss, is compiled like main.scss.
       const css = (file.endsWith('.scss') ? await compileConfig(file, { bootstrapDir, logger: quiet, style: 'compressed' }) : await processCss(read(file), file)).css.trim()
-      styles.push({ html: `<!-- ${path.relative(root, file)}, from the playground. -->\n<style>\n${indent(css, '  ')}\n</style>`, link: `./${fileName}`, fileName, content: read(file) })
+      styles.push({
+        html: `<!-- ${path.relative(root, file)}, from the playground. -->\n<style>\n${indent(css, '  ')}\n</style>`, link: `./${fileName}`, fileName, content: read(file)
+      })
       warnings.push(`The page loads ${path.relative(root, file)}, the playground's own styles: the exports include them.`)
     }
   }
@@ -389,7 +391,9 @@ Exported from ${REPOSITORY_URL}/tree/main/issues/${name}
 
   return {
     html,
-    project: { title: head.title, description: head.description || head.title, template: 'node', openFile: STACKBLITZ_FILE, files },
+    project: {
+      title: head.title, description: head.description || head.title, template: 'node', openFile: STACKBLITZ_FILE, files
+    },
     warnings
   }
 }

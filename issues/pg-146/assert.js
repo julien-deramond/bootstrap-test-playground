@@ -3,10 +3,10 @@
 // The page's stylesheets are walked, nested rules and cascade layers included.
 const queries = []
 
-const walk = (rules) => {
+const walk = rules => {
   for (const rule of rules) {
     if (rule.media && /prefers-reduced-motion/.test(rule.media.mediaText)) {
-      const selectors = Array.from(rule.cssRules, (inner) => inner.selectorText || inner.cssText.slice(0, 40))
+      const selectors = Array.from(rule.cssRules, inner => inner.selectorText || inner.cssText.slice(0, 40))
       queries.push(`(${rule.media.mediaText.replace(/^\(|\)$/g, '')}) ${selectors.join(', ')}`)
     }
 

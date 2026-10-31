@@ -2,7 +2,9 @@
 // page and its example headings. Not from a text field of the page, which keeps
 // the key (see shortcuts.js). Like the toolbar, it renders in a shadow root
 // so it neither inherits from nor leaks into the page under test.
-import { pages, readRecent, resultUrl, search } from './page-index.js'
+import {
+  pages, readRecent, resultUrl, search
+} from './page-index.js'
 import { STATUSES } from './repro-status.js'
 import { leftToPage } from './shortcuts.js'
 
@@ -158,7 +160,7 @@ export function mountPalette() {
       window.open(url, '_blank', 'noopener')
     } else {
       dialog.close()
-      location.href = url
+      location.assign(url)
     }
   }
 

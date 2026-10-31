@@ -70,7 +70,6 @@ function trackRequests(page) {
   return {
     async settled() {
       while (inflight > 0 || Date.now() - lastActivity < QUIET_MS) {
-        // eslint-disable-next-line no-await-in-loop
         await page.waitForTimeout(100)
       }
     }
@@ -89,7 +88,7 @@ async function visit(page, baseURL, path) {
 
   page.on('pageerror', error => problems.push(`uncaught ${error.name}: ${error.message}`))
   page.on('console', message => {
-    if (['error', 'warning'].includes(message.type()) && !IGNORED.some(pattern => pattern.test(message.text()))) {
+    if (['error', 'warning'].includes(message.type()) && IGNORED.every(pattern => !pattern.test(message.text()))) {
       problems.push(`console.${message.type() === 'warning' ? 'warn' : 'error'}: ${message.text()}`)
     }
   })
@@ -127,8 +126,8 @@ for (const theme of THEMES) {
           const problems = await visit(page, baseURL, path)
 
           const known = knownIssues.filter(entry => entry.pages.includes(url) && (!entry.engines || entry.engines.includes(browserName)))
-          const unexpected = problems.filter(problem => !known.some(({ message }) => message.test(problem)))
-          let gone = known.filter(({ message }) => !problems.some(problem => message.test(problem)))
+          const unexpected = problems.filter(problem => known.every(({ message }) => !message.test(problem)))
+          let gone = known.filter(({ message }) => problems.every(problem => !message.test(problem)))
 
           // An upstream fix makes a known issue go away on every load. Load
           // the page once more before calling it gone, so a single load that
@@ -136,7 +135,7 @@ for (const theme of THEMES) {
           // fixed (#283).
           if (gone.length > 0) {
             const again = await visit(await context.newPage(), baseURL, path)
-            gone = gone.filter(({ message }) => !again.some(problem => message.test(problem)))
+            gone = gone.filter(({ message }) => again.every(problem => !message.test(problem)))
           }
 
           expect(unexpected, `${path} reported problems. If Bootstrap causes one, open a tracking issue labeled \`upstream\` ` +

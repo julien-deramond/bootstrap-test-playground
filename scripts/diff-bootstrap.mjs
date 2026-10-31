@@ -62,7 +62,9 @@ if (serve) {
   // under /b/, and <from>'s server proxies /b/ to it, so both share an origin:
   // the compare view reads its panes and syncs their scrolling.
   process.env.BOOTSTRAP_PATH = dirs.to
-  const b = await createServer({ root, base: '/b/', logLevel: 'warn', server: { port: 5199, strictPort: true, watch } })
+  const b = await createServer({
+    root, base: '/b/', logLevel: 'warn', server: { port: 5199, strictPort: true, watch }
+  })
   await b.listen()
 
   process.env.BOOTSTRAP_PATH = dirs.from
@@ -70,7 +72,11 @@ if (serve) {
   const label = (sha, ref) => (/^[\da-f]{7,40}$/.test(ref) ? short(sha) : `${short(sha)} (${ref})`)
   process.env.VITE_BOOTSTRAP_A = label(from, fromRef)
   process.env.VITE_BOOTSTRAP_B = label(to, toRef)
-  const a = await createServer({ root, logLevel: 'warn', server: { port: 5198, strictPort: true, watch, proxy: { '/b/': { target: 'http://localhost:5199', ws: true } } } })
+  const a = await createServer({
+    root, logLevel: 'warn', server: {
+      port: 5198, strictPort: true, watch, proxy: { '/b/': { target: 'http://localhost:5199', ws: true } }
+    }
+  })
   await a.listen()
 
   const params = new URLSearchParams({ page: '/kitchen-sink/components-button.html', a: 'bootstrap=a', b: 'bootstrap=b' })
@@ -81,6 +87,7 @@ if (serve) {
   console.log('Stop with Ctrl+C.')
   await new Promise(() => {})
 }
+
 const reportDir = path.join(root, 'reports/diff', `${short(from)}-${short(to)}`)
 fs.rmSync(reportDir, { recursive: true, force: true })
 fs.mkdirSync(path.join(reportDir, 'images'), { recursive: true })
@@ -153,9 +160,11 @@ if (screens) {
   }
 
   const browser = await chromium.launch()
-  const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 1, timezoneId: 'UTC', locale: 'en-US' })
-  const origins = Object.values(servers).map(server => new URL(server.resolvedUrls.local[0]).origin)
-  await context.route(target => !origins.includes(target.origin), route => route.abort())
+  const context = await browser.newContext({
+    viewport: { width: 1280, height: 900 }, deviceScaleFactor: 1, timezoneId: 'UTC', locale: 'en-US'
+  })
+  const origins = new Set(Object.values(servers).map(server => new URL(server.resolvedUrls.local[0]).origin))
+  await context.route(target => !origins.has(target.origin), route => route.abort())
   const views = { from: await context.newPage(), to: await context.newPage() }
   const canvas = await context.newPage()
 
@@ -185,13 +194,15 @@ if (screens) {
         if (result.pixels >= MIN_PIXELS) {
           const name = `${path.basename(url, '.html')}--${id}`
           fs.writeFileSync(path.join(reportDir, 'images', `${name}.png`), Buffer.from(result.image, 'base64'))
-          shots.push({ url, page: title, id, example, name, pixels: result.pixels, resized: result.resized })
+          shots.push({
+            url, page: title, id, example, name, pixels: result.pixels, resized: result.resized
+          })
         }
       }
     }
   } finally {
     if (process.stdout.isTTY) {
-      process.stdout.write('\r'.padEnd(81) + '\r')
+      process.stdout.write(`${'\r'.padEnd(81)}\r`)
     }
 
     await browser.close()
@@ -262,7 +273,9 @@ const summary = [
 ].join('\n')
 fs.writeFileSync(path.join(reportDir, 'summary.md'), `${summary}\n`)
 // What record-update puts in updates/last-update.json.
-fs.writeFileSync(path.join(reportDir, 'changes.json'), `${JSON.stringify({ from, to, screens, shots: shots.map(({ url, id, pixels }) => ({ url, id, pixels })) }, null, 2)}\n`)
+fs.writeFileSync(path.join(reportDir, 'changes.json'), `${JSON.stringify({
+  from, to, screens, shots: shots.map(({ url, id, pixels }) => ({ url, id, pixels }))
+}, null, 2)}\n`)
 
 console.log(`\n${commits ? `${commits.length} upstream commits. ` : ''}CSS diff +${added} −${removed} lines. Tokens: ${tokenChanges.added.length} added, ${tokenChanges.removed.length} removed, ${tokenChanges.changed.length} changed.`)
 for (const row of sizeRows.filter(row => !row.brotli.endsWith('±0'))) {

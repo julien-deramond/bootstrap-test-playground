@@ -40,12 +40,16 @@ export async function assert() {
   const results = []
   const measure = (label, token, element, pseudo) => {
     if (!element) {
-      results.push({ label, token, weight: 'missing', ok: false })
+      results.push({
+        label, token, weight: 'missing', ok: false
+      })
       return
     }
 
     const weight = getComputedStyle(element, pseudo).fontWeight
-    results.push({ label, token, weight, ok: weight === EXPECTED[token] })
+    results.push({
+      label, token, weight, ok: weight === EXPECTED[token]
+    })
   }
 
   for (const [label, token, selector, pseudo] of checks) {

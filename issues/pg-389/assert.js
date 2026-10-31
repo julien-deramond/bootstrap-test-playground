@@ -14,7 +14,7 @@ const ready = () => new Promise(resolve => {
 const context = document.createElement('canvas').getContext('2d', { willReadFrequently: true })
 const paint = (css, over) => {
   context.clearRect(0, 0, 1, 1)
-  if (!CSS.supports('color', css) || (over && !CSS.supports('color', over))) throw new Error(`Unreadable color: ${css}`)
+  if (!CSS.supports('color', css) || (over && !CSS.supports('color', over))) {throw new Error(`Unreadable color: ${css}`)}
   for (const color of over ? [over, css] : [css]) {
     context.fillStyle = color
     context.fillRect(0, 0, 1, 1)
@@ -39,7 +39,7 @@ const ratio = (a, b) => {
 
 const hex = rgb => `#${rgb.map(value => value.toString(16).padStart(2, '0')).join('')}`
 
-const contrastOf = (menu) => {
+const contrastOf = menu => {
   const item = menu.querySelector('.menu-item.active')
   const style = getComputedStyle(item)
   // --bs-bg-body may be a light-dark() value: a probe resolves it to a color.
@@ -51,7 +51,9 @@ const contrastOf = (menu) => {
   const page = paint(body)
   const fill = paint(style.backgroundColor, body)
   const text = paint(style.color)
-  return { ratio: ratio(text, fill), text: hex(text), fill: hex(fill), page: hex(page) }
+  return {
+    ratio: ratio(text, fill), text: hex(text), fill: hex(fill), page: hex(page)
+  }
 }
 
 export async function measure() {

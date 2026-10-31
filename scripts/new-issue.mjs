@@ -15,7 +15,9 @@ import path from 'node:path'
 import { parseArgs } from 'node:util'
 import { fail, root } from './lib/configs.mjs'
 import { outDir as kitchenSinkDir, readExample } from './lib/kitchen-sink.mjs'
-import { fromExample, isValidName, renderTemplate, resolveTarget, writeReproduction } from './lib/reproduction.mjs'
+import {
+  fromExample, isValidName, renderTemplate, resolveTarget, writeReproduction
+} from './lib/reproduction.mjs'
 
 const USAGE = 'Usage: npm run new-issue <number-or-slug> [-- --config <config>] [--from <kitchen-sink page>#<id>] [--spec]   (e.g. npm run new-issue 42928)'
 

@@ -21,8 +21,22 @@ import { collectPages } from './pages.mjs'
 
 // Tried in this order until one changes the rendering.
 const SENTINELS = [
-  'rgb(255, 0, 255)', '37px', '37%', '.37', '3', '900', 'italic', 'uppercase', 'none',
-  'inset 0 0 0 7px rgb(255, 0, 255)', 'scale(3)', 'grid', '7s', 'linear', 'steps(3)', 'url("data:image/gif;base64,R0lGODlhAQABAAAAACw=")'
+  'rgb(255, 0, 255)',
+  '37px',
+  '37%',
+  '.37',
+  '3',
+  '900',
+  'italic',
+  'uppercase',
+  'none',
+  'inset 0 0 0 7px rgb(255, 0, 255)',
+  'scale(3)',
+  'grid',
+  '7s',
+  'linear',
+  'steps(3)',
+  'url("data:image/gif;base64,R0lGODlhAQABAAAAACw=")'
 ]
 
 // Tokens that may only apply in a state the page doesn't show (hover, focus…).
@@ -145,7 +159,7 @@ async function screenshotProbe(page, name) {
   const shoot = () => target.screenshot({ animations: 'disabled', timeout: 2000 })
   try {
     if (!await target.isVisible()) {
-      return undefined
+      return
     }
 
     const before = await shoot()
@@ -160,13 +174,11 @@ async function screenshotProbe(page, name) {
   } finally {
     await page.evaluate(n => window.tokenProbe.set(n), name)
   }
-
-  return undefined
 }
 
 export async function renderTokens({ defined, reads, unused, isGlobal }) {
   const component = [...defined]
-    .filter(([, list]) => !list.some(definition => isGlobal(definition.selector)))
+    .filter(([, list]) => list.every(definition => !isGlobal(definition.selector)))
     .map(([token, list]) => ({
       token,
       selectors: [...new Set(list.map(({ selector }) => selector).filter(selector => selector && !selector.startsWith('@')))],
@@ -234,7 +246,7 @@ export async function renderTokens({ defined, reads, unused, isGlobal }) {
     }
   } finally {
     if (process.stdout.isTTY) {
-      process.stdout.write('\r'.padEnd(81) + '\r')
+      process.stdout.write(`${'\r'.padEnd(81)}\r`)
     }
 
     await browser.close()
@@ -252,7 +264,9 @@ export async function renderTokens({ defined, reads, unused, isGlobal }) {
     }
   }
 
-  const rows = component.map(({ token, selectors, where }) => ({ token, selectors, where, ...results.get(token) }))
+  const rows = component.map(({ token, selectors, where }) => ({
+    token, selectors, where, ...results.get(token)
+  }))
   const counts = Object.keys(STATUS).map(status => [status, rows.filter(row => row.status === status)])
 
   const reportFile = path.join(root, 'reports/tokens/render.md')

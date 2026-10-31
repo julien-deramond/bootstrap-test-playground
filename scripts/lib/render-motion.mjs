@@ -24,8 +24,12 @@ import { root } from './configs.mjs'
 import { collectPages } from './pages.mjs'
 
 const PASSES = [
-  { name: 'reduce', config: 'default', reducedMotion: 'reduce', description: 'prefers-reduced-motion: reduce, configs/default: nothing may move' },
-  { name: 'no-transitions', config: 'no-transitions', reducedMotion: 'no-preference', description: 'configs/no-transitions: nothing may transition', only: 'transition' }
+  {
+    name: 'reduce', config: 'default', reducedMotion: 'reduce', description: 'prefers-reduced-motion: reduce, configs/default: nothing may move'
+  },
+  {
+    name: 'no-transitions', config: 'no-transitions', reducedMotion: 'no-preference', description: 'configs/no-transitions: nothing may transition', only: 'transition'
+  }
 ]
 
 const TRIGGERS = '[data-bs-toggle], [data-bs-slide], [data-bs-slide-to], [data-bs-dismiss], [data-bs-target]:is(button, a)'
@@ -120,7 +124,7 @@ async function crawl(page, base, url, pass) {
 }
 
 export async function renderMotion(known) {
-  const pages = collectPages('/').find(({ dir }) => dir === 'kitchen-sink').pages
+  const { pages } = collectPages('/').find(({ dir }) => dir === 'kitchen-sink')
   const filter = process.argv.find(arg => arg.startsWith('--page='))?.slice('--page='.length)
   const selected = pages.filter(({ url }) => !filter || url.includes(filter))
 
@@ -152,7 +156,7 @@ export async function renderMotion(known) {
     }
   } finally {
     if (process.stdout.isTTY) {
-      process.stdout.write('\r'.padEnd(81) + '\r')
+      process.stdout.write(`${'\r'.padEnd(81)}\r`)
     }
 
     await browser.close()
@@ -184,11 +188,10 @@ export async function renderMotion(known) {
       console.log(`      ${group.places[0]}${group.places.length > 1 ? `  (+${group.places.length - 1} more)` : ''}`)
     }
 
-    lines.push(`## ${pass.description}`, '', list.length ? '| Motion | Known | Where |' : 'Nothing moved.', ...(list.length ? ['| --- | --- | --- |'] : []),
-      ...list.map(group => {
-        const entry = entryOf(group)
-        return `| \`${group.text}\` | ${entry ? (entry.issue ? `#${entry.issue}` : entry.reason) : '**new**'} | ${[...new Set(group.places)].slice(0, 5).join('<br>')}${group.places.length > 5 ? `<br>… ${group.places.length - 5} more` : ''} |`
-      }), '')
+    lines.push(`## ${pass.description}`, '', list.length ? '| Motion | Known | Where |' : 'Nothing moved.', ...(list.length ? ['| --- | --- | --- |'] : []), ...list.map(group => {
+      const entry = entryOf(group)
+      return `| \`${group.text}\` | ${entry ? (entry.issue ? `#${entry.issue}` : entry.reason) : '**new**'} | ${[...new Set(group.places)].slice(0, 5).join('<br>')}${group.places.length > 5 ? `<br>… ${group.places.length - 5} more` : ''} |`
+    }), '')
   }
 
   fs.mkdirSync(path.dirname(reportFile), { recursive: true })

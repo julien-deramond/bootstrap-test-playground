@@ -13,7 +13,7 @@ const state = container => container.evaluate(element => {
   const chips = [...element.querySelectorAll('.chip')]
   const focused = document.activeElement
   return {
-    focus: focused === element.querySelector('input') ? 'input' : chips.includes(focused) ? chips.indexOf(focused) : 'none',
+    focus: focused === element.querySelector('input') ? 'input' : (chips.includes(focused) ? chips.indexOf(focused) : 'none'),
     selected: chips.flatMap((chip, index) => (chip.classList.contains('active') ? [index] : []))
   }
 })
@@ -60,7 +60,9 @@ const walk = async (page, container, { back, forward }) => {
   return result
 }
 
-const expected = { fromInput: 1, backOnLast: 0, forwardOnFirst: 1, forwardOnLast: 'input', shiftBack: [0, 1] }
+const expected = {
+  fromInput: 1, backOnLast: 0, forwardOnFirst: 1, forwardOnLast: 'input', shiftBack: [0, 1]
+}
 
 test('the arrows of a chip input follow the layout in RTL', async ({ page, repro }) => {
   // Control: in LTR ← goes back and → goes forward, and stays so after a fix.

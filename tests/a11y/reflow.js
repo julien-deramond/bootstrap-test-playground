@@ -131,7 +131,9 @@ export function install() {
           const rect = ancestor.getBoundingClientRect()
           const left = rect.left + ancestor.clientLeft
           const top = rect.top + ancestor.clientTop
-          container = { element: ancestor, css, left, top, right: left + ancestor.clientWidth, bottom: top + ancestor.clientHeight }
+          container = {
+            element: ancestor, css, left, top, right: left + ancestor.clientWidth, bottom: top + ancestor.clientHeight
+          }
           break
         }
       }
@@ -179,7 +181,9 @@ export function install() {
         const right = container ? Math.min(rect.right, container.right) : rect.right
         const bottom = container ? Math.min(rect.bottom, container.bottom) : rect.bottom
         if (right - left > 1 && bottom - top > 1) {
-          boxes.push({ element, left, top, right, bottom })
+          boxes.push({
+            element, left, top, right, bottom
+          })
         }
       }
     }
@@ -243,7 +247,7 @@ export function install() {
   // asked: a layered `!important` beats an unlayered one, so a Bootstrap rule
   // could silently undo the injection one day.
   const spacingMisses = () => {
-    const close = (actual, expected) => Math.abs(parseFloat(actual) - expected) <= 0.6
+    const close = (actual, expected) => Math.abs(Number.parseFloat(actual) - expected) <= 0.6
     const misses = []
     const seen = new Set()
     for (const { element } of textBoxes()) {
@@ -253,7 +257,7 @@ export function install() {
 
       seen.add(element)
       const css = style(element)
-      const size = parseFloat(css.fontSize)
+      const size = Number.parseFloat(css.fontSize)
       const wrong = [
         !close(css.lineHeight, size * 1.5) && `line-height ${css.lineHeight}`,
         !close(css.letterSpacing, size * 0.12) && `letter-spacing ${css.letterSpacing}`,
@@ -268,7 +272,9 @@ export function install() {
     return misses
   }
 
-  const fontSize = () => parseFloat(style(html).fontSize)
+  const fontSize = () => Number.parseFloat(style(html).fontSize)
 
-  window.playgroundReflow = { culprits, snapshot, diff, inject, eject, spacingMisses, fontSize }
+  window.playgroundReflow = {
+    culprits, snapshot, diff, inject, eject, spacingMisses, fontSize
+  }
 }

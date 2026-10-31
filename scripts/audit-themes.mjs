@@ -63,7 +63,7 @@ for (const finding of findings.filter(finding => showAll || !knownOf(finding))) 
 }
 
 const fresh = findings.filter(finding => !knownOf(finding))
-const stale = known.filter(entry => !findings.some(finding => matches(entry, finding)))
+const stale = known.filter(entry => findings.every(finding => !matches(entry, finding)))
 for (const entry of stale) {
   console.log(`  ✗ known entry no longer happens: ${entry.partial}${entry.issue ? `, #${entry.issue}` : ''} (it reads a theme token now, or the partial is gone)`)
 }

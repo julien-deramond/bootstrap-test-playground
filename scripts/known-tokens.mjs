@@ -15,10 +15,18 @@ export default [
 
   { kind: 'undefined', issue: 8, tokens: ['--font-weight-base'] },
   { kind: 'undefined', issue: 9, tokens: ['--nav-link-font-weight', '--range-track-box-shadow'] },
-  { kind: 'undefined', issue: 182, configs: ['brand'], tokens: ['--info-bg', '--info-fg-emphasis', '--secondary-fg'] },
-  { kind: 'undefined', issue: 187, configs: ['weights'], tokens: ['--font-weight-semibold'] },
-  { kind: 'undefined', issue: 216, configs: ['partial'], tokens: ['--tooltip-arrow-height', '--tooltip-border-radius', '--tooltip-padding-x', '--tooltip-padding-y'] },
-  { kind: 'undefined', configs: ['partial'], reason: '`.card-header-tabs` is a nav, and the config leaves the nav partial out', tokens: ['--nav-tabs-border-width'] },
+  {
+    kind: 'undefined', issue: 182, configs: ['brand'], tokens: ['--info-bg', '--info-fg-emphasis', '--secondary-fg']
+  },
+  {
+    kind: 'undefined', issue: 187, configs: ['weights'], tokens: ['--font-weight-semibold']
+  },
+  {
+    kind: 'undefined', issue: 216, configs: ['partial'], tokens: ['--tooltip-arrow-height', '--tooltip-border-radius', '--tooltip-padding-x', '--tooltip-padding-y']
+  },
+  {
+    kind: 'undefined', configs: ['partial'], reason: '`.card-header-tabs` is a nav, and the config leaves the nav partial out', tokens: ['--nav-tabs-border-width']
+  },
   {
     kind: 'undefined',
     reason: 'opt-in hook: while it’s unset, the property falls back to its inherited or initial value',
@@ -28,25 +36,53 @@ export default [
   // Read with a fallback, never defined
 
   { kind: 'hook', reason: 'set inline by Bootstrap’s JavaScript', tokens: ['--carousel-interval', '--range-fill'] },
-  { kind: 'hook', configs: ['reboot-only'], reason: 'set by the `.theme-*` helpers and the shadow utilities, which bootstrap-reboot leaves out, so the fallback applies', tokens: ['--sc', '--so', '--theme-fg', '--theme-fg-emphasis'] },
-  { kind: 'hook', configs: ['reboot-only'], reason: 'set by `.form-control`, which bootstrap-reboot leaves out, so the date and time pickers’ indicator falls back to its default offset', tokens: ['--control-padding-x'] },
+  {
+    kind: 'hook', configs: ['reboot-only'], reason: 'set by the `.theme-*` helpers and the shadow utilities, which bootstrap-reboot leaves out, so the fallback applies', tokens: ['--sc', '--so', '--theme-fg', '--theme-fg-emphasis']
+  },
+  {
+    kind: 'hook', configs: ['reboot-only'], reason: 'set by `.form-control`, which bootstrap-reboot leaves out, so the date and time pickers’ indicator falls back to its default offset', tokens: ['--control-padding-x']
+  },
   {
     kind: 'hook',
     reason: 'customization hook with a default',
     tokens: [
-      '--accordion-body-padding-x', '--accordion-body-padding-y', '--accordion-btn-padding-x', '--accordion-btn-padding-y', '--accordion-radius',
+      '--accordion-body-padding-x',
+      '--accordion-body-padding-y',
+      '--accordion-btn-padding-x',
+      '--accordion-btn-padding-y',
+      '--accordion-radius',
       '--avatar-font-weight',
-      '--breadcrumb-padding-x', '--breadcrumb-padding-y',
-      '--chip-font-size', '--chip-font-weight', '--chip-line-height',
+      '--breadcrumb-padding-x',
+      '--breadcrumb-padding-y',
+      '--chip-font-size',
+      '--chip-font-weight',
+      '--chip-line-height',
       '--drawer-sheet-width',
-      '--dt-font-weight', '--heading-font-weight', '--hr-margin-y', '--initialism-font-size', '--link-hover-decoration', '--list-inline-padding', '--small-font-size', '--sub-sup-font-size',
+      '--dt-font-weight',
+      '--heading-font-weight',
+      '--hr-margin-y',
+      '--initialism-font-size',
+      '--link-hover-decoration',
+      '--list-inline-padding',
+      '--small-font-size',
+      '--sub-sup-font-size',
       '--icon-link-transform',
-      '--label-color', '--label-font-size', '--label-font-style', '--label-font-weight', '--label-margin-bottom',
-      '--menu-border-color', '--menu-border-radius', '--menu-border-width', '--menu-item-font-weight',
-      '--nav-link-border-color', '--navbar-bg',
-      '--stack-align-self', '--stack-flex',
+      '--label-color',
+      '--label-font-size',
+      '--label-font-style',
+      '--label-font-weight',
+      '--label-margin-bottom',
+      '--menu-border-color',
+      '--menu-border-radius',
+      '--menu-border-width',
+      '--menu-item-font-weight',
+      '--nav-link-border-color',
+      '--navbar-bg',
+      '--stack-align-self',
+      '--stack-flex',
       '--stepper-align-items',
-      '--toast-border-radius', '--toast-color',
+      '--toast-border-radius',
+      '--toast-color',
       '--vr-border-width'
     ]
   },
@@ -56,15 +92,25 @@ export default [
   { kind: 'unused', reason: 'color scale, for users and utilities', pattern: /^--[a-z]+-\d{3}$/ },
   { kind: 'unused', reason: 'scale step, for users and utilities', pattern: /^--(spacer|radius|z|font-size|line-height)-(n?\d+|\d*x[sl])$/ },
   { kind: 'unused', reason: 'scale step, for users and utilities', tokens: ['--box-shadow-xs', '--font-weight-light', '--font-weight-lighter'] },
-  { kind: 'unused', configs: ['utilities-custom'], reason: 'the config’s `variables` list exposes each .text-shadow-* value, for users', tokens: ['--text-shadow'] },
-  { kind: 'unused', configs: ['partial'], reason: 'global tokens for the components the config leaves out', tokens: ['--box-shadow', '--box-shadow-xl', '--z-dialog', '--z-drawer', '--z-popover', '--z-toast', '--z-tooltip'] },
-  { kind: 'unused', configs: ['reboot-only', 'utilities-only'], reason: 'root defines every global token, and the entry point leaves out the components that read them', pattern: /^--/ },
-  { kind: 'unused', configs: ['weights'], reason: 'the weight the config adds to $font-weights, for users (the .fw-black utility uses the raw value)', tokens: ['--font-weight-black'] },
+  {
+    kind: 'unused', configs: ['utilities-custom'], reason: 'the config’s `variables` list exposes each .text-shadow-* value, for users', tokens: ['--text-shadow']
+  },
+  {
+    kind: 'unused', configs: ['partial'], reason: 'global tokens for the components the config leaves out', tokens: ['--box-shadow', '--box-shadow-xl', '--z-dialog', '--z-drawer', '--z-popover', '--z-toast', '--z-tooltip']
+  },
+  {
+    kind: 'unused', configs: ['reboot-only', 'utilities-only'], reason: 'root defines every global token, and the entry point leaves out the components that read them', pattern: /^--/
+  },
+  {
+    kind: 'unused', configs: ['weights'], reason: 'the weight the config adds to $font-weights, for users (the .fw-black utility uses the raw value)', tokens: ['--font-weight-black']
+  },
   { kind: 'unused', reason: 'read by Bootstrap’s JavaScript (NavOverflow)', pattern: /^--breakpoint-/ },
   { kind: 'unused', reason: 'generated from the color maps and the theme API, for users', tokens: ['--bg-inherit', '--fg-inherit', '--theme-base'] },
   { kind: 'unused', reason: 'the shadcn config sets --btn-font-weight directly', tokens: ['--btn-input-font-weight'] },
   { kind: 'unused', issue: 4, tokens: ['--check-border-radius'] },
-  { kind: 'unused', issue: 202, configs: ['color-modes-custom'], tokens: ['--btn-focus-border-color', '--btn-focus-box-shadow'] },
+  {
+    kind: 'unused', issue: 202, configs: ['color-modes-custom'], tokens: ['--btn-focus-border-color', '--btn-focus-box-shadow']
+  },
   {
     kind: 'unused',
     configs: ['no-transitions'],
@@ -94,12 +140,20 @@ export default [
     issue: 125,
     tokens: [
       '--card-subtitle-color',
-      '--check-indeterminate-bg', '--check-indeterminate-border-color',
+      '--check-indeterminate-bg',
+      '--check-indeterminate-border-color',
       '--form-text-margin-top',
       '--nav-tabs-border-radius',
-      '--navbar-toggler-width', '--navbar-toggler-padding-y', '--navbar-toggler-padding-x', '--navbar-toggler-font-size', '--navbar-toggler-border-color', '--navbar-toggler-border-radius',
+      '--navbar-toggler-width',
+      '--navbar-toggler-padding-y',
+      '--navbar-toggler-padding-x',
+      '--navbar-toggler-font-size',
+      '--navbar-toggler-border-color',
+      '--navbar-toggler-border-radius',
       '--switch-checked-indicator-bg',
-      '--table-active-bg', '--table-hover-bg', '--table-striped-bg'
+      '--table-active-bg',
+      '--table-hover-bg',
+      '--table-striped-bg'
     ]
   },
   { kind: 'unused', issue: 422, tokens: ['--menu-spacer'] },

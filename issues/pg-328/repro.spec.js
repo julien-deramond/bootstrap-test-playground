@@ -6,9 +6,15 @@
 import { expect, test } from '../../tests/issues/fixtures.js'
 
 const components = [
-  { name: 'collapse', link: '#collapseLink', button: '#collapseButton', plugin: 'Collapse', panel: '#collapseExample' },
-  { name: 'menu', link: '#menuLink', button: '#menuButton', plugin: 'Menu' },
-  { name: 'drawer', link: '#drawerLink', button: '#drawerButton', plugin: 'Drawer', dialog: '#drawerExample' }
+  {
+    name: 'collapse', link: '#collapseLink', button: '#collapseButton', plugin: 'Collapse', panel: '#collapseExample'
+  },
+  {
+    name: 'menu', link: '#menuLink', button: '#menuButton', plugin: 'Menu'
+  },
+  {
+    name: 'drawer', link: '#drawerLink', button: '#drawerButton', plugin: 'Drawer', dialog: '#drawerExample'
+  }
 ]
 
 test('Space toggles link toggles with role="button" without scrolling', async ({ page, repro }) => {
@@ -30,9 +36,9 @@ test('Space toggles link toggles with role="button" without scrolling', async ({
     const scrolled = (await page.evaluate(() => window.scrollY)) !== before
     const opened = dialog ?
       await block.locator(dialog).evaluate(element => element.open) :
-      panel ?
+      (panel ?
         await block.locator(panel).evaluate(element => element.classList.contains('show')) :
-        (await toggle.getAttribute('aria-expanded')) === 'true'
+        (await toggle.getAttribute('aria-expanded')) === 'true')
     // A collapse's or a drawer's instance lives on its panel, a menu's on its toggle.
     await (dialog ?? panel ? block.locator(dialog ?? panel) : toggle).evaluate((element, name) => window.bootstrap[name].getOrCreateInstance(element).hide(), plugin)
     // Let a drawer finish closing: its modal keeps the page inert until then.

@@ -10,10 +10,18 @@ const read = token => root().getPropertyValue(token).trim().toLowerCase()
 const rem = value => (/^\.?\d/.test(value) ? String(Number.parseFloat(value)) + value.replace(/^[\d.]+/, '') : value)
 
 export const expectations = [
-  { token: '--bs-radius-5', passed: '.25rem', read: () => read('--bs-radius-5'), matches: value => rem(value) === '0.25rem' },
-  { token: '--bs-primary-bg', passed: 'var(--teal-600)', read: () => read('--bs-primary-bg'), matches: value => value !== '' && value === read('--bs-teal-600') },
-  { token: '--bs-bg-body', passed: '#f8f9fa', read: () => read('--bs-bg-body'), matches: value => value === '#f8f9fa' },
-  { token: '--bs-font-size-md', passed: '1.25rem', read: () => read('--bs-font-size-md'), matches: value => rem(value) === '1.25rem' }
+  {
+    token: '--bs-radius-5', passed: '.25rem', read: () => read('--bs-radius-5'), matches: value => rem(value) === '0.25rem'
+  },
+  {
+    token: '--bs-primary-bg', passed: 'var(--teal-600)', read: () => read('--bs-primary-bg'), matches: value => value !== '' && value === read('--bs-teal-600')
+  },
+  {
+    token: '--bs-bg-body', passed: '#f8f9fa', read: () => read('--bs-bg-body'), matches: value => value === '#f8f9fa'
+  },
+  {
+    token: '--bs-font-size-md', passed: '1.25rem', read: () => read('--bs-font-size-md'), matches: value => rem(value) === '1.25rem'
+  }
 ]
 
 export function assert() {
@@ -23,6 +31,6 @@ export function assert() {
     return { token, actual, ok: matches(actual) }
   })
   const details = results.map(({ token, actual, ok }) => `${token}: ${ok ? 'ok' : 'default kept'} (${actual || 'unset'})`).join('; ')
-  if (rem(control) !== '1.5rem') return { pass: null, details: `control --bs-spacer is ${control || 'unset'}, expected 1.5rem: the page itself is broken` }
+  if (rem(control) !== '1.5rem') {return { pass: null, details: `control --bs-spacer is ${control || 'unset'}, expected 1.5rem: the page itself is broken` }}
   return { pass: results.every(({ ok }) => ok), details: `${details}; control --bs-spacer: ${control}` }
 }
