@@ -8,6 +8,8 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/src/styles/main.scss">
     <style>
+      /* Bootstrap's light mode link color is under 4.5:1 on white (#253): the primary text color passes. */
+      main { --bs-link-color: var(--bs-primary-fg); }
       .size-chart { inline-size: 160px; block-size: 32px; overflow: visible; }
       .size-chart polyline { fill: none; stroke: var(--bs-primary-base); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
       .size-chart circle { fill: var(--bs-primary-base); }

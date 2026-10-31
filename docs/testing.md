@@ -145,11 +145,17 @@ WebKit on macOS only tabs to text fields and selects, like Safari unless *Press 
 
 A step that fails because of an open upstream bug goes in [`tests/smoke/known-issues.js`](../tests/smoke/known-issues.js) with `walkthrough`, `step` (its exact name), the tracking issue and, when it only fails in one direction, `dirs: ['rtl']`. The walkthrough fails as soon as a listed step passes again, so the entry gets removed.
 
+[`playground-keyboard.spec.js`](../tests/smoke/playground-keyboard.spec.js) does the same for the playground's own UI, which sits on top of every page under test: a focus trap or a stolen key there would be blamed on Bootstrap. On a kitchen sink page with the toolbar, it checks the pill's tab order, that the settings panel takes focus, keeps it and gives it back to the pill on <kbd>Esc</kbd>, the names of the panel's segmented controls and their arrow keys, the page switcher's arrows, <kbd>Enter</kbd> and <kbd>Esc</kbd>, and each shortcut. Then the conflicts: no shortcut fires while typing in a text field of the page, the playground's own fields keep them, and with a Bootstrap dialog open under the panel or the switcher, one <kbd>Esc</kbd> closes only the top layer. It runs once, with the working copy, in each engine, as `playground keyboard › …`. A failure there is the playground's to fix, never a known-issues entry:
+
+```sh
+npm run test:smoke -- -g "playground keyboard"
+```
+
 ## Accessibility scan
 
 [`tests/a11y/`](../tests/a11y/a11y.spec.js) runs [axe-core](https://github.com/dequelabs/axe-core) on every page with Bootstrap's default config ([`configs/default/`](../configs/default/)), or with every config, in light and dark, with the WCAG 2.0, 2.1 and 2.2 A and AA rules. It fails on any violation, like text under 4.5:1, a control without a name or a target under 24×24px. It then runs axe's `best-practice` rules (headings, landmarks, `tabindex`, empty table headers…) on every page, as a test of its own, `<page> best practices`, so a failure there is never mistaken for a WCAG one (see below).
 
-It checks Bootstrap's markup and styles, not the playground: pages load with `?chrome=0`, and whatever is still marked `data-playground-chrome` is left out of the scan. The home, compare, matrix and sizes pages and the reproductions (`issues/`) are skipped. Reduced motion is emulated so no transition is caught halfway, and `?freeze` keeps the datepicker's labels the same. axe-core reads the DOM and computed styles, which don't depend on the engine, so the scan runs in Chromium only:
+It checks Bootstrap's markup and styles, not the playground: pages load with `?chrome=0`, and whatever is still marked `data-playground-chrome` is left out of the scan. The home, compare, matrix and sizes pages and the reproductions (`issues/`) are skipped. The playground's own UI gets a scan of its own, below. Reduced motion is emulated so no transition is caught halfway, and `?freeze` keeps the datepicker's labels the same. axe-core reads the DOM and computed styles, which don't depend on the engine, so the scan runs in Chromium only:
 
 ```sh
 npm run test:a11y
@@ -211,6 +217,12 @@ axe reads the DOM at one size, so it can't tell whether a page survives a narrow
 ```sh
 npm run test:a11y -- -g reflow
 npm run test:a11y -- -g "reflow light-default /kitchen-sink/components-alert"
+```
+
+The playground's own UI can mislead a tester too: a toolbar that fails contrast or a switcher without names looks like Bootstrap's doing. [`playground-ui.spec.js`](../tests/a11y/playground-ui.spec.js) runs axe on the home, compare, matrix and sizes pages, whole but for the pages they frame. Then it loads a kitchen sink page with the toolbar and scans the toolbar alone: its pill, its first-visit hint, its settings panel open, the tab order overlay, and the page switcher open. It runs with the default config, in light and dark, as `playground ui <theme> › …`. axe reads open shadow roots, where the toolbar, the switcher and the overlay render. Every violation there is the playground's to fix: none goes in `known-issues.js`. Where a Bootstrap bug shows in the playground's own pages, like the light mode link color, the fix is a workaround listed in [Known workarounds](known-workarounds.md):
+
+```sh
+npm run test:a11y -- -g "playground ui"
 ```
 
 With every config, the scan loads about 6,000 pages in each direction. On pull requests, [`.github/workflows/a11y.yml`](../.github/workflows/a11y.yml) scans what [`npm run test-scope`](#console-crawl) finds, with the same rules as the console crawl: the default config on every page, the changed configs on every page and the changed pages with every config, or everything after a shared change like a `tests/a11y/` edit. Everything runs every night, on demand and on the canary's pull request, split across eight parallel jobs of about 15 minutes each. Each job uploads its `reports/a11y/` as an artifact, and a summary job writes the `a11y-summary` table to the run's summary, then fails when a job failed or didn't finish, since a job that hits its 30-minute timeout counts as cancelled rather than failed. Locally, limit a run the same way:

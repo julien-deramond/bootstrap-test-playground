@@ -16,6 +16,8 @@
       .compare-pane iframe { flex: 1; inline-size: 100%; border: 0; }
       .compare-side { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; padding: .5rem; border-block-end: 1px solid var(--bs-border-color); }
       .compare-side select, .compare-bar select { inline-size: auto; }
+      /* Bootstrap's light mode link color is under 4.5:1 on white (#253): the primary text color passes. */
+      .compare-bar { --bs-link-color: var(--bs-primary-fg); }
       .compare-bar .form-range { inline-size: 8rem; }
       .compare-value { min-inline-size: 3ch; font-variant-numeric: tabular-nums; }
 

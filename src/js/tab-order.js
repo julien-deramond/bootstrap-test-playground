@@ -19,7 +19,7 @@
 
 const STORAGE_KEY = 'bootstrap-playground-tab-order'
 // The playground's own UI: the toolbar, the page switcher and the overlay.
-const PLAYGROUND_HOSTS = ['playground-toolbar', 'playground-palette', 'playground-tab-order']
+export const PLAYGROUND_HOSTS = ['playground-toolbar', 'playground-palette', 'playground-tab-order']
 
 const FOCUSABLE = [
   'a[href]',
@@ -116,7 +116,7 @@ const styles = `
   .box {
     position: absolute;
     box-sizing: border-box;
-    border: 2px dashed #e5484d;
+    border: 2px dashed #cd2b31;
     border-radius: 3px;
   }
   .box.positive { border-color: #f5a524; }
@@ -131,7 +131,7 @@ const styles = `
     font: 600 11px/20px system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     color: #fff;
     text-align: center;
-    background: #e5484d;
+    background: #cd2b31;
     border-radius: 999px;
     box-shadow: 0 0 0 2px #fff;
   }

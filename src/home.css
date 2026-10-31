@@ -186,8 +186,10 @@
     }
   }
 
+  /* Bootstrap's light mode link color is under 4.5:1 on the sidebar (#253):
+     the primary text color passes. */
   .home-tag-more {
-    color: var(--bs-link-color);
+    color: var(--bs-primary-fg);
     background: none;
     border-style: dashed;
   }
@@ -746,8 +748,9 @@
     font-size: var(--bs-font-size-xs);
     white-space: nowrap;
 
-    /* Bootstrap's subtle badges and link color are under 4.5:1 at this size
-       in light mode (#183): the emphasis color and the secondary text pass. */
+    /* Bootstrap's subtle badges (#183) and link color (#253) are under 4.5:1
+       at this size in light mode: the emphasis color and the secondary text
+       pass. */
     .badge {
       flex-shrink: 0;
       color: var(--bs-theme-fg-emphasis);
