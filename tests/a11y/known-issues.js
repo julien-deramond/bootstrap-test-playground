@@ -794,6 +794,7 @@ export default [
     themes: ['dark'],
     configs: ['hue-shift'],
     pages: [
+      '/pages/forced-colors.html',
       '/pages/states.html'
     ],
     issue: 254
@@ -869,6 +870,7 @@ export default [
     themes: ['dark'],
     configs: ['mono'],
     pages: [
+      '/pages/forced-colors.html',
       '/pages/states.html'
     ],
     issue: 254
