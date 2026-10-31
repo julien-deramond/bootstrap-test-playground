@@ -6,7 +6,7 @@
 
 import { spawnSync } from 'node:child_process'
 
-const STEPS = ['check-configs', 'check-dist', 'audit-tokens', 'lint:html', 'test']
+const STEPS = ['check-configs', 'check-dist', 'audit-tokens', 'lint:html', 'lint', 'test']
 const BROWSER_STEPS = ['test:smoke', 'test:console', 'test:a11y']
 
 const steps = process.argv.includes('--full') ? [...STEPS, ...BROWSER_STEPS] : STEPS

@@ -20,6 +20,16 @@ Bootstrap: twbs/bootstrap#main @ 624c7b98c
 
 It exits with an error when a folder fails to compile, and with `-- --strict` when there is any warning, `@warn` and Sass deprecations included. It honors `BOOTSTRAP_PATH`, like the dev server. `npm run update-bootstrap` runs it against the newly installed commit. [`.github/workflows/configs.yml`](../.github/workflows/configs.yml) runs it on every pull request and every push to `main`, and shows each warning as an annotation.
 
+## Linting the code
+
+The playground follows Bootstrap's conventions (two spaces, no semicolons, logical properties), so that a reproduction or a config can be pasted upstream unchanged. `npm run lint` checks three things:
+
+- `npm run lint:js` runs [ESLint](https://eslint.org/) with [`eslint.config.js`](../eslint.config.js) on the scripts, the tests, the reproductions and the playground's own JavaScript. The config is Bootstrap's (`eslint-config-xo` and the unicorn and import plugins), with a few style rules off that the one-off scripts and test steps would trip over.
+- `npm run lint:css` runs [Stylelint](https://stylelint.io/) with [`stylelint-config-twbs-bootstrap`](https://github.com/twbs/stylelint-config-twbs-bootstrap) and [`stylelint.config.mjs`](../stylelint.config.mjs) on every `.css` and `.scss` file, configs and reproductions included. Generated files are skipped (see [`.stylelintignore`](../.stylelintignore)). Stylelint stays on version 16, which that config supports.
+- `npm run lint:format` runs [Prettier](https://prettier.io/) in check mode on the HTML of `pages/` and `screens/`. `kitchen-sink/` is generated, so it is left alone.
+
+`npm run lint:fix` fixes what can be fixed on its own. Code that comes from an upstream report is still linted: when a finding is the report's own code, silence it where it happens with a `/* stylelint-disable-next-line <rule> */` or an `// eslint-disable-next-line <rule>` comment, so the reproduction stays as reported. The *Lint* workflow ([`.github/workflows/lint.yml`](../.github/workflows/lint.yml)) runs the three on every pull request and every push to `main`.
+
 ## Validating HTML
 
 Invalid markup can hide or fake a Bootstrap bug: a `<div>` inside a `<button>`, a duplicate id, an unknown element. `npm run lint:html` validates every page, the home page, `compare.html` and the reproduction template with [html-validate](https://html-validate.org/), the validator Bootstrap uses for its docs. It uses the `html-validate:standard` preset, which checks validity (content models, duplicate ids, attributes) rather than style. Bootstrap's own docs config only checks duplicate ids.

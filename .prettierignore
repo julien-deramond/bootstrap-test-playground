@@ -1,0 +1,10 @@
+# Prettier only checks the playground's own HTML pages (pages/ and screens/)
+*
+!pages/
+!pages/**
+!screens/
+!screens/*.html
+# Generated or vendored
+kitchen-sink/
+dist/
+node_modules/

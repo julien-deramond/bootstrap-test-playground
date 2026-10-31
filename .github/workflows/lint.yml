@@ -1,0 +1,38 @@
+name: Lint
+
+# ESLint on the playground's scripts, tests and reproductions, Stylelint
+# (Bootstrap's config) on every CSS and Sass file, and Prettier on the pages
+# and screens. The HTML validation stays in the Configs workflow.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint:js
+
+      - run: npm run lint:css
+        if: ${{ !cancelled() }}
+
+      - run: npm run lint:format
+        if: ${{ !cancelled() }}
