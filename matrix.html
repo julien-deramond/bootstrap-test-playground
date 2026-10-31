@@ -9,6 +9,8 @@
     <style>
       body { display: flex; flex-direction: column; height: 100vh; margin: 0; }
       .matrix-bar select { inline-size: auto; }
+      /* Bootstrap's light mode link color is under 4.5:1 on white (#253): the primary text color passes. */
+      .matrix-bar { --bs-link-color: var(--bs-primary-fg); }
       .matrix-bar input[type="number"] { inline-size: 6rem; }
       .matrix-configs { position: relative; }
       .matrix-configs > summary { cursor: pointer; }
@@ -59,7 +61,7 @@
       <label class="d-flex gap-2 align-items-center" title="Blends the first column over every cell of its row: what doesn't change turns black"><input type="checkbox" class="check" id="matrix-diff"> Diff against first column</label>
       <a id="matrix-open" href="#" class="ms-auto">Open page</a>
     </header>
-    <main class="matrix-scroll">
+    <main class="matrix-scroll" tabindex="0" aria-label="Matrix">
       <div class="matrix-grid" id="matrix-grid"></div>
     </main>
   </body>

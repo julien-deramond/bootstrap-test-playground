@@ -482,7 +482,8 @@ function render() {
   renderHead()
   renderResults()
   renderConfigs()
-  for (const button of document.querySelectorAll('[data-view]')) {
+  // Only the view buttons: the result list carries `data-view` too, for its layout.
+  for (const button of document.querySelectorAll('button[data-view]')) {
     button.setAttribute('aria-pressed', String(button.dataset.view === state.view))
   }
 }
@@ -536,7 +537,7 @@ results.addEventListener('keydown', event => {
 })
 
 document.addEventListener('click', event => {
-  const target = event.target.closest('[data-group], [data-tag], [data-repro-status], [data-view], [data-clear], [data-more-tags]')
+  const target = event.target.closest('[data-group], [data-tag], [data-repro-status], button[data-view], [data-clear], [data-more-tags]')
   if (!target) {
     return
   }
@@ -553,7 +554,7 @@ document.addEventListener('click', event => {
     update({ tag: state.tag === target.dataset.tag ? '' : target.dataset.tag })
   } else if (target.matches('[data-repro-status]')) {
     update({ status: state.status === target.dataset.reproStatus ? '' : target.dataset.reproStatus })
-  } else if (target.matches('[data-view]')) {
+  } else if (target.matches('button[data-view]')) {
     try {
       localStorage.setItem(VIEW_KEY, target.dataset.view)
     } catch {}
