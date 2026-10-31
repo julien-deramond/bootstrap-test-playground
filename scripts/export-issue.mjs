@@ -16,7 +16,7 @@ import { parseArgs } from 'node:util'
 import { loadEnv } from 'vite'
 import { bootstrapSource } from './lib/bootstrap.mjs'
 import { fail, root } from './lib/configs.mjs'
-import { exportIssue, listReproductions, stackblitzLauncher } from './lib/export-issue.mjs'
+import { exportIssue, listReproductions, siteUrl, stackblitzLauncher } from './lib/export-issue.mjs'
 
 const USAGE = 'Usage: npm run export-issue <name>... | -- --all   (e.g. npm run export-issue 42754)'
 let values
@@ -38,7 +38,8 @@ if (unknown.length > 0) {
   fail(`Unknown reproduction: ${unknown.join(', ')}. Available: ${available.join(', ')}`)
 }
 
-const bootstrap = bootstrapSource(loadEnv('production', root, ''))
+const env = loadEnv('production', root, '')
+const bootstrap = bootstrapSource(env)
 const outDir = path.join(root, 'dist/exports')
 fs.mkdirSync(outDir, { recursive: true })
 
@@ -46,7 +47,7 @@ let failed = false
 for (const name of names) {
   let result
   try {
-    result = await exportIssue(name, { bootstrap })
+    result = await exportIssue(name, { bootstrap, siteUrl: siteUrl(env) })
   } catch (error) {
     console.error(`✘ ${name}: ${error.message}`)
     failed = true

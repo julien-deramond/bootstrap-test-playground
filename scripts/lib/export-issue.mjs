@@ -22,7 +22,12 @@ import { parse } from 'parse5'
 import { compileConfig, processCss } from './compile.mjs'
 import { REPOSITORY_URL, configDir, root } from './configs.mjs'
 
+// The deployed playground, where the exports' root-relative links point. A
+// build served from elsewhere sets SITE_URL to its own address, like a pull
+// request's deploy preview (.github/workflows/preview.yml): a reproduction
+// that isn't merged yet only exists there.
 export const SITE_URL = 'https://julien-deramond.github.io/bootstrap-test-playground'
+export const siteUrl = env => (env.SITE_URL || SITE_URL).replace(/\/+$/, '')
 
 // The two exports' file names next to the page, in dev and in builds.
 export const EXPORT_FILES = { html: 'export.html', project: 'stackblitz.json' }
@@ -58,8 +63,8 @@ const escapeAttribute = value => value.replace(/&/g, '&amp;').replace(/"/g, '&qu
 // The page under test: the body without the playground's chrome
 // (`data-playground-chrome`) and its comments, which describe the playground
 // layout, as edits of the page's source, so the rest stays as written.
-// Root-relative links point to the deployed playground.
-function readBody(source, document, warnings) {
+// Root-relative links point to the deployed playground, `siteUrl`.
+function readBody(source, document, warnings, siteUrl) {
   const html = document.childNodes.find(node => isElement(node, 'html'))
   const body = html.childNodes.find(node => isElement(node, 'body'))
   const isBlank = node => node.nodeName === '#text' && /^\s*$/.test(node.value)
@@ -135,7 +140,7 @@ function readBody(source, document, warnings) {
 
       if (/^\/(?!\/)/.test(entry.value)) {
         const { startOffset, endOffset } = node.sourceCodeLocation.attrs[entry.name]
-        edits.push({ start: startOffset, end: endOffset, text: `${entry.name}="${escapeAttribute(SITE_URL + entry.value)}"` })
+        edits.push({ start: startOffset, end: endOffset, text: `${entry.name}="${escapeAttribute(siteUrl + entry.value)}"` })
       } else if (!/^(#|\?|[a-z][\w+.-]*:|\/\/)/i.test(entry.value) && entry.value) {
         warnings.push(`<${node.tagName} ${entry.name}="${entry.value}"> is relative to the reproduction's folder: the export doesn't include it.`)
       }
@@ -234,7 +239,7 @@ async function trimTokens(css, file) {
 
 // Reads issues/<name>/ and resolves to `{ html, project, warnings }`.
 // `bootstrap` is `bootstrapSource()` (scripts/lib/bootstrap.mjs).
-export async function exportIssue(name, { bootstrap }) {
+export async function exportIssue(name, { bootstrap, siteUrl = SITE_URL }) {
   const dir = path.join(root, 'issues', name)
   const page = path.join(dir, 'index.html')
   if (!fs.existsSync(page) || !fs.existsSync(path.join(dir, 'main.scss'))) {
@@ -249,7 +254,7 @@ export async function exportIssue(name, { bootstrap }) {
   }
 
   const warnings = []
-  const body = readBody(source, document, warnings)
+  const body = readBody(source, document, warnings, siteUrl)
   const bootstrapDir = bootstrap.dir ?? path.join(root, 'node_modules/bootstrap')
   const { sha } = bootstrap
   if (!sha) {

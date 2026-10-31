@@ -6,7 +6,7 @@ import { bootstrapSource, gitDir } from './scripts/lib/bootstrap.mjs'
 import { readBootstrapIndex } from './scripts/lib/class-index.mjs'
 import { CATEGORIES, listConfigs, readKnownGaps } from './scripts/lib/configs.mjs'
 import { buildDist } from './scripts/lib/dist.mjs'
-import { EXPORT_FILES, exportIssue, listReproductions } from './scripts/lib/export-issue.mjs'
+import { EXPORT_FILES, exportIssue, listReproductions, siteUrl } from './scripts/lib/export-issue.mjs'
 import { docsDir, SECTIONS, syncPage } from './scripts/lib/kitchen-sink.mjs'
 import { collectPages, findHtmlFiles, PAGE_GROUPS } from './scripts/lib/pages.mjs'
 
@@ -138,7 +138,7 @@ function issueExports(env, bootstrap) {
 
         try {
           // Read again: a local checkout's commit or dirty state may have changed.
-          const result = await exportIssue(name, { bootstrap: bootstrapSource(env) })
+          const result = await exportIssue(name, { bootstrap: bootstrapSource(env), siteUrl: siteUrl(env) })
           for (const warning of result.warnings) {
             server.config.logger.warn(`Export of issues/${name}/: ${warning}`, { timestamp: true })
           }
@@ -153,7 +153,7 @@ function issueExports(env, bootstrap) {
       })
     },
     async generateBundle() {
-      const results = await Promise.all(listReproductions().map(async name => [name, await exportIssue(name, { bootstrap })]))
+      const results = await Promise.all(listReproductions().map(async name => [name, await exportIssue(name, { bootstrap, siteUrl: siteUrl(env) })]))
       for (const [name, result] of results) {
         for (const [kind, file] of files) {
           this.emitFile({ type: 'asset', fileName: `issues/${name}/${file}`, source: render(kind, result) })

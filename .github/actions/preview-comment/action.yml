@@ -1,0 +1,36 @@
+name: Deploy preview comment
+description: >-
+  Keeps one comment on the pull request about its deploy preview: posts it the
+  first time, then updates it in place, so a push doesn't add a comment.
+
+inputs:
+  body:
+    description: The comment, in Markdown.
+    required: true
+  update-only:
+    description: Only update the comment, never post one.
+    default: 'false'
+  token:
+    description: A token that can comment on the pull request.
+    default: ${{ github.token }}
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        # The comment starts with this marker, which GitHub doesn't show.
+        marker='<!-- deploy-preview -->'
+        printf '%s\n%s\n' "$marker" "$BODY" > "$RUNNER_TEMP/preview-comment.md"
+        id=$(gh api --paginate "repos/$GITHUB_REPOSITORY/issues/$PR/comments" \
+          --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | startswith(\"$marker\"))) | .id" | head -n 1)
+        if [ -n "$id" ]; then
+          gh api --silent -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -F "body=@$RUNNER_TEMP/preview-comment.md"
+        elif [ "$UPDATE_ONLY" != true ]; then
+          gh api --silent "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -F "body=@$RUNNER_TEMP/preview-comment.md"
+        fi
+      env:
+        BODY: ${{ inputs.body }}
+        UPDATE_ONLY: ${{ inputs.update-only }}
+        PR: ${{ github.event.pull_request.number }}
+        GH_TOKEN: ${{ inputs.token }}

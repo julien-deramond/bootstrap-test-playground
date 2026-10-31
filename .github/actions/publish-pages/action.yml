@@ -1,0 +1,30 @@
+name: Publish to gh-pages
+description: >-
+  Puts a built site on the gh-pages branch, which GitHub Pages serves: main's
+  build at the root, where the previews' pr-<n>/ folders stay, or a pull
+  request's build in its pr-<n>/ folder. Without a path, removes that folder.
+
+inputs:
+  path:
+    description: The folder to publish. Empty removes the target folder.
+    default: ''
+  target:
+    description: Where it goes on the branch, `.` for the root or `pr-<n>`.
+    required: true
+  message:
+    description: The commit message.
+    required: true
+  token:
+    description: A token that can push to the repository.
+    default: ${{ github.token }}
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: '"$GITHUB_ACTION_PATH/publish.sh"'
+      env:
+        SITE: ${{ inputs.path }}
+        TARGET: ${{ inputs.target }}
+        MESSAGE: ${{ inputs.message }}
+        TOKEN: ${{ inputs.token }}

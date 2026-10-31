@@ -1,0 +1,156 @@
+name: Deploy preview
+
+# Publishes each pull request's build at
+# https://julien-deramond.github.io/bootstrap-test-playground/pr-<n>/, in the
+# pr-<n>/ folder of the gh-pages branch, next to main's deploy (deploy.yml).
+# One comment on the pull request, updated on every push, gives its address,
+# the commit it was built from and the Visual tests run of that commit, where
+# the `visual-report` artifact is. When the pull request closes, the preview
+# is removed and the comment says so. See "Deployment" in docs/pages.md.
+#
+# Only pull requests from branches of this repository get one. A fork's pull
+# request runs code nobody has reviewed yet, and its pages would be served
+# from the same origin as the playground and its `localStorage`.
+#
+# `build` runs the pull request's code with a read-only token. The jobs that
+# can write only copy what it built, and never run npm.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+permissions:
+  contents: read
+
+# A newer push, or the pull request closing, replaces a run still going.
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  PR: ${{ github.event.pull_request.number }}
+  SHA: ${{ github.event.pull_request.head.sha }}
+  BRANCH: ${{ github.event.pull_request.head.ref }}
+  SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+
+jobs:
+  build:
+    if: ${{ github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # The branch as it is, not its merge commit with main: the comment says
+      # which commit the preview shows.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      # Every URL gets the preview's prefix, and the reproductions' exports
+      # point to the preview, where a new reproduction already exists.
+      - run: npm run build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/pr-${{ github.event.pull_request.number }}/
+          SITE_URL: ${{ env.SITE_URL }}/pr-${{ github.event.pull_request.number }}
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: preview
+          path: dist
+          retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: read
+      contents: write
+      pull-requests: write
+    steps:
+      # Only the actions below, from the merge commit with main, like this
+      # workflow, so a branch that predates them gets a preview too.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: .github/actions
+          persist-credentials: false
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: preview
+          path: ${{ runner.temp }}/preview
+
+      - uses: ./.github/actions/publish-pages
+        with:
+          path: ${{ runner.temp }}/preview
+          target: pr-${{ github.event.pull_request.number }}
+          message: Preview of #${{ github.event.pull_request.number }} at ${{ github.event.pull_request.head.sha }}
+
+      # The Visual tests run of the same commit, which starts with this one,
+      # or that workflow's runs on the branch while it doesn't show yet.
+      - id: comment
+        run: |
+          run=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow visual.yml --commit "$SHA" --limit 1 --json url --jq '.[0].url // empty')
+          if [ -n "$run" ]; then
+            visual="Its visual report is the \`visual-report\` artifact of the [Visual tests run]($run) of the same commit."
+          else
+            runs="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/workflows/visual.yml?query=$(jq -rn --arg q "branch:$BRANCH" '$q | @uri')"
+            visual="Its visual report will be the \`visual-report\` artifact of the [Visual tests]($runs) run of the same commit."
+          fi
+          {
+            echo 'body<<BODY'
+            echo "**Deploy preview:** $SITE_URL/pr-$PR/"
+            echo
+            echo "Built from ${SHA:0:7}. $visual"
+            echo
+            echo 'The preview is removed when this pull request closes, so a link meant to last, like one in an upstream issue, should point to the deployed playground once this is merged.'
+            echo 'BODY'
+          } >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - uses: ./.github/actions/preview-comment
+        with:
+          body: ${{ steps.comment.outputs.body }}
+
+  remove:
+    if: ${{ github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      # The actions below from main: a closed pull request may have no merge
+      # commit any more.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          sparse-checkout: .github/actions
+          persist-credentials: false
+
+      - uses: ./.github/actions/publish-pages
+        with:
+          target: pr-${{ github.event.pull_request.number }}
+          message: Remove the preview of #${{ github.event.pull_request.number }}
+
+      - id: comment
+        run: |
+          if [ "$MERGED" = true ]; then
+            echo "body=**Deploy preview removed.** This pull request is merged: its pages are on the deployed playground, $SITE_URL/" >> "$GITHUB_OUTPUT"
+          else
+            echo 'body=**Deploy preview removed.** This pull request is closed.' >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          MERGED: ${{ github.event.pull_request.merged }}
+
+      - uses: ./.github/actions/preview-comment
+        with:
+          body: ${{ steps.comment.outputs.body }}
+          update-only: true
