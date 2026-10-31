@@ -77,6 +77,7 @@ if (serve) {
   console.log(`\nA: ${short(from)} at http://localhost:5198/`)
   console.log(`B: ${short(to)} at http://localhost:5198/b/`)
   console.log(`Compare: http://localhost:5198/compare.html?${params}`)
+  console.log(`Difference: http://localhost:5198/compare.html?${params}&mode=difference`)
   console.log('Stop with Ctrl+C.')
   await new Promise(() => {})
 }

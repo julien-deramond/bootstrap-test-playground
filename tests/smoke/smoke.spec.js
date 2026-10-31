@@ -840,6 +840,50 @@ test.describe('playground', () => {
     await expect(layer).toHaveCount(0)
   })
 
+  // The compare view (src/js/compare.js) keeps its panes and view mode in the
+  // URL: old two-pane links stay as they are, `c` and `d` add panes, and the
+  // stacked modes put the second pane's frame over the first one's.
+  test('compare view', async ({ page }) => {
+    const query = () => new URL(page.url()).search
+    const panes = page.locator('#compare-panes > .compare-pane')
+    const second = panes.nth(1).locator('iframe')
+
+    const old = '?page=%2Fkitchen-sink%2Fcomponents-button.html&a=theme%3Dlight&b=theme%3Ddark'
+    await page.goto(`/compare.html${old}`)
+    await expect(panes).toHaveCount(2)
+    await expect(second).toHaveAttribute('src', '/kitchen-sink/components-button.html?theme=dark&embed=')
+    expect(query()).toBe(old)
+
+    await page.goto('/compare.html?page=%2Fkitchen-sink%2Fcomponents-button.html&a=theme%3Dlight&b=theme%3Dlight&c=theme%3Ddark&mode=difference')
+    await expect(panes).toHaveCount(3)
+    await expect(panes.nth(2)).toBeHidden()
+    await expect(page.locator('#compare-mode')).toHaveValue('difference')
+    await expect(page.locator('#compare-sync')).toBeDisabled()
+    await expect(second).toHaveCSS('mix-blend-mode', 'difference')
+    await expect(second).toHaveCSS('pointer-events', 'none')
+    // Both frames fill the same box.
+    expect(await second.boundingBox()).toEqual(await panes.first().locator('iframe').boundingBox())
+
+    await page.locator('#compare-mode').selectOption('slider')
+    await page.locator('#compare-split').fill('30')
+    await expect(second).toHaveCSS('clip-path', 'inset(0px 0px 0px 30%)')
+    expect(query()).toContain('mode=slider&split=30')
+
+    await page.locator('#compare-mode').selectOption('side')
+    await expect(panes.nth(2)).toBeVisible()
+    await expect(second).toHaveCSS('mix-blend-mode', 'normal')
+    await page.getByRole('button', { name: 'Add pane' }).click()
+    await expect(panes).toHaveCount(4)
+    expect(query()).toContain('&d=theme%3Ddark&')
+    await page.getByRole('button', { name: 'Remove the bottom left pane' }).click()
+    await expect(panes).toHaveCount(3)
+
+    // Unknown values fall back to the defaults.
+    await page.goto('/compare.html?mode=sideways&opacity=150&split=x')
+    await expect(page.locator('#compare-mode')).toHaveValue('side')
+    expect(query()).not.toMatch(/mode=|opacity=|split=/)
+  })
+
   // The first-visit hint hides under automation: pretend to be a person.
   test('toolbar hint', async ({ page }) => {
     await page.addInitScript(() => Object.defineProperty(Navigator.prototype, 'webdriver', { get: () => false }))

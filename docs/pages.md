@@ -7,7 +7,7 @@ index.html               Home: every page, with search and filters
 pages/                   Starter screens (dashboard, checkout and sign-in forms, product and pricing marketing), utility API checks, focus rings, state matrix, forced colors, the JavaScript API
 screens/                 Real app screens ported from shadcn/ui (dashboard, tasks, authentication, playground, cards, login and signup blocks)
 kitchen-sink/            One page per component or form doc, with all of its docs examples (generated)
-compare.html             Side-by-side comparison of any page
+compare.html             Any page in two to four panes, side by side or stacked
 matrix.html              One page or example under several configs, themes and directions
 issues/<name>/           Issue reproductions (index.html + the three config files)
 src/styles/              Working copy of the styles (see Customizing)
@@ -242,7 +242,29 @@ Mark playground UI on a new page with `data-playground-chrome` so `?chrome=0` hi
 
 ## Compare
 
-[`/compare.html`](../compare.html) shows any page twice, side by side, with separate theme, direction, primary, config and source (CSS and JS, `src` or `dist`) settings, and keeps the two panes' scroll positions in sync. Presets cover Light / Dark, LTR / RTL, Working / Default and Source / Dist, plus Commit A / B under [`diff-bootstrap --serve`](bootstrap.md#comparing-two-commits). The whole setup lives in the URL, so a comparison can be shared as a link.
+[`/compare.html`](../compare.html) shows any page in two to four panes, each with its own theme, direction, primary, config and source (CSS and JS, `src` or `dist`) settings, and keeps their scroll positions in sync. Following a link in one pane moves every pane to that page. *Add pane* copies the last pane, up to four, and panes three and four have a *Remove* button. Two or three panes sit side by side, four make a 2×2 grid, and below 768px they stack in one column.
+
+Presets set two panes: Light / Dark, LTR / RTL, Working / Default and Source / Dist, plus Commit A / B under [`diff-bootstrap --serve`](bootstrap.md#comparing-two-commits). *Light / Dark × Working / Default* sets four, light on the first row and dark on the second, with the working copy in the first column. Under `diff-bootstrap --serve` it becomes *Light / Dark × Commit A / B*.
+
+The *View* select puts the second pane's frame over the first one's, in the same box, to see small changes like a 1px border or a shade:
+
+- *Overlay* shows the second frame with the opacity of the *Opacity* range.
+- *Slider* shows the first pane on the start side of the split and the second on the end side. Drag the handle, or use the *Split* range with the keyboard. Each side stays clickable.
+- *Difference* blends the second frame over the first with `mix-blend-mode: difference`, as the [matrix](#matrix) does: what doesn't change turns black. The second frame takes no clicks or focus, so scroll the first one.
+
+These views compare the first two panes. A third or fourth pane stays in the URL, hidden, and comes back with *Side by side*. Scroll sync is always on in these views, since both frames must stay at the same position. Interactions aren't mirrored: an open menu or a hovered button only shows in the frame you used. Both frames keep their scrollbar, so on a system with classic scrollbars a theme change also shows up on the scrollbar in *Difference*.
+
+The whole setup lives in the URL, so a comparison can be shared as a link:
+
+| Parameter | Value |
+| --- | --- |
+| `page` | The page to compare, a path on the same origin |
+| `a`, `b`, `c`, `d` | Each pane's settings, as an encoded query string (`a=theme%3Ddark%26dir%3Drtl`). There are as many panes as the last one given, at least two |
+| `mode` | `overlay`, `slider` or `difference`. Absent or unknown: side by side |
+| `opacity` | The overlay's opacity, 0 to 100, 50 by default |
+| `split` | The slider's position from the start side, 0 to 100, 50 by default |
+
+For example, [`/compare.html?page=/pages/dashboard.html&a=theme%3Dlight&b=theme%3Dlight%26config%3Ddefault&mode=difference`](../compare.html?page=/pages/dashboard.html&a=theme%3Dlight&b=theme%3Dlight%26config%3Ddefault&mode=difference) shows where the working copy's styles differ from Bootstrap's defaults on the dashboard.
 
 ## Matrix
 
