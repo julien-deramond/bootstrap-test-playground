@@ -4,7 +4,6 @@
 // and partial, SMOKE_SCOPE, and matching known-issues.js.
 import { expect, test } from '@playwright/test'
 import { configDir, listConfigs, readPartials } from '../../scripts/lib/configs.mjs'
-import known from './known-issues.js'
 
 // The working copy, every config, and Bootstrap's prebuilt files.
 export const VARIANTS = [
@@ -155,4 +154,4 @@ export const knownFor = (entries, variant, browserName) => entries.filter(entry 
   (!entry.configs || entry.configs.includes(variant)) &&
   (!entry.engines || entry.engines.includes(browserName)))
 
-export { known }
+export { default as known } from './known-issues.js'

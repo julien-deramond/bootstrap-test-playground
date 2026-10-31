@@ -30,7 +30,7 @@ const listOption = (name, fallback, allowed) => {
   return values
 }
 
-const [target] = process.argv.slice(2).filter(arg => !arg.startsWith('--'))
+const target = process.argv.slice(2).find(arg => !arg.startsWith('--'))
 if (!target) {
   fail(USAGE)
 }
@@ -51,7 +51,7 @@ if (!page) {
   fail(`No page matches \`${pagePart}\`. Use a kitchen sink page's name, like components-button, or a path, like /pages/dashboard.html`)
 }
 
-if (section && !page.sections.some(({ id }) => id === section)) {
+if (section && page.sections.every(({ id }) => id !== section)) {
   fail(`${page.url} has no example \`${section}\`. Pick one of: ${page.sections.map(({ id }) => id).join(', ')}`)
 }
 
@@ -65,7 +65,9 @@ await server.listen()
 const base = server.resolvedUrls.local[0].replace(/\/$/, '')
 
 const browser = await chromium.launch()
-const context = await browser.newContext({ viewport: { width, height: 900 }, deviceScaleFactor: 1, timezoneId: 'UTC', locale: 'en-US' })
+const context = await browser.newContext({
+  viewport: { width, height: 900 }, deviceScaleFactor: 1, timezoneId: 'UTC', locale: 'en-US'
+})
 await context.route(request => request.origin !== new URL(base).origin, route =>
   route.request().resourceType() === 'image' ?
     route.fulfill({ contentType: 'image/svg+xml', body: PLACEHOLDER_IMAGE }) :
@@ -76,7 +78,9 @@ const canvasPage = await browser.newPage({ viewport: { width: 1280, height: 100 
 
 async function screenshot(config, { theme, dir }) {
   const url = new URL(`${base}${page.url}`)
-  url.search = new URLSearchParams({ config, theme, dir, embed: '', chrome: '0', freeze: '', ...(section ? { section, frame: '0' } : {}) })
+  url.search = new URLSearchParams({
+    config, theme, dir, embed: '', chrome: '0', freeze: '', ...(section ? { section, frame: '0' } : {})
+  })
   await shotPage.goto(url.href)
   await shotPage.waitForFunction(() => !document.getElementById('playground-config-pending'))
   await shotPage.evaluate(() => document.fonts.ready)
@@ -88,7 +92,13 @@ async function screenshot(config, { theme, dir }) {
     animations: 'disabled',
     caret: 'hide',
     scale: 'css',
-    ...(box ? { clip: { x: 0, y: box.y, width, height: box.height } } : {})
+    ...(box ?
+      {
+        clip: {
+          x: 0, y: box.y, width, height: box.height
+        }
+      } :
+      {})
   })
   return `data:image/png;base64,${shot.toString('base64')}`
 }
@@ -107,7 +117,9 @@ try {
 
     for (const [index, config] of configs.entries()) {
       const diff = index > 0 ? await canvasPage.evaluate(compareImages, [shots[0], shots[index], false]) : null
-      cells.push({ row, config, image: shots[index], diff })
+      cells.push({
+        row, config, image: shots[index], diff
+      })
     }
   }
 
@@ -117,7 +129,7 @@ try {
 
   // The grid, drawn as HTML and screenshotted.
   const escapeHtml = value => String(value).replace(/[&<>"]/g, char => `&#${char.charCodeAt(0)};`)
-  const percent = ratio => `${(ratio * 100).toFixed(ratio < .001 && ratio > 0 ? 3 : 1)}%`
+  const percent = ratio => `${(ratio * 100).toFixed(ratio < 0.001 && ratio > 0 ? 3 : 1)}%`
   const cellHtml = ({ image, diff }) => {
     const showsDiff = showDiff && diff
     const src = showsDiff ? `data:image/png;base64,${diff.image}` : image

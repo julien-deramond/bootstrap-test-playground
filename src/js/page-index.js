@@ -9,8 +9,6 @@ import { STATUSES } from './repro-status.js'
 const RECENT_KEY = 'bootstrap-playground-recent'
 const RECENT_MAX = 8
 
-export { groups }
-
 export const pages = groups.flatMap(group => group.pages.map(page => ({ ...page, group: group.dir, groupLabel: group.label })))
 
 const normalize = value => value.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -22,8 +20,13 @@ const indexed = new Map(pages.map(page => [page, {
   tags: page.tags,
   sections: page.sections.map(section => ({ ...section, words: words(section.title), text: normalize(section.title) })),
   // A reproduction is found by its status ("reported") and its issues' numbers.
-  other: normalize([page.groupLabel, page.url, page.description, page.source?.label ?? '',
-    STATUSES[page.repro?.status]?.text ?? '', page.repro?.upstream ?? '', page.repro?.tracking.replace(/^.*#/, '#') ?? ''].join(' ')),
+  other: normalize([page.groupLabel,
+    page.url,
+    page.description,
+    page.source?.label ?? '',
+    STATUSES[page.repro?.status]?.text ?? '',
+    page.repro?.upstream ?? '',
+    page.repro?.tracking.replace(/^.*#/, '#') ?? ''].join(' ')),
   classes: new Map(page.classes.map(([name, count, section]) => [name, { count, section }]))
 }]))
 
@@ -45,11 +48,13 @@ function codeTerm(term) {
 
   const name = term.replace(/^\./, '')
   if (!term.startsWith('.') && !name.includes('-')) {
-    return undefined
+    return
   }
 
   if (allClasses.has(name)) {
-    return { label: `.${name}`, kind: 'class', classes: [name], exact: true }
+    return {
+      label: `.${name}`, kind: 'class', classes: [name], exact: true
+    }
   }
 
   const started = name.length >= 3 ? [...allClasses].filter(existing => existing.startsWith(name)) : []
@@ -62,7 +67,7 @@ function codeTerm(term) {
 function scoreCode(code, entry) {
   const used = code.classes.filter(name => entry.classes.has(name))
   if (used.length === 0) {
-    return undefined
+    return
   }
 
   const count = used.reduce((sum, name) => sum + entry.classes.get(name).count, 0)
@@ -120,7 +125,7 @@ function scoreToken(token, entry) {
 function bestSection(tokens, entry) {
   const missing = tokens.filter(token => !entry.title.includes(token))
   if (missing.length === 0) {
-    return undefined
+    return
   }
 
   let best
@@ -203,7 +208,9 @@ export function search(query, list = pages) {
     if (score > 0) {
       const sectionId = bestSection(tokens, entry)?.id ?? codeSection
       const section = entry.sections.find(({ id }) => id === sectionId)
-      results.push({ page, score, section: section && { id: section.id, title: section.title }, matches })
+      results.push({
+        page, score, section: section && { id: section.id, title: section.title }, matches
+      })
     }
   }
 
@@ -222,7 +229,7 @@ export function readRecent() {
 }
 
 export function recordVisit(url) {
-  if (!pages.some(page => page.url === url)) {
+  if (pages.every(page => page.url !== url)) {
     return
   }
 
@@ -242,3 +249,5 @@ export function siblings(url) {
   const index = group.pages.findIndex(page => page.url === url)
   return { group, previous: group.pages[index - 1], next: group.pages[index + 1] }
 }
+
+export { default as groups } from 'virtual:playground-pages'

@@ -9,10 +9,18 @@ export async function assert() {
   const { bootstrap } = window
   const root = document.querySelector('[data-playground-repro]')
   const components = [
-    { name: 'carousel', element: '[data-bs-autoplay="true"]', Component: bootstrap.Carousel, expected: true },
-    { name: 'scrollspy', element: '[data-bs-spy="scroll"]', Component: bootstrap.ScrollSpy, expected: true },
-    { name: 'chips (control)', element: '[data-bs-chips]', Component: bootstrap.Chips, expected: false },
-    { name: 'range (control)', element: '.form-range', Component: bootstrap.Range, expected: false }
+    {
+      name: 'carousel', element: '[data-bs-autoplay="true"]', Component: bootstrap.Carousel, expected: true
+    },
+    {
+      name: 'scrollspy', element: '[data-bs-spy="scroll"]', Component: bootstrap.ScrollSpy, expected: true
+    },
+    {
+      name: 'chips (control)', element: '[data-bs-chips]', Component: bootstrap.Chips, expected: false
+    },
+    {
+      name: 'range (control)', element: '.form-range', Component: bootstrap.Range, expected: false
+    }
   ]
   const inert = () => components.filter(({ element, Component }) => !Component.getInstance(root.querySelector(element)))
 

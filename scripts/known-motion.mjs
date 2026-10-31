@@ -9,8 +9,12 @@
 export default [
   // Moves whatever the reader's setting
 
-  { kind: 'uncovered', selector: '.otp-slot-active', runtime: /^animation otp-caret-blink /, issue: 144 },
-  { kind: 'uncovered', selector: '.spinner-rotate', runtime: /^animation spinner-border on \S*\.spinner-rotate/, issue: 145 },
+  {
+    kind: 'uncovered', selector: '.otp-slot-active', runtime: /^animation otp-caret-blink /, issue: 144
+  },
+  {
+    kind: 'uncovered', selector: '.spinner-rotate', runtime: /^animation spinner-border on \S*\.spinner-rotate/, issue: 145
+  },
 
   // Slowed, not stopped
 

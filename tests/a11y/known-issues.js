@@ -1278,7 +1278,7 @@ export default [
       '/kitchen-sink/components-nav.html',
       '/kitchen-sink/components-navbar.html',
       '/kitchen-sink/components-pagination.html',
-      '/kitchen-sink/components-scrollspy.html',
+      '/kitchen-sink/components-scrollspy.html'
     ],
     issue: 375
   },

@@ -21,8 +21,8 @@ export async function assert() {
     await picker.show()
     calendarShown = Boolean(picker._calendar?.context?.mainElement?.isConnected)
     picker.dispose()
-  } catch (e) {
-    error = `, then ${e.message}`
+  } catch (error_) {
+    error = `, then ${error_.message}`
   }
 
   // Clean up both the page's input and any copy that replaced it.

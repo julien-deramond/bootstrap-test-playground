@@ -16,7 +16,7 @@ const resolveToken = (element, token) => {
   const probe = document.createElement('div')
   probe.style.cssText = `position: absolute; visibility: hidden; width: var(${token}, 0px)`
   element.append(probe)
-  const width = probe.getBoundingClientRect().width
+  const { width } = probe.getBoundingClientRect()
   probe.remove()
   return width
 }
@@ -29,10 +29,10 @@ export async function assert() {
   const link = root.querySelector('.nav-pills .nav-link')
   const range = root.querySelector('.form-range')
 
-  const control = parseFloat(getComputedStyle(chip).borderTopLeftRadius)
+  const control = Number.parseFloat(getComputedStyle(chip).borderTopLeftRadius)
   const cases = [
-    ['nav pills', parseFloat(getComputedStyle(nav).borderTopLeftRadius)],
-    ['nav pills link', parseFloat(getComputedStyle(link).borderTopLeftRadius)],
+    ['nav pills', Number.parseFloat(getComputedStyle(nav).borderTopLeftRadius)],
+    ['nav pills link', Number.parseFloat(getComputedStyle(link).borderTopLeftRadius)],
     ['range track', resolveToken(range, '--bs-range-track-border-radius')],
     ['range thumb', resolveToken(range, '--bs-range-thumb-border-radius')]
   ].map(([name, radius]) => ({ name, radius, pass: radius === 0 }))

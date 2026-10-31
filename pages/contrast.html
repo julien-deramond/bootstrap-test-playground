@@ -1,27 +1,30 @@
 <!doctype html>
 <html lang="en" data-playground-busy>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Contrast</title>
-    <meta name="description" content="Contrast of every documented color pairing (contrast on bg, fg on bg-subtle, fg-emphasis on bg-muted, fg-1 to fg-3 on bg-body to bg-3) for every theme color, and of the components that embed one (solid and subtle buttons, badges, alerts, list group, tables, placeholders, disabled controls), in every color mode of the config: WCAG 2 ratio, AA and AAA, and APCA Lc.">
-    <meta name="playground-tags" content="components, forms, a11y">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <meta
+      name="description"
+      content="Contrast of every documented color pairing (contrast on bg, fg on bg-subtle, fg-emphasis on bg-muted, fg-1 to fg-3 on bg-body to bg-3) for every theme color, and of the components that embed one (solid and subtle buttons, badges, alerts, list group, tables, placeholders, disabled controls), in every color mode of the config: WCAG 2 ratio, AA and AAA, and APCA Lc."
+    />
+    <meta name="playground-tags" content="components, forms, a11y" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script src="/playground-prefs.js"></script>
-    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
-    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main" />
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens" />
     <style>
       .pg-sample {
         display: inline-block;
-        padding: .25rem .5rem;
+        padding: 0.25rem 0.5rem;
       }
 
       .pg-swatch {
         display: inline-block;
         min-width: 2.5rem;
-        padding: .125rem .375rem;
+        padding: 0.125rem 0.375rem;
         text-align: center;
-        border: 1px solid rgb(128 128 128 / .4);
+        border: 1px solid rgb(128 128 128 / 0.4);
       }
 
       .pg-result {
@@ -36,10 +39,15 @@
         <p class="mb-2"><a href="/">Playground</a> / Pages</p>
         <h1>Contrast</h1>
         <p class="fs-lg fg-2">
-          Every documented color pairing, for every theme color, and the components that embed one, in every color mode of the current config.
+          Every documented color pairing, for every theme color, and the components that embed one, in every color mode
+          of the current config.
         </p>
         <p class="fg-2">
-          Each foreground is composited on what's behind it, then measured: the WCAG 2 ratio, AA at 4.5:1 and AAA at 7:1 for normal text, and the APCA Lc for reference. Disabled controls are measured but exempt (WCAG 1.4.3). The live sample shows the current color mode, the swatches the colors measured in each mode. See <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/52">#52</a>, and <code>npm run report:contrast</code> for every config.
+          Each foreground is composited on what's behind it, then measured: the WCAG 2 ratio, AA at 4.5:1 and AAA at 7:1
+          for normal text, and the APCA Lc for reference. Disabled controls are measured but exempt (WCAG 1.4.3). The
+          live sample shows the current color mode, the swatches the colors measured in each mode. See
+          <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/52">#52</a>, and
+          <code>npm run report:contrast</code> for every config.
         </p>
       </header>
 
@@ -54,7 +62,13 @@
 
       <section class="mb-5">
         <h2 class="h4">Theme colors</h2>
-        <p class="fg-2" data-playground-chrome>The pairings of <a href="https://github.com/twbs/bootstrap/blob/main/site/src/content/docs/customize/theme.mdx">the theme docs</a>: <code>contrast</code> on <code>bg</code> and <code>base</code>, <code>fg</code> on <code>bg-subtle</code>, <code>bg-muted</code> and the body, <code>fg-emphasis</code> on <code>bg-muted</code>.</p>
+        <p class="fg-2" data-playground-chrome>
+          The pairings of
+          <a href="https://github.com/twbs/bootstrap/blob/main/site/src/content/docs/customize/theme.mdx"
+            >the theme docs</a
+          >: <code>contrast</code> on <code>bg</code> and <code>base</code>, <code>fg</code> on <code>bg-subtle</code>,
+          <code>bg-muted</code> and the body, <code>fg-emphasis</code> on <code>bg-muted</code>.
+        </p>
         <div class="table-responsive" tabindex="0" role="region" aria-label="Theme colors">
           <table class="table table-sm align-middle" id="contrast-theme" data-contrast-check></table>
         </div>
@@ -62,7 +76,11 @@
 
       <section class="mb-5">
         <h2 class="h4">Body and surfaces</h2>
-        <p class="fg-2" data-playground-chrome><code>fg-body</code> on every background, <code>fg-1</code> on <code>bg-body</code> to <code>bg-3</code>, <code>fg-2</code> to <code>bg-2</code>, <code>fg-3</code> to <code>bg-1</code>: the dimmer the text, the fewer the backgrounds.</p>
+        <p class="fg-2" data-playground-chrome>
+          <code>fg-body</code> on every background, <code>fg-1</code> on <code>bg-body</code> to <code>bg-3</code>,
+          <code>fg-2</code> to <code>bg-2</code>, <code>fg-3</code> to <code>bg-1</code>: the dimmer the text, the fewer
+          the backgrounds.
+        </p>
         <div class="table-responsive" tabindex="0" role="region" aria-label="Body and surfaces">
           <table class="table table-sm align-middle" id="contrast-surface" data-contrast-check></table>
         </div>
@@ -70,7 +88,9 @@
 
       <section class="mb-5">
         <h2 class="h4">Components</h2>
-        <p class="fg-2" data-playground-chrome>Components whose defaults embed a pairing, on <code>bg-body</code>, measured on the element itself.</p>
+        <p class="fg-2" data-playground-chrome>
+          Components whose defaults embed a pairing, on <code>bg-body</code>, measured on the element itself.
+        </p>
         <div class="table-responsive" tabindex="0" role="region" aria-label="Components">
           <table class="table table-sm align-middle" id="contrast-component" data-contrast-check></table>
         </div>
@@ -92,10 +112,10 @@
       ]
 
       const SURFACE_PAIRINGS = [
-        ...['bg-body', 'bg-1', 'bg-2', 'bg-3', 'bg-4'].map(bg => ['fg-body', bg]),
-        ...['bg-body', 'bg-1', 'bg-2', 'bg-3'].map(bg => ['fg-1', bg]),
-        ...['bg-body', 'bg-1', 'bg-2'].map(bg => ['fg-2', bg]),
-        ...['bg-body', 'bg-1'].map(bg => ['fg-3', bg])
+        ...['bg-body', 'bg-1', 'bg-2', 'bg-3', 'bg-4'].map((bg) => ['fg-body', bg]),
+        ...['bg-body', 'bg-1', 'bg-2', 'bg-3'].map((bg) => ['fg-1', bg]),
+        ...['bg-body', 'bg-1', 'bg-2'].map((bg) => ['fg-2', bg]),
+        ...['bg-body', 'bg-1'].map((bg) => ['fg-3', bg])
       ]
 
       // Components, once per theme color when their markup has `{theme}`.
@@ -112,20 +132,57 @@
         { name: 'badge-subtle', markup: '<span class="badge badge-subtle theme-{theme}">Subtle</span>' },
         { name: 'badge-outline', markup: '<span class="badge badge-outline theme-{theme}">Outline</span>' },
         { name: 'alert', markup: '<div class="alert theme-{theme} mb-0">Alert</div>' },
-        { name: 'table', markup: '<table class="table theme-{theme} mb-0"><tbody><tr><td>Cell</td></tr></tbody></table>', target: 'td' },
+        {
+          name: 'table',
+          markup: '<table class="table theme-{theme} mb-0"><tbody><tr><td>Cell</td></tr></tbody></table>',
+          target: 'td'
+        },
         { name: 'link', markup: '<a href="#">Link</a>' },
         { name: 'btn', markup: '<button type="button" class="btn">Button</button>' },
         { name: 'badge', markup: '<span class="badge">Badge</span>' },
         { name: 'alert', markup: '<div class="alert mb-0">Alert</div>' },
-        { name: 'table', markup: '<table class="table mb-0"><tbody><tr><td>Cell</td></tr></tbody></table>', target: 'td' },
-        { name: 'list-group-item', markup: '<ul class="list-group"><li class="list-group-item">Item</li></ul>', target: 'li' },
-        { name: 'list-group-item-action', markup: '<div class="list-group"><a href="#" class="list-group-item list-group-item-action">Action</a></div>', target: 'a' },
-        { name: 'list-group-item-active', markup: '<ul class="list-group"><li class="list-group-item active" aria-current="true">Active</li></ul>', target: 'li' },
+        {
+          name: 'table',
+          markup: '<table class="table mb-0"><tbody><tr><td>Cell</td></tr></tbody></table>',
+          target: 'td'
+        },
+        {
+          name: 'list-group-item',
+          markup: '<ul class="list-group"><li class="list-group-item">Item</li></ul>',
+          target: 'li'
+        },
+        {
+          name: 'list-group-item-action',
+          markup: '<div class="list-group"><a href="#" class="list-group-item list-group-item-action">Action</a></div>',
+          target: 'a'
+        },
+        {
+          name: 'list-group-item-active',
+          markup: '<ul class="list-group"><li class="list-group-item active" aria-current="true">Active</li></ul>',
+          target: 'li'
+        },
         { name: 'form-control', markup: '<input type="text" class="form-control" value="Value" aria-label="Text">' },
-        { name: 'form-control::placeholder', markup: '<input type="text" class="form-control" placeholder="Placeholder" aria-label="Text">', pseudo: '::placeholder' },
-        { name: 'list-group-item-disabled', markup: '<ul class="list-group"><li class="list-group-item disabled" aria-disabled="true">Disabled</li></ul>', target: 'li', exempt: true },
-        { name: 'form-control-disabled', markup: '<input type="text" class="form-control" value="Disabled" aria-label="Disabled text" disabled>', exempt: true },
-        { name: 'btn-solid-disabled', markup: '<button type="button" class="btn-solid theme-primary" disabled>Disabled</button>', exempt: true }
+        {
+          name: 'form-control::placeholder',
+          markup: '<input type="text" class="form-control" placeholder="Placeholder" aria-label="Text">',
+          pseudo: '::placeholder'
+        },
+        {
+          name: 'list-group-item-disabled',
+          markup: '<ul class="list-group"><li class="list-group-item disabled" aria-disabled="true">Disabled</li></ul>',
+          target: 'li',
+          exempt: true
+        },
+        {
+          name: 'form-control-disabled',
+          markup: '<input type="text" class="form-control" value="Disabled" aria-label="Disabled text" disabled>',
+          exempt: true
+        },
+        {
+          name: 'btn-solid-disabled',
+          markup: '<button type="button" class="btn-solid theme-primary" disabled>Disabled</button>',
+          exempt: true
+        }
       ]
 
       const AA = 4.5
@@ -134,7 +191,7 @@
       // Every style rule of the page's same-origin stylesheets.
       const styleRules = () => {
         const found = []
-        const walk = list => {
+        const walk = (list) => {
           for (const rule of list) {
             if (rule instanceof CSSStyleRule) {
               found.push(rule)
@@ -165,8 +222,12 @@
         let prefix = 'bs-'
         for (const rule of styleRules()) {
           const [, theme] = rule.selectorText.match(/^\.theme-([\w-]+)$/) ?? []
-          const property = theme && [...rule.style].find(name => name.endsWith('theme-contrast'))
-          if (property && !themes.includes(theme) && rule.style.getPropertyValue(property).includes(`${theme}-contrast`)) {
+          const property = theme && [...rule.style].find((name) => name.endsWith('theme-contrast'))
+          if (
+            property &&
+            !themes.includes(theme) &&
+            rule.style.getPropertyValue(property).includes(`${theme}-contrast`)
+          ) {
             themes.push(theme)
             prefix = property.slice(2, -'theme-contrast'.length)
           }
@@ -191,7 +252,7 @@
       // canvas, which takes any syntax the page's styles resolve to (oklch(),
       // color(srgb …)…) and clips it to sRGB. Null when it can't parse it.
       const canvas = document.createElement('canvas').getContext('2d', { willReadFrequently: true })
-      const parse = color => {
+      const parse = (color) => {
         canvas.fillStyle = '#010203'
         canvas.fillStyle = color
         if (canvas.fillStyle === '#010203' && !/^#010203$/i.test(color)) {
@@ -205,11 +266,12 @@
       }
 
       // `top` over an opaque `bottom`, in sRGB like the browser composites.
-      const over = (top, bottom, alpha = top[3]) => [0, 1, 2].map(i => top[i] * alpha + bottom[i] * (1 - alpha)).concat(1)
+      const over = (top, bottom, alpha = top[3]) =>
+        [0, 1, 2].map((i) => top[i] * alpha + bottom[i] * (1 - alpha)).concat(1)
 
       // The opaque color behind an element: its ancestors' backgrounds,
       // composited from the nearest opaque one.
-      const backdrop = element => {
+      const backdrop = (element) => {
         const layers = []
         for (let node = element.parentElement; node; node = node.parentElement) {
           const color = parse(getComputedStyle(node).backgroundColor)
@@ -224,7 +286,7 @@
         return layers.reduceRight((below, layer) => over(layer, below), [255, 255, 255, 1])
       }
 
-      const channel = value => {
+      const channel = (value) => {
         const c = value / 255
         return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
       }
@@ -258,7 +320,11 @@
         return sapc > -0.1 ? 0 : (sapc + 0.027) * 100
       }
 
-      const hex = color => `#${color.slice(0, 3).map(value => Math.round(value).toString(16).padStart(2, '0')).join('')}`
+      const hex = (color) =>
+        `#${color
+          .slice(0, 3)
+          .map((value) => Math.round(value).toString(16).padStart(2, '0'))
+          .join('')}`
 
       // The element's text color and background as the page shows them,
       // opacity included, as 8-bit sRGB like a screenshot.
@@ -278,7 +344,7 @@
           opacity *= Number(getComputedStyle(node).opacity)
         }
 
-        const round = value => value.map(Math.round)
+        const round = (value) => value.map(Math.round)
         return { fg: round(over(fg, behind, opacity)), bg: round(over(bg, behind, opacity)) }
       }
 
@@ -317,43 +383,49 @@
         })
       }
 
-      const mark = (passed, label) => `<span class="badge ${passed ? 'badge-subtle theme-success' : 'theme-danger'}">${label}</span>`
+      const mark = (passed, label) =>
+        `<span class="badge ${passed ? 'badge-subtle theme-success' : 'theme-danger'}">${label}</span>`
 
       const run = () => {
         const { themes, prefix } = themeColors()
         const modes = colorModes()
-        const token = name => `var(--${prefix}${name})`
-        const defined = name => getComputedStyle(html).getPropertyValue(`--${prefix}${name}`).trim() !== ''
-        const sample = (fg, bg) => `<span class="pg-sample" style="color: ${token(fg)}; background-color: ${token(bg)}">Aa</span>`
+        const token = (name) => `var(--${prefix}${name})`
+        const defined = (name) => getComputedStyle(html).getPropertyValue(`--${prefix}${name}`).trim() !== ''
+        const sample = (fg, bg) =>
+          `<span class="pg-sample" style="color: ${token(fg)}; background-color: ${token(bg)}">Aa</span>`
 
         const groups = {
-          theme: themes.flatMap(theme => THEME_PAIRINGS.map(([fg, bg]) => {
-            const background = bg === 'bg-body' ? bg : `${theme}-${bg}`
-            return {
-              name: `${theme} ${fg} on ${bg}`,
-              label: `<code>${theme}</code> <code>${fg}</code> on <code>${bg}</code>`,
-              tokens: [`${theme}-${fg}`, background],
-              markup: sample(`${theme}-${fg}`, background)
-            }
-          })),
+          theme: themes.flatMap((theme) =>
+            THEME_PAIRINGS.map(([fg, bg]) => {
+              const background = bg === 'bg-body' ? bg : `${theme}-${bg}`
+              return {
+                name: `${theme} ${fg} on ${bg}`,
+                label: `<code>${theme}</code> <code>${fg}</code> on <code>${bg}</code>`,
+                tokens: [`${theme}-${fg}`, background],
+                markup: sample(`${theme}-${fg}`, background)
+              }
+            })
+          ),
           surface: SURFACE_PAIRINGS.map(([fg, bg]) => ({
             name: `${fg} on ${bg}`,
             label: `<code>${fg}</code> on <code>${bg}</code>`,
             tokens: [fg, bg],
             markup: sample(fg, bg)
           })),
-          component: COMPONENTS.flatMap(component => (component.markup.includes('{theme}') ? themes : [null]).map(theme => ({
-            ...component,
-            name: theme ? `${component.name} ${theme}` : component.name,
-            label: `<code>${component.name}</code>${theme ? ` <code>${theme}</code>` : ''}`,
-            markup: component.markup.replaceAll('{theme}', theme)
-          })))
+          component: COMPONENTS.flatMap((component) =>
+            (component.markup.includes('{theme}') ? themes : [null]).map((theme) => ({
+              ...component,
+              name: theme ? `${component.name} ${theme}` : component.name,
+              label: `<code>${component.name}</code>${theme ? ` <code>${theme}</code>` : ''}`,
+              markup: component.markup.replaceAll('{theme}', theme)
+            }))
+          )
         }
 
         const measured = Object.entries(groups).flatMap(([group, rows]) => {
           // A pairing whose tokens the config doesn't define shows as such.
           const present = rows.filter(({ tokens }) => !tokens || tokens.every(defined))
-          return addRows(document.getElementById(`contrast-${group}`), present, modes).map(row => ({ ...row, group }))
+          return addRows(document.getElementById(`contrast-${group}`), present, modes).map((row) => ({ ...row, group }))
         })
 
         // Transitions off, so switching modes doesn't catch a color halfway.
@@ -388,9 +460,12 @@
             results.push(result)
             cells[index].classList.add('pg-result')
             cells[index].title = `${result.fg} on ${result.bg}`
-            cells[index].innerHTML = `<span class="pg-swatch" style="color: ${result.fg}; background-color: ${result.bg}">Aa</span> ` +
+            cells[index].innerHTML =
+              `<span class="pg-swatch" style="color: ${result.fg}; background-color: ${result.bg}">Aa</span> ` +
               `${result.ratio.toFixed(2)}:1 ` +
-              (exempt ? '<span class="badge badge-subtle">Exempt</span>' : `${mark(result.aa, 'AA')} ${mark(result.aaa, 'AAA')}`) +
+              (exempt
+                ? '<span class="badge badge-subtle">Exempt</span>'
+                : `${mark(result.aa, 'AA')} ${mark(result.aaa, 'AAA')}`) +
               ` <small class="fg-3">Lc ${result.apca.toFixed(1)}</small>`
           }
         }
@@ -406,11 +481,14 @@
         void getComputedStyle(html).color
         still.remove()
 
-        const failing = results.filter(result => !result.aa && !result.exempt)
-        document.getElementById('contrast-summary').innerHTML = modes.map(mode => {
-          const count = failing.filter(result => result.mode === mode).length
-          return `<code>${mode}</code>: ${count ? `<strong>${count}</strong> under ${AA}:1` : 'all pass'}`
-        }).join(' · ') + ` (${measured.length} pairings and components, ${themes.length} theme colors)`
+        const failing = results.filter((result) => !result.aa && !result.exempt)
+        document.getElementById('contrast-summary').innerHTML =
+          modes
+            .map((mode) => {
+              const count = failing.filter((result) => result.mode === mode).length
+              return `<code>${mode}</code>: ${count ? `<strong>${count}</strong> under ${AA}:1` : 'all pass'}`
+            })
+            .join(' · ') + ` (${measured.length} pairings and components, ${themes.length} theme colors)`
 
         window.playgroundContrast = { prefix, themes, modes, results }
       }

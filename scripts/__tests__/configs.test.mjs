@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import path from 'node:path'
-import { after, before, describe, test } from 'node:test'
+import {
+  after, describe, test
+} from 'node:test'
 import { makeTree } from '../__fixtures__/tree.mjs'
 
 // configs.mjs reads PLAYGROUND_ROOT when it loads, so point it at a temp tree first.

@@ -28,7 +28,9 @@ test('menu items, list group actions and links show a focus indicator that contr
     const round = ({ x, y, width, height }) => {
       const left = Math.floor(x)
       const top = Math.floor(y)
-      return { x: left, y: top, width: Math.ceil(x + width) - left, height: Math.ceil(y + height) - top }
+      return {
+        x: left, y: top, width: Math.ceil(x + width) - left, height: Math.ceil(y + height) - top
+      }
     }
 
     const area = round(element.getBoundingClientRect())

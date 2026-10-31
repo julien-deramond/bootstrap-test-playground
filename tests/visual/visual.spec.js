@@ -8,7 +8,9 @@
 // pages (see shared.js).
 import { expect, test } from '@playwright/test'
 import { collectPages } from '../../scripts/lib/pages.mjs'
-import { VARIANTS, baseline, inScope, openPage, snapshotPath } from './shared.js'
+import {
+  VARIANTS, baseline, inScope, openPage, snapshotPath
+} from './shared.js'
 
 const pages = collectPages('/').flatMap(({ dir, pages }) => pages.map(page => ({ ...page, group: dir }))).filter(({ url }) => inScope(url))
 

@@ -31,6 +31,7 @@ Contributors, human or agent, follow [CONTRIBUTING.md](../CONTRIBUTING.md) and [
 | `npm run report:contrast [-- --config <name>]` | Measures every documented color pairing and the components that embed one, per config and color mode, and writes `reports/contrast/` (see [Accessibility scan](testing.md#accessibility-scan)) |
 | `npm run test-scope [-- <base>]` | Prints what the console crawl, the smoke tests and the accessibility scan have to run for the changes since `<base>` (see [Console crawl](testing.md#console-crawl)) |
 | `npm run test:smoke:engines` / `test:console:engines` | The same suites in Chromium, Firefox and WebKit (see [Browser engines](testing.md#browser-engines)) |
+| `npm run lint` | Runs ESLint, Stylelint and a Prettier check on the HTML of pages and screens; `npm run lint:fix` fixes what it can (see [Linting the code](audits.md#linting-the-code)) |
 | `npm run lint:html [-- --all]` | Validates the HTML of every page with html-validate (see [Validating HTML](audits.md#validating-html)) |
 | `npm run check-configs [-- --strict]` | Compiles the working copy, every config and every reproduction, and lists Sass errors and warnings (see [Checking configs](audits.md#checking-configs)) |
 | `npm run check-dist` | Checks that the default config compiles to the `dist/css/bootstrap.css` Bootstrap's build makes from the same commit (see [Checking the dist](audits.md#checking-the-dist)) |

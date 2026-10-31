@@ -16,7 +16,7 @@
 :root {
   /* A serif body stack: taller ascenders, a smaller x-height and a different
      baseline than the sans-serif default. The monospace stack stays. */
-  --body-font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --body-font-family: ui-serif, georgia, cambria, "Times New Roman", times, serif;
 }
 
 /*
@@ -26,6 +26,8 @@
  */
 @layer custom {
   /* .alert { */
+
   /*   --alert-padding-x: 2rem; */
+
   /* } */
 }

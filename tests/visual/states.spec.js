@@ -31,9 +31,11 @@ import path from 'node:path'
 import { expect, test } from '@playwright/test'
 import { root } from '../../scripts/lib/configs.mjs'
 import { collectPages } from '../../scripts/lib/pages.mjs'
-import { VARIANTS, baseline, inScope, openPage, snapshotPath } from './shared.js'
+import {
+  VARIANTS, baseline, inScope, openPage, snapshotPath
+} from './shared.js'
 
-const PSEUDO_STATES = ['hover', 'focus', 'active']
+const PSEUDO_STATES = new Set(['hover', 'focus', 'active'])
 const MARKUP_STATES = ['selected', 'disabled', 'invalid', 'checked']
 const STATES = (process.env.VISUAL_STATES || [...PSEUDO_STATES, ...MARKUP_STATES].join(',')).split(',').map(value => value.trim()).filter(Boolean)
 
@@ -64,7 +66,7 @@ const targets = [
     url: STATES_URL,
     folder: snapshotPath(STATES_URL),
     sections: TABLES.map(name => ({ name, selector: `[data-states="${name}"]` })),
-    states: STATES.filter(state => PSEUDO_STATES.includes(state))
+    states: STATES.filter(state => PSEUDO_STATES.has(state))
   }
 ].filter(({ url }) => inScope(url))
 
@@ -140,47 +142,64 @@ function applyMarkupState([selector, state]) {
   const LINKS = 'a[href], [role="button"]:not(button, input), .nav-link:not(button), .page-link:not(button), .menu-item:not(button), .list-group-item-action:not(button), .chip:not(button)'
   const FIELDS = 'input:not([type="hidden"], [type="button"], [type="submit"], [type="reset"], [type="image"]), select, textarea'
 
-  if (state === 'selected') {
+  switch (state) {
+    case 'selected': {
     // `.active` is what Bootstrap's CSS reads; its JavaScript adds
     // aria-pressed to toggle buttons and the docs aria-current to links.
     // Disabled items can't be selected.
-    const disabled = '.disabled, [aria-disabled="true"], :disabled, label.btn-check:has(:disabled)'
-    for (const element of all(`${LINKS}, button:not(.btn-close, .chip-dismiss), label.btn-check`).filter(element => !element.matches(disabled))) {
-      if (toggleClass(element, 'active', true)) {
-        changed++
-        if (element.matches('button')) {
-          setAttribute(element, 'aria-pressed', 'true')
-        } else if (element.matches('a')) {
-          setAttribute(element, 'aria-current', 'true')
+      const disabled = '.disabled, [aria-disabled="true"], :disabled, label.btn-check:has(:disabled)'
+      for (const element of all(`${LINKS}, button:not(.btn-close, .chip-dismiss), label.btn-check`).filter(element => !element.matches(disabled))) {
+        if (toggleClass(element, 'active', true)) {
+          changed++
+          if (element.matches('button')) {
+            setAttribute(element, 'aria-pressed', 'true')
+          } else if (element.matches('a')) {
+            setAttribute(element, 'aria-current', 'true')
+          }
         }
       }
-    }
-  } else if (state === 'disabled') {
-    for (const element of all('button, input:not([type="hidden"]), select, textarea')) {
-      changed += setProperty(element, 'disabled', true)
+
+      break
     }
 
-    for (const element of all(`${LINKS}, .chip-input`)) {
-      if (toggleClass(element, 'disabled', true)) {
-        changed++
-        setAttribute(element, 'aria-disabled', 'true')
+    case 'disabled': {
+      for (const element of all('button, input:not([type="hidden"]), select, textarea')) {
+        changed += setProperty(element, 'disabled', true)
       }
-    }
-  } else if (state === 'invalid') {
-    for (const element of all(`${FIELDS}, .otp`)) {
-      if (toggleClass(element, 'is-invalid', true)) {
-        changed++
-        toggleClass(element, 'is-valid', false)
-        if (element.matches(FIELDS)) {
-          setAttribute(element, 'aria-invalid', 'true')
+
+      for (const element of all(`${LINKS}, .chip-input`)) {
+        if (toggleClass(element, 'disabled', true)) {
+          changed++
+          setAttribute(element, 'aria-disabled', 'true')
         }
       }
+
+      break
     }
-  } else if (state === 'checked') {
+
+    case 'invalid': {
+      for (const element of all(`${FIELDS}, .otp`)) {
+        if (toggleClass(element, 'is-invalid', true)) {
+          changed++
+          toggleClass(element, 'is-valid', false)
+          if (element.matches(FIELDS)) {
+            setAttribute(element, 'aria-invalid', 'true')
+          }
+        }
+      }
+
+      break
+    }
+
+    case 'checked': {
     // In a radio group, the last radio ends up checked.
-    for (const element of all('input[type="checkbox"], input[type="radio"]')) {
-      changed += setProperty(element, 'checked', true)
+      for (const element of all('input[type="checkbox"], input[type="radio"]')) {
+        changed += setProperty(element, 'checked', true)
+      }
+
+      break
     }
+  // No default
   }
 
   window.playgroundUndoState = () => {
@@ -265,7 +284,7 @@ for (const variant of VARIANTS) {
 
           for (const state of states) {
             let image
-            if (PSEUDO_STATES.includes(state)) {
+            if (PSEUDO_STATES.has(state)) {
               const lists = await page.evaluate(markPseudoState, [selector, state])
               if (!lists.length) {
                 continue

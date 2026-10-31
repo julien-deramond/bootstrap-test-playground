@@ -22,7 +22,7 @@ function prefixRootUrls(base) {
     transformIndexHtml: {
       order: 'post',
       handler: html => html.replace(/\b(href|src|action)="\/(?!\/)([^"]*)"/g, (match, attribute, url) =>
-        ('/' + url).startsWith(base) ? match : `${attribute}="${base}${url}"`)
+        (`/${url}`).startsWith(base) ? match : `${attribute}="${base}${url}"`)
     }
   }
 }
@@ -175,7 +175,7 @@ function issueExports(env, bootstrap) {
 //   in order.
 function playgroundData(base, distDir) {
   const modules = {
-    'virtual:playground-pages': () => {
+    'virtual:playground-pages'() {
       const { classes, tokens } = readBootstrapIndex(distDir)
       const groups = collectPages(base, { bootstrapClasses: classes })
       const used = new Set(groups.flatMap(({ pages }) => pages.flatMap(page => page.classes.map(([name]) => name))))
@@ -184,7 +184,7 @@ function playgroundData(base, distDir) {
         .filter(([, owners]) => owners.length > 0))
       return `export const tokens = ${JSON.stringify(tokenClasses)}\nexport default ${JSON.stringify(groups)}`
     },
-    'virtual:playground-configs': () => {
+    'virtual:playground-configs'() {
       const configs = listConfigs()
       const imports = configs.map(({ name }, index) => [
         `import main${index} from '/configs/${name}/main.scss?url'`,
@@ -198,12 +198,12 @@ function playgroundData(base, distDir) {
 
   return {
     name: 'playground-data',
-    resolveId: source => (source in modules ? '\0' + source : null),
+    resolveId: source => (source in modules ? `\0${source}` : null),
     load: id => (id.startsWith('\0') ? modules[id.slice(1)]?.() ?? null : null),
     configureServer(server) {
       const invalidate = () => {
         for (const id of Object.keys(modules)) {
-          const mod = server.moduleGraph.getModuleById('\0' + id)
+          const mod = server.moduleGraph.getModuleById(`\0${id}`)
           if (mod) {
             server.moduleGraph.invalidateModule(mod)
           }
@@ -250,7 +250,9 @@ function playgroundData(base, distDir) {
 function bootstrapSourceData(env, initial) {
   const id = 'virtual:bootstrap-source'
   let source = initial
-  const code = () => `const source = ${JSON.stringify({ label: source.label, path: source.path, url: source.url, sha: source.sha, dirty: source.dirty })}
+  const code = () => `const source = ${JSON.stringify({
+    label: source.label, path: source.path, url: source.url, sha: source.sha, dirty: source.dirty
+  })}
 const listeners = new Set()
 export const onChange = listener => listeners.add(listener)
 if (import.meta.hot) {
@@ -263,10 +265,10 @@ export default source`
 
   return {
     name: 'bootstrap-source',
-    resolveId: request => (request === id ? '\0' + id : null),
-    load: request => (request === '\0' + id ? code() : null),
+    resolveId: request => (request === id ? `\0${id}` : null),
+    load: request => (request === `\0${id}` ? code() : null),
     configureServer(server) {
-      const dir = source.dir
+      const { dir } = source
       if (!dir) {
         return
       }
@@ -281,13 +283,17 @@ export default source`
           }
 
           source = next
-          const mod = server.moduleGraph.getModuleById('\0' + id)
+          const mod = server.moduleGraph.getModuleById(`\0${id}`)
           if (mod) {
             server.moduleGraph.invalidateModule(mod)
           }
 
           server.config.logger.info(`Bootstrap source: ${source.label}`, { timestamp: true })
-          server.ws.send({ type: 'custom', event: 'playground:bootstrap-source', data: { label: source.label, url: source.url, sha: source.sha, dirty: source.dirty } })
+          server.ws.send({
+            type: 'custom', event: 'playground:bootstrap-source', data: {
+              label: source.label, url: source.url, sha: source.sha, dirty: source.dirty
+            }
+          })
         }, 300)
       }
 
@@ -317,7 +323,7 @@ export default source`
         refresh()
         const mdx = path.relative(docs, file)
         const [section, name, ...rest] = mdx.split(path.sep)
-        if (!watchDocs || rest.length > 0 || !name?.endsWith('.mdx') || !SECTIONS.some(entry => entry.dir === section)) {
+        if (!watchDocs || rest.length > 0 || !name?.endsWith('.mdx') || SECTIONS.every(entry => entry.dir !== section)) {
           return
         }
 

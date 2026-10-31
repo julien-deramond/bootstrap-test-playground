@@ -49,7 +49,9 @@ for (const file of files) {
   for (const result of report.results) {
     for (const message of result.messages) {
       if (message.severity === 2) {
-        findings.push({ file: path.relative(root, file), line: message.line, rule: message.ruleId, message: message.message })
+        findings.push({
+          file: path.relative(root, file), line: message.line, rule: message.ruleId, message: message.message
+        })
       }
     }
   }
@@ -68,7 +70,7 @@ console.log(`${fresh.length ? '✗' : '✓'} ${findings.length - fresh.length} k
 
 // By file, so duplicate ids read per page.
 const listed = showAll ? findings : fresh
-for (const file of [...new Set(listed.map(finding => finding.file))]) {
+for (const file of new Set(listed.map(finding => finding.file))) {
   console.log(`  ${file}`)
   for (const finding of listed.filter(item => item.file === file)) {
     const entry = entryOf(finding)

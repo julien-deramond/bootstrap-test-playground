@@ -19,7 +19,9 @@ import { createRequire } from 'node:module'
 import { expect, test } from '@playwright/test'
 import { root } from '../../scripts/lib/configs.mjs'
 import { collectPages } from '../../scripts/lib/pages.mjs'
-import { A11Y_DIRS, TAGS, THEMES, describe, describeEntry, dirSuffix, expectedWith, goneMessage, knownOn, load, matches, report, toNodes, unexpectedMessage } from './shared.js'
+import {
+  A11Y_DIRS, TAGS, THEMES, describe, describeEntry, dirSuffix, expectedWith, goneMessage, knownOn, load, matches, report, toNodes, unexpectedMessage
+} from './shared.js'
 
 const CONFIG = 'default'
 const runs = process.env.A11Y_CONFIGS === 'all' || (process.env.A11Y_CONFIGS || CONFIG).split(',').map(value => value.trim()).includes(CONFIG)
@@ -165,13 +167,15 @@ test.describe('open', () => {
             const nodes = [...found.values()]
             const known = knownOn(url, theme, CONFIG, 'open', dir)
             const entryOf = new Map(nodes.map(node => [node, known.find(entry => matches(entry, node))]))
-            await report(testInfo, { config: CONFIG, theme, url, dir, state: 'open' }, nodes.map(node => {
+            await report(testInfo, {
+              config: CONFIG, theme, url, dir, state: 'open'
+            }, nodes.map(node => {
               const entry = entryOf.get(node)
               return { ...node, known: entry ? entry.issue ?? entry.reason : null }
             }))
 
             const unexpected = nodes.filter(node => !entryOf.get(node))
-            const gone = known.filter(entry => expectedWith(entry, CONFIG) && !nodes.some(node => matches(entry, node)))
+            const gone = known.filter(entry => expectedWith(entry, CONFIG) && nodes.every(node => !matches(entry, node)))
 
             expect(unexpected.map(node => `${describe(node)}, opened by ${node.trigger}: ${node.help}`), unexpectedMessage(`${url}?${params} with its overlays open`)).toEqual([])
             expect(gone.map(describeEntry), goneMessage).toEqual([])

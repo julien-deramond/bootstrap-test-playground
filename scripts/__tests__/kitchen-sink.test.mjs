@@ -3,7 +3,9 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { describe, test } from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { cleanHtml, extractExamples, parseAttributes, readExpression } from '../lib/kitchen-sink.mjs'
+import {
+  cleanHtml, extractExamples, parseAttributes, readExpression
+} from '../lib/kitchen-sink.mjs'
 
 const fixture = name => fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '../__fixtures__/mdx', name), 'utf8')
 const getData = type => {

@@ -24,8 +24,12 @@ test('a focused close button draws its focus ring', async ({ page, repro }) => {
     const reach = Math.ceil((Number.parseFloat(style.getPropertyValue('--focus-ring-width')) || 3) + 2) + margin
     const box = element.getBoundingClientRect()
     return {
-      box: { x: box.x, y: box.y, width: box.width, height: box.height },
-      clip: { x: Math.floor(box.x - reach), y: Math.floor(box.y - reach), width: Math.ceil(box.width + 2 * reach), height: Math.ceil(box.height + 2 * reach) }
+      box: {
+        x: box.x, y: box.y, width: box.width, height: box.height
+      },
+      clip: {
+        x: Math.floor(box.x - reach), y: Math.floor(box.y - reach), width: Math.ceil(box.width + 2 * reach), height: Math.ceil(box.height + 2 * reach)
+      }
     }
   }, MARGIN)
 

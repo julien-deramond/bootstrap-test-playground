@@ -75,7 +75,9 @@ configList.innerHTML = [
 
 function frameUrl(config, theme, dir) {
   const url = new URL(view.page, location.origin)
-  url.search = new URLSearchParams({ config, theme, dir, embed: '', chrome: '0' })
+  url.search = new URLSearchParams({
+    config, theme, dir, embed: '', chrome: '0'
+  })
   if (view.section) {
     url.searchParams.set('section', view.section)
     url.searchParams.set('frame', '0')
@@ -141,7 +143,7 @@ function renderGrid() {
 function render() {
   pageSelect.value = view.page
   const sections = sectionsOf(view.page)
-  if (!sections.some(({ id }) => id === view.section)) {
+  if (sections.every(({ id }) => id !== view.section)) {
     view.section = ''
   }
 
@@ -204,16 +206,36 @@ document.addEventListener('change', event => {
   } else if (target.dataset.row) {
     const key = `${target.dataset.row}s`
     view[key] = toggle(view[key], target.value, target.checked, target.dataset.row === 'theme' ? THEMES : DIRS)
-  } else if (target.id === 'matrix-width') {
-    view.width = Math.min(Math.max(Number.parseInt(target.value, 10) || view.width, 240), 1600)
-  } else if (target.id === 'matrix-zoom') {
-    view.zoom = target.value
-  } else if (target.id === 'matrix-freeze') {
-    view.freeze = target.checked
-  } else if (target.id === 'matrix-diff') {
-    view.diff = target.checked
   } else {
-    return
+    switch (target.id) {
+      case 'matrix-width': {
+        view.width = Math.min(Math.max(Number.parseInt(target.value, 10) || view.width, 240), 1600)
+
+        break
+      }
+
+      case 'matrix-zoom': {
+        view.zoom = target.value
+
+        break
+      }
+
+      case 'matrix-freeze': {
+        view.freeze = target.checked
+
+        break
+      }
+
+      case 'matrix-diff': {
+        view.diff = target.checked
+
+        break
+      }
+
+      default: {
+        return
+      }
+    }
   }
 
   render()

@@ -2,7 +2,9 @@
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import path from 'node:path'
-import { afterEach, beforeEach, describe, test } from 'node:test'
+import {
+  afterEach, beforeEach, describe, test
+} from 'node:test'
 import { makeTree, runScript } from '../__fixtures__/tree.mjs'
 
 let tree

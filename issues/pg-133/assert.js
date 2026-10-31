@@ -8,13 +8,13 @@
 // selector, minus the pseudo-element, matches the input; a rule outside a
 // cascade layer beats one inside, as in the browser.
 const pseudoElement = /::-(webkit-slider-runnable-track|moz-range-track)/
-const fillDirection = (input) => {
+const fillDirection = input => {
   let direction
   let unlayered = false
   const walk = (rules, parent, layered) => {
     for (const rule of rules) {
       if (rule.selectorText === undefined) {
-        if (rule.cssRules) walk(rule.cssRules, parent, layered || rule.constructor.name === 'CSSLayerBlockRule')
+        if (rule.cssRules) {walk(rule.cssRules, parent, layered || rule.constructor.name === 'CSSLayerBlockRule')}
         continue
       }
 
@@ -29,12 +29,12 @@ const fillDirection = (input) => {
         } catch {}
       }
 
-      if (rule.cssRules) walk(rule.cssRules, selector, layered)
+      if (rule.cssRules) {walk(rule.cssRules, selector, layered)}
     }
   }
 
   for (const sheet of document.styleSheets) {
-    try { walk(sheet.cssRules, '', false) } catch {}
+    try {walk(sheet.cssRules, '', false)} catch {}
   }
 
   return direction

@@ -27,7 +27,9 @@
 //   config. It needs A11Y_CONFIGS=all.
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
-import { A11Y_DIRS, ALL_CONFIGS, BEST_PRACTICE, BEST_PRACTICE_TAGS, PAGES, TAGS, THEMES, bestPracticeRulesOff, describe, describeEntry, dirSuffix, expectedWith, goneMessage, knownOn, list, load, matches, report, toNodes, unexpectedMessage } from './shared.js'
+import {
+  A11Y_DIRS, ALL_CONFIGS, BEST_PRACTICE, BEST_PRACTICE_TAGS, PAGES, TAGS, THEMES, bestPracticeRulesOff, describe, describeEntry, dirSuffix, expectedWith, goneMessage, knownOn, list, load, matches, report, toNodes, unexpectedMessage
+} from './shared.js'
 
 const CONFIGS = process.env.A11Y_CONFIGS === 'all' ? ALL_CONFIGS : list('A11Y_CONFIGS', 'default')
 
@@ -86,13 +88,15 @@ for (const config of CONFIGS) {
               }
             }
 
-            await report(testInfo, { config, theme, url, dir }, nodes.map(node => {
+            await report(testInfo, {
+              config, theme, url, dir
+            }, nodes.map(node => {
               const entry = entryOf.get(node)
               return { ...node, known: entry ? entry.issue ?? entry.reason : null }
             }))
 
             const unexpected = nodes.filter(node => !entryOf.get(node))
-            const gone = known.filter(entry => expectedWith(entry, config) && !nodes.some(node => matches(entry, node)))
+            const gone = known.filter(entry => expectedWith(entry, config) && nodes.every(node => !matches(entry, node)))
 
             expect(unexpected.map(node => `${describe(node)}: ${node.help}`), unexpectedMessage(`${url}?${params}`)).toEqual([])
             expect(gone.map(describeEntry), goneMessage).toEqual([])
@@ -106,10 +110,12 @@ for (const config of CONFIGS) {
             test(`${url} best practices`, async ({ page }, testInfo) => {
               const { params, nodes } = await scan(page, url, theme, config, dir, BEST_PRACTICE_TAGS)
               const known = knownOn(url, theme, config, BEST_PRACTICE, dir)
-              const unexpected = nodes.filter(node => !known.some(entry => matches(entry, node)))
-              const gone = known.filter(entry => !nodes.some(node => matches(entry, node)))
+              const unexpected = nodes.filter(node => known.every(entry => !matches(entry, node)))
+              const gone = known.filter(entry => nodes.every(node => !matches(entry, node)))
 
-              await report(testInfo, { config, theme, url, dir, state: BEST_PRACTICE }, nodes.map(node => {
+              await report(testInfo, {
+                config, theme, url, dir, state: BEST_PRACTICE
+              }, nodes.map(node => {
                 const entry = known.find(entry => matches(entry, node))
                 return { ...node, known: entry ? entry.issue ?? entry.reason : null }
               }))

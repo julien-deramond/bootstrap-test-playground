@@ -67,7 +67,11 @@ const results = []
 for (const check of CHECKS) {
   process.stdout.write(`${check.name}… `)
   const started = Date.now()
-  const run = spawnSync(check.command, { cwd: root, shell: true, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, env: { ...process.env, ...check.env, BOOTSTRAP_PATH: '', FORCE_COLOR: '0' } })
+  const run = spawnSync(check.command, {
+    cwd: root, shell: true, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, env: {
+      ...process.env, ...check.env, BOOTSTRAP_PATH: '', FORCE_COLOR: '0'
+    }
+  })
   const output = stripAnsi(`${run.stdout ?? ''}${run.stderr ?? ''}`)
   const lines = output.split('\n').map(line => line.trimEnd())
   const passed = run.status === 0
@@ -86,7 +90,7 @@ for (const check of CHECKS) {
     // check-size's table goes into the report whole.
     table: check.table ? lines.filter(line => /^(File|css\/|dist\/|src\/|Compared|No recorded)/.test(line)).join('\n') : undefined
   })
-  console.log(passed ? '✓' : check.informational ? '≠' : '✗')
+  console.log(passed ? '✓' : (check.informational ? '≠' : '✗'))
 }
 
 // Upstream commits, through the GitHub CLI when it's there.
@@ -106,7 +110,9 @@ const escapeCell = text => text.replace(/\|/g, '\\|')
 const report = [
   `Updates Bootstrap to \`main\` at ${range}.`,
   '',
-  failed.length ? `**${failed.length} ${failed.length === 1 ? 'check fails' : 'checks fail'}:** ${failed.map(({ name }) => `\`${name}\``).join(', ')}.` : '**Every check passes.**',
+  failed.length ?
+    `**${failed.length} ${failed.length === 1 ? 'check fails' : 'checks fail'}:** ${failed.map(({ name }) => `\`${name}\``).join(', ')}.` :
+    '**Every check passes.**',
   stale.length ? `**${stale.length} allowlist ${stale.length === 1 ? 'entry no longer matches' : 'entries no longer match'}**: an upstream fix may have landed.` : '',
   '',
   ...(from === to ? [] : [
@@ -122,17 +128,19 @@ const report = [
   '| Check | Result | Summary | Time |',
   '| --- | --- | --- | --- |',
   ...results.map(({ name, passed, informational, summary, seconds }) =>
-    `| \`${name}\` | ${passed ? '✅' : informational ? '🔶 changed' : '❌'} | ${escapeCell(summary)} | ${seconds}s |`),
+    `| \`${name}\` | ${passed ? '✅' : (informational ? '🔶 changed' : '❌')} | ${escapeCell(summary)} | ${seconds}s |`),
   '',
   ...(results.some(({ env }) => env) ? ['The console crawl and the smoke tests ran the working copy and dist. This pull request\'s own checks run them with every config.', ''] : []),
-  ...(stale.length ? [
-    '### Allowlist entries that no longer match',
-    '',
-    'Check the tracking issue: if Bootstrap fixed it, remove the entry, label the issue `upstream-fixed` and close it (step 3 of "Upstream issue tracking" in CLAUDE.md).',
-    '',
-    ...stale.map(({ check, line }) => `- \`${check}\`: ${line}`),
-    ''
-  ] : []),
+  ...(stale.length ?
+    [
+      '### Allowlist entries that no longer match',
+      '',
+      'Check the tracking issue: if Bootstrap fixed it, remove the entry, label the issue `upstream-fixed` and close it (step 3 of "Upstream issue tracking" in CLAUDE.md).',
+      '',
+      ...stale.map(({ check, line }) => `- \`${check}\`: ${line}`),
+      ''
+    ] :
+    []),
   ...results.filter(({ table }) => table).flatMap(({ table }) => [
     '### Sizes',
     '',
@@ -141,12 +149,14 @@ const report = [
     '```',
     ''
   ]),
-  ...(changedPages.length ? [
-    `### Kitchen sink pages changed by the sync (${changedPages.length})`,
-    '',
-    ...changedPages.map(page => `- \`${page}\``),
-    ''
-  ] : []),
+  ...(changedPages.length ?
+    [
+      `### Kitchen sink pages changed by the sync (${changedPages.length})`,
+      '',
+      ...changedPages.map(page => `- \`${page}\``),
+      ''
+    ] :
+    []),
   ...results.filter(({ passed }) => !passed).flatMap(({ name, tail }) => [
     `<details><summary><code>${name}</code> output (end)</summary>`,
     '',

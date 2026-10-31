@@ -30,12 +30,12 @@ test('Escape closes the popup while focus is on the toggle', async ({ page, repr
   await page.keyboard.press('ArrowDown')
   await page.keyboard.press('Escape')
   await expect(toggle, 'Escape with focus on an option should close the popup').toHaveAttribute('aria-expanded', 'false')
-  await page.evaluate(() => { window.comboboxEvents = [] })
+  await page.evaluate(() => {window.comboboxEvents = []})
 
   // The bug: open with a click, focus stays on the toggle, Escape does nothing.
   await toggle.click()
   await expect(toggle).toHaveAttribute('aria-expanded', 'true')
-  await page.evaluate(() => { window.comboboxEvents = [] })
+  await page.evaluate(() => {window.comboboxEvents = []})
   const focusedBefore = await toggle.evaluate(element => element === document.activeElement)
   await page.keyboard.press('Escape')
   await page.waitForTimeout(100)

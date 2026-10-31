@@ -21,7 +21,9 @@
 // passes: the bug is fixed, so remove the entry (step 3 of "Upstream issue
 // tracking" in CLAUDE.md).
 import { expect as baseExpect, test } from '@playwright/test'
-import { PAGES, VARIANTS, clearEvents, expectEvents, first, inScope, known, knownFor, leftOut, load, tabsToControls } from './shared.js'
+import {
+  PAGES, VARIANTS, clearEvents, expectEvents, first, inScope, known, knownFor, leftOut, load, tabsToControls
+} from './shared.js'
 
 // Transitions are off: what a key does shows at once, and a step that fails
 // on a known bug shouldn't wait long for it.
@@ -989,7 +991,7 @@ for (const { name: variant, params } of VARIANTS) {
             test.info().annotations.push({ type: 'known upstream bug', description: `#${entry.issue}: ${entry.step}` })
           }
 
-          const unexpected = [...failures].filter(([title]) => !listed.some(entry => entry.step === title))
+          const unexpected = [...failures].filter(([title]) => listed.every(entry => entry.step !== title))
           const fixed = listed.filter(entry => !failures.has(entry.step))
           if (unexpected.length > 0) {
             throw new Error(unexpected.map(([title, error]) => `${title}\n${error.message}`).join('\n\n'))

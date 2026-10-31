@@ -55,12 +55,16 @@ export default defineConfig({
     { name: 'a11y', testDir: 'tests/a11y', use: { ...ENGINES.chromium } },
     // The reproductions' own specs, issues/<name>/repro.spec.js (see
     // tests/issues/fixtures.js), in Chromium: `forcePseudoState` needs it.
-    { name: 'issues', testDir: 'issues', testMatch: /repro\.spec\.js$/, use: { ...ENGINES.chromium } }
+    {
+      name: 'issues', testDir: 'issues', testMatch: /repro\.spec\.js$/, use: { ...ENGINES.chromium }
+    }
   ),
-  webServer: process.env.PLAYWRIGHT_BASE_URL ? undefined : {
-    command: `npm run build && npm run preview -- --port ${PORT} --strictPort`,
-    url: `http://localhost:${PORT}`,
-    reuseExistingServer: false,
-    timeout: 120_000
-  }
+  webServer: process.env.PLAYWRIGHT_BASE_URL ?
+    undefined :
+    {
+      command: `npm run build && npm run preview -- --port ${PORT} --strictPort`,
+      url: `http://localhost:${PORT}`,
+      reuseExistingServer: false,
+      timeout: 120_000
+    }
 })

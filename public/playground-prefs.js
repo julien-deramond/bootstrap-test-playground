@@ -25,11 +25,13 @@
 //   transitions or caret, carousels don't autoplay, a fixed date and a seeded
 //   Math.random
 (() => {
-  'use strict'
-
   const STORAGE_KEY = 'bootstrap-playground'
-  const DEFAULTS = { colorMode: 'auto', dir: 'ltr', primary: 'default', config: 'working', css: 'src', js: 'src' }
-  const URL_PARAMS = { theme: 'colorMode', dir: 'dir', primary: 'primary', config: 'config', css: 'css', js: 'js' }
+  const DEFAULTS = {
+    colorMode: 'auto', dir: 'ltr', primary: 'default', config: 'working', css: 'src', js: 'src'
+  }
+  const URL_PARAMS = {
+    theme: 'colorMode', dir: 'dir', primary: 'primary', config: 'config', css: 'css', js: 'js'
+  }
 
   const params = new URLSearchParams(location.search)
   const overrides = {}

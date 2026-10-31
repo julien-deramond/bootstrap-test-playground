@@ -8,7 +8,9 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { createInterface } from 'node:readline/promises'
-import { CATEGORIES, NAME_PATTERN, configDir, copyStyles, fail, isMetaBlock, root, updateConfigsReadme, workingDir, writeCategory } from './lib/configs.mjs'
+import {
+  CATEGORIES, NAME_PATTERN, configDir, copyStyles, fail, isMetaBlock, root, updateConfigsReadme, workingDir, writeCategory
+} from './lib/configs.mjs'
 
 const USAGE = 'Usage: npm run save-config <name> [-- "Description"] [--category <id>] [--force]   (name: lowercase letters, digits, dashes)'
 

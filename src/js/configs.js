@@ -7,8 +7,6 @@
 import distCss from 'bootstrap/dist/css/bootstrap.css?url'
 import configs, { categories } from 'virtual:playground-configs'
 
-export { categories, configs }
-
 // The categories that have configs, in order, each with its configs.
 export function groupConfigs(items = configs) {
   return categories
@@ -63,3 +61,5 @@ export function initConfigs(prefs) {
 
   return { swappable }
 }
+
+export { categories, default as configs } from 'virtual:playground-configs'

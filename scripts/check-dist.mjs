@@ -103,7 +103,9 @@ function print(title, { identical, groups, diffFile }) {
 function save(name, label, css) {
   const file = path.join(reportDir, `${name}.css`)
   fs.writeFileSync(file, normalize(css))
-  return { name, file, label, css: fs.readFileSync(file, 'utf8') }
+  return {
+    name, file, label, css: fs.readFileSync(file, 'utf8')
+  }
 }
 
 console.log(`Bootstrap: ${bootstrap.label}\n`)
@@ -112,8 +114,7 @@ fs.mkdirSync(reportDir, { recursive: true })
 
 const distFile = path.join(await buildDist(bootstrapDir), 'dist/css/bootstrap.css')
 const build = save('build', 'Bootstrap build (dist/css/bootstrap.css)', fs.readFileSync(distFile, 'utf8'))
-const playground = save('playground', 'playground (configs/default)',
-  (await compileConfig(path.join(configDir('default'), 'main.scss'), { bootstrapDir, logger: quiet })).css)
+const playground = save('playground', 'playground (configs/default)', (await compileConfig(path.join(configDir('default'), 'main.scss'), { bootstrapDir, logger: quiet })).css)
 const result = compare('pipeline', build, playground)
 print('playground vs Bootstrap’s build', result)
 if (!result.identical) {

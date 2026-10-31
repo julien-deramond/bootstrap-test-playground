@@ -18,7 +18,7 @@ test('the carousel scroll viewport can be reached from the keyboard', async ({ p
   const markup = await viewport.evaluate((element, selector) => {
     const tabindex = element.getAttribute('tabindex')
     const own = tabindex !== null && Number.parseInt(tabindex, 10) !== -1
-    const inside = Array.from(element.querySelectorAll(selector)).filter(child => child.tabIndex >= 0).length
+    const inside = [...element.querySelectorAll(selector)].filter(child => child.tabIndex >= 0).length
     return { tabindex, own, inside }
   }, focusable)
 
@@ -49,7 +49,9 @@ test('the carousel indicators meet the 24px target size', async ({ page, repro }
   await repro.open()
   const boxes = await page.locator('[data-playground-repro]').first().locator('.carousel-indicators button').evaluateAll(buttons => buttons.map(button => {
     const { x, y, width, height } = button.getBoundingClientRect()
-    return { x, y, width, height }
+    return {
+      x, y, width, height
+    }
   }))
 
   const size = 24

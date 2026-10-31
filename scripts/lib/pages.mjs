@@ -12,7 +12,9 @@ export const PAGE_GROUPS = [
   { dir: 'pages', label: 'Starter screens', description: 'Bootstrap’s own examples, adapted to v6.' },
   { dir: 'screens', label: 'Real screens', description: 'Application screens ported from shadcn/ui and rebuilt with v6 components.' },
   // Tagged with their docs section (components, forms), from the file name.
-  { dir: 'kitchen-sink', label: 'Kitchen sink', description: 'Every live example from the docs, one page per component or form control.', tags: file => [path.basename(file).split('-')[0]] },
+  {
+    dir: 'kitchen-sink', label: 'Kitchen sink', description: 'Every live example from the docs, one page per component or form control.', tags: file => [path.basename(file).split('-')[0]]
+  },
   { dir: 'issues', label: 'Issue reproductions', description: 'Isolated reproductions. Each one compiles its own copy of Bootstrap.' }
 ]
 
@@ -33,7 +35,9 @@ export function findHtmlFiles(dir) {
 
 const decodeEntities = value => value
   .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
-  .replace(/&(amp|lt|gt|quot|#39|apos);/g, (_, name) => ({ amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'", apos: "'" })[name])
+  .replace(/&(amp|lt|gt|quot|#39|apos);/g, (_, name) => ({
+    amp: '&', lt: '<', gt: '>', quot: '"', '#39': '\'', apos: '\''
+  })[name])
 
 const plainText = html => decodeEntities(html.replace(/<[^>]*>/g, '')).replace(/\s+/g, ' ').trim()
 

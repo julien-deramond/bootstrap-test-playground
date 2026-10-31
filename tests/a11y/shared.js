@@ -21,15 +21,15 @@ export const bestPracticeRulesOff = url => /^\/(kitchen-sink|pages)\//.test(url)
 
 // The pages the scans cover: every page but the reproductions (issues/), which
 // show bugs on purpose.
-const SKIPPED_GROUPS = ['issues']
-export const PAGES = collectPages('/').filter(({ dir }) => !SKIPPED_GROUPS.includes(dir)).flatMap(({ pages }) => pages.map(({ url }) => url))
+const SKIPPED_GROUPS = new Set(['issues'])
+export const PAGES = collectPages('/').filter(({ dir }) => !SKIPPED_GROUPS.has(dir)).flatMap(({ pages }) => pages.map(({ url }) => url))
 
 // Builds of part of Bootstrap leave most pages unstyled on purpose, where
 // unstyled links and controls fail target-size and contrast for no reason.
 // Their own pages (pages/grid-only.html…) load their config whatever
 // `?config` says, so the default config's run scans those.
-const PARTIAL_BUILDS = ['grid-only', 'partial', 'reboot-only', 'utilities-only']
-export const ALL_CONFIGS = listConfigs().map(({ name }) => name).filter(name => !PARTIAL_BUILDS.includes(name))
+const PARTIAL_BUILDS = new Set(['grid-only', 'partial', 'reboot-only', 'utilities-only'])
+export const ALL_CONFIGS = listConfigs().map(({ name }) => name).filter(name => !PARTIAL_BUILDS.has(name))
 
 // The focus ring check's own rule (focus.spec.js), the pairing contrast
 // check's (contrast.spec.js) and the Tab walk's (tab-walk.spec.js), which axe
@@ -105,9 +105,11 @@ export const matches = (entry, node) => entry.rule === node.rule &&
 // scan's direction; an entry without `dirs` applies to both.
 const appliesTo = (entry, config) => !entry.configs || entry.configs.includes(config)
 export const expectedWith = (entry, config) => entry.configs ? entry.configs.includes(config) : config === 'default'
-const scanOf = entry => ({ [FOCUS_RULE]: 'focus', [CONTRAST_RULE]: 'contrast', [OBSCURED_RULE]: 'obscured', [REFLOW_RULE]: 'reflow', [TEXT_SPACING_RULE]: 'reflow', [RESIZE_TEXT_RULE]: 'reflow' })[entry.rule] ?? (TAB_RULES.includes(entry.rule) ? 'tab' : entry.state ?? 'closed')
+const scanOf = entry => ({
+  [FOCUS_RULE]: 'focus', [CONTRAST_RULE]: 'contrast', [OBSCURED_RULE]: 'obscured', [REFLOW_RULE]: 'reflow', [TEXT_SPACING_RULE]: 'reflow', [RESIZE_TEXT_RULE]: 'reflow'
+})[entry.rule] ?? (TAB_RULES.includes(entry.rule) ? 'tab' : entry.state ?? 'closed')
 
-export const knownOn = (url, theme, config, state = 'closed', dir = undefined) => knownIssues.filter(entry => entry.pages.includes(url) &&
+export const knownOn = (url, theme, config, state = 'closed', dir) => knownIssues.filter(entry => entry.pages.includes(url) &&
   scanOf(entry) === state && appliesTo(entry, config) && (!entry.themes || entry.themes.includes(theme)) && (!entry.dirs || !dir || entry.dirs.includes(dir)))
 
 // Loads a page with a config and theme, ready to scan. `extra` adds URL
@@ -116,7 +118,9 @@ export async function load(page, url, theme, config, extra = {}) {
   // Remote resources (avatars, web fonts) aren't the playground's to fix.
   await page.route(target => target.hostname !== 'localhost', route => route.abort())
   // `freeze` fixes "today", so the datepicker's labels stay the same.
-  const params = new URLSearchParams({ theme, config, chrome: '0', freeze: '', ...extra })
+  const params = new URLSearchParams({
+    theme, config, chrome: '0', freeze: '', ...extra
+  })
   await page.goto(`${url}?${params}`)
   await page.waitForFunction(() => !document.getElementById('playground-config-pending'))
   await page.evaluate(() => document.fonts.ready)

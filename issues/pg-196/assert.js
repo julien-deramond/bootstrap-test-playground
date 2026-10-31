@@ -8,14 +8,14 @@ const cases = ['range', 'carousel-interval', 'carousel-loop', 'nav-overflow']
 export async function assert() {
   const html = document.documentElement
   for (let i = 0; i < 100 && html.dataset.prefixCases !== 'done'; i++) {
-    await new Promise((resolve) => setTimeout(resolve, 100))
+    await new Promise(resolve => setTimeout(resolve, 100))
   }
 
   if (html.dataset.prefixCases !== 'done') {
     return { pass: null, details: 'the cases never ran' }
   }
 
-  const results = cases.map((name) => [name, document.querySelector(`[data-prefix-case="${name}"]`)?.dataset.result ?? 'missing'])
+  const results = cases.map(name => [name, document.querySelector(`[data-prefix-case="${name}"]`)?.dataset.result ?? 'missing'])
   const prefix = document.getElementById('prefix-detected').textContent
   return {
     pass: results.every(([, result]) => result === 'pass'),

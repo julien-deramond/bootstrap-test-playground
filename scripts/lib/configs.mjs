@@ -41,9 +41,11 @@ export function listConfigs() {
     .filter(entry => entry.isDirectory() && fs.existsSync(path.join(configsDir, entry.name, 'main.scss')))
     .map(entry => {
       const dir = path.join(configsDir, entry.name)
-      return { name: entry.name, description: readDescription(dir), category: readCategory(dir), tokensOnly: isTokensOnly(dir), colorModes: readColorModes(dir) }
+      return {
+        name: entry.name, description: readDescription(dir), category: readCategory(dir), tokensOnly: isTokensOnly(dir), colorModes: readColorModes(dir)
+      }
     })
-    .sort((a, b) => (a.name === 'default' ? -1 : b.name === 'default' ? 1 : a.name.localeCompare(b.name)))
+    .sort((a, b) => (a.name === 'default' ? -1 : (b.name === 'default' ? 1 : a.name.localeCompare(b.name))))
 }
 
 // Every folder that compiles its own copy of Bootstrap: the working copy,
@@ -93,7 +95,7 @@ export function readCategory(dir) {
 export function unknownCategories() {
   return listConfigs()
     .map(({ name }) => ({ name, id: readCategoryLine(configDir(name)) }))
-    .filter(({ id }) => id && !CATEGORIES.some(category => category.id === id))
+    .filter(({ id }) => id && CATEGORIES.every(category => category.id !== id))
 }
 
 // Sets the README's `Category:` line, or adds it after the description.

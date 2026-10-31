@@ -37,6 +37,7 @@ Run the check that matches what you changed. Every one of them also runs in CI o
 
 | You changed | Run |
 | --- | --- |
+| Any script, style or page | `npm run lint` (`npm run lint:fix` fixes most findings) |
 | A page or the kitchen sink | `npm run lint:html` |
 | A config, a reproduction's styles or Bootstrap | `npm run check-configs`, then `npm run audit-tokens` |
 | A config's README | `npm run configs-table` (CI fails when `configs/README.md` is stale) |

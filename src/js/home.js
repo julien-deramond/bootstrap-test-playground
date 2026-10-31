@@ -10,7 +10,9 @@
 // Bootstrap's defaults whatever the preferences (see playground-prefs.js).
 import source, { onChange as onSourceChange } from 'virtual:bootstrap-source'
 import { configs, groupConfigs } from './configs.js'
-import { groups, pages, queryText, readRecent, resultUrl, search } from './page-index.js'
+import {
+  groups, pages, queryText, readRecent, resultUrl, search
+} from './page-index.js'
 import { changeLabels, pageUrl, record } from './last-update.js'
 import { STATUSES, githubUrl } from './repro-status.js'
 
@@ -151,7 +153,7 @@ function highlight(text, query) {
   }
 
   const lower = text.toLowerCase()
-  const marked = new Array(text.length).fill(false)
+  const marked = Array.from({ length: text.length }).fill(false)
   for (const token of tokens) {
     let index = lower.indexOf(token)
     while (index !== -1) {
@@ -162,13 +164,13 @@ function highlight(text, query) {
 
   let html = ''
   let open = false
-  for (let index = 0; index < text.length; index++) {
+  for (const [index, element] of text.entries()) {
     if (marked[index] !== open) {
       html += open ? '</mark>' : '<mark>'
       open = marked[index]
     }
 
-    html += escapeHtml(text[index])
+    html += escapeHtml(element)
   }
 
   return html + (open ? '</mark>' : '')
@@ -228,9 +230,11 @@ function card(result, { showGroup }) {
         <a class="page-card-action" href="${import.meta.env.BASE_URL}compare.html?page=${encodeURIComponent(page.url)}" title="Compare ${title} side by side" aria-label="Compare ${title} side by side">
           <svg width="16" height="16" aria-hidden="true"><use href="#icon-columns"/></svg>
         </a>
-        ${page.docs ? `<a class="page-card-action" href="${escapeHtml(page.docs)}" rel="noopener" title="${title} docs source" aria-label="${title} docs source">
+        ${page.docs ?
+          `<a class="page-card-action" href="${escapeHtml(page.docs)}" rel="noopener" title="${title} docs source" aria-label="${title} docs source">
           <svg width="16" height="16" aria-hidden="true"><use href="#icon-book"/></svg>
-        </a>` : ''}
+        </a>` :
+          ''}
       </div>
     </li>`
 }
@@ -325,7 +329,7 @@ function renderHead() {
     title = 'Configs'
     description = CONFIGS_DESCRIPTION
   } else if (state.q || state.tag || state.status) {
-    title = state.q ? 'Results' : state.tag ? `Tagged “${state.tag}”` : STATUSES[state.status].text
+    title = state.q ? 'Results' : (state.tag ? `Tagged “${state.tag}”` : STATUSES[state.status].text)
     description = group ? `In ${group.label}.` : ''
   }
 
@@ -376,16 +380,20 @@ function renderResults() {
   const recent = state.group ? [] : readRecent().slice(0, 6)
   const shownGroups = groups.filter(group => !state.group || group.dir === state.group)
   results.innerHTML = [
-    recent.length > 0 ? `
+    recent.length > 0 ?
+      `
       <section class="home-recent" aria-labelledby="group-recent">
         <h2 class="home-recent-title" id="group-recent"><svg width="14" height="14" aria-hidden="true"><use href="#icon-clock"/></svg> Recent</h2>
         <ul class="home-recent-list">${recent.map(page => `
           <li><a class="home-recent-item" href="${escapeHtml(resultUrl({ page }))}" title="${escapeHtml(`${page.groupLabel}: ${page.title}`)}">${groupIcon(page.group)}<span>${escapeHtml(page.title)}</span></a></li>`).join('')}
         </ul>
-      </section>` : '',
+      </section>` :
+      '',
     ...shownGroups.map(group => `
       <section class="home-group" aria-labelledby="group-${group.dir}">
-        ${state.group ? '' : `
+        ${state.group ?
+          '' :
+          `
           <div class="home-group-head">
             <h2 class="home-group-title" id="group-${group.dir}"><button type="button" data-group="${escapeHtml(group.dir)}">${escapeHtml(group.label)}</button></h2>
             <span class="home-group-count">${group.pages.length}</span>
@@ -407,7 +415,9 @@ const prefs = window.playgroundPrefs
 const issueUrl = issue => `https://github.com/julien-deramond/bootstrap-test-playground/issues/${issue}`
 
 // The working copy leads the first category, next to `default`.
-const working = { name: 'working', label: 'src/styles', category: 'baseline', description: 'The working copy, what every example page uses until a config is applied. Save it as a config with `npm run save-config <name>`.', gaps: [] }
+const working = {
+  name: 'working', label: 'src/styles', category: 'baseline', description: 'The working copy, what every example page uses until a config is applied. Save it as a config with `npm run save-config <name>`.', gaps: []
+}
 
 // Configs whose name or description has every word of the search.
 function matchingConfigs() {
@@ -428,7 +438,7 @@ function renderConfigs() {
   const current = prefs?.read().config
   const found = matchingConfigs()
   const configCard = ({ name, label, description, gaps, tokensOnly }) => {
-    const active = name === current || (name === 'working' && !configs.some(config => config.name === current))
+    const active = name === current || (name === 'working' && configs.every(config => config.name !== current))
     return `
       <li class="config-card${active ? ' active' : ''}">
         <div class="config-card-head">
@@ -436,11 +446,13 @@ function renderConfigs() {
           <button type="button" class="btn-sm ${active ? 'btn-subtle' : 'btn-outline'} theme-${active ? 'success' : 'secondary'} config-card-apply" data-config="${escapeHtml(name)}" aria-pressed="${active}" aria-label="${active ? 'Applied' : 'Apply'} ${escapeHtml(label ?? name)}" ${prefs ? '' : 'disabled'}>${active ? '<svg width="14" height="14" aria-hidden="true"><use href="#icon-check"/></svg> Applied' : 'Apply'}</button>
         </div>
         <p class="config-card-description" title="${escapeHtml(description)}">${inlineCode(description || `configs/${name}/`)}</p>
-        ${(tokensOnly && name !== 'default') || gaps.length > 0 ? `
+        ${(tokensOnly && name !== 'default') || gaps.length > 0 ?
+          `
           <div class="config-card-meta">
             ${tokensOnly && name !== 'default' ? '<span class="config-card-badge" title="Only changes tokens.css, so it also applies on top of the prebuilt dist">tokens only</span>' : ''}
             ${gaps.map(issue => `<a class="config-card-gap" href="${issueUrl(issue)}" rel="noopener" title="Known gap: tracking issue #${issue}">#${issue}</a>`).join('')}
-          </div>` : ''}
+          </div>` :
+          ''}
       </li>`
   }
 
@@ -562,7 +574,9 @@ document.addEventListener('click', event => {
     update({ view: target.dataset.view })
   } else {
     input.value = ''
-    update({ q: '', tag: '', status: '', group: '' })
+    update({
+      q: '', tag: '', status: '', group: ''
+    })
     input.focus()
   }
 })

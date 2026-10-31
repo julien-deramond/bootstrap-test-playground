@@ -1,15 +1,18 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Icon integration</title>
-    <meta name="description" content="Bootstrap Icons (font and SVG sprite), Lucide inline SVG and emoji in every icon slot of v6: btn-icon, icon-link, form-adorn, chip-icon, menu-item-icon, nav links, alerts, toasts, list groups, avatars and input groups, at small, default and large sizes. Directional icons show what needs flipping in RTL.">
-    <meta name="playground-tags" content="icons, components, forms">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <meta
+      name="description"
+      content="Bootstrap Icons (font and SVG sprite), Lucide inline SVG and emoji in every icon slot of v6: btn-icon, icon-link, form-adorn, chip-icon, menu-item-icon, nav links, alerts, toasts, list groups, avatars and input groups, at small, default and large sizes. Directional icons show what needs flipping in RTL."
+    />
+    <meta name="playground-tags" content="icons, components, forms" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script src="/playground-prefs.js"></script>
-    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main">
-    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens">
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main" />
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens" />
     <style>
       .pg-slot {
         margin-bottom: 2rem;
@@ -32,12 +35,12 @@
       .pg-item {
         display: flex;
         flex-direction: column;
-        gap: .25rem;
+        gap: 0.25rem;
         align-items: flex-start;
       }
 
       .pg-cap {
-        font-size: .75rem;
+        font-size: 0.75rem;
         color: var(--bs-fg-2);
       }
 
@@ -53,7 +56,7 @@
 
       .pg-slot .alert,
       .pg-slot .toast {
-        margin-bottom: .5rem;
+        margin-bottom: 0.5rem;
       }
 
       /* Neither Bootstrap Icons nor Lucide mirror their directional glyphs. */
@@ -82,76 +85,273 @@
         <p class="mb-2"><a href="/">Playground</a> / Pages</p>
         <h1>Icon integration</h1>
         <p class="fs-lg fg-2">
-          The same icons in every slot v6 gives them, once per source: Bootstrap Icons as a font and as an SVG sprite, Lucide as inline SVG, and an emoji. The icon names match across sources, so a difference comes from the integration, not from the glyph.
+          The same icons in every slot v6 gives them, once per source: Bootstrap Icons as a font and as an SVG sprite,
+          Lucide as inline SVG, and an emoji. The icon names match across sources, so a difference comes from the
+          integration, not from the glyph.
         </p>
         <p class="fg-2">
-          Icon sizing and alignment depend on <code>1em</code> against fixed sizes and on <code>currentColor</code>. Switch the direction in the toolbar (<code>?dir=rtl</code>): the arrows and chevrons are mirrored with <code>scale: -1 1</code> on <code>:dir(rtl)</code>, which neither icon set does for you. Every icon here is decorative and hidden from assistive technology, and every icon-only button has an accessible name. See <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/81">#81</a>.
+          Icon sizing and alignment depend on <code>1em</code> against fixed sizes and on <code>currentColor</code>.
+          Switch the direction in the toolbar (<code>?dir=rtl</code>): the arrows and chevrons are mirrored with
+          <code>scale: -1 1</code> on <code>:dir(rtl)</code>, which neither icon set does for you. Every icon here is
+          decorative and hidden from assistive technology, and every icon-only button has an accessible name. See
+          <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/81">#81</a>.
         </p>
       </header>
 
       <section class="mb-5" aria-labelledby="bootstrap-icons-font">
         <h2 class="h4" id="bootstrap-icons-font">Bootstrap Icons font</h2>
-        <p class="fg-2" data-playground-chrome>The icon font: <code>&lt;i class="bi bi-search"&gt;</code>. The glyph is a <code>::before</code> character, so it follows <code>font-size</code> and <code>color</code> but not the <code>width</code> and <code>height</code> a slot sets.</p>
+        <p class="fg-2" data-playground-chrome>
+          The icon font: <code>&lt;i class="bi bi-search"&gt;</code>. The glyph is a <code>::before</code> character, so
+          it follows <code>font-size</code> and <code>color</code> but not the <code>width</code> and
+          <code>height</code> a slot sets.
+        </p>
         <div class="pg-slot">
           <h3 class="h6" id="font-btn-icon" data-playground-chrome><code>.btn-icon</code></h3>
-          <p class="fs-sm fg-2" data-playground-chrome>The glyph size decides the box: the button has <code>aspect-ratio: 1</code> and no padding.</p>
+          <p class="fs-sm fg-2" data-playground-chrome>
+            The glyph size decides the box: the button has <code>aspect-ratio: 1</code> and no padding.
+          </p>
           <div class="pg-grid">
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><button type="button" class="btn-solid theme-primary btn-icon btn-sm" aria-label="Search sm"><i class="bi bi-search" aria-hidden="true"></i></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><button type="button" class="btn-solid theme-primary btn-icon" aria-label="Search"><i class="bi bi-search" aria-hidden="true"></i></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><button type="button" class="btn-solid theme-primary btn-icon btn-lg" aria-label="Search lg"><i class="bi bi-search" aria-hidden="true"></i></button></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><button type="button" class="btn-outline theme-secondary btn-icon btn-sm" aria-label="Search sm"><i class="bi bi-search" aria-hidden="true"></i></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><button type="button" class="btn-outline theme-secondary btn-icon" aria-label="Search"><i class="bi bi-search" aria-hidden="true"></i></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><button type="button" class="btn-outline theme-secondary btn-icon btn-lg" aria-label="Search lg"><i class="bi bi-search" aria-hidden="true"></i></button></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><button type="button" class="btn-text theme-danger btn-icon btn-sm" aria-label="Search sm"><i class="bi bi-search" aria-hidden="true"></i></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><button type="button" class="btn-text theme-danger btn-icon" aria-label="Search"><i class="bi bi-search" aria-hidden="true"></i></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><button type="button" class="btn-text theme-danger btn-icon btn-lg" aria-label="Search lg"><i class="bi bi-search" aria-hidden="true"></i></button></div></div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><button type="button" class="btn-solid theme-primary btn-icon btn-sm" aria-label="Search sm">
+                  <i class="bi bi-search" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><button type="button" class="btn-solid theme-primary btn-icon" aria-label="Search">
+                  <i class="bi bi-search" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><button type="button" class="btn-solid theme-primary btn-icon btn-lg" aria-label="Search lg">
+                  <i class="bi bi-search" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><button type="button" class="btn-outline theme-secondary btn-icon btn-sm" aria-label="Search sm">
+                  <i class="bi bi-search" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><button type="button" class="btn-outline theme-secondary btn-icon" aria-label="Search">
+                  <i class="bi bi-search" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><button type="button" class="btn-outline theme-secondary btn-icon btn-lg" aria-label="Search lg">
+                  <i class="bi bi-search" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><button type="button" class="btn-text theme-danger btn-icon btn-sm" aria-label="Search sm">
+                  <i class="bi bi-search" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><button type="button" class="btn-text theme-danger btn-icon" aria-label="Search">
+                  <i class="bi bi-search" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><button type="button" class="btn-text theme-danger btn-icon btn-lg" aria-label="Search lg">
+                  <i class="bi bi-search" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="font-icon-link" data-playground-chrome><code>.icon-link</code></h3>
-          <p class="fs-sm fg-2" data-playground-chrome>The helper sizes <code>> .bi</code> at <code>1em</code> and fills it with <code>currentcolor</code>. Hover or focus the second link in each row: the icon nudges with <code>.icon-link-hover</code>, toward the text in RTL (<a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/142">#142</a>). It was made for filled icons, so a stroke icon like Lucide’s gets filled in too.</p>
+          <p class="fs-sm fg-2" data-playground-chrome>
+            The helper sizes <code>> .bi</code> at <code>1em</code> and fills it with <code>currentcolor</code>. Hover
+            or focus the second link in each row: the icon nudges with <code>.icon-link-hover</code>, toward the text in
+            RTL (<a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/142">#142</a>). It was
+            made for filled icons, so a stroke icon like Lucide’s gets filled in too.
+          </p>
           <div class="pg-grid">
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><a class="icon-link fs-sm" href="#font-icon-link"><i class="bi bi-star" aria-hidden="true"></i> Starred</a></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm hover</span><a class="icon-link icon-link-hover fs-sm" href="#font-icon-link">Next <i class="bi bi-arrow-right pg-flip" aria-hidden="true"></i></a></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><a class="icon-link" href="#font-icon-link"><i class="bi bi-star" aria-hidden="true"></i> Starred</a></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default hover</span><a class="icon-link icon-link-hover" href="#font-icon-link">Next <i class="bi bi-arrow-right pg-flip" aria-hidden="true"></i></a></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><a class="icon-link fs-lg" href="#font-icon-link"><i class="bi bi-star" aria-hidden="true"></i> Starred</a></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg hover</span><a class="icon-link icon-link-hover fs-lg" href="#font-icon-link">Next <i class="bi bi-arrow-right pg-flip" aria-hidden="true"></i></a></div></div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><a class="icon-link fs-sm" href="#font-icon-link"
+                  ><i class="bi bi-star" aria-hidden="true"></i> Starred</a
+                >
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm hover</span
+                ><a class="icon-link icon-link-hover fs-sm" href="#font-icon-link"
+                  >Next <i class="bi bi-arrow-right pg-flip" aria-hidden="true"></i
+                ></a>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><a class="icon-link" href="#font-icon-link"><i class="bi bi-star" aria-hidden="true"></i> Starred</a>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default hover</span
+                ><a class="icon-link icon-link-hover" href="#font-icon-link"
+                  >Next <i class="bi bi-arrow-right pg-flip" aria-hidden="true"></i
+                ></a>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><a class="icon-link fs-lg" href="#font-icon-link"
+                  ><i class="bi bi-star" aria-hidden="true"></i> Starred</a
+                >
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg hover</span
+                ><a class="icon-link icon-link-hover fs-lg" href="#font-icon-link"
+                  >Next <i class="bi bi-arrow-right pg-flip" aria-hidden="true"></i
+                ></a>
+              </div>
+            </div>
           </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="font-form-adorn" data-playground-chrome><code>.form-adorn-icon</code></h3>
-          <p class="fs-sm fg-2" data-playground-chrome>The helper sizes <code>> svg</code> at <code>1rem</code>. A font icon or an emoji is not sized by it.</p>
+          <p class="fs-sm fg-2" data-playground-chrome>
+            The helper sizes <code>> svg</code> at <code>1rem</code>. A font icon or an emoji is not sized by it.
+          </p>
           <div class="pg-grid">
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm start</span><label class="form-control form-adorn form-control-sm"><span class="form-adorn-icon" aria-hidden="true"><i class="bi bi-search" aria-hidden="true"></i></span><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search font sm"></label></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm end</span><label class="form-control form-adorn form-adorn-end form-control-sm"><span class="form-adorn-icon" aria-hidden="true"><i class="bi bi-envelope" aria-hidden="true"></i></span><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email font sm"></label></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>default start</span><label class="form-control form-adorn"><span class="form-adorn-icon" aria-hidden="true"><i class="bi bi-search" aria-hidden="true"></i></span><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search font default"></label></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default end</span><label class="form-control form-adorn form-adorn-end"><span class="form-adorn-icon" aria-hidden="true"><i class="bi bi-envelope" aria-hidden="true"></i></span><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email font default"></label></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg start</span><label class="form-control form-adorn form-control-lg"><span class="form-adorn-icon" aria-hidden="true"><i class="bi bi-search" aria-hidden="true"></i></span><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search font lg"></label></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg end</span><label class="form-control form-adorn form-adorn-end form-control-lg"><span class="form-adorn-icon" aria-hidden="true"><i class="bi bi-envelope" aria-hidden="true"></i></span><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email font lg"></label></div></div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm start</span
+                ><label class="form-control form-adorn form-control-sm"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><i class="bi bi-search" aria-hidden="true"></i></span
+                  ><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search font sm"
+                /></label>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm end</span
+                ><label class="form-control form-adorn form-adorn-end form-control-sm"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><i class="bi bi-envelope" aria-hidden="true"></i></span
+                  ><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email font sm"
+                /></label>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default start</span
+                ><label class="form-control form-adorn"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><i class="bi bi-search" aria-hidden="true"></i></span
+                  ><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search font default"
+                /></label>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default end</span
+                ><label class="form-control form-adorn form-adorn-end"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><i class="bi bi-envelope" aria-hidden="true"></i></span
+                  ><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email font default"
+                /></label>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg start</span
+                ><label class="form-control form-adorn form-control-lg"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><i class="bi bi-search" aria-hidden="true"></i></span
+                  ><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search font lg"
+                /></label>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg end</span
+                ><label class="form-control form-adorn form-adorn-end form-control-lg"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><i class="bi bi-envelope" aria-hidden="true"></i></span
+                  ><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email font lg"
+                /></label>
+              </div>
+            </div>
           </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="font-chip-icon" data-playground-chrome><code>.chip-icon</code></h3>
           <p class="fs-sm fg-2" data-playground-chrome>The helper sizes <code>> svg</code> at <code>1rem</code>.</p>
-          <div class="pg-grid"><div class="pg-cell"><span class="chip"><span class="chip-icon"><i class="bi bi-person" aria-hidden="true"></i></span> With icon</span><span class="chip theme-primary"><span class="chip-icon"><i class="bi bi-star" aria-hidden="true"></i></span> Starred</span></div></div>
+          <div class="pg-grid">
+            <div class="pg-cell">
+              <span class="chip"
+                ><span class="chip-icon"><i class="bi bi-person" aria-hidden="true"></i></span> With icon</span
+              ><span class="chip theme-primary"
+                ><span class="chip-icon"><i class="bi bi-star" aria-hidden="true"></i></span> Starred</span
+              >
+            </div>
+          </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="font-menu-item-icon" data-playground-chrome><code>.menu-item-icon</code></h3>
-          <p class="fs-sm fg-2" data-playground-chrome>The class sets <code>width: 1rem; height: auto</code>. An inline <code>&lt;i&gt;</code> ignores the width and an emoji span too, so both keep the line’s own size.</p>
+          <p class="fs-sm fg-2" data-playground-chrome>
+            The class sets <code>width: 1rem; height: auto</code>. An inline <code>&lt;i&gt;</code> ignores the width
+            and an emoji span too, so both keep the line’s own size.
+          </p>
           <div class="menu show position-static pg-menu">
-            <button class="menu-item" type="button"><i class="bi bi-files menu-item-icon fg-3" aria-hidden="true"></i> Copy</button>
-            <button class="menu-item" type="button"><i class="bi bi-scissors menu-item-icon fg-3" aria-hidden="true"></i> Cut</button>
-            <hr class="menu-divider">
-            <button class="menu-item theme-danger" type="button"><i class="bi bi-trash menu-item-icon" aria-hidden="true"></i> Delete</button>
+            <button class="menu-item" type="button">
+              <i class="bi bi-files menu-item-icon fg-3" aria-hidden="true"></i> Copy
+            </button>
+            <button class="menu-item" type="button">
+              <i class="bi bi-scissors menu-item-icon fg-3" aria-hidden="true"></i> Cut
+            </button>
+            <hr class="menu-divider" />
+            <button class="menu-item theme-danger" type="button">
+              <i class="bi bi-trash menu-item-icon" aria-hidden="true"></i> Delete
+            </button>
           </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="font-nav" data-playground-chrome><code>.nav-link</code></h3>
-          
+
           <ul class="nav">
-            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#font-nav"><i class="bi bi-person" aria-hidden="true"></i> Profile</a></li>
-            <li class="nav-item"><a class="nav-link" href="#font-nav"><i class="bi bi-bell" aria-hidden="true"></i> Alerts</a></li>
-            <li class="nav-item"><a class="nav-link" href="#font-nav">Next <i class="bi bi-chevron-right pg-flip" aria-hidden="true"></i></a></li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#font-nav"
+                ><i class="bi bi-person" aria-hidden="true"></i> Profile</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#font-nav"><i class="bi bi-bell" aria-hidden="true"></i> Alerts</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#font-nav"
+                >Next <i class="bi bi-chevron-right pg-flip" aria-hidden="true"></i
+              ></a>
+            </li>
           </ul>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="font-alert" data-playground-chrome><code>.alert</code></h3>
-          
-          <div class="alert theme-primary d-flex align-items-center gap-2" role="alert"><i class="bi bi-info-circle flex-shrink-0" aria-hidden="true"></i><p class="mb-0">An example alert with an icon.</p></div>
-          <div class="alert theme-warning d-flex align-items-center gap-2" role="alert"><i class="bi bi-exclamation-triangle flex-shrink-0" aria-hidden="true"></i><p class="mb-0">A warning alert with an icon.</p></div>
+
+          <div class="alert theme-primary d-flex align-items-center gap-2" role="alert">
+            <i class="bi bi-info-circle flex-shrink-0" aria-hidden="true"></i>
+            <p class="mb-0">An example alert with an icon.</p>
+          </div>
+          <div class="alert theme-warning d-flex align-items-center gap-2" role="alert">
+            <i class="bi bi-exclamation-triangle flex-shrink-0" aria-hidden="true"></i>
+            <p class="mb-0">A warning alert with an icon.</p>
+          </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="font-toast" data-playground-chrome><code>.toast</code></h3>
-          
+
           <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
               <span class="me-2 d-inline-flex"><i class="bi bi-check-circle" aria-hidden="true"></i></span>
@@ -164,95 +364,373 @@
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="font-list-group" data-playground-chrome><code>.list-group-item</code></h3>
-          
+
           <ul class="list-group">
-            <li class="list-group-item d-flex align-items-center gap-2"><i class="bi bi-person" aria-hidden="true"></i> Profile</li>
-            <li class="list-group-item d-flex align-items-center gap-2"><i class="bi bi-bell" aria-hidden="true"></i> Notifications</li>
-            <li class="list-group-item d-flex align-items-center gap-2 justify-content-between">Details <i class="bi bi-chevron-right pg-flip" aria-hidden="true"></i></li>
+            <li class="list-group-item d-flex align-items-center gap-2">
+              <i class="bi bi-person" aria-hidden="true"></i> Profile
+            </li>
+            <li class="list-group-item d-flex align-items-center gap-2">
+              <i class="bi bi-bell" aria-hidden="true"></i> Notifications
+            </li>
+            <li class="list-group-item d-flex align-items-center gap-2 justify-content-between">
+              Details <i class="bi bi-chevron-right pg-flip" aria-hidden="true"></i>
+            </li>
           </ul>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="font-avatar" data-playground-chrome><code>.avatar</code></h3>
-          
-          <div class="pg-grid"><div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><span class="avatar avatar-sm" role="img" aria-label="User sm"><i class="bi bi-person" aria-hidden="true"></i></span></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><span class="avatar" role="img" aria-label="User default"><i class="bi bi-person" aria-hidden="true"></i></span></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><span class="avatar avatar-lg" role="img" aria-label="User lg"><i class="bi bi-person" aria-hidden="true"></i></span></div></div></div>
+
+          <div class="pg-grid">
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><span class="avatar avatar-sm" role="img" aria-label="User sm"
+                  ><i class="bi bi-person" aria-hidden="true"></i
+                ></span>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><span class="avatar" role="img" aria-label="User default"
+                  ><i class="bi bi-person" aria-hidden="true"></i
+                ></span>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><span class="avatar avatar-lg" role="img" aria-label="User lg"
+                  ><i class="bi bi-person" aria-hidden="true"></i
+                ></span>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="font-input-group" data-playground-chrome><code>.input-group-text</code></h3>
-          
+
           <div class="pg-grid">
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><div class="input-group input-group-sm"><span class="input-group-text"><i class="bi bi-envelope" aria-hidden="true"></i></span><input type="email" class="form-control" placeholder="you@example.com" aria-label="Email font sm"></div></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><div class="input-group"><span class="input-group-text"><i class="bi bi-envelope" aria-hidden="true"></i></span><input type="email" class="form-control" placeholder="you@example.com" aria-label="Email font default"></div></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><div class="input-group input-group-lg"><span class="input-group-text"><i class="bi bi-envelope" aria-hidden="true"></i></span><input type="email" class="form-control" placeholder="you@example.com" aria-label="Email font lg"></div></div></div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span>
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text"><i class="bi bi-envelope" aria-hidden="true"></i></span
+                  ><input type="email" class="form-control" placeholder="you@example.com" aria-label="Email font sm" />
+                </div>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-envelope" aria-hidden="true"></i></span
+                  ><input
+                    type="email"
+                    class="form-control"
+                    placeholder="you@example.com"
+                    aria-label="Email font default"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span>
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text"><i class="bi bi-envelope" aria-hidden="true"></i></span
+                  ><input type="email" class="form-control" placeholder="you@example.com" aria-label="Email font lg" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       <section class="mb-5" aria-labelledby="bootstrap-icons-svg">
         <h2 class="h4" id="bootstrap-icons-svg">Bootstrap Icons SVG sprite</h2>
-        <p class="fg-2" data-playground-chrome>The sprite from <code>node_modules/bootstrap-icons/bootstrap-icons.svg</code>: <code>&lt;svg class="bi"&gt;&lt;use href="…#search"/&gt;&lt;/svg&gt;</code>, the markup the Bootstrap examples use.</p>
+        <p class="fg-2" data-playground-chrome>
+          The sprite from <code>node_modules/bootstrap-icons/bootstrap-icons.svg</code>:
+          <code>&lt;svg class="bi"&gt;&lt;use href="…#search"/&gt;&lt;/svg&gt;</code>, the markup the Bootstrap examples
+          use.
+        </p>
         <div class="pg-slot">
           <h3 class="h6" id="sprite-btn-icon" data-playground-chrome><code>.btn-icon</code></h3>
-          <p class="fs-sm fg-2" data-playground-chrome>The glyph size decides the box: the button has <code>aspect-ratio: 1</code> and no padding.</p>
+          <p class="fs-sm fg-2" data-playground-chrome>
+            The glyph size decides the box: the button has <code>aspect-ratio: 1</code> and no padding.
+          </p>
           <div class="pg-grid">
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><button type="button" class="btn-solid theme-primary btn-icon btn-sm" aria-label="Search sm"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search"/></svg></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><button type="button" class="btn-solid theme-primary btn-icon" aria-label="Search"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search"/></svg></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><button type="button" class="btn-solid theme-primary btn-icon btn-lg" aria-label="Search lg"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search"/></svg></button></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><button type="button" class="btn-outline theme-secondary btn-icon btn-sm" aria-label="Search sm"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search"/></svg></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><button type="button" class="btn-outline theme-secondary btn-icon" aria-label="Search"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search"/></svg></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><button type="button" class="btn-outline theme-secondary btn-icon btn-lg" aria-label="Search lg"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search"/></svg></button></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><button type="button" class="btn-text theme-danger btn-icon btn-sm" aria-label="Search sm"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search"/></svg></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><button type="button" class="btn-text theme-danger btn-icon" aria-label="Search"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search"/></svg></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><button type="button" class="btn-text theme-danger btn-icon btn-lg" aria-label="Search lg"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search"/></svg></button></div></div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><button type="button" class="btn-solid theme-primary btn-icon btn-sm" aria-label="Search sm">
+                  <svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search" /></svg>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><button type="button" class="btn-solid theme-primary btn-icon" aria-label="Search">
+                  <svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search" /></svg>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><button type="button" class="btn-solid theme-primary btn-icon btn-lg" aria-label="Search lg">
+                  <svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search" /></svg>
+                </button>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><button type="button" class="btn-outline theme-secondary btn-icon btn-sm" aria-label="Search sm">
+                  <svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search" /></svg>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><button type="button" class="btn-outline theme-secondary btn-icon" aria-label="Search">
+                  <svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search" /></svg>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><button type="button" class="btn-outline theme-secondary btn-icon btn-lg" aria-label="Search lg">
+                  <svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search" /></svg>
+                </button>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><button type="button" class="btn-text theme-danger btn-icon btn-sm" aria-label="Search sm">
+                  <svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search" /></svg>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><button type="button" class="btn-text theme-danger btn-icon" aria-label="Search">
+                  <svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search" /></svg>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><button type="button" class="btn-text theme-danger btn-icon btn-lg" aria-label="Search lg">
+                  <svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="search" /></svg>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="sprite-icon-link" data-playground-chrome><code>.icon-link</code></h3>
-          <p class="fs-sm fg-2" data-playground-chrome>The helper sizes <code>> .bi</code> at <code>1em</code> and fills it with <code>currentcolor</code>. Hover or focus the second link in each row: the icon nudges with <code>.icon-link-hover</code>, toward the text in RTL (<a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/142">#142</a>). It was made for filled icons, so a stroke icon like Lucide’s gets filled in too.</p>
+          <p class="fs-sm fg-2" data-playground-chrome>
+            The helper sizes <code>> .bi</code> at <code>1em</code> and fills it with <code>currentcolor</code>. Hover
+            or focus the second link in each row: the icon nudges with <code>.icon-link-hover</code>, toward the text in
+            RTL (<a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/142">#142</a>). It was
+            made for filled icons, so a stroke icon like Lucide’s gets filled in too.
+          </p>
           <div class="pg-grid">
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><a class="icon-link fs-sm" href="#sprite-icon-link"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="star"/></svg> Starred</a></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm hover</span><a class="icon-link icon-link-hover fs-sm" href="#sprite-icon-link">Next <svg class="bi pg-flip" width="1em" height="1em" aria-hidden="true"><use data-bi="arrow-right"/></svg></a></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><a class="icon-link" href="#sprite-icon-link"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="star"/></svg> Starred</a></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default hover</span><a class="icon-link icon-link-hover" href="#sprite-icon-link">Next <svg class="bi pg-flip" width="1em" height="1em" aria-hidden="true"><use data-bi="arrow-right"/></svg></a></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><a class="icon-link fs-lg" href="#sprite-icon-link"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="star"/></svg> Starred</a></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg hover</span><a class="icon-link icon-link-hover fs-lg" href="#sprite-icon-link">Next <svg class="bi pg-flip" width="1em" height="1em" aria-hidden="true"><use data-bi="arrow-right"/></svg></a></div></div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><a class="icon-link fs-sm" href="#sprite-icon-link"
+                  ><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="star" /></svg> Starred</a
+                >
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm hover</span
+                ><a class="icon-link icon-link-hover fs-sm" href="#sprite-icon-link"
+                  >Next
+                  <svg class="bi pg-flip" width="1em" height="1em" aria-hidden="true"><use data-bi="arrow-right" /></svg
+                ></a>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><a class="icon-link" href="#sprite-icon-link"
+                  ><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="star" /></svg> Starred</a
+                >
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default hover</span
+                ><a class="icon-link icon-link-hover" href="#sprite-icon-link"
+                  >Next
+                  <svg class="bi pg-flip" width="1em" height="1em" aria-hidden="true"><use data-bi="arrow-right" /></svg
+                ></a>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><a class="icon-link fs-lg" href="#sprite-icon-link"
+                  ><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="star" /></svg> Starred</a
+                >
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg hover</span
+                ><a class="icon-link icon-link-hover fs-lg" href="#sprite-icon-link"
+                  >Next
+                  <svg class="bi pg-flip" width="1em" height="1em" aria-hidden="true"><use data-bi="arrow-right" /></svg
+                ></a>
+              </div>
+            </div>
           </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="sprite-form-adorn" data-playground-chrome><code>.form-adorn-icon</code></h3>
-          <p class="fs-sm fg-2" data-playground-chrome>The helper sizes <code>> svg</code> at <code>1rem</code>. A font icon or an emoji is not sized by it.</p>
+          <p class="fs-sm fg-2" data-playground-chrome>
+            The helper sizes <code>> svg</code> at <code>1rem</code>. A font icon or an emoji is not sized by it.
+          </p>
           <div class="pg-grid">
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm start</span><label class="form-control form-adorn form-control-sm"><span class="form-adorn-icon" aria-hidden="true"><svg class="bi" width="16" height="16" aria-hidden="true"><use data-bi="search"/></svg></span><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search sprite sm"></label></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm end</span><label class="form-control form-adorn form-adorn-end form-control-sm"><span class="form-adorn-icon" aria-hidden="true"><svg class="bi" width="16" height="16" aria-hidden="true"><use data-bi="envelope"/></svg></span><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email sprite sm"></label></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>default start</span><label class="form-control form-adorn"><span class="form-adorn-icon" aria-hidden="true"><svg class="bi" width="16" height="16" aria-hidden="true"><use data-bi="search"/></svg></span><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search sprite default"></label></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default end</span><label class="form-control form-adorn form-adorn-end"><span class="form-adorn-icon" aria-hidden="true"><svg class="bi" width="16" height="16" aria-hidden="true"><use data-bi="envelope"/></svg></span><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email sprite default"></label></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg start</span><label class="form-control form-adorn form-control-lg"><span class="form-adorn-icon" aria-hidden="true"><svg class="bi" width="16" height="16" aria-hidden="true"><use data-bi="search"/></svg></span><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search sprite lg"></label></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg end</span><label class="form-control form-adorn form-adorn-end form-control-lg"><span class="form-adorn-icon" aria-hidden="true"><svg class="bi" width="16" height="16" aria-hidden="true"><use data-bi="envelope"/></svg></span><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email sprite lg"></label></div></div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm start</span
+                ><label class="form-control form-adorn form-control-sm"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><svg class="bi" width="16" height="16" aria-hidden="true"><use data-bi="search" /></svg></span
+                  ><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search sprite sm"
+                /></label>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm end</span
+                ><label class="form-control form-adorn form-adorn-end form-control-sm"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><svg class="bi" width="16" height="16" aria-hidden="true"><use data-bi="envelope" /></svg></span
+                  ><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email sprite sm"
+                /></label>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default start</span
+                ><label class="form-control form-adorn"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><svg class="bi" width="16" height="16" aria-hidden="true"><use data-bi="search" /></svg></span
+                  ><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search sprite default"
+                /></label>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default end</span
+                ><label class="form-control form-adorn form-adorn-end"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><svg class="bi" width="16" height="16" aria-hidden="true"><use data-bi="envelope" /></svg></span
+                  ><input
+                    type="email"
+                    class="form-ghost"
+                    placeholder="you@example.com"
+                    aria-label="Email sprite default"
+                /></label>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg start</span
+                ><label class="form-control form-adorn form-control-lg"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><svg class="bi" width="16" height="16" aria-hidden="true"><use data-bi="search" /></svg></span
+                  ><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search sprite lg"
+                /></label>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg end</span
+                ><label class="form-control form-adorn form-adorn-end form-control-lg"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><svg class="bi" width="16" height="16" aria-hidden="true"><use data-bi="envelope" /></svg></span
+                  ><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email sprite lg"
+                /></label>
+              </div>
+            </div>
           </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="sprite-chip-icon" data-playground-chrome><code>.chip-icon</code></h3>
           <p class="fs-sm fg-2" data-playground-chrome>The helper sizes <code>> svg</code> at <code>1rem</code>.</p>
-          <div class="pg-grid"><div class="pg-cell"><span class="chip"><span class="chip-icon"><svg class="bi" width="16" height="16" aria-hidden="true"><use data-bi="person"/></svg></span> With icon</span><span class="chip theme-primary"><span class="chip-icon"><svg class="bi" width="16" height="16" aria-hidden="true"><use data-bi="star"/></svg></span> Starred</span></div></div>
+          <div class="pg-grid">
+            <div class="pg-cell">
+              <span class="chip"
+                ><span class="chip-icon"
+                  ><svg class="bi" width="16" height="16" aria-hidden="true"><use data-bi="person" /></svg
+                ></span>
+                With icon</span
+              ><span class="chip theme-primary"
+                ><span class="chip-icon"
+                  ><svg class="bi" width="16" height="16" aria-hidden="true"><use data-bi="star" /></svg
+                ></span>
+                Starred</span
+              >
+            </div>
+          </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="sprite-menu-item-icon" data-playground-chrome><code>.menu-item-icon</code></h3>
-          <p class="fs-sm fg-2" data-playground-chrome>The class sets <code>width: 1rem; height: auto</code>. An inline <code>&lt;i&gt;</code> ignores the width and an emoji span too, so both keep the line’s own size.</p>
+          <p class="fs-sm fg-2" data-playground-chrome>
+            The class sets <code>width: 1rem; height: auto</code>. An inline <code>&lt;i&gt;</code> ignores the width
+            and an emoji span too, so both keep the line’s own size.
+          </p>
           <div class="menu show position-static pg-menu">
-            <button class="menu-item" type="button"><svg class="bi menu-item-icon fg-3" width="16" height="16" aria-hidden="true"><use data-bi="files"/></svg> Copy</button>
-            <button class="menu-item" type="button"><svg class="bi menu-item-icon fg-3" width="16" height="16" aria-hidden="true"><use data-bi="scissors"/></svg> Cut</button>
-            <hr class="menu-divider">
-            <button class="menu-item theme-danger" type="button"><svg class="bi menu-item-icon" width="16" height="16" aria-hidden="true"><use data-bi="trash"/></svg> Delete</button>
+            <button class="menu-item" type="button">
+              <svg class="bi menu-item-icon fg-3" width="16" height="16" aria-hidden="true">
+                <use data-bi="files" />
+              </svg>
+              Copy
+            </button>
+            <button class="menu-item" type="button">
+              <svg class="bi menu-item-icon fg-3" width="16" height="16" aria-hidden="true">
+                <use data-bi="scissors" />
+              </svg>
+              Cut
+            </button>
+            <hr class="menu-divider" />
+            <button class="menu-item theme-danger" type="button">
+              <svg class="bi menu-item-icon" width="16" height="16" aria-hidden="true"><use data-bi="trash" /></svg>
+              Delete
+            </button>
           </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="sprite-nav" data-playground-chrome><code>.nav-link</code></h3>
-          
+
           <ul class="nav">
-            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#sprite-nav"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="person"/></svg> Profile</a></li>
-            <li class="nav-item"><a class="nav-link" href="#sprite-nav"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="bell"/></svg> Alerts</a></li>
-            <li class="nav-item"><a class="nav-link" href="#sprite-nav">Next <svg class="bi pg-flip" width="1em" height="1em" aria-hidden="true"><use data-bi="chevron-right"/></svg></a></li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#sprite-nav"
+                ><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="person" /></svg> Profile</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#sprite-nav"
+                ><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="bell" /></svg> Alerts</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#sprite-nav"
+                >Next
+                <svg class="bi pg-flip" width="1em" height="1em" aria-hidden="true"><use data-bi="chevron-right" /></svg
+              ></a>
+            </li>
           </ul>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="sprite-alert" data-playground-chrome><code>.alert</code></h3>
-          
-          <div class="alert theme-primary d-flex align-items-center gap-2" role="alert"><svg class="bi flex-shrink-0" width="1em" height="1em" aria-hidden="true"><use data-bi="info-circle"/></svg><p class="mb-0">An example alert with an icon.</p></div>
-          <div class="alert theme-warning d-flex align-items-center gap-2" role="alert"><svg class="bi flex-shrink-0" width="1em" height="1em" aria-hidden="true"><use data-bi="exclamation-triangle"/></svg><p class="mb-0">A warning alert with an icon.</p></div>
+
+          <div class="alert theme-primary d-flex align-items-center gap-2" role="alert">
+            <svg class="bi flex-shrink-0" width="1em" height="1em" aria-hidden="true">
+              <use data-bi="info-circle" />
+            </svg>
+            <p class="mb-0">An example alert with an icon.</p>
+          </div>
+          <div class="alert theme-warning d-flex align-items-center gap-2" role="alert">
+            <svg class="bi flex-shrink-0" width="1em" height="1em" aria-hidden="true">
+              <use data-bi="exclamation-triangle" />
+            </svg>
+            <p class="mb-0">A warning alert with an icon.</p>
+          </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="sprite-toast" data-playground-chrome><code>.toast</code></h3>
-          
+
           <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
-              <span class="me-2 d-inline-flex"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="check-circle"/></svg></span>
+              <span class="me-2 d-inline-flex"
+                ><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="check-circle" /></svg
+              ></span>
               <strong class="me-auto">Saved</strong>
               <small>just now</small>
               <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -262,95 +740,831 @@
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="sprite-list-group" data-playground-chrome><code>.list-group-item</code></h3>
-          
+
           <ul class="list-group">
-            <li class="list-group-item d-flex align-items-center gap-2"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="person"/></svg> Profile</li>
-            <li class="list-group-item d-flex align-items-center gap-2"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="bell"/></svg> Notifications</li>
-            <li class="list-group-item d-flex align-items-center gap-2 justify-content-between">Details <svg class="bi pg-flip" width="1em" height="1em" aria-hidden="true"><use data-bi="chevron-right"/></svg></li>
+            <li class="list-group-item d-flex align-items-center gap-2">
+              <svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="person" /></svg> Profile
+            </li>
+            <li class="list-group-item d-flex align-items-center gap-2">
+              <svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="bell" /></svg> Notifications
+            </li>
+            <li class="list-group-item d-flex align-items-center gap-2 justify-content-between">
+              Details
+              <svg class="bi pg-flip" width="1em" height="1em" aria-hidden="true"><use data-bi="chevron-right" /></svg>
+            </li>
           </ul>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="sprite-avatar" data-playground-chrome><code>.avatar</code></h3>
-          
-          <div class="pg-grid"><div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><span class="avatar avatar-sm" role="img" aria-label="User sm"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="person"/></svg></span></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><span class="avatar" role="img" aria-label="User default"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="person"/></svg></span></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><span class="avatar avatar-lg" role="img" aria-label="User lg"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="person"/></svg></span></div></div></div>
+
+          <div class="pg-grid">
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><span class="avatar avatar-sm" role="img" aria-label="User sm"
+                  ><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="person" /></svg
+                ></span>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><span class="avatar" role="img" aria-label="User default"
+                  ><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="person" /></svg
+                ></span>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><span class="avatar avatar-lg" role="img" aria-label="User lg"
+                  ><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="person" /></svg
+                ></span>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="sprite-input-group" data-playground-chrome><code>.input-group-text</code></h3>
-          
+
           <div class="pg-grid">
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><div class="input-group input-group-sm"><span class="input-group-text"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="envelope"/></svg></span><input type="email" class="form-control" placeholder="you@example.com" aria-label="Email sprite sm"></div></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><div class="input-group"><span class="input-group-text"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="envelope"/></svg></span><input type="email" class="form-control" placeholder="you@example.com" aria-label="Email sprite default"></div></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><div class="input-group input-group-lg"><span class="input-group-text"><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="envelope"/></svg></span><input type="email" class="form-control" placeholder="you@example.com" aria-label="Email sprite lg"></div></div></div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span>
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text"
+                    ><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="envelope" /></svg></span
+                  ><input
+                    type="email"
+                    class="form-control"
+                    placeholder="you@example.com"
+                    aria-label="Email sprite sm"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span>
+                <div class="input-group">
+                  <span class="input-group-text"
+                    ><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="envelope" /></svg></span
+                  ><input
+                    type="email"
+                    class="form-control"
+                    placeholder="you@example.com"
+                    aria-label="Email sprite default"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span>
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text"
+                    ><svg class="bi" width="1em" height="1em" aria-hidden="true"><use data-bi="envelope" /></svg></span
+                  ><input
+                    type="email"
+                    class="form-control"
+                    placeholder="you@example.com"
+                    aria-label="Email sprite lg"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       <section class="mb-5" aria-labelledby="lucide">
         <h2 class="h4" id="lucide">Lucide inline SVG</h2>
-        <p class="fg-2" data-playground-chrome>Inline stroke icons on a 24-unit grid (<a href="https://lucide.dev">Lucide</a>, ISC License), with <code>class="bi"</code> as in the playground's real screens.</p>
+        <p class="fg-2" data-playground-chrome>
+          Inline stroke icons on a 24-unit grid (<a href="https://lucide.dev">Lucide</a>, ISC License), with
+          <code>class="bi"</code> as in the playground's real screens.
+        </p>
         <div class="pg-slot">
           <h3 class="h6" id="lucide-btn-icon" data-playground-chrome><code>.btn-icon</code></h3>
-          <p class="fs-sm fg-2" data-playground-chrome>The glyph size decides the box: the button has <code>aspect-ratio: 1</code> and no padding.</p>
+          <p class="fs-sm fg-2" data-playground-chrome>
+            The glyph size decides the box: the button has <code>aspect-ratio: 1</code> and no padding.
+          </p>
           <div class="pg-grid">
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><button type="button" class="btn-solid theme-primary btn-icon btn-sm" aria-label="Search sm"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><button type="button" class="btn-solid theme-primary btn-icon" aria-label="Search"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><button type="button" class="btn-solid theme-primary btn-icon btn-lg" aria-label="Search lg"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></button></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><button type="button" class="btn-outline theme-secondary btn-icon btn-sm" aria-label="Search sm"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><button type="button" class="btn-outline theme-secondary btn-icon" aria-label="Search"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><button type="button" class="btn-outline theme-secondary btn-icon btn-lg" aria-label="Search lg"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></button></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><button type="button" class="btn-text theme-danger btn-icon btn-sm" aria-label="Search sm"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><button type="button" class="btn-text theme-danger btn-icon" aria-label="Search"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><button type="button" class="btn-text theme-danger btn-icon btn-lg" aria-label="Search lg"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></button></div></div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><button type="button" class="btn-solid theme-primary btn-icon btn-sm" aria-label="Search sm">
+                  <svg
+                    class="bi"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="m21 21-4.34-4.34" />
+                    <circle cx="11" cy="11" r="8" />
+                  </svg>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><button type="button" class="btn-solid theme-primary btn-icon" aria-label="Search">
+                  <svg
+                    class="bi"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="m21 21-4.34-4.34" />
+                    <circle cx="11" cy="11" r="8" />
+                  </svg>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><button type="button" class="btn-solid theme-primary btn-icon btn-lg" aria-label="Search lg">
+                  <svg
+                    class="bi"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="m21 21-4.34-4.34" />
+                    <circle cx="11" cy="11" r="8" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><button type="button" class="btn-outline theme-secondary btn-icon btn-sm" aria-label="Search sm">
+                  <svg
+                    class="bi"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="m21 21-4.34-4.34" />
+                    <circle cx="11" cy="11" r="8" />
+                  </svg>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><button type="button" class="btn-outline theme-secondary btn-icon" aria-label="Search">
+                  <svg
+                    class="bi"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="m21 21-4.34-4.34" />
+                    <circle cx="11" cy="11" r="8" />
+                  </svg>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><button type="button" class="btn-outline theme-secondary btn-icon btn-lg" aria-label="Search lg">
+                  <svg
+                    class="bi"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="m21 21-4.34-4.34" />
+                    <circle cx="11" cy="11" r="8" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><button type="button" class="btn-text theme-danger btn-icon btn-sm" aria-label="Search sm">
+                  <svg
+                    class="bi"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="m21 21-4.34-4.34" />
+                    <circle cx="11" cy="11" r="8" />
+                  </svg>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><button type="button" class="btn-text theme-danger btn-icon" aria-label="Search">
+                  <svg
+                    class="bi"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="m21 21-4.34-4.34" />
+                    <circle cx="11" cy="11" r="8" />
+                  </svg>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><button type="button" class="btn-text theme-danger btn-icon btn-lg" aria-label="Search lg">
+                  <svg
+                    class="bi"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="m21 21-4.34-4.34" />
+                    <circle cx="11" cy="11" r="8" />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="lucide-icon-link" data-playground-chrome><code>.icon-link</code></h3>
-          <p class="fs-sm fg-2" data-playground-chrome>The helper sizes <code>> .bi</code> at <code>1em</code> and fills it with <code>currentcolor</code>. Hover or focus the second link in each row: the icon nudges with <code>.icon-link-hover</code>, toward the text in RTL (<a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/142">#142</a>). It was made for filled icons, so a stroke icon like Lucide’s gets filled in too.</p>
+          <p class="fs-sm fg-2" data-playground-chrome>
+            The helper sizes <code>> .bi</code> at <code>1em</code> and fills it with <code>currentcolor</code>. Hover
+            or focus the second link in each row: the icon nudges with <code>.icon-link-hover</code>, toward the text in
+            RTL (<a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/142">#142</a>). It was
+            made for filled icons, so a stroke icon like Lucide’s gets filled in too.
+          </p>
           <div class="pg-grid">
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><a class="icon-link fs-sm" href="#lucide-icon-link"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg> Starred</a></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm hover</span><a class="icon-link icon-link-hover fs-sm" href="#lucide-icon-link">Next <svg class="bi pg-flip" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><a class="icon-link" href="#lucide-icon-link"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg> Starred</a></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default hover</span><a class="icon-link icon-link-hover" href="#lucide-icon-link">Next <svg class="bi pg-flip" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><a class="icon-link fs-lg" href="#lucide-icon-link"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg> Starred</a></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg hover</span><a class="icon-link icon-link-hover fs-lg" href="#lucide-icon-link">Next <svg class="bi pg-flip" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a></div></div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><a class="icon-link fs-sm" href="#lucide-icon-link"
+                  ><svg
+                    class="bi"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"
+                    />
+                  </svg>
+                  Starred</a
+                >
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm hover</span
+                ><a class="icon-link icon-link-hover fs-sm" href="#lucide-icon-link"
+                  >Next
+                  <svg
+                    class="bi pg-flip"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" /></svg
+                ></a>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><a class="icon-link" href="#lucide-icon-link"
+                  ><svg
+                    class="bi"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"
+                    />
+                  </svg>
+                  Starred</a
+                >
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default hover</span
+                ><a class="icon-link icon-link-hover" href="#lucide-icon-link"
+                  >Next
+                  <svg
+                    class="bi pg-flip"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" /></svg
+                ></a>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><a class="icon-link fs-lg" href="#lucide-icon-link"
+                  ><svg
+                    class="bi"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"
+                    />
+                  </svg>
+                  Starred</a
+                >
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg hover</span
+                ><a class="icon-link icon-link-hover fs-lg" href="#lucide-icon-link"
+                  >Next
+                  <svg
+                    class="bi pg-flip"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" /></svg
+                ></a>
+              </div>
+            </div>
           </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="lucide-form-adorn" data-playground-chrome><code>.form-adorn-icon</code></h3>
-          <p class="fs-sm fg-2" data-playground-chrome>The helper sizes <code>> svg</code> at <code>1rem</code>. A font icon or an emoji is not sized by it.</p>
+          <p class="fs-sm fg-2" data-playground-chrome>
+            The helper sizes <code>> svg</code> at <code>1rem</code>. A font icon or an emoji is not sized by it.
+          </p>
           <div class="pg-grid">
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm start</span><label class="form-control form-adorn form-control-sm"><span class="form-adorn-icon" aria-hidden="true"><svg class="bi" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></span><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search lucide sm"></label></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm end</span><label class="form-control form-adorn form-adorn-end form-control-sm"><span class="form-adorn-icon" aria-hidden="true"><svg class="bi" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg></span><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email lucide sm"></label></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>default start</span><label class="form-control form-adorn"><span class="form-adorn-icon" aria-hidden="true"><svg class="bi" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></span><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search lucide default"></label></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default end</span><label class="form-control form-adorn form-adorn-end"><span class="form-adorn-icon" aria-hidden="true"><svg class="bi" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg></span><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email lucide default"></label></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg start</span><label class="form-control form-adorn form-control-lg"><span class="form-adorn-icon" aria-hidden="true"><svg class="bi" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></span><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search lucide lg"></label></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg end</span><label class="form-control form-adorn form-adorn-end form-control-lg"><span class="form-adorn-icon" aria-hidden="true"><svg class="bi" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg></span><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email lucide lg"></label></div></div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm start</span
+                ><label class="form-control form-adorn form-control-sm"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><svg
+                      class="bi"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="m21 21-4.34-4.34" />
+                      <circle cx="11" cy="11" r="8" /></svg></span
+                  ><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search lucide sm"
+                /></label>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm end</span
+                ><label class="form-control form-adorn form-adorn-end form-control-sm"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><svg
+                      class="bi"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+                      <rect x="2" y="4" width="20" height="16" rx="2" /></svg></span
+                  ><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email lucide sm"
+                /></label>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default start</span
+                ><label class="form-control form-adorn"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><svg
+                      class="bi"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="m21 21-4.34-4.34" />
+                      <circle cx="11" cy="11" r="8" /></svg></span
+                  ><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search lucide default"
+                /></label>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default end</span
+                ><label class="form-control form-adorn form-adorn-end"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><svg
+                      class="bi"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+                      <rect x="2" y="4" width="20" height="16" rx="2" /></svg></span
+                  ><input
+                    type="email"
+                    class="form-ghost"
+                    placeholder="you@example.com"
+                    aria-label="Email lucide default"
+                /></label>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg start</span
+                ><label class="form-control form-adorn form-control-lg"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><svg
+                      class="bi"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="m21 21-4.34-4.34" />
+                      <circle cx="11" cy="11" r="8" /></svg></span
+                  ><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search lucide lg"
+                /></label>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg end</span
+                ><label class="form-control form-adorn form-adorn-end form-control-lg"
+                  ><span class="form-adorn-icon" aria-hidden="true"
+                    ><svg
+                      class="bi"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+                      <rect x="2" y="4" width="20" height="16" rx="2" /></svg></span
+                  ><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email lucide lg"
+                /></label>
+              </div>
+            </div>
           </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="lucide-chip-icon" data-playground-chrome><code>.chip-icon</code></h3>
           <p class="fs-sm fg-2" data-playground-chrome>The helper sizes <code>> svg</code> at <code>1rem</code>.</p>
-          <div class="pg-grid"><div class="pg-cell"><span class="chip"><span class="chip-icon"><svg class="bi" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> With icon</span><span class="chip theme-primary"><span class="chip-icon"><svg class="bi" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg></span> Starred</span></div></div>
+          <div class="pg-grid">
+            <div class="pg-cell">
+              <span class="chip"
+                ><span class="chip-icon"
+                  ><svg
+                    class="bi"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" /></svg
+                ></span>
+                With icon</span
+              ><span class="chip theme-primary"
+                ><span class="chip-icon"
+                  ><svg
+                    class="bi"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"
+                    /></svg
+                ></span>
+                Starred</span
+              >
+            </div>
+          </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="lucide-menu-item-icon" data-playground-chrome><code>.menu-item-icon</code></h3>
-          <p class="fs-sm fg-2" data-playground-chrome>The class sets <code>width: 1rem; height: auto</code>. An inline <code>&lt;i&gt;</code> ignores the width and an emoji span too, so both keep the line’s own size.</p>
+          <p class="fs-sm fg-2" data-playground-chrome>
+            The class sets <code>width: 1rem; height: auto</code>. An inline <code>&lt;i&gt;</code> ignores the width
+            and an emoji span too, so both keep the line’s own size.
+          </p>
           <div class="menu show position-static pg-menu">
-            <button class="menu-item" type="button"><svg class="bi menu-item-icon fg-3" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg> Copy</button>
-            <button class="menu-item" type="button"><svg class="bi menu-item-icon fg-3" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></svg> Cut</button>
-            <hr class="menu-divider">
-            <button class="menu-item theme-danger" type="button"><svg class="bi menu-item-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</button>
+            <button class="menu-item" type="button">
+              <svg
+                class="bi menu-item-icon fg-3"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+              </svg>
+              Copy
+            </button>
+            <button class="menu-item" type="button">
+              <svg
+                class="bi menu-item-icon fg-3"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="6" cy="6" r="3" />
+                <path d="M8.12 8.12 12 12" />
+                <path d="M20 4 8.12 15.88" />
+                <circle cx="6" cy="18" r="3" />
+                <path d="M14.8 14.8 20 20" />
+              </svg>
+              Cut
+            </button>
+            <hr class="menu-divider" />
+            <button class="menu-item theme-danger" type="button">
+              <svg
+                class="bi menu-item-icon"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M10 11v6" />
+                <path d="M14 11v6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                <path d="M3 6h18" />
+                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              </svg>
+              Delete
+            </button>
           </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="lucide-nav" data-playground-chrome><code>.nav-link</code></h3>
-          
+
           <ul class="nav">
-            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#lucide-nav"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profile</a></li>
-            <li class="nav-item"><a class="nav-link" href="#lucide-nav"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg> Alerts</a></li>
-            <li class="nav-item"><a class="nav-link" href="#lucide-nav">Next <svg class="bi pg-flip" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#lucide-nav"
+                ><svg
+                  class="bi"
+                  width="1em"
+                  height="1em"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                Profile</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#lucide-nav"
+                ><svg
+                  class="bi"
+                  width="1em"
+                  height="1em"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M10.268 21a2 2 0 0 0 3.464 0" />
+                  <path
+                    d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"
+                  />
+                </svg>
+                Alerts</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#lucide-nav"
+                >Next
+                <svg
+                  class="bi pg-flip"
+                  width="1em"
+                  height="1em"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="m9 18 6-6-6-6" /></svg
+              ></a>
+            </li>
           </ul>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="lucide-alert" data-playground-chrome><code>.alert</code></h3>
-          
-          <div class="alert theme-primary d-flex align-items-center gap-2" role="alert"><svg class="bi flex-shrink-0" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><p class="mb-0">An example alert with an icon.</p></div>
-          <div class="alert theme-warning d-flex align-items-center gap-2" role="alert"><svg class="bi flex-shrink-0" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><p class="mb-0">A warning alert with an icon.</p></div>
+
+          <div class="alert theme-primary d-flex align-items-center gap-2" role="alert">
+            <svg
+              class="bi flex-shrink-0"
+              width="1em"
+              height="1em"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4" />
+              <path d="M12 8h.01" />
+            </svg>
+            <p class="mb-0">An example alert with an icon.</p>
+          </div>
+          <div class="alert theme-warning d-flex align-items-center gap-2" role="alert">
+            <svg
+              class="bi flex-shrink-0"
+              width="1em"
+              height="1em"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
+              <path d="M12 9v4" />
+              <path d="M12 17h.01" />
+            </svg>
+            <p class="mb-0">A warning alert with an icon.</p>
+          </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="lucide-toast" data-playground-chrome><code>.toast</code></h3>
-          
+
           <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
-              <span class="me-2 d-inline-flex"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m16 9-5.5 5.5L8 12"/></svg></span>
+              <span class="me-2 d-inline-flex"
+                ><svg
+                  class="bi"
+                  width="1em"
+                  height="1em"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="m16 9-5.5 5.5L8 12" /></svg
+              ></span>
               <strong class="me-auto">Saved</strong>
               <small>just now</small>
               <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -360,92 +1574,471 @@
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="lucide-list-group" data-playground-chrome><code>.list-group-item</code></h3>
-          
+
           <ul class="list-group">
-            <li class="list-group-item d-flex align-items-center gap-2"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profile</li>
-            <li class="list-group-item d-flex align-items-center gap-2"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg> Notifications</li>
-            <li class="list-group-item d-flex align-items-center gap-2 justify-content-between">Details <svg class="bi pg-flip" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></li>
+            <li class="list-group-item d-flex align-items-center gap-2">
+              <svg
+                class="bi"
+                width="1em"
+                height="1em"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              Profile
+            </li>
+            <li class="list-group-item d-flex align-items-center gap-2">
+              <svg
+                class="bi"
+                width="1em"
+                height="1em"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M10.268 21a2 2 0 0 0 3.464 0" />
+                <path
+                  d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"
+                />
+              </svg>
+              Notifications
+            </li>
+            <li class="list-group-item d-flex align-items-center gap-2 justify-content-between">
+              Details
+              <svg
+                class="bi pg-flip"
+                width="1em"
+                height="1em"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </li>
           </ul>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="lucide-avatar" data-playground-chrome><code>.avatar</code></h3>
-          
-          <div class="pg-grid"><div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><span class="avatar avatar-sm" role="img" aria-label="User sm"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><span class="avatar" role="img" aria-label="User default"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><span class="avatar avatar-lg" role="img" aria-label="User lg"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span></div></div></div>
+
+          <div class="pg-grid">
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><span class="avatar avatar-sm" role="img" aria-label="User sm"
+                  ><svg
+                    class="bi"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" /></svg
+                ></span>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><span class="avatar" role="img" aria-label="User default"
+                  ><svg
+                    class="bi"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" /></svg
+                ></span>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><span class="avatar avatar-lg" role="img" aria-label="User lg"
+                  ><svg
+                    class="bi"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" /></svg
+                ></span>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="lucide-input-group" data-playground-chrome><code>.input-group-text</code></h3>
-          
+
           <div class="pg-grid">
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><div class="input-group input-group-sm"><span class="input-group-text"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg></span><input type="email" class="form-control" placeholder="you@example.com" aria-label="Email lucide sm"></div></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><div class="input-group"><span class="input-group-text"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg></span><input type="email" class="form-control" placeholder="you@example.com" aria-label="Email lucide default"></div></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><div class="input-group input-group-lg"><span class="input-group-text"><svg class="bi" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg></span><input type="email" class="form-control" placeholder="you@example.com" aria-label="Email lucide lg"></div></div></div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span>
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text"
+                    ><svg
+                      class="bi"
+                      width="1em"
+                      height="1em"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+                      <rect x="2" y="4" width="20" height="16" rx="2" /></svg></span
+                  ><input
+                    type="email"
+                    class="form-control"
+                    placeholder="you@example.com"
+                    aria-label="Email lucide sm"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span>
+                <div class="input-group">
+                  <span class="input-group-text"
+                    ><svg
+                      class="bi"
+                      width="1em"
+                      height="1em"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+                      <rect x="2" y="4" width="20" height="16" rx="2" /></svg></span
+                  ><input
+                    type="email"
+                    class="form-control"
+                    placeholder="you@example.com"
+                    aria-label="Email lucide default"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span>
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text"
+                    ><svg
+                      class="bi"
+                      width="1em"
+                      height="1em"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+                      <rect x="2" y="4" width="20" height="16" rx="2" /></svg></span
+                  ><input
+                    type="email"
+                    class="form-control"
+                    placeholder="you@example.com"
+                    aria-label="Email lucide lg"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       <section class="mb-5" aria-labelledby="emoji">
         <h2 class="h4" id="emoji">Emoji</h2>
-        <p class="fg-2" data-playground-chrome>A text character in an <code>aria-hidden</code> span. It follows <code>font-size</code> only, ignores <code>color</code> and renders differently on each platform.</p>
+        <p class="fg-2" data-playground-chrome>
+          A text character in an <code>aria-hidden</code> span. It follows <code>font-size</code> only, ignores
+          <code>color</code> and renders differently on each platform.
+        </p>
         <div class="pg-slot">
           <h3 class="h6" id="emoji-btn-icon" data-playground-chrome><code>.btn-icon</code></h3>
-          <p class="fs-sm fg-2" data-playground-chrome>The glyph size decides the box: the button has <code>aspect-ratio: 1</code> and no padding.</p>
+          <p class="fs-sm fg-2" data-playground-chrome>
+            The glyph size decides the box: the button has <code>aspect-ratio: 1</code> and no padding.
+          </p>
           <div class="pg-grid">
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><button type="button" class="btn-solid theme-primary btn-icon btn-sm" aria-label="Search sm"><span class="" aria-hidden="true">🔍</span></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><button type="button" class="btn-solid theme-primary btn-icon" aria-label="Search"><span class="" aria-hidden="true">🔍</span></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><button type="button" class="btn-solid theme-primary btn-icon btn-lg" aria-label="Search lg"><span class="" aria-hidden="true">🔍</span></button></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><button type="button" class="btn-outline theme-secondary btn-icon btn-sm" aria-label="Search sm"><span class="" aria-hidden="true">🔍</span></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><button type="button" class="btn-outline theme-secondary btn-icon" aria-label="Search"><span class="" aria-hidden="true">🔍</span></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><button type="button" class="btn-outline theme-secondary btn-icon btn-lg" aria-label="Search lg"><span class="" aria-hidden="true">🔍</span></button></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><button type="button" class="btn-text theme-danger btn-icon btn-sm" aria-label="Search sm"><span class="" aria-hidden="true">🔍</span></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><button type="button" class="btn-text theme-danger btn-icon" aria-label="Search"><span class="" aria-hidden="true">🔍</span></button></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><button type="button" class="btn-text theme-danger btn-icon btn-lg" aria-label="Search lg"><span class="" aria-hidden="true">🔍</span></button></div></div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><button type="button" class="btn-solid theme-primary btn-icon btn-sm" aria-label="Search sm">
+                  <span class="" aria-hidden="true">🔍</span>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><button type="button" class="btn-solid theme-primary btn-icon" aria-label="Search">
+                  <span class="" aria-hidden="true">🔍</span>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><button type="button" class="btn-solid theme-primary btn-icon btn-lg" aria-label="Search lg">
+                  <span class="" aria-hidden="true">🔍</span>
+                </button>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><button type="button" class="btn-outline theme-secondary btn-icon btn-sm" aria-label="Search sm">
+                  <span class="" aria-hidden="true">🔍</span>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><button type="button" class="btn-outline theme-secondary btn-icon" aria-label="Search">
+                  <span class="" aria-hidden="true">🔍</span>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><button type="button" class="btn-outline theme-secondary btn-icon btn-lg" aria-label="Search lg">
+                  <span class="" aria-hidden="true">🔍</span>
+                </button>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><button type="button" class="btn-text theme-danger btn-icon btn-sm" aria-label="Search sm">
+                  <span class="" aria-hidden="true">🔍</span>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><button type="button" class="btn-text theme-danger btn-icon" aria-label="Search">
+                  <span class="" aria-hidden="true">🔍</span>
+                </button>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><button type="button" class="btn-text theme-danger btn-icon btn-lg" aria-label="Search lg">
+                  <span class="" aria-hidden="true">🔍</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="emoji-icon-link" data-playground-chrome><code>.icon-link</code></h3>
-          <p class="fs-sm fg-2" data-playground-chrome>The helper sizes <code>> .bi</code> at <code>1em</code> and fills it with <code>currentcolor</code>. Hover or focus the second link in each row: the icon nudges with <code>.icon-link-hover</code>, toward the text in RTL (<a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/142">#142</a>). It was made for filled icons, so a stroke icon like Lucide’s gets filled in too.</p>
+          <p class="fs-sm fg-2" data-playground-chrome>
+            The helper sizes <code>> .bi</code> at <code>1em</code> and fills it with <code>currentcolor</code>. Hover
+            or focus the second link in each row: the icon nudges with <code>.icon-link-hover</code>, toward the text in
+            RTL (<a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/142">#142</a>). It was
+            made for filled icons, so a stroke icon like Lucide’s gets filled in too.
+          </p>
           <div class="pg-grid">
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><a class="icon-link fs-sm" href="#emoji-icon-link"><span class="" aria-hidden="true">⭐</span> Starred</a></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm hover</span><a class="icon-link icon-link-hover fs-sm" href="#emoji-icon-link">Next <span class="pg-flip" aria-hidden="true">→</span></a></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><a class="icon-link" href="#emoji-icon-link"><span class="" aria-hidden="true">⭐</span> Starred</a></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default hover</span><a class="icon-link icon-link-hover" href="#emoji-icon-link">Next <span class="pg-flip" aria-hidden="true">→</span></a></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><a class="icon-link fs-lg" href="#emoji-icon-link"><span class="" aria-hidden="true">⭐</span> Starred</a></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg hover</span><a class="icon-link icon-link-hover fs-lg" href="#emoji-icon-link">Next <span class="pg-flip" aria-hidden="true">→</span></a></div></div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><a class="icon-link fs-sm" href="#emoji-icon-link"
+                  ><span class="" aria-hidden="true">⭐</span> Starred</a
+                >
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm hover</span
+                ><a class="icon-link icon-link-hover fs-sm" href="#emoji-icon-link"
+                  >Next <span class="pg-flip" aria-hidden="true">→</span></a
+                >
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><a class="icon-link" href="#emoji-icon-link"><span class="" aria-hidden="true">⭐</span> Starred</a>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default hover</span
+                ><a class="icon-link icon-link-hover" href="#emoji-icon-link"
+                  >Next <span class="pg-flip" aria-hidden="true">→</span></a
+                >
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><a class="icon-link fs-lg" href="#emoji-icon-link"
+                  ><span class="" aria-hidden="true">⭐</span> Starred</a
+                >
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg hover</span
+                ><a class="icon-link icon-link-hover fs-lg" href="#emoji-icon-link"
+                  >Next <span class="pg-flip" aria-hidden="true">→</span></a
+                >
+              </div>
+            </div>
           </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="emoji-form-adorn" data-playground-chrome><code>.form-adorn-icon</code></h3>
-          <p class="fs-sm fg-2" data-playground-chrome>The helper sizes <code>> svg</code> at <code>1rem</code>. A font icon or an emoji is not sized by it.</p>
+          <p class="fs-sm fg-2" data-playground-chrome>
+            The helper sizes <code>> svg</code> at <code>1rem</code>. A font icon or an emoji is not sized by it.
+          </p>
           <div class="pg-grid">
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm start</span><label class="form-control form-adorn form-control-sm"><span class="form-adorn-icon" aria-hidden="true"><span class="" aria-hidden="true">🔍</span></span><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search emoji sm"></label></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm end</span><label class="form-control form-adorn form-adorn-end form-control-sm"><span class="form-adorn-icon" aria-hidden="true"><span class="" aria-hidden="true">✉️</span></span><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email emoji sm"></label></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>default start</span><label class="form-control form-adorn"><span class="form-adorn-icon" aria-hidden="true"><span class="" aria-hidden="true">🔍</span></span><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search emoji default"></label></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default end</span><label class="form-control form-adorn form-adorn-end"><span class="form-adorn-icon" aria-hidden="true"><span class="" aria-hidden="true">✉️</span></span><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email emoji default"></label></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg start</span><label class="form-control form-adorn form-control-lg"><span class="form-adorn-icon" aria-hidden="true"><span class="" aria-hidden="true">🔍</span></span><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search emoji lg"></label></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg end</span><label class="form-control form-adorn form-adorn-end form-control-lg"><span class="form-adorn-icon" aria-hidden="true"><span class="" aria-hidden="true">✉️</span></span><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email emoji lg"></label></div></div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm start</span
+                ><label class="form-control form-adorn form-control-sm"
+                  ><span class="form-adorn-icon" aria-hidden="true"><span class="" aria-hidden="true">🔍</span></span
+                  ><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search emoji sm"
+                /></label>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm end</span
+                ><label class="form-control form-adorn form-adorn-end form-control-sm"
+                  ><span class="form-adorn-icon" aria-hidden="true"><span class="" aria-hidden="true">✉️</span></span
+                  ><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email emoji sm"
+                /></label>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default start</span
+                ><label class="form-control form-adorn"
+                  ><span class="form-adorn-icon" aria-hidden="true"><span class="" aria-hidden="true">🔍</span></span
+                  ><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search emoji default"
+                /></label>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default end</span
+                ><label class="form-control form-adorn form-adorn-end"
+                  ><span class="form-adorn-icon" aria-hidden="true"><span class="" aria-hidden="true">✉️</span></span
+                  ><input
+                    type="email"
+                    class="form-ghost"
+                    placeholder="you@example.com"
+                    aria-label="Email emoji default"
+                /></label>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg start</span
+                ><label class="form-control form-adorn form-control-lg"
+                  ><span class="form-adorn-icon" aria-hidden="true"><span class="" aria-hidden="true">🔍</span></span
+                  ><input type="search" class="form-ghost" placeholder="Search…" aria-label="Search emoji lg"
+                /></label>
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg end</span
+                ><label class="form-control form-adorn form-adorn-end form-control-lg"
+                  ><span class="form-adorn-icon" aria-hidden="true"><span class="" aria-hidden="true">✉️</span></span
+                  ><input type="email" class="form-ghost" placeholder="you@example.com" aria-label="Email emoji lg"
+                /></label>
+              </div>
+            </div>
           </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="emoji-chip-icon" data-playground-chrome><code>.chip-icon</code></h3>
           <p class="fs-sm fg-2" data-playground-chrome>The helper sizes <code>> svg</code> at <code>1rem</code>.</p>
-          <div class="pg-grid"><div class="pg-cell"><span class="chip"><span class="chip-icon"><span class="" aria-hidden="true">👤</span></span> With icon</span><span class="chip theme-primary"><span class="chip-icon"><span class="" aria-hidden="true">⭐</span></span> Starred</span></div></div>
+          <div class="pg-grid">
+            <div class="pg-cell">
+              <span class="chip"
+                ><span class="chip-icon"><span class="" aria-hidden="true">👤</span></span> With icon</span
+              ><span class="chip theme-primary"
+                ><span class="chip-icon"><span class="" aria-hidden="true">⭐</span></span> Starred</span
+              >
+            </div>
+          </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="emoji-menu-item-icon" data-playground-chrome><code>.menu-item-icon</code></h3>
-          <p class="fs-sm fg-2" data-playground-chrome>The class sets <code>width: 1rem; height: auto</code>. An inline <code>&lt;i&gt;</code> ignores the width and an emoji span too, so both keep the line’s own size.</p>
+          <p class="fs-sm fg-2" data-playground-chrome>
+            The class sets <code>width: 1rem; height: auto</code>. An inline <code>&lt;i&gt;</code> ignores the width
+            and an emoji span too, so both keep the line’s own size.
+          </p>
           <div class="menu show position-static pg-menu">
-            <button class="menu-item" type="button"><span class="menu-item-icon fg-3" aria-hidden="true">📋</span> Copy</button>
-            <button class="menu-item" type="button"><span class="menu-item-icon fg-3" aria-hidden="true">✂️</span> Cut</button>
-            <hr class="menu-divider">
-            <button class="menu-item theme-danger" type="button"><span class="menu-item-icon" aria-hidden="true">🗑️</span> Delete</button>
+            <button class="menu-item" type="button">
+              <span class="menu-item-icon fg-3" aria-hidden="true">📋</span> Copy
+            </button>
+            <button class="menu-item" type="button">
+              <span class="menu-item-icon fg-3" aria-hidden="true">✂️</span> Cut
+            </button>
+            <hr class="menu-divider" />
+            <button class="menu-item theme-danger" type="button">
+              <span class="menu-item-icon" aria-hidden="true">🗑️</span> Delete
+            </button>
           </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="emoji-nav" data-playground-chrome><code>.nav-link</code></h3>
-          
+
           <ul class="nav">
-            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#emoji-nav"><span class="" aria-hidden="true">👤</span> Profile</a></li>
-            <li class="nav-item"><a class="nav-link" href="#emoji-nav"><span class="" aria-hidden="true">🔔</span> Alerts</a></li>
-            <li class="nav-item"><a class="nav-link" href="#emoji-nav">Next <span class="pg-flip" aria-hidden="true">›</span></a></li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#emoji-nav"
+                ><span class="" aria-hidden="true">👤</span> Profile</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#emoji-nav"><span class="" aria-hidden="true">🔔</span> Alerts</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#emoji-nav">Next <span class="pg-flip" aria-hidden="true">›</span></a>
+            </li>
           </ul>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="emoji-alert" data-playground-chrome><code>.alert</code></h3>
-          
-          <div class="alert theme-primary d-flex align-items-center gap-2" role="alert"><span class="flex-shrink-0" aria-hidden="true">ℹ️</span><p class="mb-0">An example alert with an icon.</p></div>
-          <div class="alert theme-warning d-flex align-items-center gap-2" role="alert"><span class="flex-shrink-0" aria-hidden="true">⚠️</span><p class="mb-0">A warning alert with an icon.</p></div>
+
+          <div class="alert theme-primary d-flex align-items-center gap-2" role="alert">
+            <span class="flex-shrink-0" aria-hidden="true">ℹ️</span>
+            <p class="mb-0">An example alert with an icon.</p>
+          </div>
+          <div class="alert theme-warning d-flex align-items-center gap-2" role="alert">
+            <span class="flex-shrink-0" aria-hidden="true">⚠️</span>
+            <p class="mb-0">A warning alert with an icon.</p>
+          </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="emoji-toast" data-playground-chrome><code>.toast</code></h3>
-          
+
           <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
               <span class="me-2 d-inline-flex"><span class="" aria-hidden="true">✅</span></span>
@@ -458,25 +2051,81 @@
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="emoji-list-group" data-playground-chrome><code>.list-group-item</code></h3>
-          
+
           <ul class="list-group">
-            <li class="list-group-item d-flex align-items-center gap-2"><span class="" aria-hidden="true">👤</span> Profile</li>
-            <li class="list-group-item d-flex align-items-center gap-2"><span class="" aria-hidden="true">🔔</span> Notifications</li>
-            <li class="list-group-item d-flex align-items-center gap-2 justify-content-between">Details <span class="pg-flip" aria-hidden="true">›</span></li>
+            <li class="list-group-item d-flex align-items-center gap-2">
+              <span class="" aria-hidden="true">👤</span> Profile
+            </li>
+            <li class="list-group-item d-flex align-items-center gap-2">
+              <span class="" aria-hidden="true">🔔</span> Notifications
+            </li>
+            <li class="list-group-item d-flex align-items-center gap-2 justify-content-between">
+              Details <span class="pg-flip" aria-hidden="true">›</span>
+            </li>
           </ul>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="emoji-avatar" data-playground-chrome><code>.avatar</code></h3>
-          
-          <div class="pg-grid"><div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><span class="avatar avatar-sm" role="img" aria-label="User sm"><span class="" aria-hidden="true">👤</span></span></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><span class="avatar" role="img" aria-label="User default"><span class="" aria-hidden="true">👤</span></span></div><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><span class="avatar avatar-lg" role="img" aria-label="User lg"><span class="" aria-hidden="true">👤</span></span></div></div></div>
+
+          <div class="pg-grid">
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span
+                ><span class="avatar avatar-sm" role="img" aria-label="User sm"
+                  ><span class="" aria-hidden="true">👤</span></span
+                >
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span
+                ><span class="avatar" role="img" aria-label="User default"
+                  ><span class="" aria-hidden="true">👤</span></span
+                >
+              </div>
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span
+                ><span class="avatar avatar-lg" role="img" aria-label="User lg"
+                  ><span class="" aria-hidden="true">👤</span></span
+                >
+              </div>
+            </div>
+          </div>
         </div>
         <div class="pg-slot">
           <h3 class="h6" id="emoji-input-group" data-playground-chrome><code>.input-group-text</code></h3>
-          
+
           <div class="pg-grid">
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>sm</span><div class="input-group input-group-sm"><span class="input-group-text"><span class="" aria-hidden="true">✉️</span></span><input type="email" class="form-control" placeholder="you@example.com" aria-label="Email emoji sm"></div></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>default</span><div class="input-group"><span class="input-group-text"><span class="" aria-hidden="true">✉️</span></span><input type="email" class="form-control" placeholder="you@example.com" aria-label="Email emoji default"></div></div></div>
-          <div class="pg-cell"><div class="pg-item"><span class="pg-cap" data-playground-chrome>lg</span><div class="input-group input-group-lg"><span class="input-group-text"><span class="" aria-hidden="true">✉️</span></span><input type="email" class="form-control" placeholder="you@example.com" aria-label="Email emoji lg"></div></div></div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>sm</span>
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text"><span class="" aria-hidden="true">✉️</span></span
+                  ><input type="email" class="form-control" placeholder="you@example.com" aria-label="Email emoji sm" />
+                </div>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>default</span>
+                <div class="input-group">
+                  <span class="input-group-text"><span class="" aria-hidden="true">✉️</span></span
+                  ><input
+                    type="email"
+                    class="form-control"
+                    placeholder="you@example.com"
+                    aria-label="Email emoji default"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="pg-cell">
+              <div class="pg-item">
+                <span class="pg-cap" data-playground-chrome>lg</span>
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text"><span class="" aria-hidden="true">✉️</span></span
+                  ><input type="email" class="form-control" placeholder="you@example.com" aria-label="Email emoji lg" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

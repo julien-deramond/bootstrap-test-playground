@@ -31,7 +31,11 @@ test('a carousel indicator focused from the keyboard shows Bootstrap\'s ring', a
   const reference = await control.evaluate(ring)
   await page.keyboard.press('Tab')
   const active = await indicators.nth(0).evaluate(ring)
-  await repro.screenshot('focused active indicator', { clip: await indicators.nth(0).boundingBox().then(box => ({ x: box.x - 12, y: box.y - 12, width: box.width + 24, height: box.height + 24 })) })
+  await repro.screenshot('focused active indicator', {
+    clip: await indicators.nth(0).boundingBox().then(box => ({
+      x: box.x - 12, y: box.y - 12, width: box.width + 24, height: box.height + 24
+    }))
+  })
   await page.keyboard.press('Tab')
   const other = await indicators.nth(1).evaluate(ring)
 

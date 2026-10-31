@@ -2,10 +2,10 @@
 // breakpoint and focus ring mixins. The bug is in Sass, not in a rendering, so
 // the spec compiles one snippet per mixin family, as a reader of the docs
 // would write them, and reports which ones fail with "Undefined mixin".
+import path from 'node:path'
 import { compileString } from 'sass-embedded'
 import { root } from '../../scripts/lib/configs.mjs'
 import { test } from '../../tests/issues/fixtures.js'
-import path from 'node:path'
 
 const snippets = {
   'make-row()': '.example-row { @include make-row(); }',

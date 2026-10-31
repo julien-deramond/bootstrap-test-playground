@@ -19,6 +19,7 @@ if (unknown.length > 0) {
   console.error(`  Categories: ${CATEGORIES.map(({ id }) => id).join(', ')} (scripts/lib/configs.mjs)`)
   process.exit(1)
 }
+
 const stale = updateConfigsReadme({ check })
 
 if (check && stale) {

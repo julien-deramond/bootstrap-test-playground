@@ -23,7 +23,9 @@ if (!arg('from') || !arg('to')) {
 
 const from = resolveRef(arg('from'))
 const to = resolveRef(arg('to'))
-const record = writeLastUpdate({ from, to, commits: upstreamCommits(from, to), base: arg('base') })
+const record = writeLastUpdate({
+  from, to, commits: upstreamCommits(from, to), base: arg('base')
+})
 const markup = record.examples.filter(example => example.markup).length
 const rendering = record.examples.filter(example => example.pixels).length
 console.log(`updates/last-update.json: ${record.commits ? `${record.commits.length} upstream commits, ` : ''}${markup} examples with new markup, ${record.rendering ? `${rendering} rendering differently` : 'rendering not compared (no diff-bootstrap report)'}.`)

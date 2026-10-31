@@ -8,10 +8,11 @@ export async function assert() {
   const custom = block.querySelector('#floating-custom label')
   const alpha = color => {
     const m = color.match(/\/\s*([\d.]+)(%?)\s*\)/)
-    if (!m) return 1
+    if (!m) {return 1}
     return m[2] ? Number(m[1]) / 100 : Number(m[1])
   }
-  const color = getComputedStyle(label).color
+
+  const { color } = getComputedStyle(label)
   const parent = getComputedStyle(label.parentElement).color
   const customColor = getComputedStyle(custom).color
   const a = alpha(color)

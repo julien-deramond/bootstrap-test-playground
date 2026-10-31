@@ -13,7 +13,7 @@ export function declarations(root) {
   const map = new Map()
   root.walkDecls(decl => {
     const context = []
-    let parent = decl.parent
+    let { parent } = decl
     while (parent && parent.type !== 'root') {
       if (parent.type === 'atrule') {
         context.unshift(`@${parent.name} ${parent.params}`.trim())
@@ -23,7 +23,9 @@ export function declarations(root) {
     }
 
     const selector = decl.parent.type === 'rule' ? decl.parent.selector.replace(/\s+/g, ' ') : ''
-    const entry = { context: context.join(' > '), selector, prop: decl.prop, value: normalizeValue(decl.value) }
+    const entry = {
+      context: context.join(' > '), selector, prop: decl.prop, value: normalizeValue(decl.value)
+    }
     map.set(`${entry.context}|${selector}|${decl.prop}`, entry)
   })
   return map
@@ -62,7 +64,9 @@ export function compareStatic({ defaults, sass, tokens }) {
 
   for (const [key, entry] of defaults) {
     if (!sass.has(key)) {
-      changes.push({ ...entry, kind: 'removed', from: entry.value, value: undefined })
+      changes.push({
+        ...entry, kind: 'removed', from: entry.value, value: undefined
+      })
     }
   }
 
@@ -72,12 +76,14 @@ export function compareStatic({ defaults, sass, tokens }) {
 
   const covered = changes.filter(change => set.some(token => covers(token, change)))
   const compileTime = changes.filter(change => !covered.includes(change))
-  const unreached = set.filter(token => !changes.some(change => change.prop === token.prop))
+  const unreached = set.filter(token => changes.every(change => change.prop !== token.prop))
   const redeclared = set.filter(token => token.context.startsWith('@layer ')).flatMap(token => [...defaults.values()]
-    .filter(entry => entry.prop === token.prop && !selectorsOf(entry.selector).some(selector => selectorsOf(token.selector).includes(selector)))
+    .filter(entry => entry.prop === token.prop && selectorsOf(entry.selector).every(selector => !selectorsOf(token.selector).includes(selector)))
     .map(entry => ({ ...entry, token: token.prop })))
 
-  return { changes, covered, compileTime, unreached, redeclared }
+  return {
+    changes, covered, compileTime, unreached, redeclared
+  }
 }
 
 // Groups compile-time changes for the report: by layer, kind and property,
@@ -91,6 +97,8 @@ export function groupChanges(changes) {
   }
 
   return [...groups.values()]
-    .map(list => ({ layer: list[0].context.match(/@layer ([\w-]+)/)?.[1] ?? 'unlayered', kind: list[0].kind, prop: list[0].prop, list }))
+    .map(list => ({
+      layer: list[0].context.match(/@layer ([\w-]+)/)?.[1] ?? 'unlayered', kind: list[0].kind, prop: list[0].prop, list
+    }))
     .sort((a, b) => b.list.length - a.list.length || a.prop.localeCompare(b.prop))
 }

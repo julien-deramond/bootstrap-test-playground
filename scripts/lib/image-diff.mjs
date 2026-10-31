@@ -15,7 +15,7 @@ export const PLACEHOLDER_IMAGE = `<svg xmlns="http://www.w3.org/2000/svg" width=
 export async function compareImages([first, second, mirror, draw = true]) {
   const load = src => new Promise((resolve, reject) => {
     const image = new Image()
-    image.onload = () => resolve(image)
+    image.addEventListener('load', () => resolve(image))
     image.onerror = reject
     image.src = src
   })
@@ -97,9 +97,11 @@ export async function compareImages([first, second, mirror, draw = true]) {
   const blob = await canvas.convertToBlob({ type: 'image/png' })
   const image = await new Promise(resolve => {
     const reader = new FileReader()
-    reader.onload = () => resolve(reader.result.split(',')[1])
+    reader.addEventListener('load', () => resolve(reader.result.split(',')[1]))
     reader.readAsDataURL(blob)
   })
 
-  return { ratio: different / (width * height), pixels: different, resized: a.width !== b.width || a.height !== b.height, image }
+  return {
+    ratio: different / (width * height), pixels: different, resized: a.width !== b.width || a.height !== b.height, image
+  }
 }

@@ -29,7 +29,9 @@ function layout([surface, padding]) {
   const round = ({ x, y, width, height }) => {
     const left = Math.floor(x)
     const top = Math.floor(y)
-    return { x: left, y: top, width: Math.ceil(x + width) - left, height: Math.ceil(y + height) - top }
+    return {
+      x: left, y: top, width: Math.ceil(x + width) - left, height: Math.ceil(y + height) - top
+    }
   }
 
   // The area of a 2px band along the inside of the component's edge, the
@@ -114,7 +116,7 @@ export async function captureSurface(page, surface) {
   await page.keyboard.press('Shift')
   await page.evaluate(([surface, padding]) => {
     document.activeElement?.blur()
-    const top = document.querySelector(`[data-focus-surface="${surface}"]`).getBoundingClientRect().top
+    const { top } = document.querySelector(`[data-focus-surface="${surface}"]`).getBoundingClientRect()
     window.scrollTo(0, window.scrollY + top - padding)
   }, [surface, PADDING])
 
@@ -157,7 +159,9 @@ export async function measureRings({ rect, unfocused, items }) {
   const base = await load(`data:image/png;base64,${unfocused}`)
   return Promise.all(items.map(async ({ clip, required, focused }) => {
     const before = pixels(base, { ...clip, x: clip.x - rect.x, y: clip.y - rect.y })
-    const after = pixels(await load(`data:image/png;base64,${focused}`), { x: 0, y: 0, width: clip.width, height: clip.height })
+    const after = pixels(await load(`data:image/png;base64,${focused}`), {
+      x: 0, y: 0, width: clip.width, height: clip.height
+    })
     const changes = new Map()
     for (let i = 0; i < after.length; i += 4) {
       const contrast = ratio(luminance(after, i), luminance(before, i))
@@ -184,7 +188,9 @@ export async function measureRings({ rect, unfocused, items }) {
       }
     }
 
-    return { covered: Math.round(covered), required, colors, contrast: Math.round(contrast * 100) / 100 }
+    return {
+      covered: Math.round(covered), required, colors, contrast: Math.round(contrast * 100) / 100
+    }
   }))
 }
 

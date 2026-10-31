@@ -12,12 +12,14 @@ body {
   z-index: 2;
 }
 
+/* stylelint-disable-next-line selector-no-qualifying-type */
 .form-signin input[type="email"] {
   margin-bottom: -1px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 }
 
+/* stylelint-disable-next-line selector-no-qualifying-type */
 .form-signin input[type="password"] {
   margin-bottom: 10px;
   border-top-left-radius: 0;

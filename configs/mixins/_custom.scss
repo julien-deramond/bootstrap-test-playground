@@ -36,6 +36,8 @@
 // `defaults()` and `tokens()`, theme colors read from `--theme-*` with a
 // fallback, and the mixins for radius, motion, focus, breakpoints, color
 // modes, icons and hidden text.
+// The defaults() map takes custom property names as keys
+// stylelint-disable custom-property-no-missing-var-function
 $callout-tokens: defaults(
   (
     --callout-padding-x: 1rem,
@@ -47,6 +49,7 @@ $callout-tokens: defaults(
   ),
   ()
 );
+// stylelint-enable custom-property-no-missing-var-function
 
 $callout-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='6.5' fill='none' stroke='#000' stroke-width='1.5'/><path d='M8 7v4M8 4.75v.5' stroke='#000' stroke-width='1.5' stroke-linecap='round'/></svg>");
 

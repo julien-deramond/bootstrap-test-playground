@@ -13,11 +13,11 @@ const arrowTransform = (root, name) => {
 
 const dayRadii = (root, position) => {
   const button = root.querySelector(`[data-vc-date-selected="${position}"] [data-vc-date-btn]`)
-  if (!button) return null
+  if (!button) {return null}
   const style = getComputedStyle(button)
   return {
-    left: parseFloat(style.borderTopLeftRadius) + parseFloat(style.borderBottomLeftRadius),
-    right: parseFloat(style.borderTopRightRadius) + parseFloat(style.borderBottomRightRadius)
+    left: Number.parseFloat(style.borderTopLeftRadius) + Number.parseFloat(style.borderBottomLeftRadius),
+    right: Number.parseFloat(style.borderTopRightRadius) + Number.parseFloat(style.borderBottomRightRadius)
   }
 }
 
@@ -25,8 +25,8 @@ const waitFor = async (check, timeout = 3000) => {
   const end = Date.now() + timeout
   while (Date.now() < end) {
     const value = check()
-    if (value) return value
-    await new Promise((resolve) => { setTimeout(resolve, 50) })
+    if (value) {return value}
+    await new Promise(resolve => {setTimeout(resolve, 50)})
   }
 
   return null
@@ -37,7 +37,7 @@ export async function assert() {
     const el = document.querySelector('[dir="rtl"] [data-vc="calendar"]')
     return el?.querySelector('[data-vc-date-selected="last"]') ? el : null
   })
-  if (!rtl) return { pass: null, details: 'no RTL datepicker with a selected range rendered' }
+  if (!rtl) {return { pass: null, details: 'no RTL datepicker with a selected range rendered' }}
 
   // LTR reference, in the same page and with the same styles
   const host = document.createElement('div')
@@ -51,13 +51,13 @@ export async function assert() {
   const ltrPrev = ltr && arrowTransform(ltr, 'prev')
   const ltrNext = ltr && arrowTransform(ltr, 'next')
   host.remove()
-  if (!ltrPrev || !ltrNext) return { pass: null, details: 'could not render the LTR reference' }
+  if (!ltrPrev || !ltrNext) {return { pass: null, details: 'could not render the LTR reference' }}
 
   const prev = arrowTransform(rtl, 'prev')
   const next = arrowTransform(rtl, 'next')
   const first = dayRadii(rtl, 'first')
   const last = dayRadii(rtl, 'last')
-  if (!prev || !next || !first || !last) return { pass: null, details: 'arrows or range ends not found' }
+  if (!prev || !next || !first || !last) {return { pass: null, details: 'arrows or range ends not found' }}
 
   const mirrored = prev !== ltrPrev && next !== ltrNext
   // First day: radius on the right (the start of a RTL range), none on the left

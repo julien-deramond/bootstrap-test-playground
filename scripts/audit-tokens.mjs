@@ -27,11 +27,11 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { loadEnv } from 'vite'
+import { DEFAULT_PREFIX, readPrefix } from '../postcss.config.js'
 import { bootstrapScssFiles, bootstrapSource } from './lib/bootstrap.mjs'
 import { compileConfig, processCss } from './lib/compile.mjs'
 import { root, styleFolders } from './lib/configs.mjs'
 import known from './known-tokens.mjs'
-import { DEFAULT_PREFIX, readPrefix } from '../postcss.config.js'
 import { renderTokens } from './lib/render-tokens.mjs'
 
 // Bugs are tracked, intended findings explained: see "Upstream issue tracking" in CLAUDE.md.
@@ -49,6 +49,7 @@ for (const folder of targets) {
     throw new Error(`${path.relative(root, folder)} has no main.scss: pass a config's folder, like configs/no-shadows or issues/pg-173`)
   }
 }
+
 const bootstrap = bootstrapSource(loadEnv('production', root, ''))
 const bootstrapDir = bootstrap.dir ?? path.join(root, 'node_modules/bootstrap')
 const quiet = { warn() {}, debug() {} }
@@ -103,7 +104,7 @@ const definedAt = (token, node) => {
 }
 
 // The selector a declaration applies to, or the at-rule it sits in.
-const selectorOf = node => (node.parent?.type === 'rule' ? node.parent.selector.replace(/\s+/g, ' ') : node.parent?.type === 'atrule' ? `@${node.parent.name} ${node.parent.params}` : '')
+const selectorOf = node => (node.parent?.type === 'rule' ? node.parent.selector.replace(/\s+/g, ' ') : (node.parent?.type === 'atrule' ? `@${node.parent.name} ${node.parent.params}` : ''))
 
 // Selectors that make a token global: `:root`, `:host`, color modes and theme
 // helpers, which exist to set tokens for whatever sits inside them.
@@ -154,10 +155,12 @@ function analyze(roots, unprefix) {
     const families = new Set(list.flatMap(definition => familiesOf(definition.selector)))
     const foreign = reads.get(token).filter(read => {
       const readFamilies = familiesOf(read.selector)
-      return readFamilies.length && !readFamilies.some(family => families.has(family))
+      return readFamilies.length && readFamilies.every(family => !families.has(family))
     })
     if (foreign.length) {
-      findings.push({ kind: 'foreign', token, places: foreign, definedOn: [...new Set(list.map(definition => definition.selector))] })
+      findings.push({
+        kind: 'foreign', token, places: foreign, definedOn: [...new Set(list.map(definition => definition.selector))]
+      })
     }
   }
 
@@ -214,7 +217,9 @@ console.log(`Bootstrap: ${bootstrap.label}\n`)
 
 if (process.argv.includes('--render')) {
   const { findings, defined, reads } = await audit(path.join(root, 'configs/default'))
-  process.exitCode = await renderTokens({ defined, reads, unused: new Set(findings.filter(({ kind }) => kind === 'unused').map(({ token }) => token)), isGlobal: selector => GLOBAL_SELECTOR.test(selector) })
+  process.exitCode = await renderTokens({
+    defined, reads, unused: new Set(findings.filter(({ kind }) => kind === 'unused').map(({ token }) => token)), isGlobal: selector => GLOBAL_SELECTOR.test(selector)
+  })
   process.exit()
 }
 

@@ -22,7 +22,9 @@ const CONFIGS = process.env.VISUAL_CONFIGS === 'all' ?
   list('VISUAL_CONFIGS', 'working')
 
 // Every combination, named like the baselines' first folder: light-ltr-working.
-export const VARIANTS = THEMES.flatMap(theme => DIRS.flatMap(dir => CONFIGS.map(config => ({ theme, dir, config, name: `${theme}-${dir}-${config}` }))))
+export const VARIANTS = THEMES.flatMap(theme => DIRS.flatMap(dir => CONFIGS.map(config => ({
+  theme, dir, config, name: `${theme}-${dir}-${config}`
+}))))
 
 // The visual suite only screenshots the working copy, so its scope is pages.
 const scope = process.env.VISUAL_SCOPE ? JSON.parse(process.env.VISUAL_SCOPE) : { full: true }
@@ -57,7 +59,9 @@ export async function openPage(page, url, { theme, dir, config }) {
       route.fulfill({ contentType: 'image/svg+xml', body: PLACEHOLDER_IMAGE }) :
       route.continue())
 
-  const params = new URLSearchParams({ theme, dir, config, chrome: '0', freeze: '' })
+  const params = new URLSearchParams({
+    theme, dir, config, chrome: '0', freeze: ''
+  })
   await page.goto(`${url}?${params}`)
   // A non-default config hides the page until its styles are swapped in.
   await page.waitForFunction(() => !document.getElementById('playground-config-pending'))
@@ -71,12 +75,14 @@ export async function openPage(page, url, { theme, dir, config }) {
   // reach, in an empty date or time input, so its baseline would only match
   // on the day it was recorded. Hide the empty fields' text.
   if (page.context().browser()?.browserType().name() === 'webkit') {
-    await page.addStyleTag({ content: `
+    await page.addStyleTag({
+      content: `
       input:is([type="date"], [type="datetime-local"], [type="month"], [type="time"], [type="week"]):not([data-pg-filled])::-webkit-datetime-edit { visibility: hidden; }
-    ` })
+    `
+    })
     await page.evaluate(() => {
       for (const input of document.querySelectorAll('input[type="date"], input[type="datetime-local"], input[type="month"], input[type="time"], input[type="week"]')) {
-        if (input.value) input.dataset.pgFilled = ''
+        if (input.value) {input.dataset.pgFilled = ''}
       }
     })
   }

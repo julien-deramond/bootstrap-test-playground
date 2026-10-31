@@ -36,7 +36,9 @@ import { parseArgs } from 'node:util'
 import { chromium } from '@playwright/test'
 import { createServer } from 'vite'
 import { fail, root } from './lib/configs.mjs'
-import { UPSTREAM_LABELS, needsRefs, readReproductionMeta, reportedRefs, syncReproduction } from './lib/repro-status.mjs'
+import {
+  UPSTREAM_LABELS, needsRefs, readReproductionMeta, reportedRefs, syncReproduction
+} from './lib/repro-status.mjs'
 
 const USAGE = 'Usage: npm run check-issues [-- <name>...] [--no-gh]   (e.g. npm run check-issues -- pg-4 42754)'
 let values
@@ -134,7 +136,7 @@ async function runAssertions() {
           throw new TypeError(`assert() returned ${JSON.stringify(outcome)} instead of { pass: true | false | null, details }`)
         }
 
-        reproduction.result = outcome.pass === null ? 'SKIP' : outcome.pass ? 'PASS' : 'FAIL'
+        reproduction.result = outcome.pass === null ? 'SKIP' : (outcome.pass ? 'PASS' : 'FAIL')
         reproduction.details = String(outcome.details ?? '')
       } catch (error) {
         reproduction.result = 'ERROR'
@@ -162,7 +164,9 @@ const run = (command, args, env) => new Promise(resolve => {
   let stderr = ''
   child.stdout.on('data', chunk => (stdout += chunk))
   child.stderr.on('data', chunk => (stderr += chunk))
-  child.on('error', error => resolve({ status: null, stdout, stderr, error }))
+  child.on('error', error => resolve({
+    status: null, stdout, stderr, error
+  }))
   child.on('close', status => resolve({ status, stdout, stderr }))
 })
 
@@ -177,8 +181,7 @@ async function runSpecs(specs, base) {
   fs.mkdirSync(path.dirname(output), { recursive: true })
   fs.rmSync(output, { force: true })
   // The files first: `--project` takes every value after it.
-  const result = await run('npx', ['playwright', 'test', ...specs.map(({ name }) => `issues/${name}/repro.spec.js`), '--project', 'issues', '--reporter=json'],
-    { PLAYWRIGHT_BASE_URL: base, PLAYWRIGHT_JSON_OUTPUT_FILE: output, FORCE_COLOR: '0' })
+  const result = await run('npx', ['playwright', 'test', ...specs.map(({ name }) => `issues/${name}/repro.spec.js`), '--project', 'issues', '--reporter=json'], { PLAYWRIGHT_BASE_URL: base, PLAYWRIGHT_JSON_OUTPUT_FILE: output, FORCE_COLOR: '0' })
   let report
   try {
     report = JSON.parse(fs.readFileSync(output, 'utf8'))
@@ -230,7 +233,7 @@ async function runSpecs(specs, base) {
     }
 
     const passes = own.map(test => test.verdict.pass)
-    spec.result = passes.every(pass => pass === true) ? 'PASS' : passes.some(pass => pass === false) ? 'FAIL' : 'SKIP'
+    spec.result = passes.every(pass => pass === true) ? 'PASS' : (passes.includes(false) ? 'FAIL' : 'SKIP')
     spec.details = `${own.map(test => test.verdict.details).join('; ')} (repro.spec.js)`
   }
 }

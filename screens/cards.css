@@ -38,9 +38,15 @@
 /* Fixed chart and widget sizes: no fixed-length width/height utilities. */
 .cards-bars { height: 140px; }
 .cards-bars-lg { height: 200px; }
-.cards-spark { width: 6rem; height: 2rem; }
+.cards-spark {
+  width: 6rem;
+  height: 2rem;
+}
 .cards-area { aspect-ratio: 1 / .35; }
-.cards-qr { width: 10rem; height: 10rem; }
+.cards-qr {
+  width: 10rem;
+  height: 10rem;
+}
 .cards-chat { height: 35rem; }
 
 /* Tailwind `tabular-nums`: no font-variant utility. */

@@ -46,22 +46,22 @@
  * tokens. Theme colors keep their light values.
  */
 [data-bs-theme="sepia"] {
-  color-scheme: light;
   --shadow-strength: 1;
-  --bg-body: oklch(96% .03 85);
-  --bg-1: oklch(94% .035 85);
-  --bg-2: oklch(92% .04 85);
-  --bg-3: oklch(89% .045 85);
-  --bg-4: oklch(85% .05 85);
-  --fg-body: oklch(30% .04 60);
-  --fg-1: oklch(35% .04 60);
-  --fg-2: oklch(42% .04 60);
-  --fg-3: oklch(50% .035 60);
-  --fg-4: oklch(60% .03 60);
-  --border-color: oklch(84% .04 80);
-  --border-subtle: oklch(88% .035 80);
-  --border-muted: oklch(86% .04 80);
-  --border-emphasized: oklch(70% .04 70);
+  --bg-body: oklch(96% .03 85deg);
+  --bg-1: oklch(94% .035 85deg);
+  --bg-2: oklch(92% .04 85deg);
+  --bg-3: oklch(89% .045 85deg);
+  --bg-4: oklch(85% .05 85deg);
+  --fg-body: oklch(30% .04 60deg);
+  --fg-1: oklch(35% .04 60deg);
+  --fg-2: oklch(42% .04 60deg);
+  --fg-3: oklch(50% .035 60deg);
+  --fg-4: oklch(60% .03 60deg);
+  --border-color: oklch(84% .04 80deg);
+  --border-subtle: oklch(88% .035 80deg);
+  --border-muted: oklch(86% .04 80deg);
+  --border-emphasized: oklch(70% .04 70deg);
+  color-scheme: light;
 }
 
 /*
@@ -70,20 +70,20 @@
  * since `--shadow-strength` is a number `light-dark()` can't switch.
  */
 [data-bs-theme="dim"] {
-  color-scheme: dark;
   --shadow-strength: 2.4;
-  --bg-body: oklch(30% .02 250);
-  --bg-1: oklch(32% .02 250);
-  --bg-2: oklch(35% .02 250);
-  --bg-3: oklch(39% .02 250);
-  --bg-4: oklch(44% .02 250);
-  --fg-body: oklch(88% .01 250);
-  --fg-1: oklch(84% .01 250);
-  --fg-2: oklch(78% .015 250);
-  --fg-3: oklch(68% .015 250);
-  --fg-4: oklch(58% .015 250);
-  --border-color: oklch(44% .02 250);
-  --border-subtle: oklch(38% .02 250);
-  --border-muted: oklch(40% .02 250);
-  --border-emphasized: oklch(55% .02 250);
+  --bg-body: oklch(30% .02 250deg);
+  --bg-1: oklch(32% .02 250deg);
+  --bg-2: oklch(35% .02 250deg);
+  --bg-3: oklch(39% .02 250deg);
+  --bg-4: oklch(44% .02 250deg);
+  --fg-body: oklch(88% .01 250deg);
+  --fg-1: oklch(84% .01 250deg);
+  --fg-2: oklch(78% .015 250deg);
+  --fg-3: oklch(68% .015 250deg);
+  --fg-4: oklch(58% .015 250deg);
+  --border-color: oklch(44% .02 250deg);
+  --border-subtle: oklch(38% .02 250deg);
+  --border-muted: oklch(40% .02 250deg);
+  --border-emphasized: oklch(55% .02 250deg);
+  color-scheme: dark;
 }

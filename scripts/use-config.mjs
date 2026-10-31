@@ -5,7 +5,9 @@
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
-import { configDir, copyStyles, fail, listConfigs, root, workingDir } from './lib/configs.mjs'
+import {
+  configDir, copyStyles, fail, listConfigs, root, workingDir
+} from './lib/configs.mjs'
 
 const args = process.argv.slice(2)
 const force = args.includes('--force')

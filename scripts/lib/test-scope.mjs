@@ -55,7 +55,7 @@ const ROOT_PAGES = {
   'sizes/history.json': '/sizes.html'
 }
 
-const urlOf = file => '/' + path.relative(root, file).split(path.sep).join('/').replace(/index\.html$/, '')
+const urlOf = file => `/${path.relative(root, file).split(path.sep).join('/').replace(/index\.html$/, '')}`
 
 // Pages of a folder that use `file`, like `pages/dashboard.css`: those whose
 // HTML names it, or else every page next to it.
@@ -108,7 +108,7 @@ export function testScope(files, suite) {
       // A reproduction's own styles only reach its own page.
       const pages = file.endsWith('.html') ?
         [urlOf(path.join(root, file))] :
-        top === 'issues' && file.split('/').length > 2 ? findHtmlFiles(path.join(root, top, name)).map(urlOf) : pagesUsing(file)
+        (top === 'issues' && file.split('/').length > 2 ? findHtmlFiles(path.join(root, top, name)).map(urlOf) : pagesUsing(file))
       for (const url of pages) {
         urls.add(url)
       }

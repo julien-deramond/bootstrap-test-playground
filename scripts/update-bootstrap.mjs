@@ -26,7 +26,9 @@ import path from 'node:path'
 import { loadEnv } from 'vite'
 import { root } from './lib/configs.mjs'
 import { LAST_UPDATE_FILE, writeLastUpdate } from './lib/last-update.mjs'
-import { fetchCommit, lockedSha, resolveRef, upstreamCommits } from './lib/upstream.mjs'
+import {
+  fetchCommit, lockedSha, resolveRef, upstreamCommits
+} from './lib/upstream.mjs'
 
 const SPEC = 'github:twbs/bootstrap#main'
 // canary-report's checks that need no browser. `npm run canary-report` runs them all.
@@ -170,7 +172,11 @@ if (to === from) {
       `diff-bootstrap failed, so the record lists markup changes only:\n${diff.stderr.trim().split('\n').slice(-5).join('\n')}`)
   }
 
-  const record = writeLastUpdate({ from, to, commits, pr: pr && { number: pr.number, title: pr.title, url: pr.url, behind: pr.behind } })
+  const record = writeLastUpdate({
+    from, to, commits, pr: pr && {
+      number: pr.number, title: pr.title, url: pr.url, behind: pr.behind
+    }
+  })
   console.log(`\n${lastUpdate}: ${record.examples.length} ${record.examples.length === 1 ? 'example' : 'examples'} changed${record.rendering ? '' : ' (markup only)'}. The home page lists them.`)
 }
 

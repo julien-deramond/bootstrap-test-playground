@@ -14,7 +14,9 @@ export function assert() {
     const inputHeight = height(input)
     const chips = [...input.querySelectorAll('.chip')]
     const chipsFit = chips.every(chip => height(chip) <= inputHeight)
-    return { name, control, button: height(row.querySelector('.btn-solid')), chipInput: inputHeight, chip: height(chips[0]), chipsFit }
+    return {
+      name, control, button: height(row.querySelector('.btn-solid')), chipInput: inputHeight, chip: height(chips[0]), chipsFit
+    }
   })
 
   const round = value => Math.round(value * 100) / 100

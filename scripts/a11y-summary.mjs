@@ -24,7 +24,7 @@ const reportsDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '.
 function jsonFiles(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
     const file = path.join(dir, entry.name)
-    return entry.isDirectory() ? jsonFiles(file) : entry.name.endsWith('.json') ? [file] : []
+    return entry.isDirectory() ? jsonFiles(file) : (entry.name.endsWith('.json') ? [file] : [])
   })
 }
 
@@ -50,9 +50,11 @@ const configs = fs.readdirSync(reportsDir, { withFileTypes: true })
     // focus rings (<theme>/focus/), color pairings (<theme>/contrast/), reflow
     // (<theme>/reflow/), best practices (<theme>/best-practice/) and Tab walks
     // (<theme>/tab/, <theme>/tab-rtl/) count with it.
-    return { name, pages: new Set(reports.map(file => path.relative(path.join(reportsDir, name), file).split(path.sep).slice(1).filter((part, index) => index > 0 || !['open', 'focus', 'contrast', 'reflow', 'best-practice', 'tab', 'tab-rtl'].includes(part)).join('/'))).size, rules, unknown }
+    return {
+      name, pages: new Set(reports.map(file => path.relative(path.join(reportsDir, name), file).split(path.sep).slice(1).filter((part, index) => index > 0 || !['open', 'focus', 'contrast', 'reflow', 'best-practice', 'tab', 'tab-rtl'].includes(part)).join('/'))).size, rules, unknown
+    }
   })
-  .sort((a, b) => (a.name === 'default' ? -1 : b.name === 'default' ? 1 : a.name.localeCompare(b.name)))
+  .sort((a, b) => (a.name === 'default' ? -1 : (b.name === 'default' ? 1 : a.name.localeCompare(b.name))))
 
 const ruleNames = [...new Set(configs.flatMap(({ rules }) => Object.keys(rules)))].sort()
 const rows = [

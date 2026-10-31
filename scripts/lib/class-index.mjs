@@ -75,14 +75,14 @@ function withoutChrome(html) {
 export function pageClasses(html, bootstrapClasses) {
   const body = withoutChrome((html.match(/<body[\s\S]*<\/body>/i)?.[0] ?? html).replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, ''))
   // Headings are chrome, so their positions come from the full page, matched by id.
-  const headings = [...html.matchAll(/<h2[^>]*\bid="([^"]+)"/gi)].map(([, id]) => id)
+  const headings = new Set([...html.matchAll(/<h2[^>]*\bid="([^"]+)"/gi)].map(([, id]) => id))
   const found = new Map()
   let section
   for (const [tag] of body.matchAll(/<[a-z][^>]*>/gi)) {
     // A section starts at its heading, or at its section element (aria-labelledby)
     // when the heading is chrome.
     const id = tag.match(/^<h2\b[^>]*\bid="([^"]+)"/i)?.[1] ?? tag.match(/\baria-labelledby="([^"]+)"/)?.[1]
-    if (id && headings.includes(id)) {
+    if (id && headings.has(id)) {
       section = id
     }
 

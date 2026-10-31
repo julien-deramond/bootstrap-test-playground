@@ -246,7 +246,7 @@ A spec whose verdict is true fails with the step to take: the fix landed upstrea
 
 `npm test` runs the unit tests of the scripts with Node's built-in test runner, no browser and no dependency: [`scripts/__tests__/`](../scripts/__tests__/). `kitchen-sink.test.mjs` covers the MDX parser behind `sync-kitchen-sink` (`readExpression`, `parseAttributes`, `cleanHtml`, `extractExamples`) with the samples in [`scripts/__fixtures__/mdx/`](../scripts/__fixtures__/mdx/). `configs.test.mjs` covers the helpers of [`scripts/lib/configs.mjs`](../scripts/lib/configs.mjs), and `scripts.test.mjs` runs `new-issue`, `save-config` and `use-config` as the CLIs they are, in a temporary copy of the minimum tree: `PLAYGROUND_ROOT` points the scripts at it, so they never touch the real `configs/`, `issues/` or `src/styles/`.
 
-`npm run check` runs `check-configs`, `check-dist`, `audit-tokens`, `lint:html` and `npm test` one after the other, keeps going after a failure and sums them up. `npm run check:full` adds `test:smoke`, `test:console` and `test:a11y`. CI runs the same steps in the Configs workflow.
+`npm run check` runs `check-configs`, `check-dist`, `audit-tokens`, `lint:html`, `lint` and `npm test` one after the other, keeps going after a failure and sums them up. `npm run check:full` adds `test:smoke`, `test:console` and `test:a11y`. CI runs the same steps in the Configs workflow.
 
 ## Browser engines
 

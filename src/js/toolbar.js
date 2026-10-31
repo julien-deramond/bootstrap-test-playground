@@ -287,7 +287,9 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
     radio('primary', hue, '', { className: 'swatch', label: capitalize(hue), style: `background: var(--bs-${hue}-500, #71717a)` }))).join('')
 
   // The working copy leads the first category, next to `default`.
-  const working = { name: 'working', label: 'src/styles', category: 'baseline', description: 'The working copy in `src/styles/`, what pages use until a config is applied.', gaps: [] }
+  const working = {
+    name: 'working', label: 'src/styles', category: 'baseline', description: 'The working copy in `src/styles/`, what pages use until a config is applied.', gaps: []
+  }
   const configRow = ({ name, label, description, gaps, tokensOnly }) => `
     <div class="config" data-config="${escapeHtml(name)}" data-search="${escapeHtml(`${name} ${label ?? ''} ${description}`.toLowerCase())}">
       <label>
@@ -295,13 +297,15 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
         <span class="config-name">${escapeHtml(label ?? name)}</span>
         ${description ? `<span class="config-description">${inlineCode(description)}</span>` : ''}
       </label>
-      ${(tokensOnly && name !== 'default') || gaps.length > 0 ? `
+      ${(tokensOnly && name !== 'default') || gaps.length > 0 ?
+        `
         <span class="config-meta">
           ${tokensOnly && name !== 'default' ? '<span class="badge" title="Only changes tokens.css, so it also applies on top of the prebuilt dist">tokens only</span>' : ''}
           ${gaps.map(issue => `<a href="${REPOSITORY_URL}/issues/${issue}" target="_blank" rel="noopener" title="Known gap: tracking issue #${issue}">#${issue}</a>`).join('')}
-        </span>` : ''}
+        </span>` :
+        ''}
     </div>`
-  const categories = groupConfigs([working, ...configs]).map(({ id, label, description, configs }) => `
+  const categories = groupConfigs([working, ...configs]).map(({ id, label, configs }) => `
     <fieldset class="category" data-category="${escapeHtml(id)}">
       <legend>${escapeHtml(label)} <span>${configs.filter(config => config !== working).length}</span></legend>
       ${configs.map(configRow).join('')}
@@ -316,15 +320,19 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
   const pagerLink = (page, label, arrow) => page ?
     `<a href="${escapeHtml(page.url)}" title="${label}: ${escapeHtml(page.title)}" aria-label="${label}: ${escapeHtml(page.title)}">${arrow}</a>` :
     `<a aria-disabled="true" aria-label="${label}">${arrow}</a>`
-  const pagerHtml = group ? `
-      <span class="pager" role="group" aria-label="${escapeHtml(group.label)}">${pagerLink(previous, 'Previous', '&#x2039;')}${pagerLink(next, 'Next', '&#x203A;')}</span>` : ''
+  const pagerHtml = group ?
+    `
+      <span class="pager" role="group" aria-label="${escapeHtml(group.label)}">${pagerLink(previous, 'Previous', '&#x2039;')}${pagerLink(next, 'Next', '&#x203A;')}</span>` :
+    ''
 
   // Pages adapted from elsewhere credit their source with
   // <meta name="playground-source" content="Label" data-url="…" data-license="…">.
   // The credit stays visible while the panel is closed.
   const origin = document.querySelector('meta[name="playground-source"]')
-  const originHtml = origin ? `
-      <span class="origin">Adapted from <a href="${escapeHtml(origin.dataset.url)}" target="_blank" rel="noopener">${escapeHtml(origin.content)}</a>${origin.dataset.license ? ` (${escapeHtml(origin.dataset.license)})` : ''}</span>` : ''
+  const originHtml = origin ?
+    `
+      <span class="origin">Adapted from <a href="${escapeHtml(origin.dataset.url)}" target="_blank" rel="noopener">${escapeHtml(origin.content)}</a>${origin.dataset.license ? ` (${escapeHtml(origin.dataset.license)})` : ''}</span>` :
+    ''
 
   // An issue reproduction exports itself for upstream maintainers: one HTML
   // file, or a Vite project in StackBlitz, which public/open-in-stackblitz.html
@@ -334,9 +342,11 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
   const issue = location.pathname.startsWith(base) ?
     location.pathname.slice(base.length).match(/^issues\/([a-z0-9][a-z0-9-]*)\/(?:index\.html)?$/)?.[1] :
     undefined
-  const exportHtml = issue ? `
+  const exportHtml = issue ?
+    `
         <a class="action" href="${base}issues/${issue}/export.html" download="bootstrap-repro-${issue}.html" title="This reproduction as one HTML file, with Bootstrap from jsDelivr or inlined">Export HTML</a>
-        <a class="action" href="${base}open-in-stackblitz.html?issue=${issue}" target="_blank" rel="noopener" title="This reproduction as a Vite + Sass project, compiled from the same Bootstrap commit">Open in StackBlitz</a>` : ''
+        <a class="action" href="${base}open-in-stackblitz.html?issue=${issue}" target="_blank" rel="noopener" title="This reproduction as a Vite + Sass project, compiled from the same Bootstrap commit">Open in StackBlitz</a>` :
+    ''
 
   shadow.innerHTML = `
     <style>${styles}</style>
@@ -423,7 +433,7 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
 
   // What the pill shows, like `shadcn · dark · RTL · dist`.
   const describe = current => {
-    const config = !swappable ? 'own styles' : configNamed(current.config) ? current.config : 'src/styles'
+    const config = swappable ? (configNamed(current.config) ? current.config : 'src/styles') : 'own styles'
     const dist = current.css === 'dist' && current.js === 'dist' ? 'dist' : current.css === 'dist' ? 'CSS dist' : current.js === 'dist' ? 'JS dist' : ''
     return [
       config,
@@ -460,9 +470,9 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
   render = current => {
     // The config's own color modes come and go with the config.
     const modes = colorModes(current)
-    if (modeGroup.dataset.modes !== modes.join()) {
+    if (modeGroup.dataset.modes !== modes.join(',')) {
       modeGroup.innerHTML = segmented('colorMode', modeOptions(modes))
-      modeGroup.dataset.modes = modes.join()
+      modeGroup.dataset.modes = modes.join(',')
     }
 
     const values = { ...current, config: configNamed(current.config) ? current.config : 'working' }

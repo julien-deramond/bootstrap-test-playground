@@ -134,8 +134,8 @@
   }
 
   .home-sidebar-title {
-    margin: 0 0 .5rem;
     padding-inline: .5rem;
+    margin: 0 0 .5rem;
     font-size: var(--bs-font-size-xs);
     font-weight: var(--bs-font-weight-medium);
     color: var(--bs-fg-3);
@@ -195,8 +195,8 @@
   }
 
   .home-sidebar-foot {
-    margin-block-start: auto;
     padding-inline: .5rem;
+    margin-block-start: auto;
     font-size: var(--bs-font-size-xs);
     color: var(--bs-fg-3);
 
@@ -271,6 +271,7 @@
       text-decoration: none;
     }
 
+    /* stylelint-disable-next-line selector-no-qualifying-type */
     a[href]:hover code {
       text-decoration: underline;
     }
@@ -301,8 +302,8 @@
 
   /* The last Bootstrap update (updates/last-update.json), under the commit in use. */
   .home-update {
-    order: 1;
     flex-basis: 100%;
+    order: 1;
     font-size: var(--bs-font-size-sm);
 
     &[open] {
@@ -355,8 +356,8 @@
     gap: .375rem;
     padding: 0;
     margin: 0;
-    list-style: none;
     overflow-wrap: anywhere;
+    list-style: none;
 
     ul {
       display: grid;
@@ -446,8 +447,8 @@
     padding: .1875rem .625rem .1875rem .25rem;
     font-size: var(--bs-font-size-sm);
     color: var(--bs-fg-body);
-    white-space: nowrap;
     text-decoration: none;
+    white-space: nowrap;
     border: var(--bs-border-width) solid var(--bs-border-subtle);
     border-radius: var(--bs-radius-pill);
 
@@ -900,8 +901,8 @@
       }
 
       .page-card-meta {
-        order: 1;
         justify-content: flex-start;
+        order: 1;
         max-width: none;
         padding-inline-start: 2.5rem;
       }
@@ -925,8 +926,8 @@
       }
 
       .home-group-head {
-        margin: 0;
         padding-block-start: .5rem;
+        margin: 0;
       }
     }
   }
@@ -1047,8 +1048,8 @@
       height: auto;
       padding: 1rem;
       overflow: visible;
-      border-inline-end: 0;
       border-block-end: var(--bs-border-width) solid var(--bs-border-subtle);
+      border-inline-end: 0;
     }
 
     .home-nav,

@@ -18,7 +18,9 @@ export async function assert() {
     const around = pseudo ? element : element.parentElement
     const actual = weight(element, pseudo)
     const inherited = weight(around)
-    return { name, actual, inherited, pass: actual > inherited }
+    return {
+      name, actual, inherited, pass: actual > inherited
+    }
   })
   const controlWeight = weight(control)
   const controlInherited = weight(control.parentElement)

@@ -24,7 +24,9 @@ import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { LABEL_STATUS, UPSTREAM_LABELS, listReproductions, needsRefs, readReproductionMeta, reportedRefs, syncReproduction } from './lib/repro-status.mjs'
+import {
+  LABEL_STATUS, UPSTREAM_LABELS, listReproductions, needsRefs, readReproductionMeta, reportedRefs, syncReproduction
+} from './lib/repro-status.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const UPSTREAM = 'twbs/bootstrap'
@@ -258,8 +260,7 @@ for (const issue of reported) {
       `Closed by the weekly status sweep (step 3 of [Upstream issue tracking](${TRACKING})).`,
       marker(`fixed:${refs.join(',')}`)
     ].join('\n')
-    act(issue, `fixed upstream in ${statuses.map(show).join(', ')}: \`upstream-reported\` → \`upstream-fixed\`, closed${left.length > 0 ? ` (still referenced by ${left.join(', ')})` : ''}`,
-      relabel(issue, 'upstream-reported', 'upstream-fixed'), comment(issue, body), close(issue))
+    act(issue, `fixed upstream in ${statuses.map(show).join(', ')}: \`upstream-reported\` → \`upstream-fixed\`, closed${left.length > 0 ? ` (still referenced by ${left.join(', ')})` : ''}`, relabel(issue, 'upstream-reported', 'upstream-fixed'), comment(issue, body), close(issue))
     continue
   }
 
@@ -307,8 +308,7 @@ for (const issue of unreported) {
       marker(`reported:${link.number}`)
     ].join('\n')
     newRefs.set(issue.number, link.number)
-    act(issue, `linked from ${UPSTREAM}#${link.number} (${link.title}): \`upstream\` → \`upstream-reported\``,
-      relabel(issue, 'upstream', 'upstream-reported'), comment(issue, body))
+    act(issue, `linked from ${UPSTREAM}#${link.number} (${link.title}): \`upstream\` → \`upstream-reported\``, relabel(issue, 'upstream', 'upstream-reported'), comment(issue, body))
     continue
   }
 
@@ -322,7 +322,7 @@ for (const issue of unreported) {
   }
 
   const body = [
-    `The weekly status sweep found upstream items that may be this bug (not linked, so they don't cross-reference this issue):`,
+    'The weekly status sweep found upstream items that may be this bug (not linked, so they don\'t cross-reference this issue):',
     '',
     ...matches.map(({ item, keywords }) => `- \`${UPSTREAM}#${item.number}\` (${item.pull_request ? 'pull request' : 'issue'}, ${item.state}): ${item.title.replaceAll('`', '')}. Shared keywords: ${keywords.join(', ')}.`),
     '',

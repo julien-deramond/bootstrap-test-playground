@@ -59,7 +59,9 @@ export function writeLastUpdate({ from, to, pr, commits, base = 'HEAD' }) {
   const examples = new Map()
   for (const change of [...markupChanges(base), ...(rendering ?? [])]) {
     const key = `${change.url}#${change.id}`
-    examples.set(key, { url: change.url, id: change.id, ...titles.get(key), ...examples.get(key), ...change })
+    examples.set(key, {
+      url: change.url, id: change.id, ...titles.get(key), ...examples.get(key), ...change
+    })
   }
 
   const record = {

@@ -78,7 +78,7 @@ for (const name of partials) {
 // the folder index that forwards them (forms/form-control, not forms).
 function providers(token) {
   const found = [...results].filter(([, result]) => result.own?.has(token)).map(([name]) => name)
-  return found.filter(name => !found.some(other => other.startsWith(`${name}/`)))
+  return found.filter(name => found.every(other => !other.startsWith(`${name}/`)))
 }
 
 const findings = []
@@ -96,7 +96,9 @@ for (const [name, result] of results) {
   }
 
   for (const [provider, tokens] of byProvider) {
-    findings.push({ kind: 'needs', partial: name, needs: provider, detail: tokens.sort().join(', ') })
+    findings.push({
+      kind: 'needs', partial: name, needs: provider, detail: tokens.sort().join(', ')
+    })
   }
 }
 
@@ -146,7 +148,7 @@ for (const finding of shown) {
 }
 
 const fresh = findings.filter(finding => !knownOf(finding))
-const stale = known.filter(entry => !findings.some(finding => matches(entry, finding)))
+const stale = known.filter(entry => findings.every(finding => !matches(entry, finding)))
 for (const entry of stale) {
   console.log(`  ✗ known entry no longer happens: ${entry.partial}${entry.needs ? ` needs ${entry.needs}` : ''} (${entry.kind})${entry.issue ? `, #${entry.issue}` : ''}`)
 }

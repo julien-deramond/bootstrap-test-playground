@@ -15,10 +15,12 @@ export async function measure() {
   await ready()
   const system = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   const cases = [...document.querySelectorAll('[data-case]')].map(element => {
-    const mode = element.dataset.mode
+    const { mode } = element.dataset
     const actual = background(element.querySelector('[data-box]'))
     const expected = background(element.querySelector(mode === 'dark' ? '[data-ref-dark]' : '[data-ref-light]'))
-    return { name: element.dataset.case, mode, actual, expected, pass: actual === expected }
+    return {
+      name: element.dataset.case, mode, actual, expected, pass: actual === expected
+    }
   })
   const details = `system ${system}: ${cases.map(item => `${item.name} (${item.mode}) ${item.pass ? 'ok' : `${item.actual}, expected ${item.expected}`}`).join('; ')}`
   return { cases, details }

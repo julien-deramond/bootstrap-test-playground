@@ -98,7 +98,9 @@ function degrees(angle) {
     return null
   }
 
-  const factor = { deg: 1, turn: 360, rad: 180 / Math.PI, grad: 0.9 }[match[2]]
+  const factor = {
+    deg: 1, turn: 360, rad: 180 / Math.PI, grad: 0.9
+  }[match[2]]
   return Number(match[1]) * factor
 }
 
@@ -116,7 +118,7 @@ function calls(value, names) {
     let depth = 1
     let index = match.index + match[0].length
     while (index < value.length && depth) {
-      depth += value[index] === '(' ? 1 : value[index] === ')' ? -1 : 0
+      depth += value[index] === '(' ? 1 : (value[index] === ')' ? -1 : 0)
       index++
     }
 
@@ -257,7 +259,7 @@ function tokenWhere(name) {
 // The at-rules a node sits in: `@layer components > @media (width < 576px)`.
 function contextOf(node) {
   const chain = []
-  for (let parent = node.parent; parent && parent.type !== 'root'; parent = parent.parent) {
+  for (let { parent } = node; parent && parent.type !== 'root'; parent = parent.parent) {
     if (parent.type === 'atrule') {
       chain.unshift(`@${parent.name} ${parent.params}`.trim())
     }

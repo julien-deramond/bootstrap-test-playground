@@ -5,7 +5,7 @@ const NAMES = { check: 'checkbox', radio: 'radio', switch: 'switch' }
 const SIZES = { sm: 'small', md: 'default', lg: 'large' }
 
 export function measureOffsets(root = document) {
-  return [...root.querySelectorAll('#controls .form-field')].map((field) => {
+  return [...root.querySelectorAll('#controls .form-field')].map(field => {
     const input = field.querySelector('input')
     const label = field.querySelector('label')
     // A switch's box is its wrapper; a checkbox's and a radio's is the input.
@@ -15,7 +15,7 @@ export function measureOffsets(root = document) {
     range.selectNodeContents(text)
     const line = range.getClientRects()[0]
     const box = control.getBoundingClientRect()
-    const kind = input.matches('[switch]') ? 'switch' : input.type === 'radio' ? 'radio' : 'check'
+    const kind = input.matches('[switch]') ? 'switch' : (input.type === 'radio' ? 'radio' : 'check')
     const size = /-(sm|lg)\b/.test(`${control.className} ${input.className}`) ?
       RegExp.$1 :
       'md'

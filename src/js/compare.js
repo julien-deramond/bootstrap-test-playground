@@ -44,7 +44,7 @@ const PRESETS = {
 const PANES = ['a', 'b', 'c', 'd']
 const DEFAULT_PANES = ['theme=light', 'theme=dark']
 // Every view but the first stacks the first two panes in one box.
-const MODES = ['side', 'overlay', 'slider', 'difference']
+const MODES = new Set(['side', 'overlay', 'slider', 'difference'])
 // Accessible names of the panes, by count and in the stacked views.
 const NAMES = {
   2: ['Left', 'Right'],
@@ -66,7 +66,7 @@ for (const [index, key] of PANES.slice(0, Math.max(PANES.findLastIndex(key => st
 }
 
 const view = {
-  mode: MODES.includes(state.get('mode')) ? state.get('mode') : 'side',
+  mode: MODES.has(state.get('mode')) ? state.get('mode') : 'side',
   opacity: toPercent(state.get('opacity'), 50),
   split: toPercent(state.get('split'), 50)
 }
@@ -284,7 +284,7 @@ pageSelect.addEventListener('change', () => {
 })
 
 modeSelect.addEventListener('change', () => {
-  view.mode = MODES.includes(modeSelect.value) ? modeSelect.value : 'side'
+  view.mode = MODES.has(modeSelect.value) ? modeSelect.value : 'side'
   render()
   const [first] = frames()
   if (isStacked() && showsPage(first)) {

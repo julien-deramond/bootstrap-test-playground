@@ -24,12 +24,24 @@ const resolve = token => {
 
 export function cases() {
   const list = [
-    { name: '.p-3', property: 'padding', actual: style('case-p').paddingTop, expected: style('control-p').paddingTop },
-    { name: '.gap-3', property: 'gap', actual: style('case-gap').columnGap, expected: style('control-gap').columnGap },
-    { name: '.row.g-3 > *', property: 'padding-inline', actual: column('case-row'), expected: column('control-row') },
-    { name: '.rounded', property: 'border-radius', actual: rounded('case-rounded'), expected: style('control-radius').borderTopLeftRadius },
-    { name: '.rounded-5', property: 'border-radius', actual: rounded('case-rounded-5'), expected: style('control-radius').borderTopLeftRadius },
-    { name: '.rounded-top', property: 'border-radius (top)', actual: rounded('case-rounded-top'), expected: style('control-radius').borderTopLeftRadius }
+    {
+      name: '.p-3', property: 'padding', actual: style('case-p').paddingTop, expected: style('control-p').paddingTop
+    },
+    {
+      name: '.gap-3', property: 'gap', actual: style('case-gap').columnGap, expected: style('control-gap').columnGap
+    },
+    {
+      name: '.row.g-3 > *', property: 'padding-inline', actual: column('case-row'), expected: column('control-row')
+    },
+    {
+      name: '.rounded', property: 'border-radius', actual: rounded('case-rounded'), expected: style('control-radius').borderTopLeftRadius
+    },
+    {
+      name: '.rounded-5', property: 'border-radius', actual: rounded('case-rounded-5'), expected: style('control-radius').borderTopLeftRadius
+    },
+    {
+      name: '.rounded-top', property: 'border-radius (top)', actual: rounded('case-rounded-top'), expected: style('control-radius').borderTopLeftRadius
+    }
   ]
   return list.map(item => ({ ...item, ok: item.actual === item.expected }))
 }
@@ -41,7 +53,7 @@ export function assert() {
     ['control radius', style('control-radius').borderTopLeftRadius, resolve('--bs-radius-5')]
   ]
   const broken = controls.find(([, got, want]) => got !== want)
-  if (broken) return { pass: null, details: `${broken[0]} is ${broken[1]}, expected ${broken[2]}: the page itself is broken` }
+  if (broken) {return { pass: null, details: `${broken[0]} is ${broken[1]}, expected ${broken[2]}: the page itself is broken` }}
   const failing = results.filter(({ ok }) => !ok)
   const details = failing.length === 0 ?
     'every utility follows its token' :

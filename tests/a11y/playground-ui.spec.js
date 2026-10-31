@@ -15,7 +15,9 @@
 // markup. The keyboard side of the same UI is tests/smoke/playground-keyboard.spec.js.
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
-import { TAGS, THEMES, describe, toNodes } from './shared.js'
+import {
+  TAGS, THEMES, describe, toNodes
+} from './shared.js'
 
 const PAGE = '/kitchen-sink/components-dialog.html'
 

@@ -51,7 +51,9 @@ export async function renderRtl() {
   const base = server.resolvedUrls.local[0].replace(/\/$/, '')
 
   const browser = await chromium.launch()
-  const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 1, timezoneId: 'UTC', locale: 'en-US' })
+  const context = await browser.newContext({
+    viewport: { width: 1280, height: 900 }, deviceScaleFactor: 1, timezoneId: 'UTC', locale: 'en-US'
+  })
   await context.route(target => target.origin !== new URL(base).origin, route =>
     route.request().resourceType() === 'image' ?
       route.fulfill({ contentType: 'image/svg+xml', body: PLACEHOLDER_IMAGE }) :
@@ -91,12 +93,14 @@ export async function renderRtl() {
           fs.writeFileSync(path.join(reportDir, 'images', `${name}.png`), Buffer.from(result.image, 'base64'))
         }
 
-        results.push({ url, page: title, id, example, name, ratio: result.ratio, pixels: result.pixels, resized: result.resized })
+        results.push({
+          url, page: title, id, example, name, ratio: result.ratio, pixels: result.pixels, resized: result.resized
+        })
       }
     }
   } finally {
     if (process.stdout.isTTY) {
-      process.stdout.write('\r'.padEnd(81) + '\r')
+      process.stdout.write(`${'\r'.padEnd(81)}\r`)
     }
 
     await browser.close()
