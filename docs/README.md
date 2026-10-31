@@ -9,8 +9,12 @@ How the playground works, tool by tool. The [README](../README.md) has the overv
 | [Bootstrap versions and updates](bootstrap.md) | Updating Bootstrap, what the last update changed, comparing two commits, the nightly canary, testing a local checkout, source or dist |
 | [Test suites](testing.md) | Visual regression, console crawl, interaction smoke tests, accessibility scan, browser engines, and how CI runs them |
 | [Checks and audits](audits.md) | Config compilation, HTML validation, pipeline drift against Bootstrap's build, tokens, sizes, option combinations, RTL, motion, cascade layers, partial imports, Sass and tokens.css equivalence |
+| [Testing a Bootstrap pull request](testing-a-bootstrap-pr.md) | Two routes to try an upstream pull request here, what to compare and run, and where to report |
+| [Reproducing an issue](reproducing-an-issue.md) | Starting a reproduction, its assertion or spec, exporting it and filing the tracking issue |
+| [Adding a config](adding-a-config.md) | Porting a design system to a config, saving it, the configs table, the matrix and the contrast report |
+| [Running the suites](regression-suites.md) | Which suite answers what, running only what changed, known-issue allowlists and baselines |
 
-Contributors, human or agent, also follow [CLAUDE.md](../CLAUDE.md): the conventions, and how a Bootstrap bug found here is tracked until it's fixed upstream.
+Contributors, human or agent, follow [CONTRIBUTING.md](../CONTRIBUTING.md) and [CLAUDE.md](../CLAUDE.md): the conventions, and how a Bootstrap bug found here is tracked until it's fixed upstream.
 
 ## Scripts
 
