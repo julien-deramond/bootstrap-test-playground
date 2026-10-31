@@ -201,6 +201,7 @@ export default [
       '/kitchen-sink/forms-validation.html',
       '/pages/checkout.html',
       '/pages/focus.html',
+      '/pages/forced-colors.html',
       '/pages/js-api.html',
       '/pages/marketing-pricing.html',
       '/pages/marketing-product.html',
@@ -345,6 +346,7 @@ export default [
       '/pages/color-modes.html',
       '/pages/custom-property-prefix.html',
       '/pages/focus.html',
+      '/pages/forced-colors.html',
       '/pages/js-api.html',
       '/pages/reboot-only.html',
       '/pages/states.html',
@@ -369,6 +371,7 @@ export default [
     pages: [
       '/kitchen-sink/components-button-group.html',
       '/kitchen-sink/components-button.html',
+      '/pages/forced-colors.html',
       '/pages/states.html'
     ],
     issue: 254
