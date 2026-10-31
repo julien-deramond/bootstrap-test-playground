@@ -49,11 +49,12 @@ After an update, the question is what the upstream commits changed. `npm run dif
 
 It writes `reports/diff/<from>-<to>/index.html`, a browsable report with the diff, the token lists and each changed example (both commits and their difference), plus `summary.md` and `changes.json`, which [`record-update`](#what-changed-in-the-last-update) reads. The nightly canary runs it on every update: the summary goes into its pull request, and the full report into the run's artifact. A comparison takes one to two minutes.
 
-To look at the two commits yourself, `npm run diff-bootstrap -- <from> <to> --serve` skips the report and serves the playground with `<from>` at <http://localhost:5198/> and with `<to>` under <http://localhost:5198/b/>, from one origin. The [compare view](pages.md#compare) then gets a *Bootstrap* field in each pane and a *Commit A / B* preset, and keeps both panes in sync as usual:
+To look at the two commits yourself, `npm run diff-bootstrap -- <from> <to> --serve` skips the report and serves the playground with `<from>` at <http://localhost:5198/> and with `<to>` under <http://localhost:5198/b/>, from one origin. The [compare view](pages.md#compare) then gets a *Bootstrap* field in each pane and a *Commit A / B* preset, and keeps the panes in sync as usual. Its *Difference* view blends commit B over commit A, so only what the commits changed stays visible, and *Light / Dark × Commit A / B* shows both commits in both themes:
 
 ```sh
 npm run diff-bootstrap -- 624c7b9 main --serve
 # Compare: http://localhost:5198/compare.html?page=%2Fkitchen-sink%2Fcomponents-button.html&a=bootstrap%3Da&b=bootstrap%3Db
+# Difference: http://localhost:5198/compare.html?page=%2Fkitchen-sink%2Fcomponents-button.html&a=bootstrap%3Da&b=bootstrap%3Db&mode=difference
 ```
 
 ## Nightly canary

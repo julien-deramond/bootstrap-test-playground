@@ -48,6 +48,7 @@ const SHARED = {
 const ROOT_PAGES = {
   'index.html': '/',
   'compare.html': '/compare.html',
+  'src/js/compare.js': '/compare.html',
   'matrix.html': '/matrix.html',
   'src/js/matrix.js': '/matrix.html',
   'sizes.html': '/sizes.html',
