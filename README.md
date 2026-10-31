@@ -60,6 +60,15 @@ The test suites need Playwright's browsers once: `npx playwright install chromiu
 - [Test suites](docs/testing.md): visual, console, smoke, accessibility, browser engines
 - [Checks and audits](docs/audits.md): configs, HTML, dist, tokens, sizes, options, RTL, motion, layers, partials, Sass against tokens.css
 
+Step by step:
+
+- [Testing a Bootstrap pull request](docs/testing-a-bootstrap-pr.md): install it or use a local checkout, see what changed, run the checks, report
+- [Reproducing an issue](docs/reproducing-an-issue.md): import or start a reproduction, say what fixed looks like, file the tracking issue
+- [Adding a config](docs/adding-a-config.md): port a design system, save it, preview and check it
+- [Running the suites](docs/regression-suites.md): which suite answers what, what to run for a change, known issues and baselines
+
+[CONTRIBUTING.md](CONTRIBUTING.md) covers setup, commits, pull requests and the checks to run.
+
 ## Upstream bugs
 
 Bootstrap bugs found here are tracked as [issues in this repository](https://github.com/julien-deramond/bootstrap-test-playground/issues?q=label%3Aupstream%2Cupstream-reported%2Cupstream-fixed), labeled `upstream` until they're reported to twbs/bootstrap, then `upstream-reported`, then `upstream-fixed`. The checks allowlist a known bug only with its tracking issue, and fail once it's fixed so the entry gets removed. [CLAUDE.md](CLAUDE.md) has the full workflow and the project's conventions.
