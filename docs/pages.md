@@ -207,6 +207,10 @@ Each example page has a small floating toolbar at its bottom end, a pill that su
 | Summary | Opens the settings panel | <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> toggles |
 | Search | Opens the page switcher | <kbd>Ctrl</kbd>+<kbd>K</kbd> (<kbd>⌘</kbd>+<kbd>K</kbd>) |
 
+The shortcuts never take a key from the page under test. None of them fires while focus is in a text field of the page: an `<input>` that takes text, a `<textarea>` or an editable element. Typing in a Bootstrap combobox, datepicker or textarea sends every key to it, <kbd>Alt</kbd>+<kbd>Shift</kbd> letters and <kbd>Ctrl</kbd>+<kbd>K</kbd> included. Tab out of the field to use them. The playground's own fields, the page switcher's search and the panel's config filter, keep them. A key that a component already handled (`preventDefault()`) is left alone too. See [`src/js/shortcuts.js`](../src/js/shortcuts.js).
+
+The panel and the page switcher open on top of whatever the page has open, like a Bootstrap dialog. <kbd>Esc</kbd> closes only the top one: the panel or the switcher first, then the dialog under it. Focus goes back to where it was. On the home page, <kbd>/</kbd> (outside a field) and <kbd>Ctrl</kbd>+<kbd>K</kbd> (anywhere) focus the search field: the home page has no toolbar, so they don't compete with the switcher.
+
 On a first visit, a hint above the pill says what it does. It goes away for good (`localStorage`) once the panel opens, a shortcut is used or it's dismissed, and never shows under automation (`navigator.webdriver`), so tests and screenshots don't see it.
 
 The settings panel is a modal dialog, a bottom sheet on small screens. It closes on <kbd>Esc</kbd> and on a click outside it, and stays open from page to page until it's closed, for the browser session.

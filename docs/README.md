@@ -8,6 +8,7 @@ How the playground works, tool by tool. The [README](../README.md) has the overv
 | [Pages and tools](pages.md) | The folder layout, page search, starter and real screens, the kitchen sink, issue reproductions, the toolbar and its URL flags, the compare and matrix views, deployment |
 | [Bootstrap versions and updates](bootstrap.md) | Updating Bootstrap, what the last update changed, comparing two commits, the nightly canary, testing a local checkout, source or dist |
 | [Test suites](testing.md) | Visual regression, console crawl, interaction smoke tests, accessibility scan, browser engines, and how CI runs them |
+| [Known workarounds](known-workarounds.md) | Where the playground's own code steps around an upstream bug, with the tracking issue of each and when it can go |
 | [Checks and audits](audits.md) | Config compilation, HTML validation, pipeline drift against Bootstrap's build, tokens, sizes, option combinations, RTL, motion, cascade layers, partial imports, Sass and tokens.css equivalence |
 | [Testing a Bootstrap pull request](testing-a-bootstrap-pr.md) | Two routes to try an upstream pull request here, what to compare and run, and where to report |
 | [Reproducing an issue](reproducing-an-issue.md) | Starting a reproduction, its assertion or spec, exporting it and filing the tracking issue |
@@ -24,8 +25,8 @@ Contributors, human or agent, follow [CONTRIBUTING.md](../CONTRIBUTING.md) and [
 | `npm run build` / `npm run preview` | Builds every page to `dist/` and serves the build |
 | `npm run test:visual [-- -u]` | Screenshots every page and compares with the baselines (see [Visual regression tests](testing.md#visual-regression-tests)) |
 | `npm run test:console` | Opens every page and fails on errors, warnings and failed requests (see [Console crawl](testing.md#console-crawl)) |
-| `npm run test:smoke` | Opens, drives and closes every JavaScript component and checks its state and events, then walks every documented key in LTR and RTL (see [Interaction smoke tests](testing.md#interaction-smoke-tests)) |
-| `npm run test:a11y` | Scans every page with axe-core at WCAG 2.2 AA, in light and dark with the default config, or every config with `A11Y_CONFIGS=all`, then every overlay open, and walks every page with the Tab key in LTR and RTL (see [Accessibility scan](testing.md#accessibility-scan)) |
+| `npm run test:smoke` | Opens, drives and closes every JavaScript component and checks its state and events, then walks every documented key in LTR and RTL, and the playground's own toolbar and page switcher (see [Interaction smoke tests](testing.md#interaction-smoke-tests)) |
+| `npm run test:a11y` | Scans every page with axe-core at WCAG 2.2 AA, in light and dark with the default config, or every config with `A11Y_CONFIGS=all`, then every overlay open, walks every page with the Tab key in LTR and RTL, and scans the playground's own UI (see [Accessibility scan](testing.md#accessibility-scan)) |
 | `npm run a11y-summary` | Sums up the last accessibility scan per config: violating elements by axe rule (see [Accessibility scan](testing.md#accessibility-scan)) |
 | `npm run report:contrast [-- --config <name>]` | Measures every documented color pairing and the components that embed one, per config and color mode, and writes `reports/contrast/` (see [Accessibility scan](testing.md#accessibility-scan)) |
 | `npm run test-scope [-- <base>]` | Prints what the console crawl, the smoke tests and the accessibility scan have to run for the changes since `<base>` (see [Console crawl](testing.md#console-crawl)) |
