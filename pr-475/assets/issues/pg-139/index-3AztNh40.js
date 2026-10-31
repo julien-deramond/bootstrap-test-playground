@@ -1,0 +1,1 @@
+import"../../modulepreload-polyfill-P2Xu9kJm.js";import"../../main-BoTDVRl5.js";import{t as e}from"../../preload-helper-C-V9XuXn.js";e(async()=>{let{assert:e}=await import(`../../assert-DV60AcY9.js`);return{assert:e}},[]).then(async({assert:e})=>{let{details:t}=await e();document.getElementById(`measured`).textContent=t});

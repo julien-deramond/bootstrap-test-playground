@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-422: Static menus have no positioning rule</title>
+    <!-- Shown and searched on the home page: one line about the bug, and the
+         components involved (comma-separated). -->
+    <meta name="description" content="A menu with data-bs-display=&quot;static&quot; has no CSS to place it: it opens flush against its toggle in a block wrapper and on top of it in a flex wrapper.">
+    <meta name="playground-tags" content="menu, static, positioning, flex">
+    <!-- The header reads these two. playground-upstream: the upstream issue or
+         pull request (`twbs/bootstrap#42754`, empty until there is one), with
+         `data-status` following the tracking issue's label: `unreported`
+         (upstream), `reported` (upstream-reported) or `fixed` (upstream-fixed),
+         and `data-tracking`, the tracking issue in this repository.
+         playground-bootstrap: the Bootstrap commit this was reproduced on. -->
+    <meta name="playground-upstream" content="" data-status="unreported" data-tracking="julien-deramond/bootstrap-test-playground#422">
+    <meta name="playground-bootstrap" content="05331e182f29d02a684516bd804b80a53f9fdfc3">
+    <link rel="icon" href="/bootstrap-test-playground/pr-475/favicon.svg" type="image/svg+xml">
+    <script>
+// Applies the playground preferences (color mode, direction, primary hue,
+// styles config and Bootstrap source) before first paint. Every page's <head>
+// loads it first, as a classic script that vite.config.js inlines (see #240).
+// The toolbar in src/js/toolbar.js drives it.
+//
+// Saved preferences live in localStorage. URL parameters override them for the
+// current view only, without saving: ?theme=dark&dir=rtl&primary=teal&config=name
+//
+// `css` and `js` pick where Bootstrap comes from: `src`, compiled from its Sass
+// and TypeScript (the default), or `dist`, the files the package ships
+// (dist/css/bootstrap.css, js/dist/), built from the same source by
+// scripts/lib/dist.mjs. ?css=dist&js=dist tests what users get.
+//
+// A page marked `<html data-playground-fixed>`, like the home page, keeps
+// Bootstrap's defaults: none of the preferences apply to it, but it can still
+// read and save them for the example pages.
+//
+// View flags, for screenshots and embeds:
+// - `embed` hides the toolbar, as used by /compare.html
+// - `chrome=0` also hides the page's own playground UI, marked with
+//   `data-playground-chrome` (kitchen sink header, navigation, headings)
+// - `frame=0` removes the kitchen sink's `.bd-example` frame
+// - `section=<id>` shows one kitchen sink example only
+// - `freeze` makes the page render the same way every time: no animations,
+//   transitions or caret, carousels don't autoplay, a fixed date and a seeded
+//   Math.random
+(() => {
+  'use strict'
+
+  const STORAGE_KEY = 'bootstrap-playground'
+  const DEFAULTS = { colorMode: 'auto', dir: 'ltr', primary: 'default', config: 'working', css: 'src', js: 'src' }
+  const URL_PARAMS = { theme: 'colorMode', dir: 'dir', primary: 'primary', config: 'config', css: 'css', js: 'js' }
+
+  const params = new URLSearchParams(location.search)
+  const overrides = {}
+  for (const [param, key] of Object.entries(URL_PARAMS)) {
+    if (params.has(param)) {
+      overrides[key] = params.get(param)
+    }
+  }
+
+  // Sub-keys of a `$theme-colors` entry, mapped like Bootstrap's own `primary`.
+  const themeTokens = hue => ({
+    base: `var(--bs-${hue}-500)`,
+    fg: `light-dark(var(--bs-${hue}-600), var(--bs-${hue}-400))`,
+    'fg-emphasis': `light-dark(var(--bs-${hue}-800), var(--bs-${hue}-200))`,
+    bg: `var(--bs-${hue}-500)`,
+    'bg-subtle': `light-dark(var(--bs-${hue}-100), var(--bs-${hue}-900))`,
+    'bg-muted': `light-dark(var(--bs-${hue}-200), var(--bs-${hue}-800))`,
+    border: `light-dark(var(--bs-${hue}-300), var(--bs-${hue}-600))`,
+    'focus-ring': `light-dark(color-mix(in oklch, var(--bs-${hue}-500) 50%, var(--bs-bg-body)), color-mix(in oklch, var(--bs-${hue}-500) 75%, var(--bs-bg-body)))`,
+    contrast: 'var(--bs-white)'
+  })
+
+  const read = () => {
+    try {
+      return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(STORAGE_KEY)) }
+    } catch {
+      return { ...DEFAULTS }
+    }
+  }
+
+  const effective = () => ({ ...read(), ...overrides })
+
+  const fixed = document.documentElement.hasAttribute('data-playground-fixed')
+
+  // Swapping the stylesheets needs the list of configs and the dist stylesheet's
+  // URL, which only the module script (src/js/configs.js) has. It registers
+  // itself here, and gets the whole preferences (`config` and `css`).
+  let configHandler = null
+
+  const apply = prefs => {
+    if (fixed) {
+      return
+    }
+
+    const html = document.documentElement
+
+    if (prefs.colorMode === 'auto') {
+      html.removeAttribute('data-bs-theme')
+    } else {
+      html.setAttribute('data-bs-theme', prefs.colorMode)
+    }
+
+    html.setAttribute('dir', prefs.dir)
+
+    for (const key of Object.keys(themeTokens('blue'))) {
+      html.style.removeProperty(`--bs-primary-${key}`)
+    }
+
+    if (prefs.primary !== 'default') {
+      for (const [key, value] of Object.entries(themeTokens(prefs.primary))) {
+        html.style.setProperty(`--bs-primary-${key}`, value)
+      }
+    }
+
+    configHandler?.(prefs)
+  }
+
+  // Saving a key drops its URL override, so the toolbar always wins.
+  const save = changes => {
+    const prefs = { ...read(), ...changes }
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs))
+    } catch {}
+
+    const url = new URL(location.href)
+    for (const [param, key] of Object.entries(URL_PARAMS)) {
+      if (key in changes) {
+        delete overrides[key]
+        url.searchParams.delete(param)
+      }
+    }
+
+    history.replaceState(history.state, '', url)
+    apply(effective())
+    // The toolbar and the home page's configs follow saves made by the other.
+    window.dispatchEvent(new Event('playground-prefs'))
+    return effective()
+  }
+
+  const reset = () => save({ ...DEFAULTS })
+
+  const setConfigHandler = handler => {
+    configHandler = handler
+    handler(effective())
+  }
+
+  const addStyle = (id, css) => {
+    const style = document.createElement('style')
+    style.id = id
+    style.textContent = css
+    document.head.append(style)
+    return style
+  }
+
+  // Hide the page until a non-default config's stylesheets, or the dist
+  // stylesheet, are swapped in, so it doesn't flash with the working styles
+  // first. Failsafe after 3 seconds.
+  if (!fixed && (effective().config !== 'working' || effective().css === 'dist')) {
+    const style = addStyle('playground-config-pending', 'html { visibility: hidden !important; }')
+    setTimeout(() => style.remove(), 3000)
+  }
+
+  const chromeless = params.get('chrome') === '0'
+  const frozen = params.has('freeze') && !['0', 'false'].includes(params.get('freeze'))
+  const section = params.get('section')
+
+  // Unlayered, so these win over the pages' `@layer custom` rules.
+  const viewRules = []
+  if (chromeless) {
+    viewRules.push('[data-playground-chrome] { display: none !important; }')
+  }
+
+  if (params.get('frame') === '0') {
+    viewRules.push('.bd-example { --bd-example-padding: 0px; background-color: transparent; border: 0; border-radius: 0; }')
+  }
+
+  if (section) {
+    viewRules.push(`.bd-kitchen-sink-section:not([aria-labelledby="${CSS.escape(section)}"]) { display: none !important; }`)
+  }
+
+  if (frozen) {
+    viewRules.push(
+      'html { scroll-behavior: auto !important; }',
+      '*, ::before, ::after { animation: none !important; transition: none !important; caret-color: transparent !important; }'
+    )
+
+    // A fixed "today" (the datepicker's month, relative dates) that still
+    // ticks, so code measuring elapsed time keeps working. Noon UTC is the
+    // same calendar day in nearly every time zone.
+    const RealDate = Date
+    const start = RealDate.UTC(2026, 0, 15, 12)
+    const now = () => start + Math.floor(performance.now())
+    window.Date = new Proxy(RealDate, {
+      construct: (target, args, newTarget) => Reflect.construct(target, args.length > 0 ? args : [now()], newTarget),
+      apply: () => new RealDate(now()).toString(),
+      get: (target, key, receiver) => (key === 'now' ? now : Reflect.get(target, key, receiver))
+    })
+
+    // Seeded Math.random (mulberry32), for generated ids and demo data.
+    let seed = 0x2F6B_3A91
+    Math.random = () => {
+      seed = (seed + 0x6D2B_79F5) | 0
+      let value = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+      value = (value + Math.imul(value ^ (value >>> 7), 61 | value)) ^ value
+      return ((value ^ (value >>> 14)) >>> 0) / 4_294_967_296
+    }
+  }
+
+  if (viewRules.length > 0) {
+    addStyle('playground-view', viewRules.join('\n'))
+  }
+
+  window.playgroundPrefs = {
+    DEFAULTS,
+    URL_PARAMS,
+    embedded: params.has('embed') || chromeless,
+    fixed,
+    frozen,
+    read,
+    effective,
+    save,
+    reset,
+    apply,
+    setConfigHandler
+  }
+
+  apply(effective())
+})()
+</script>
+    <!-- This reproduction compiles its own copy of Bootstrap from the config
+         files next to this page (main.scss, _custom.scss, tokens.css). -->
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/modulepreload-polyfill-P2Xu9kJm.js"></script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/_virtual_playground-pages-vKXQSeZa.js"></script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/page-index-Bw8QXOEx.js"></script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/last-update-BrzV7MdX.js"></script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/preload-helper-C-V9XuXn.js"></script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/main-BoTDVRl5.js"></script>
+    <link rel="stylesheet" crossorigin href="/bootstrap-test-playground/pr-475/assets/index-CnXlIq3Y.css">
+  </head>
+  <body>
+    <!-- Before filing, the tracking issue needs (see CLAUDE.md, "Record a
+         potential bug"):
+         - [ ] Summary: one or two sentences, also the description above
+         - [ ] Bootstrap version: Bootstrap's main commit, shown in the header
+         - [ ] Reproduction: the steps below, and a link to this page
+         - [ ] Expected / Actual, below
+         - [ ] Root cause: file:line in twbs/bootstrap with a permalink, when known
+         - [ ] Possible fix, when known
+         And an assert.js next to this page, when "fixed" can be measured, or
+         a repro.spec.js (`new-issue -- --spec`) when it takes the keyboard or
+         the viewport: `npm run check-issues` then tells when the fix lands
+         (see "Assertions" in docs/pages.md). -->
+    <main class="container py-5">
+      <!-- data-playground-chrome: hidden by ?chrome=0, which shows the
+           markup under test alone (screenshots, embeds). -->
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/bootstrap-test-playground/pr-475/">Playground</a> / Issues</p>
+        <h1>Static menus have no positioning rule</h1>
+        <!-- Filled from the metadata above: status, upstream and tracking
+             links, and the Bootstrap commit. -->
+        <p class="d-flex flex-wrap align-items-center gap-2 fg-2" data-playground-repro-meta></p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">Steps to reproduce</h2>
+        <ol>
+          <li>Open each menu below. The two static ones (<code>data-bs-display="static"</code>) sit in a <code>.position-relative</code> wrapper, the first a block, the second a <code>.d-flex gap-2</code> row. The dynamic one is the control.</li>
+          <li>Measure the gap between the bottom edge of the toggle and the top edge of the menu, and between their start edges.</li>
+        </ol>
+        <div class="row g-3">
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-success">
+              <h3 class="h6">Expected</h3>
+              <p class="mb-0">A static menu opens below its toggle, lined up with its start edge, with the same 2px gap (<code>--menu-spacer</code>) as a dynamic menu, whatever the wrapper's layout.</p>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <div class="h-100 p-3 border rounded border-danger">
+              <h3 class="h6">Actual</h3>
+              <p class="mb-0">No rule reads <code>data-bs-display</code>, so the menu stays at its static position: 0px below the toggle in a block wrapper, and 38px above its bottom edge, on top of the toggle, in the flex row. The dynamic menu is 2px below.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="h5" data-playground-chrome>Reproduction</h2>
+        <div class="d-flex flex-wrap align-items-start gap-5 pb-5 mb-5">
+          <div class="position-relative" data-case="static-block">
+            <button type="button" class="btn-solid theme-primary" data-bs-toggle="menu" data-bs-display="static" aria-expanded="false">Static, block wrapper</button>
+            <div class="menu">
+              <a class="menu-item" href="#">Item 1</a>
+              <a class="menu-item" href="#">Item 2</a>
+            </div>
+          </div>
+          <div class="d-flex gap-2 position-relative" data-case="static-flex">
+            <button type="button" class="btn-solid theme-primary" data-bs-toggle="menu" data-bs-display="static" aria-expanded="false">Static, flex wrapper</button>
+            <div class="menu">
+              <a class="menu-item" href="#">Item 1</a>
+              <a class="menu-item" href="#">Item 2</a>
+            </div>
+          </div>
+          <div class="position-relative" data-case="dynamic">
+            <button type="button" class="btn-solid theme-secondary" data-bs-toggle="menu" aria-expanded="false">Dynamic (control)</button>
+            <div class="menu">
+              <a class="menu-item" href="#">Item 1</a>
+              <a class="menu-item" href="#">Item 2</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+  </body>
+</html>

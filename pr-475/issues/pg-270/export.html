@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-270: Focus rings under 3:1 contrast</title>
+    <!--
+      pg-270: Focus rings under 3:1 contrast
+      Focus rings: the theme focus ring mixes the theme color with - -bg-body, which is under 3:1 against the page in light mode, and on bg-2, bg-3 and solid backgrounds in dark mode.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-270
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <p class="mb-0">Measured here: <code id="measured">…</code></p>
+
+      <section>
+        <div data-playground-repro>
+          <div class="vstack gap-3">
+            <div class="bg-body p-3 rounded-3" data-surface="bg-body"><button type="button" class="btn-solid theme-primary">bg-body</button></div>
+            <div class="bg-1 p-3 rounded-3" data-surface="bg-1"><button type="button" class="btn-solid theme-primary">bg-1</button></div>
+            <div class="bg-2 p-3 rounded-3" data-surface="bg-2"><button type="button" class="btn-solid theme-primary">bg-2</button></div>
+            <div class="bg-3 p-3 rounded-3" data-surface="bg-3"><button type="button" class="btn-solid theme-primary">bg-3</button></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      import { measureRings, format } from './measure.js'
+
+      const show = () => {
+        document.getElementById('measured').textContent = format(measureRings())
+      }
+
+      if (document.readyState === 'complete') {
+        show()
+      } else {
+        window.addEventListener('load', show, { once: true })
+      }
+    </script>
+  </body>
+</html>

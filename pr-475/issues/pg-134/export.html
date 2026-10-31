@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-134: Issue reproduction</title>
+    <!--
+      pg-134: Issue reproduction
+      Select: - -control-select-bg-position is a physical `right .75rem center`, so in RTL the chevron stays on the right, over the start of the text, while the padding that reserves room for it is on the left.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-134
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <section>
+        <div data-playground-repro>
+          <div class="vstack gap-4">
+            <div dir="ltr" data-case="ltr">
+              <label for="select-ltr" class="form-label">LTR (reference)</label>
+              <select class="form-control" id="select-ltr">
+                <option selected>Open this select menu</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+              </select>
+            </div>
+            <div dir="rtl" data-case="rtl">
+              <label for="select-rtl" class="form-label">Select in RTL</label>
+              <select class="form-control" id="select-rtl">
+                <option selected>Open this select menu</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+              </select>
+            </div>
+            <div dir="rtl" data-case="rtl">
+              <div class="form-floating">
+                <label for="select-rtl-floating">Floating label in RTL</label>
+                <select class="form-control" id="select-rtl-floating" aria-label="Floating label select example">
+                  <option selected>Open this select menu</option>
+                  <option value="1">One</option>
+                  <option value="2">Two</option>
+                </select>
+              </div>
+            </div>
+            <div dir="rtl" data-case="rtl">
+              <div class="input-group">
+                <label class="input-group-text" for="select-rtl-group">Options</label>
+                <select class="form-control" id="select-rtl-group">
+                  <option selected>Choose...</option>
+                  <option value="1">One</option>
+                  <option value="2">Two</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Reproduction-specific JavaScript. Bootstrap is available as `window.bootstrap`.
+    </script>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-141: Popover header notch off in RTL</title>
+    <!--
+      pg-141: Popover header notch off in RTL
+      Popover: the header notch under a bottom arrow is 8px off the arrow's center in RTL.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-141
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+      for (const element of document.querySelectorAll('[data-bs-toggle="popover"]')) {
+        new bootstrap.Popover(element)
+      }
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <p class="mb-0">Measured here: <code id="measured">…</code></p>
+
+      <section>
+        <div dir="rtl" class="px-4 pt-3 pb-5 text-center" id="repro">
+          <button type="button" class="btn-solid theme-primary"
+                  data-bs-toggle="popover"
+                  data-bs-placement="bottom"
+                  data-bs-container="#repro"
+                  data-bs-title="Popover title"
+                  data-bs-content="The notch in the header border should sit under the arrow.">
+            Toggle popover
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      import { assert } from './assert.js'
+
+      // assert() opens the popover, then measures it.
+      const show = async () => {
+        // Bootstrap loads after this page's modules (top-level await in main.js).
+        for (let i = 0; i < 100 && !window.bootstrap; i++) await new Promise((resolve) => setTimeout(resolve, 50))
+        document.getElementById('measured').textContent = (await assert()).details
+      }
+
+      if (document.readyState === 'complete') {
+        show()
+      } else {
+        window.addEventListener('load', show, { once: true })
+      }
+    </script>
+  </body>
+</html>

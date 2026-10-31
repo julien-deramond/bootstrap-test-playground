@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>#42754: drawer-sheet ignores drawer-start and drawer-end</title>
+    <!--
+      #42754: drawer-sheet ignores drawer-start and drawer-end
+      Drawer: .drawer-sheet is always centered at the bottom, it ignores .drawer-start and .drawer-end.
+      Upstream: https://github.com/twbs/bootstrap/issues/42754
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/42754
+    -->
+    <meta http-equiv="Content-Security-Policy" content="img-src 'self' data:; media-src 'self'; font-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <p class="mb-0">Measured here: <code id="measured">open a sheet</code></p>
+
+      <section>
+        <div class="hstack flex-wrap gap-2">
+          <button class="btn-solid theme-secondary" type="button" data-bs-toggle="drawer" data-bs-target="#sheetBottom" aria-controls="sheetBottom">Bottom sheet (docs)</button>
+          <button class="btn-solid theme-primary" type="button" data-bs-toggle="drawer" data-bs-target="#sheetStart" aria-controls="sheetStart">Start sheet</button>
+          <button class="btn-solid theme-primary" type="button" data-bs-toggle="drawer" data-bs-target="#sheetEnd" aria-controls="sheetEnd">End sheet</button>
+        </div>
+
+        <dialog class="drawer drawer-bottom drawer-sheet" tabindex="-1" id="sheetBottom" aria-labelledby="sheetBottomLabel">
+          <div class="drawer-header">
+            <h5 class="drawer-title" id="sheetBottomLabel">Bottom sheet</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="drawer" aria-label="Close"></button>
+          </div>
+          <div class="drawer-body">
+            Flush with the bottom edge, as documented.
+          </div>
+        </dialog>
+
+        <dialog class="drawer drawer-start drawer-sheet" tabindex="-1" id="sheetStart" aria-labelledby="sheetStartLabel">
+          <div class="drawer-header">
+            <h5 class="drawer-title" id="sheetStartLabel">Start sheet</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="drawer" aria-label="Close"></button>
+          </div>
+          <div class="drawer-body">
+            Should be flush with the start edge, full height.
+          </div>
+        </dialog>
+
+        <dialog class="drawer drawer-end drawer-sheet" tabindex="-1" id="sheetEnd" aria-labelledby="sheetEndLabel">
+          <div class="drawer-header">
+            <h5 class="drawer-title" id="sheetEndLabel">End sheet</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="drawer" aria-label="Close"></button>
+          </div>
+          <div class="drawer-body">
+            Should be flush with the end edge, full height.
+          </div>
+        </dialog>
+      </section>
+    </main>
+
+    <script type="module">
+      // Where each sheet ends up once open: its distance to each viewport edge.
+      const measured = document.getElementById('measured')
+      for (const sheet of document.querySelectorAll('.drawer-sheet')) {
+        sheet.addEventListener('shown.bs.drawer', () => {
+          const rect = sheet.getBoundingClientRect()
+          const gaps = {
+            top: rect.top,
+            right: document.documentElement.clientWidth - rect.right,
+            bottom: window.innerHeight - rect.bottom,
+            left: rect.left
+          }
+          measured.textContent = `${sheet.querySelector('.drawer-title').textContent}: ${Math.round(rect.width)}×${Math.round(rect.height)}px, ` +
+            Object.entries(gaps).map(([edge, gap]) => `${Math.round(gap)}px from the ${edge}`).join(', ')
+        })
+      }
+    </script>
+  </body>
+</html>

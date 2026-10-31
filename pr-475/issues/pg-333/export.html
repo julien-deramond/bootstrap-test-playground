@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-333: --spacer does not drive --spacer-1 to --spacer-12</title>
+    <!--
+      pg-333: - -spacer does not drive - -spacer-1 to - -spacer-12
+      Spacing: - -spacer-1 to - -spacer-12 are computed from $spacer when Sass compiles, so overriding - -spacer at runtime moves only the components that read it directly.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-333
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <p class="mb-0">Measured here: <code id="measured">…</code></p>
+
+      <section>
+        <div class="spacer-probe" id="spacerProbe" aria-hidden="true"></div>
+        <div class="hstack align-items-start flex-wrap gap-3 mb-5">
+          <div class="spacer-box" id="spacerBox1" style="padding: var(--bs-spacer-1);"><span></span></div>
+          <div class="spacer-box" id="spacerBox2" style="padding: var(--bs-spacer-2);"><span></span></div>
+          <div class="spacer-box" id="spacerBox3" style="padding: var(--bs-spacer-3);"><span></span></div>
+          <div class="spacer-box" id="spacerBox4" style="padding: var(--bs-spacer-4);"><span></span></div>
+          <div class="spacer-box" id="spacerBox5" style="padding: var(--bs-spacer-5);"><span></span></div>
+          <div class="spacer-box" id="spacerBox6" style="padding: var(--bs-spacer-6);"><span></span></div>
+          <div class="spacer-box" id="spacerBox7" style="padding: var(--bs-spacer-7);"><span></span></div>
+          <div class="spacer-box" id="spacerBox8" style="padding: var(--bs-spacer-8);"><span></span></div>
+          <div class="spacer-box" id="spacerBox9" style="padding: var(--bs-spacer-9);"><span></span></div>
+          <div class="spacer-box" id="spacerBox10" style="padding: var(--bs-spacer-10);"><span></span></div>
+          <div class="spacer-box" id="spacerBox11" style="padding: var(--bs-spacer-11);"><span></span></div>
+          <div class="spacer-box" id="spacerBox12" style="padding: var(--bs-spacer-12);"><span></span></div>
+        </div>
+        <div class="row g-4 align-items-start">
+          <div class="md:col-4">
+            <div class="popover show popover-instant position-static" id="reproPopover" role="presentation">
+              <h3 class="popover-header">Popover title</h3>
+              <div class="popover-body">Popover body: horizontal padding follows <code>--spacer</code>, vertical padding does not.</div>
+            </div>
+          </div>
+          <div class="md:col-4">
+            <div class="alert" id="reproAlert" role="alert">An alert: its padding follows <code>--spacer</code>, its gap does not.</div>
+          </div>
+          <div class="md:col-4">
+            <ul class="list-group" id="reproListGroup">
+              <li class="list-group-item">An item</li>
+              <li class="list-group-item">A second item</li>
+              <li class="list-group-item">A third item</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Fill the "Measured here" line with the same numbers assert.js checks.
+      import { measure } from './assert.js'
+
+      const { details } = measure()
+      document.getElementById('measured').textContent = details
+    </script>
+  </body>
+</html>

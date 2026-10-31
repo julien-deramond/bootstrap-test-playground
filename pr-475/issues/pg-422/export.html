@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-422: Static menus have no positioning rule</title>
+    <!--
+      pg-422: Static menus have no positioning rule
+      A menu with data-bs-display="static" has no CSS to place it: it opens flush against its toggle in a block wrapper and on top of it in a flex wrapper.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-422
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <section>
+        <div class="d-flex flex-wrap align-items-start gap-5 pb-5 mb-5">
+          <div class="position-relative" data-case="static-block">
+            <button type="button" class="btn-solid theme-primary" data-bs-toggle="menu" data-bs-display="static" aria-expanded="false">Static, block wrapper</button>
+            <div class="menu">
+              <a class="menu-item" href="#">Item 1</a>
+              <a class="menu-item" href="#">Item 2</a>
+            </div>
+          </div>
+          <div class="d-flex gap-2 position-relative" data-case="static-flex">
+            <button type="button" class="btn-solid theme-primary" data-bs-toggle="menu" data-bs-display="static" aria-expanded="false">Static, flex wrapper</button>
+            <div class="menu">
+              <a class="menu-item" href="#">Item 1</a>
+              <a class="menu-item" href="#">Item 2</a>
+            </div>
+          </div>
+          <div class="position-relative" data-case="dynamic">
+            <button type="button" class="btn-solid theme-secondary" data-bs-toggle="menu" aria-expanded="false">Dynamic (control)</button>
+            <div class="menu">
+              <a class="menu-item" href="#">Item 1</a>
+              <a class="menu-item" href="#">Item 2</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+  </body>
+</html>

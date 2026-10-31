@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>#42546: scrollbar-gutter: stable leaves an empty gutter</title>
+    <!--
+      #42546: scrollbar-gutter: stable leaves an empty gutter
+      Root: scrollbar-gutter: stable reserves an empty strip for the scrollbar on pages that don't scroll, with classic scrollbars (Windows Chromium).
+      Upstream: https://github.com/twbs/bootstrap/issues/42546
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/42546
+    -->
+    <meta http-equiv="Content-Security-Policy" content="img-src 'self' data:; media-src 'self'; font-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <!-- The reproduction's own CSS (tokens.css). -->
+    <style>
+      /* From twbs/bootstrap#42546: a border that shows where the page ends. */
+      html,
+      body {
+        border: 1px solid red;
+      }
+    </style>
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <section>
+        <div class="vstack gap-3 align-items-start">
+          <h1>Hello, world!</h1>
+          <p class="mb-0">Reserved for the scrollbar: <code id="measured">…</code></p>
+          <button type="button" class="btn-outline theme-secondary" id="toggleGutter" aria-pressed="false">Use <code>scrollbar-gutter: auto</code></button>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // The gutter is the part of the window the root's content box doesn't
+      // use: with a classic scrollbar and `stable`, it's there even when the
+      // page doesn't scroll.
+      const root = document.documentElement
+      const measured = document.getElementById('measured')
+      const toggle = document.getElementById('toggleGutter')
+      const measure = () => {
+        const gutter = window.innerWidth - root.clientWidth
+        const scrolls = root.scrollHeight > root.clientHeight
+        measured.textContent = `${gutter}px, with scrollbar-gutter: ${getComputedStyle(root).scrollbarGutter}, on a page that ${scrolls ? 'scrolls' : 'doesn\'t scroll'}` +
+          (gutter === 0 && !scrolls ? ' (overlay scrollbars, or the gutter is gone)' : '')
+      }
+
+      toggle.addEventListener('click', () => {
+        const auto = toggle.getAttribute('aria-pressed') !== 'true'
+        root.style.scrollbarGutter = auto ? 'auto' : ''
+        toggle.setAttribute('aria-pressed', String(auto))
+        measure()
+      })
+      window.addEventListener('resize', measure)
+      window.addEventListener('load', measure)
+      measure()
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1 @@
+import"../../modulepreload-polyfill-P2Xu9kJm.js";import"../../main-BoTDVRl5.js";var e=()=>{document.querySelectorAll(`[data-container]`).forEach(e=>{e.querySelector(`[data-width]`).textContent=`${Math.round(e.getBoundingClientRect().width)}px at a ${innerWidth}px viewport`})};e(),addEventListener(`resize`,e);

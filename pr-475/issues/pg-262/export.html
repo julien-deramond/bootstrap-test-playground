@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-262: Scrollable stepper can't be scrolled from the keyboard</title>
+    <!--
+      pg-262: Scrollable stepper can't be scrolled from the keyboard
+      A stepper wrapped in .stepper-overflow scrolls horizontally (overflow-x: auto) but has no tabindex and holds nothing focusable, so axe reports scrollable-region-focusable (WCAG 2.1.1).
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-262
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <section>
+        <div data-playground-repro>
+          <div style="max-inline-size: 20rem">
+          <div class="stepper-overflow">
+            <ol class="stepper stepper-horizontal">
+              <li class="stepper-item active">Create account</li>
+              <li class="stepper-item active">Verify email address</li>
+              <li class="stepper-item">Complete profile setup</li>
+              <li class="stepper-item">Add payment method</li>
+              <li class="stepper-item">Review and confirm</li>
+              <li class="stepper-item">Finish onboarding</li>
+            </ol>
+          </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Reproduction-specific JavaScript. Bootstrap is available as `window.bootstrap`.
+    </script>
+  </body>
+</html>

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-322: Tooltip and popover ignore data-bs-config</title>
+    <!--
+      pg-322: Tooltip and popover ignore data-bs-config
+      Tooltip and Popover never read data-bs-config, the reserved JSON attribute every other component merges under its data-bs-* attributes, so an option set only there falls back to its default.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-322
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <section>
+        <div data-playground-repro>
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <button type="button" class="btn-solid theme-primary" data-repro="tooltip" data-bs-config='{"customClass":"from-config","placement":"bottom"}'>Tooltip trigger</button>
+            <button type="button" class="btn-solid theme-secondary" data-repro="popover" data-bs-config='{"customClass":"from-config","placement":"bottom"}'>Popover trigger</button>
+          </div>
+          <p class="mb-0" data-repro-result>Reading the options…</p>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      for (let i = 0; i < 100 && !window.bootstrap; i++) await new Promise((resolve) => setTimeout(resolve, 50))
+
+      for (const root of document.querySelectorAll('[data-playground-repro]')) {
+        const lines = []
+        for (const kind of ['tooltip', 'popover']) {
+          const trigger = root.querySelector(`[data-repro="${kind}"]`)
+          const Component = kind === 'tooltip' ? window.bootstrap.Tooltip : window.bootstrap.Popover
+          const { customClass, placement } = new Component(trigger, { title: 'Tip' })._config
+          lines.push(`${kind}: customClass '${customClass}', placement '${placement}'`)
+        }
+        root.querySelector('[data-repro-result]').textContent = lines.join('; ')
+      }
+    </script>
+  </body>
+</html>

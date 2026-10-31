@@ -1,0 +1,287 @@
+<!doctype html>
+<!-- Adapted from shadcn/ui's "authentication" example (apps/v4/app/(app)/examples/authentication/), MIT License. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Screens: Authentication</title>
+    <meta name="description" content="Two-column sign-up page with a quote panel and social sign-in.">
+    <meta name="playground-tags" content="auth, forms, layout">
+    <meta name="playground-source" content="shadcn/ui example “authentication”" data-url="https://github.com/shadcn-ui/ui/tree/98a1fe67b439324ddc857f47fbdce056600a4329/apps/v4/app/(app)/examples/authentication" data-license="MIT">
+    <link rel="icon" href="/bootstrap-test-playground/pr-475/favicon.svg" type="image/svg+xml">
+    <script>
+// Applies the playground preferences (color mode, direction, primary hue,
+// styles config and Bootstrap source) before first paint. Every page's <head>
+// loads it first, as a classic script that vite.config.js inlines (see #240).
+// The toolbar in src/js/toolbar.js drives it.
+//
+// Saved preferences live in localStorage. URL parameters override them for the
+// current view only, without saving: ?theme=dark&dir=rtl&primary=teal&config=name
+//
+// `css` and `js` pick where Bootstrap comes from: `src`, compiled from its Sass
+// and TypeScript (the default), or `dist`, the files the package ships
+// (dist/css/bootstrap.css, js/dist/), built from the same source by
+// scripts/lib/dist.mjs. ?css=dist&js=dist tests what users get.
+//
+// A page marked `<html data-playground-fixed>`, like the home page, keeps
+// Bootstrap's defaults: none of the preferences apply to it, but it can still
+// read and save them for the example pages.
+//
+// View flags, for screenshots and embeds:
+// - `embed` hides the toolbar, as used by /compare.html
+// - `chrome=0` also hides the page's own playground UI, marked with
+//   `data-playground-chrome` (kitchen sink header, navigation, headings)
+// - `frame=0` removes the kitchen sink's `.bd-example` frame
+// - `section=<id>` shows one kitchen sink example only
+// - `freeze` makes the page render the same way every time: no animations,
+//   transitions or caret, carousels don't autoplay, a fixed date and a seeded
+//   Math.random
+(() => {
+  'use strict'
+
+  const STORAGE_KEY = 'bootstrap-playground'
+  const DEFAULTS = { colorMode: 'auto', dir: 'ltr', primary: 'default', config: 'working', css: 'src', js: 'src' }
+  const URL_PARAMS = { theme: 'colorMode', dir: 'dir', primary: 'primary', config: 'config', css: 'css', js: 'js' }
+
+  const params = new URLSearchParams(location.search)
+  const overrides = {}
+  for (const [param, key] of Object.entries(URL_PARAMS)) {
+    if (params.has(param)) {
+      overrides[key] = params.get(param)
+    }
+  }
+
+  // Sub-keys of a `$theme-colors` entry, mapped like Bootstrap's own `primary`.
+  const themeTokens = hue => ({
+    base: `var(--bs-${hue}-500)`,
+    fg: `light-dark(var(--bs-${hue}-600), var(--bs-${hue}-400))`,
+    'fg-emphasis': `light-dark(var(--bs-${hue}-800), var(--bs-${hue}-200))`,
+    bg: `var(--bs-${hue}-500)`,
+    'bg-subtle': `light-dark(var(--bs-${hue}-100), var(--bs-${hue}-900))`,
+    'bg-muted': `light-dark(var(--bs-${hue}-200), var(--bs-${hue}-800))`,
+    border: `light-dark(var(--bs-${hue}-300), var(--bs-${hue}-600))`,
+    'focus-ring': `light-dark(color-mix(in oklch, var(--bs-${hue}-500) 50%, var(--bs-bg-body)), color-mix(in oklch, var(--bs-${hue}-500) 75%, var(--bs-bg-body)))`,
+    contrast: 'var(--bs-white)'
+  })
+
+  const read = () => {
+    try {
+      return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(STORAGE_KEY)) }
+    } catch {
+      return { ...DEFAULTS }
+    }
+  }
+
+  const effective = () => ({ ...read(), ...overrides })
+
+  const fixed = document.documentElement.hasAttribute('data-playground-fixed')
+
+  // Swapping the stylesheets needs the list of configs and the dist stylesheet's
+  // URL, which only the module script (src/js/configs.js) has. It registers
+  // itself here, and gets the whole preferences (`config` and `css`).
+  let configHandler = null
+
+  const apply = prefs => {
+    if (fixed) {
+      return
+    }
+
+    const html = document.documentElement
+
+    if (prefs.colorMode === 'auto') {
+      html.removeAttribute('data-bs-theme')
+    } else {
+      html.setAttribute('data-bs-theme', prefs.colorMode)
+    }
+
+    html.setAttribute('dir', prefs.dir)
+
+    for (const key of Object.keys(themeTokens('blue'))) {
+      html.style.removeProperty(`--bs-primary-${key}`)
+    }
+
+    if (prefs.primary !== 'default') {
+      for (const [key, value] of Object.entries(themeTokens(prefs.primary))) {
+        html.style.setProperty(`--bs-primary-${key}`, value)
+      }
+    }
+
+    configHandler?.(prefs)
+  }
+
+  // Saving a key drops its URL override, so the toolbar always wins.
+  const save = changes => {
+    const prefs = { ...read(), ...changes }
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs))
+    } catch {}
+
+    const url = new URL(location.href)
+    for (const [param, key] of Object.entries(URL_PARAMS)) {
+      if (key in changes) {
+        delete overrides[key]
+        url.searchParams.delete(param)
+      }
+    }
+
+    history.replaceState(history.state, '', url)
+    apply(effective())
+    // The toolbar and the home page's configs follow saves made by the other.
+    window.dispatchEvent(new Event('playground-prefs'))
+    return effective()
+  }
+
+  const reset = () => save({ ...DEFAULTS })
+
+  const setConfigHandler = handler => {
+    configHandler = handler
+    handler(effective())
+  }
+
+  const addStyle = (id, css) => {
+    const style = document.createElement('style')
+    style.id = id
+    style.textContent = css
+    document.head.append(style)
+    return style
+  }
+
+  // Hide the page until a non-default config's stylesheets, or the dist
+  // stylesheet, are swapped in, so it doesn't flash with the working styles
+  // first. Failsafe after 3 seconds.
+  if (!fixed && (effective().config !== 'working' || effective().css === 'dist')) {
+    const style = addStyle('playground-config-pending', 'html { visibility: hidden !important; }')
+    setTimeout(() => style.remove(), 3000)
+  }
+
+  const chromeless = params.get('chrome') === '0'
+  const frozen = params.has('freeze') && !['0', 'false'].includes(params.get('freeze'))
+  const section = params.get('section')
+
+  // Unlayered, so these win over the pages' `@layer custom` rules.
+  const viewRules = []
+  if (chromeless) {
+    viewRules.push('[data-playground-chrome] { display: none !important; }')
+  }
+
+  if (params.get('frame') === '0') {
+    viewRules.push('.bd-example { --bd-example-padding: 0px; background-color: transparent; border: 0; border-radius: 0; }')
+  }
+
+  if (section) {
+    viewRules.push(`.bd-kitchen-sink-section:not([aria-labelledby="${CSS.escape(section)}"]) { display: none !important; }`)
+  }
+
+  if (frozen) {
+    viewRules.push(
+      'html { scroll-behavior: auto !important; }',
+      '*, ::before, ::after { animation: none !important; transition: none !important; caret-color: transparent !important; }'
+    )
+
+    // A fixed "today" (the datepicker's month, relative dates) that still
+    // ticks, so code measuring elapsed time keeps working. Noon UTC is the
+    // same calendar day in nearly every time zone.
+    const RealDate = Date
+    const start = RealDate.UTC(2026, 0, 15, 12)
+    const now = () => start + Math.floor(performance.now())
+    window.Date = new Proxy(RealDate, {
+      construct: (target, args, newTarget) => Reflect.construct(target, args.length > 0 ? args : [now()], newTarget),
+      apply: () => new RealDate(now()).toString(),
+      get: (target, key, receiver) => (key === 'now' ? now : Reflect.get(target, key, receiver))
+    })
+
+    // Seeded Math.random (mulberry32), for generated ids and demo data.
+    let seed = 0x2F6B_3A91
+    Math.random = () => {
+      seed = (seed + 0x6D2B_79F5) | 0
+      let value = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+      value = (value + Math.imul(value ^ (value >>> 7), 61 | value)) ^ value
+      return ((value ^ (value >>> 14)) >>> 0) / 4_294_967_296
+    }
+  }
+
+  if (viewRules.length > 0) {
+    addStyle('playground-view', viewRules.join('\n'))
+  }
+
+  window.playgroundPrefs = {
+    DEFAULTS,
+    URL_PARAMS,
+    embedded: params.has('embed') || chromeless,
+    fixed,
+    frozen,
+    read,
+    effective,
+    save,
+    reset,
+    apply,
+    setConfigHandler
+  }
+
+  apply(effective())
+})()
+</script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/screens/authentication-4yc5Syx2.js"></script>
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/modulepreload-polyfill-P2Xu9kJm.js">
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/_virtual_playground-pages-vKXQSeZa.js">
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/page-index-Bw8QXOEx.js">
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/last-update-BrzV7MdX.js">
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/preload-helper-C-V9XuXn.js">
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/main-BoTDVRl5.js">
+    <link rel="stylesheet" data-playground-styles="main" crossorigin href="/bootstrap-test-playground/pr-475/assets/index-CnXlIq3Y.css">
+    <link rel="stylesheet" data-playground-styles="tokens" crossorigin href="/bootstrap-test-playground/pr-475/assets/tokens-B4oSpHCU.css">
+    <link rel="stylesheet" crossorigin href="/bootstrap-test-playground/pr-475/assets/auth-UFNymTbD.css">
+  </head>
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <symbol id="command" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></symbol>
+      <symbol id="github" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+    </svg>
+    <main class="position-relative d-grid min-vh-100 lg:grid-cols-2">
+      <a href="#" class="btn-text theme-secondary position-absolute top-0 end-0 mt-5 me-5 md:mt-9 md:me-9">Login</a>
+      <div class="d-none lg:d-flex flex-column p-11 bg-subtle-primary fg-emphasis-primary">
+        <div class="d-flex align-items-center fs-lg fw-medium">
+          <svg class="bi bi-lg me-3" aria-hidden="true"><use href="#command"/></svg>
+          Acme Inc
+        </div>
+        <figure class="blockquote mt-auto mb-0">
+          <blockquote class="text-balance">
+            <p>&ldquo;This library has saved me countless hours of work and helped me deliver stunning designs to my clients faster than ever before.&rdquo;</p>
+          </blockquote>
+          <figcaption class="blockquote-footer fg-emphasis-primary">Sofia Davis</figcaption>
+        </figure>
+      </div>
+      <div class="d-flex align-items-center justify-content-center px-7 py-12 lg:p-9">
+        <div class="mx-auto d-flex w-100 auth-max-350 flex-column justify-content-center gap-7">
+          <div class="d-flex flex-column gap-3 text-center">
+            <h1 class="fs-xl fw-semibold mb-0">Create an account</h1>
+            <p class="fs-sm fg-2 mb-0">Enter your email below to create your account</p>
+          </div>
+          <div class="d-grid gap-7">
+            <form id="user-auth-form" class="d-flex flex-column gap-8">
+              <div class="form-field">
+                <label for="email" class="visually-hidden">Email</label>
+                <input id="email" type="email" class="form-control" placeholder="name@example.com" autocapitalize="none" autocomplete="email" autocorrect="off">
+              </div>
+              <button type="submit" class="btn-solid theme-primary">
+                <span class="spinner-border d-none" aria-hidden="true"></span>
+                Sign In with Email
+              </button>
+            </form>
+            <div class="d-flex align-items-center gap-3 fs-sm fg-2">
+              <hr class="flex-grow-1 m-0">
+              <span>Or continue with</span>
+              <hr class="flex-grow-1 m-0">
+            </div>
+            <button type="button" class="btn-outline theme-secondary" data-auth-loading>
+              <svg class="bi" aria-hidden="true"><use href="#github"/></svg>
+              <span class="spinner-border d-none" aria-hidden="true"></span>
+              GitHub
+            </button>
+          </div>
+          <p class="fs-sm fg-2 text-center px-7 mb-0">By clicking continue, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

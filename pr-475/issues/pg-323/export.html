@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-323: data-bs-config is ignored when its JSON contains a %</title>
+    <!--
+      pg-323: data-bs-config is ignored when its JSON contains a %
+      data-bs-config is ignored as a whole when its JSON contains a %, because normalizeData() decodes it with decodeURIComponent() first. A Scrollspy with topMargin 20% keeps its defaults.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-323
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <section>
+        <div class="mb-3">
+          <button type="button" class="btn-solid theme-primary" id="run">Create the Scrollspies</button>
+        </div>
+        <div id="stage" class="mb-3"></div>
+        <p id="result" role="status" class="mb-0"></p>
+      </section>
+    </main>
+
+    <script type="module">
+      import { assert } from './assert.js'
+
+      document.getElementById('run').addEventListener('click', async () => {
+        const result = document.getElementById('result')
+        const { pass, details } = await assert()
+        result.textContent = `${pass ? 'Fixed' : 'Bug'}: ${details}`
+      })
+    </script>
+  </body>
+</html>

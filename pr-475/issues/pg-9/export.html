@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-9: The range track reads an undeclared shadow token</title>
+    <!--
+      pg-9: The range track reads an undeclared shadow token
+      Range: - -range-track-box-shadow is read without a fallback but never declared, so the track has no shadow.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-9
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <p class="mb-0">Measured here: <code id="measured">…</code></p>
+
+      <section>
+        <div data-playground-repro>
+          <div class="vstack gap-3">
+            <div>
+              <label for="range" class="form-label">Example range</label>
+              <div class="form-range">
+                <input type="range" class="form-range-input" id="range">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      const reads = (rules, name) => [...rules].some(rule =>
+        (rule.style ? rule.style.cssText.includes(`var(${name}`) : false) ||
+        (rule.cssRules ? reads(rule.cssRules, name) : false))
+
+      const show = () => {
+        const name = '--bs-range-track-box-shadow'
+        const range = getComputedStyle(document.querySelector('.form-range-input'))
+        const stillRead = [...document.styleSheets].some(sheet => reads(sheet.cssRules, name))
+        document.getElementById('measured').textContent =
+          `${name}: ${range.getPropertyValue(name).trim() || '(undefined)'}, still read by a rule: ${stillRead ? 'yes' : 'no'}`
+      }
+
+      if (document.readyState === 'complete') {
+        show()
+      } else {
+        window.addEventListener('load', show, { once: true })
+      }
+    </script>
+  </body>
+</html>

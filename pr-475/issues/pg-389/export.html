@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-389: Issue reproduction</title>
+    <!--
+      pg-389: Issue reproduction
+      The active item of a translucent menu has white text on a 80% primary fill, lighter than the opaque menu's, in light mode.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-389
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <p class="mb-0">Measured here: <code id="measured">…</code></p>
+
+      <section>
+        <div data-playground-repro>
+          <div class="row g-3">
+            <div class="md:col-6">
+              <h3 class="h6">Translucent menu</h3>
+              <div class="menu menu-translucent pg-static-menu" id="translucent">
+                <a class="menu-item active" href="#">Active menu item</a>
+                <a class="menu-item" href="#">Menu item</a>
+                <a class="menu-item" href="#">Menu item</a>
+                <hr class="menu-divider">
+                <a class="menu-item theme-danger" href="#">Danger menu item</a>
+              </div>
+            </div>
+            <div class="md:col-6">
+              <h3 class="h6">Plain menu</h3>
+              <div class="menu pg-static-menu" id="plain">
+                <a class="menu-item active" href="#">Active menu item</a>
+                <a class="menu-item" href="#">Menu item</a>
+                <a class="menu-item" href="#">Menu item</a>
+                <hr class="menu-divider">
+                <a class="menu-item theme-danger" href="#">Danger menu item</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      import { measure } from './assert.js'
+
+      const { details } = await measure()
+      document.getElementById('measured').textContent = details
+    </script>
+  </body>
+</html>

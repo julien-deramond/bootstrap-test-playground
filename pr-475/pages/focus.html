@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Focus rings</title>
+    <meta name="description" content="Focus rings: every focusable component (buttons of every variant, links, form controls, checks, radios, switches, range, OTP, chips, chip input, nav links, menu items, list group actions, pagination, accordion, close button, carousel controls and indicators, card with a stretched link) on bg-body, bg-1, bg-2, bg-3 and every theme's solid background, for every theme color, to check each ring's contrast when focused.">
+    <meta name="playground-tags" content="components, forms, a11y">
+    <link rel="icon" href="/bootstrap-test-playground/pr-475/favicon.svg" type="image/svg+xml">
+    <script>
+// Applies the playground preferences (color mode, direction, primary hue,
+// styles config and Bootstrap source) before first paint. Every page's <head>
+// loads it first, as a classic script that vite.config.js inlines (see #240).
+// The toolbar in src/js/toolbar.js drives it.
+//
+// Saved preferences live in localStorage. URL parameters override them for the
+// current view only, without saving: ?theme=dark&dir=rtl&primary=teal&config=name
+//
+// `css` and `js` pick where Bootstrap comes from: `src`, compiled from its Sass
+// and TypeScript (the default), or `dist`, the files the package ships
+// (dist/css/bootstrap.css, js/dist/), built from the same source by
+// scripts/lib/dist.mjs. ?css=dist&js=dist tests what users get.
+//
+// A page marked `<html data-playground-fixed>`, like the home page, keeps
+// Bootstrap's defaults: none of the preferences apply to it, but it can still
+// read and save them for the example pages.
+//
+// View flags, for screenshots and embeds:
+// - `embed` hides the toolbar, as used by /compare.html
+// - `chrome=0` also hides the page's own playground UI, marked with
+//   `data-playground-chrome` (kitchen sink header, navigation, headings)
+// - `frame=0` removes the kitchen sink's `.bd-example` frame
+// - `section=<id>` shows one kitchen sink example only
+// - `freeze` makes the page render the same way every time: no animations,
+//   transitions or caret, carousels don't autoplay, a fixed date and a seeded
+//   Math.random
+(() => {
+  'use strict'
+
+  const STORAGE_KEY = 'bootstrap-playground'
+  const DEFAULTS = { colorMode: 'auto', dir: 'ltr', primary: 'default', config: 'working', css: 'src', js: 'src' }
+  const URL_PARAMS = { theme: 'colorMode', dir: 'dir', primary: 'primary', config: 'config', css: 'css', js: 'js' }
+
+  const params = new URLSearchParams(location.search)
+  const overrides = {}
+  for (const [param, key] of Object.entries(URL_PARAMS)) {
+    if (params.has(param)) {
+      overrides[key] = params.get(param)
+    }
+  }
+
+  // Sub-keys of a `$theme-colors` entry, mapped like Bootstrap's own `primary`.
+  const themeTokens = hue => ({
+    base: `var(--bs-${hue}-500)`,
+    fg: `light-dark(var(--bs-${hue}-600), var(--bs-${hue}-400))`,
+    'fg-emphasis': `light-dark(var(--bs-${hue}-800), var(--bs-${hue}-200))`,
+    bg: `var(--bs-${hue}-500)`,
+    'bg-subtle': `light-dark(var(--bs-${hue}-100), var(--bs-${hue}-900))`,
+    'bg-muted': `light-dark(var(--bs-${hue}-200), var(--bs-${hue}-800))`,
+    border: `light-dark(var(--bs-${hue}-300), var(--bs-${hue}-600))`,
+    'focus-ring': `light-dark(color-mix(in oklch, var(--bs-${hue}-500) 50%, var(--bs-bg-body)), color-mix(in oklch, var(--bs-${hue}-500) 75%, var(--bs-bg-body)))`,
+    contrast: 'var(--bs-white)'
+  })
+
+  const read = () => {
+    try {
+      return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(STORAGE_KEY)) }
+    } catch {
+      return { ...DEFAULTS }
+    }
+  }
+
+  const effective = () => ({ ...read(), ...overrides })
+
+  const fixed = document.documentElement.hasAttribute('data-playground-fixed')
+
+  // Swapping the stylesheets needs the list of configs and the dist stylesheet's
+  // URL, which only the module script (src/js/configs.js) has. It registers
+  // itself here, and gets the whole preferences (`config` and `css`).
+  let configHandler = null
+
+  const apply = prefs => {
+    if (fixed) {
+      return
+    }
+
+    const html = document.documentElement
+
+    if (prefs.colorMode === 'auto') {
+      html.removeAttribute('data-bs-theme')
+    } else {
+      html.setAttribute('data-bs-theme', prefs.colorMode)
+    }
+
+    html.setAttribute('dir', prefs.dir)
+
+    for (const key of Object.keys(themeTokens('blue'))) {
+      html.style.removeProperty(`--bs-primary-${key}`)
+    }
+
+    if (prefs.primary !== 'default') {
+      for (const [key, value] of Object.entries(themeTokens(prefs.primary))) {
+        html.style.setProperty(`--bs-primary-${key}`, value)
+      }
+    }
+
+    configHandler?.(prefs)
+  }
+
+  // Saving a key drops its URL override, so the toolbar always wins.
+  const save = changes => {
+    const prefs = { ...read(), ...changes }
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs))
+    } catch {}
+
+    const url = new URL(location.href)
+    for (const [param, key] of Object.entries(URL_PARAMS)) {
+      if (key in changes) {
+        delete overrides[key]
+        url.searchParams.delete(param)
+      }
+    }
+
+    history.replaceState(history.state, '', url)
+    apply(effective())
+    // The toolbar and the home page's configs follow saves made by the other.
+    window.dispatchEvent(new Event('playground-prefs'))
+    return effective()
+  }
+
+  const reset = () => save({ ...DEFAULTS })
+
+  const setConfigHandler = handler => {
+    configHandler = handler
+    handler(effective())
+  }
+
+  const addStyle = (id, css) => {
+    const style = document.createElement('style')
+    style.id = id
+    style.textContent = css
+    document.head.append(style)
+    return style
+  }
+
+  // Hide the page until a non-default config's stylesheets, or the dist
+  // stylesheet, are swapped in, so it doesn't flash with the working styles
+  // first. Failsafe after 3 seconds.
+  if (!fixed && (effective().config !== 'working' || effective().css === 'dist')) {
+    const style = addStyle('playground-config-pending', 'html { visibility: hidden !important; }')
+    setTimeout(() => style.remove(), 3000)
+  }
+
+  const chromeless = params.get('chrome') === '0'
+  const frozen = params.has('freeze') && !['0', 'false'].includes(params.get('freeze'))
+  const section = params.get('section')
+
+  // Unlayered, so these win over the pages' `@layer custom` rules.
+  const viewRules = []
+  if (chromeless) {
+    viewRules.push('[data-playground-chrome] { display: none !important; }')
+  }
+
+  if (params.get('frame') === '0') {
+    viewRules.push('.bd-example { --bd-example-padding: 0px; background-color: transparent; border: 0; border-radius: 0; }')
+  }
+
+  if (section) {
+    viewRules.push(`.bd-kitchen-sink-section:not([aria-labelledby="${CSS.escape(section)}"]) { display: none !important; }`)
+  }
+
+  if (frozen) {
+    viewRules.push(
+      'html { scroll-behavior: auto !important; }',
+      '*, ::before, ::after { animation: none !important; transition: none !important; caret-color: transparent !important; }'
+    )
+
+    // A fixed "today" (the datepicker's month, relative dates) that still
+    // ticks, so code measuring elapsed time keeps working. Noon UTC is the
+    // same calendar day in nearly every time zone.
+    const RealDate = Date
+    const start = RealDate.UTC(2026, 0, 15, 12)
+    const now = () => start + Math.floor(performance.now())
+    window.Date = new Proxy(RealDate, {
+      construct: (target, args, newTarget) => Reflect.construct(target, args.length > 0 ? args : [now()], newTarget),
+      apply: () => new RealDate(now()).toString(),
+      get: (target, key, receiver) => (key === 'now' ? now : Reflect.get(target, key, receiver))
+    })
+
+    // Seeded Math.random (mulberry32), for generated ids and demo data.
+    let seed = 0x2F6B_3A91
+    Math.random = () => {
+      seed = (seed + 0x6D2B_79F5) | 0
+      let value = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+      value = (value + Math.imul(value ^ (value >>> 7), 61 | value)) ^ value
+      return ((value ^ (value >>> 14)) >>> 0) / 4_294_967_296
+    }
+  }
+
+  if (viewRules.length > 0) {
+    addStyle('playground-view', viewRules.join('\n'))
+  }
+
+  window.playgroundPrefs = {
+    DEFAULTS,
+    URL_PARAMS,
+    embedded: params.has('embed') || chromeless,
+    fixed,
+    frozen,
+    read,
+    effective,
+    save,
+    reset,
+    apply,
+    setConfigHandler
+  }
+
+  apply(effective())
+})()
+</script>
+    <style>[data-focus-surface]{flex-direction:column;gap:1rem;padding:1rem;display:flex}[data-focus-surface]>div{flex-wrap:wrap;align-items:center;gap:1rem;display:flex}[data-focus^=range]{width:12rem}.pg-theme-name{width:6rem}</style>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/modulepreload-polyfill-P2Xu9kJm.js"></script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/_virtual_playground-pages-vKXQSeZa.js"></script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/page-index-Bw8QXOEx.js"></script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/last-update-BrzV7MdX.js"></script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/preload-helper-C-V9XuXn.js"></script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/main-BoTDVRl5.js"></script>
+    <link rel="stylesheet" data-playground-styles="main" crossorigin href="/bootstrap-test-playground/pr-475/assets/index-CnXlIq3Y.css">
+    <link rel="stylesheet" data-playground-styles="tokens" crossorigin href="/bootstrap-test-playground/pr-475/assets/tokens-B4oSpHCU.css">
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/bootstrap-test-playground/pr-475/">Playground</a> / Pages</p>
+        <h1>Focus rings</h1>
+        <p class="fs-lg fg-2">
+          Every focusable component on <code>bg-body</code>, <code>bg-1</code> to <code>bg-3</code> and every theme's solid background, for every theme color. The accessibility scan focuses each one and measures its ring, and the visual suite captures them focused.
+        </p>
+        <p class="fg-2">
+          A ring passes when the pixels it changes contrast at least 3:1 with what was there before focus, over at least the area of a 2px perimeter of the component (WCAG 2.4.13). See <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/105">#105</a>, and <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/7">#7</a> for chips.
+        </p>
+      </header>
+
+      <!-- Each surface gets the components of #focus-components, and the
+           neutral ones a row of #focus-themed per theme color, from the script
+           at the end of the page. Each [data-focus] element is what gets
+           measured and captured, named by its value within its surface. What
+           gets focused is its [data-focus-target] descendant, the element
+           itself when it's focusable, or its first focusable descendant. The
+           ring is measured against the whole component, or against the
+           sub-component its data-focus-area selector names. -->
+      <h2 class="h5" data-playground-chrome><code>bg-body</code></h2>
+      <section class="bg-body rounded-3 mb-5" data-focus-surface="bg-body" data-focus-themed aria-label="bg-body"></section>
+
+      <h2 class="h5" data-playground-chrome><code>bg-1</code></h2>
+      <section class="bg-1 rounded-3 mb-5" data-focus-surface="bg-1" data-focus-themed aria-label="bg-1"></section>
+
+      <h2 class="h5" data-playground-chrome><code>bg-2</code></h2>
+      <section class="bg-2 rounded-3 mb-5" data-focus-surface="bg-2" data-focus-themed aria-label="bg-2"></section>
+
+      <h2 class="h5" data-playground-chrome><code>bg-3</code></h2>
+      <section class="bg-3 rounded-3 mb-5" data-focus-surface="bg-3" data-focus-themed aria-label="bg-3"></section>
+
+      <h2 class="h5" data-playground-chrome>Solid theme backgrounds</h2>
+      <section class="bg-primary fg-contrast-primary rounded-3 mb-3" data-focus-surface="primary" aria-label="primary"></section>
+      <section class="bg-accent fg-contrast-accent rounded-3 mb-3" data-focus-surface="accent" aria-label="accent"></section>
+      <section class="bg-success fg-contrast-success rounded-3 mb-3" data-focus-surface="success" aria-label="success"></section>
+      <section class="bg-danger fg-contrast-danger rounded-3 mb-3" data-focus-surface="danger" aria-label="danger"></section>
+      <section class="bg-warning fg-contrast-warning rounded-3 mb-3" data-focus-surface="warning" aria-label="warning"></section>
+      <section class="bg-info fg-contrast-info rounded-3 mb-3" data-focus-surface="info" aria-label="info"></section>
+      <section class="bg-inverse fg-contrast-inverse rounded-3 mb-3" data-focus-surface="inverse" aria-label="inverse"></section>
+      <section class="bg-secondary fg-contrast-secondary rounded-3 mb-3" data-focus-surface="secondary" aria-label="secondary"></section>
+
+      <template id="focus-components">
+        <div>
+          <a href="#" data-focus="link">Link</a>
+          <button type="button" class="btn-close" aria-label="Close" data-focus="btn-close"></button>
+          <button type="button" class="btn-icon btn-sm" aria-label="Next" data-focus="btn-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg>
+          </button>
+          <input type="text" class="form-control w-auto" aria-label="Text" data-focus="form-control">
+          <select class="form-control w-auto" aria-label="Select" data-focus="select">
+            <option>Choose one…</option>
+          </select>
+          <input type="text" class="form-control w-auto is-invalid" aria-label="Invalid text" data-focus="form-control-invalid">
+          <input type="text" class="form-control w-auto is-valid" aria-label="Valid text" data-focus="form-control-valid">
+          <input type="checkbox" class="check" aria-label="Check" data-focus="check">
+          <input type="checkbox" class="check is-invalid" aria-label="Invalid check" data-focus="check-invalid">
+          <input type="radio" class="radio" aria-label="Radio" data-focus="radio">
+          <div class="switch" data-focus="switch">
+            <input type="checkbox" role="switch" switch aria-label="Switch">
+          </div>
+          <div class="form-range" data-focus="range">
+            <input type="range" class="form-range-input" aria-label="Range">
+          </div>
+          <div class="otp" data-bs-otp data-focus="otp" data-focus-area=".otp-slot">
+            <input type="text" class="otp-input" maxlength="4" aria-label="Verification code">
+          </div>
+          <span class="chip" data-focus="chip-dismiss">
+            Dismissible
+            <button type="button" class="chip-dismiss" aria-label="Remove">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>
+            </button>
+          </span>
+          <div class="chip-input" data-bs-chips data-focus="chip-input">
+            <span class="chip" data-focus="chip-input-chip">Chip</span>
+            <input type="text" class="form-ghost" aria-label="Add a chip" data-focus-target>
+          </div>
+        </div>
+        <div>
+          <ul class="nav nav-tabs">
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#" data-focus="nav-tabs-active">Active</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" data-focus="nav-tabs-link">Link</a></li>
+          </ul>
+          <ul class="nav nav-pills">
+            <li class="nav-item"><a class="nav-link active" aria-current="page" href="#" data-focus="nav-pills-active">Active</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" data-focus="nav-pills-link">Link</a></li>
+          </ul>
+          <ul class="pagination mb-0">
+            <li class="page-item"><a class="page-link" href="#" data-focus="page-link">1</a></li>
+            <li class="page-item active"><a class="page-link" href="#" aria-current="page" data-focus="page-link-active">2</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="menu show position-static">
+            <a class="menu-item" href="#" data-focus="menu-item">Menu item</a>
+            <a class="menu-item active" href="#" aria-current="true" data-focus="menu-item-active">Active item</a>
+          </div>
+          <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action" data-focus="list-group-action">List group action</a>
+            <a href="#" class="list-group-item list-group-item-action active" aria-current="true" data-focus="list-group-action-active">Active action</a>
+          </div>
+          <div class="accordion">
+            <details class="accordion-item">
+              <summary class="accordion-header" data-focus="accordion">
+                Accordion item
+                <svg class="accordion-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m2 5 6 6 6-6"/></svg>
+              </summary>
+              <div class="accordion-body">Body</div>
+            </details>
+          </div>
+        </div>
+        <div>
+          <div class="carousel" id="focus-carousel">
+            <div class="d-flex gap-3 align-items-center">
+              <button type="button" class="btn-icon btn-sm" data-bs-target="#focus-carousel" data-bs-slide="prev" data-focus="carousel-control">
+                <span class="carousel-icon-prev" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <div class="carousel-indicators">
+                <button type="button" data-bs-target="#focus-carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1" data-focus="carousel-indicator-active"></button>
+                <button type="button" data-bs-target="#focus-carousel" data-bs-slide-to="1" aria-label="Slide 2" data-focus="carousel-indicator"></button>
+              </div>
+            </div>
+          </div>
+          <!-- The link is what gets focused and measured; the capture covers
+               the card, which its ::after makes clickable. -->
+          <div class="card" data-focus="card-stretched-link" data-focus-area=".stretched-link">
+            <div class="card-body">
+              <p class="mb-2">Card</p>
+              <a href="#" class="stretched-link">Stretched link</a>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- The script adds the theme's class to each [data-focus-theme] element
+           and the theme's name to each [data-focus]. -->
+      <template id="focus-themed">
+        <div>
+          <span class="pg-theme-name small" data-playground-chrome></span>
+          <button type="button" class="btn-solid" data-focus-theme data-focus="btn-solid">Solid</button>
+          <button type="button" class="btn-outline" data-focus-theme data-focus="btn-outline">Outline</button>
+          <button type="button" class="btn-subtle" data-focus-theme data-focus="btn-subtle">Subtle</button>
+          <button type="button" class="btn-text" data-focus-theme data-focus="btn-text">Text</button>
+          <button type="button" class="btn btn-link" data-focus-theme data-focus="btn-link">Link</button>
+          <label class="btn-check btn-outline" data-focus-theme data-focus="btn-check">
+            <input type="checkbox">
+            Toggle
+          </label>
+          <input type="checkbox" class="check" checked aria-label="Check" data-focus-theme data-focus="check">
+          <input type="radio" class="radio" checked aria-label="Radio" data-focus-theme data-focus="radio">
+          <div class="switch" data-focus-theme data-focus="switch">
+            <input type="checkbox" role="switch" switch checked aria-label="Switch">
+          </div>
+          <ul class="pagination mb-0" data-focus-theme>
+            <li class="page-item"><a class="page-link" href="#" data-focus="page-link">1</a></li>
+          </ul>
+          <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action" data-focus-theme data-focus="list-group-action">Action</a>
+          </div>
+          <div class="menu show position-static">
+            <a class="menu-item" href="#" data-focus-theme data-focus="menu-item">Menu item</a>
+          </div>
+          <div class="chip-input" data-bs-chips data-focus-theme data-focus="chip-input">
+            <span class="chip" data-focus="chip-input-chip">Chip</span>
+            <input type="text" class="form-ghost" aria-label="Add a chip" data-focus-target>
+          </div>
+        </div>
+      </template>
+    </main>
+
+    <!-- A classic script, so the surfaces are filled while the page parses,
+         before Bootstrap's DOMContentLoaded sets up the chips and OTP inputs. -->
+    <script>
+      const THEMES = ['primary', 'accent', 'success', 'danger', 'warning', 'info', 'inverse', 'secondary']
+      const components = document.getElementById('focus-components')
+      const themed = document.getElementById('focus-themed')
+
+      for (const surface of document.querySelectorAll('[data-focus-surface]')) {
+        // One carousel per surface, so each gets its own id.
+        const content = components.content.cloneNode(true)
+        const suffix = `-${surface.dataset.focusSurface}`
+        for (const element of content.querySelectorAll('[id]')) {
+          element.id += suffix
+        }
+
+        for (const element of content.querySelectorAll('[data-bs-target]')) {
+          element.dataset.bsTarget += suffix
+        }
+
+        surface.append(content)
+
+        if (!surface.hasAttribute('data-focus-themed')) {
+          continue
+        }
+
+        for (const theme of THEMES) {
+          const row = themed.content.cloneNode(true)
+          row.querySelector('.pg-theme-name').textContent = theme
+          for (const element of row.querySelectorAll('[data-focus-theme]')) {
+            element.classList.add(`theme-${theme}`)
+          }
+
+          for (const element of row.querySelectorAll('[data-focus]')) {
+            element.dataset.focus += `-${theme}`
+          }
+
+          surface.append(row)
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-7: Chips have no focus indicator</title>
+    <!--
+      pg-7: Chips have no focus indicator
+      Chips have no visible focus indicator: .chip:focus-visible sets outline: 0 and puts no focus ring in its place.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-7
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <p class="mb-0">Measured on the focused chip: <code id="measured">focus a chip</code></p>
+
+      <section>
+        <div data-playground-repro>
+          <div class="chip-input" data-bs-chips>
+            <label class="chip-input-label" for="skillsInput">Skills:</label>
+            <span class="chip">
+              JavaScript
+            </span>
+            <span class="chip">
+              TypeScript
+            </span>
+            <input type="text" class="form-ghost" id="skillsInput" placeholder="Add more…" />
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      document.addEventListener('focusin', event => {
+        const chip = event.target.closest('.chip')
+        if (!chip) {
+          return
+        }
+
+        const style = getComputedStyle(chip)
+        document.getElementById('measured').textContent =
+          `:focus-visible ${chip.matches(':focus-visible') ? 'matches' : 'doesn\'t match'}, outline-style: ${style.outlineStyle}, box-shadow: ${style.boxShadow}`
+      })
+    </script>
+  </body>
+</html>

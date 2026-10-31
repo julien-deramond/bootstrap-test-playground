@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-145: Issue reproduction</title>
+    <!--
+      pg-145: Issue reproduction
+      With reduced motion, .spinner-rotate keeps its 1s rotation while .spinner-border and .spinner-grow slow to 1.5s.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-145
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <section>
+        <div data-playground-repro>
+          <div class="d-flex align-items-center gap-4">
+            <div class="spinner-border" role="status"><span class="visually-hidden">Loading…</span></div>
+            <div class="spinner-grow" role="status"><span class="visually-hidden">Loading…</span></div>
+            <svg id="spinnerRotate" class="bi spinner-rotate" width="32" height="32" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentcolor" stroke-width="2" stroke-linecap="round" role="img" aria-label="Loading…">
+              <path d="M8 1V4"/>
+              <path opacity="0.8" d="M3.05 3.05L5.17 5.17"/>
+              <path opacity="0.6" d="M4 8L1 8"/>
+              <path opacity="0.5" d="M5.17 10.83L3.05 12.95"/>
+              <path opacity="0.4" d="M8 12V15"/>
+              <path opacity="0.3" d="M10.83 10.83L12.95 12.95"/>
+              <path opacity="0.2" d="M15 8L12 8"/>
+              <path opacity="0.1" d="M12.95 3.05L10.83 5.17"/>
+            </svg>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Reproduction-specific JavaScript. Bootstrap is available as `window.bootstrap`.
+    </script>
+  </body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Matrix</title>
+    <link rel="icon" href="/bootstrap-test-playground/pr-475/favicon.svg" type="image/svg+xml">
+    <style>body{flex-direction:column;height:100vh;margin:0;display:flex}.matrix-bar select{inline-size:auto}.matrix-bar{--bs-link-color:var(--bs-primary-fg)}.matrix-bar input[type=number]{inline-size:6rem}.matrix-configs{position:relative}.matrix-configs>summary{cursor:pointer}.matrix-configs-panel{z-index:10;background:var(--bs-bg-body);border:1px solid var(--bs-border-color);border-radius:var(--bs-border-radius);max-block-size:70vh;inline-size:max-content;max-inline-size:min(40rem,90vw);box-shadow:var(--bs-box-shadow);gap:1rem;padding:1rem;display:grid;position:absolute;inset-block-start:calc(100% + .5rem);overflow:auto}.matrix-configs-panel fieldset{flex-wrap:wrap;gap:.25rem 1rem;display:flex}.matrix-configs-panel legend{font-size:var(--bs-font-size-sm);font-weight:var(--bs-font-weight-semibold)}.matrix-scroll{background:var(--bs-bg-1);flex:1;min-height:0;overflow:auto}.matrix-grid{background:var(--bs-border-color);gap:1px;inline-size:max-content;display:grid}.matrix-grid>*{background:var(--bs-bg-body)}.matrix-head{z-index:2;font-size:var(--bs-font-size-sm);font-weight:var(--bs-font-weight-semibold);padding:.5rem .75rem;position:sticky;inset-block-start:0}.matrix-row-head{z-index:1;font-size:var(--bs-font-size-sm);font-weight:var(--bs-font-weight-semibold);white-space:nowrap;padding:.5rem .75rem;position:sticky;inset-inline-start:0}.matrix-corner{z-index:3;inset-inline-start:0}.matrix-cell{position:relative;overflow:hidden}.matrix-cell iframe{transform-origin:0 0;border:0;display:block;position:absolute;inset-block-start:0;inset-inline-start:0}[dir=rtl] .matrix-cell iframe{transform-origin:100% 0}.matrix-cell .matrix-diff{pointer-events:none;mix-blend-mode:difference}</style>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/matrix-DmwM1Opr.js"></script>
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/modulepreload-polyfill-P2Xu9kJm.js">
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/_virtual_playground-pages-vKXQSeZa.js">
+    <link rel="stylesheet" crossorigin href="/bootstrap-test-playground/pr-475/assets/index-CnXlIq3Y.css">
+  </head>
+  <body>
+    <header class="matrix-bar d-flex flex-wrap gap-3 align-items-center p-2 border-bottom">
+      <a href="/bootstrap-test-playground/pr-475/" class="fw-bold">Playground</a>
+      <label class="d-flex gap-2 align-items-center">Page <select class="form-control form-control-sm" id="matrix-page"></select></label>
+      <label class="d-flex gap-2 align-items-center">Example <select class="form-control form-control-sm" id="matrix-section"></select></label>
+      <details class="matrix-configs" id="matrix-configs">
+        <summary class="btn-outline theme-secondary btn-sm">Configs <span id="matrix-config-count"></span></summary>
+        <div class="matrix-configs-panel" id="matrix-config-list"></div>
+      </details>
+      <span class="d-flex gap-2 align-items-center" role="group" aria-label="Themes">
+        Themes
+        <label class="d-flex gap-1 align-items-center"><input type="checkbox" class="check" data-row="theme" value="light"> light</label>
+        <label class="d-flex gap-1 align-items-center"><input type="checkbox" class="check" data-row="theme" value="dark"> dark</label>
+      </span>
+      <span class="d-flex gap-2 align-items-center" role="group" aria-label="Directions">
+        Dir
+        <label class="d-flex gap-1 align-items-center"><input type="checkbox" class="check" data-row="dir" value="ltr"> ltr</label>
+        <label class="d-flex gap-1 align-items-center"><input type="checkbox" class="check" data-row="dir" value="rtl"> rtl</label>
+      </span>
+      <label class="d-flex gap-2 align-items-center">Width <input type="number" class="form-control form-control-sm" id="matrix-width" min="240" max="1600" step="40"></label>
+      <label class="d-flex gap-2 align-items-center">Zoom
+        <select class="form-control form-control-sm" id="matrix-zoom">
+          <option value="0.5">50%</option>
+          <option value="0.75">75%</option>
+          <option value="1">100%</option>
+        </select>
+      </label>
+      <label class="d-flex gap-2 align-items-center"><input type="checkbox" class="check" id="matrix-freeze"> Freeze</label>
+      <label class="d-flex gap-2 align-items-center" title="Blends the first column over every cell of its row: what doesn't change turns black"><input type="checkbox" class="check" id="matrix-diff"> Diff against first column</label>
+      <a id="matrix-open" href="#" class="ms-auto">Open page</a>
+    </header>
+    <main class="matrix-scroll" tabindex="0" aria-label="Matrix">
+      <div class="matrix-grid" id="matrix-grid"></div>
+    </main>
+  </body>
+</html>

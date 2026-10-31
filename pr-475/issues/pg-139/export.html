@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-139: Datepicker arrows and range corners in RTL</title>
+    <!--
+      pg-139: Datepicker arrows and range corners in RTL
+      Datepicker: in RTL the previous and next arrows are rotated as in LTR, so they point the wrong way, and the first and last days of a selected range keep their LTR corner radii.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-139
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <p class="mb-0">Measured here: <code id="measured">…</code></p>
+
+      <section>
+        <div data-playground-repro>
+          <div dir="rtl">
+            <div data-bs-toggle="datepicker" data-bs-inline="true" data-bs-selection-mode="multiple-ranged" data-bs-selected-dates='["2026-10-12","2026-10-16"]'></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Shows the verdict of assert.js on the page.
+      import('./assert.js').then(async ({ assert }) => {
+        const { details } = await assert()
+        document.getElementById('measured').textContent = details
+      })
+    </script>
+  </body>
+</html>

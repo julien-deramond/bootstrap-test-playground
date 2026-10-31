@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-160: Components that start on window load never do when Bootstrap loads late</title>
+    <!--
+      pg-160: Components that start on window load never do when Bootstrap loads late
+      Bootstrap imported after window load: the autoplaying carousel and scrollspy, which only start from a load listener, stay inert.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-160
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <section>
+        <div data-playground-repro>
+          <div class="chip-input" data-bs-chips>
+            <label class="chip-input-label" for="skillsInput">Skills (control):</label>
+            <span class="chip">JavaScript</span>
+            <input type="text" class="form-ghost" id="skillsInput" placeholder="Add more…">
+          </div>
+
+          <div class="mt-4">
+            <label for="range1" class="form-label">Range (control)</label>
+            <div class="form-range">
+              <input type="range" class="form-range-input" id="range1">
+            </div>
+          </div>
+
+          <div id="carouselAutoplaying" class="carousel slide mt-4" data-bs-autoplay="true" data-bs-interval="1500" role="region" aria-label="Autoplaying carousel">
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <svg aria-label="Placeholder: First slide" class="d-block w-100 rounded-5" height="120" preserveAspectRatio="xMidYMid slice" role="img" width="800" xmlns="http://www.w3.org/2000/svg"><title>Placeholder</title><rect width="100%" height="100%" fill="#777" /><text x="50%" y="50%" fill="#fff" dy=".3em">First slide</text></svg>
+              </div>
+              <div class="carousel-item">
+                <svg aria-label="Placeholder: Second slide" class="d-block w-100 rounded-5" height="120" preserveAspectRatio="xMidYMid slice" role="img" width="800" xmlns="http://www.w3.org/2000/svg"><title>Placeholder</title><rect width="100%" height="100%" fill="#555" /><text x="50%" y="50%" fill="#fff" dy=".3em">Second slide</text></svg>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselAutoplaying" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselAutoplaying" data-bs-slide-to="1" aria-label="Slide 2"></button>
+              </div>
+              <div>
+                <button class="btn-icon btn-sm carousel-control-play-pause" type="button" data-bs-target="#carouselAutoplaying" aria-label="Pause" data-bs-pause-label="Pause" data-bs-play-label="Play">
+                  <span class="carousel-icon-pause" aria-hidden="true"></span>
+                  <span class="carousel-icon-play" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <nav id="navbarSpy" class="nav nav-pills mt-4" aria-label="Scrollspy sections">
+            <a class="nav-link" href="#spyHeading1">First</a>
+            <a class="nav-link" href="#spyHeading2">Second</a>
+            <a class="nav-link" href="#spyHeading3">Third</a>
+          </nav>
+          <div class="bg-1 p-3 rounded-2 mt-2" style="height: 8rem; overflow-y: auto;" data-bs-spy="scroll" data-bs-target="#navbarSpy" data-bs-root-margin="0px 0px -40%" tabindex="0" role="region" aria-label="Scrollspy content">
+            <h4 id="spyHeading1">First heading</h4>
+            <p>Placeholder content for the scrollspy. Scroll down: the link of the visible heading should be highlighted above.</p>
+            <h4 id="spyHeading2">Second heading</h4>
+            <p>Placeholder content for the scrollspy. Scroll down: the link of the visible heading should be highlighted above.</p>
+            <h4 id="spyHeading3">Third heading</h4>
+            <p>Placeholder content for the scrollspy. Scroll down: the link of the visible heading should be highlighted above.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Same setup as /src/js/main.js, except that Bootstrap is imported after
+      // window.load and nothing replays the events it missed.
+      import { configs, initConfigs } from '/src/js/configs.js'
+      import { initReproduction } from '/src/js/reproduction.js'
+      import { mountToolbar } from '/src/js/toolbar.js'
+      import source, { onChange as onSourceChange } from 'virtual:bootstrap-source'
+
+      const { swappable } = window.playgroundPrefs ? initConfigs(window.playgroundPrefs) : { swappable: false }
+
+      // Before the delay: the dark copy has to exist before this script awaits.
+      initReproduction()
+
+      if (document.readyState !== 'complete') {
+        await new Promise(resolve => window.addEventListener('load', resolve, { once: true }))
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      const bootstrap = window.playgroundPrefs?.effective().js === 'dist' ? await import('bootstrap') : await import('bootstrap/js/src/index.ts')
+      window.bootstrap = bootstrap
+
+      mountToolbar({ source, onSourceChange, configs, swappable })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1 @@
+import"../../modulepreload-polyfill-P2Xu9kJm.js";import"../../main-BoTDVRl5.js";document.addEventListener(`focusin`,e=>{let t=e.target.closest(`.chip`);if(!t)return;let n=getComputedStyle(t);document.getElementById(`measured`).textContent=`:focus-visible ${t.matches(`:focus-visible`)?`matches`:`doesn't match`}, outline-style: ${n.outlineStyle}, box-shadow: ${n.boxShadow}`});

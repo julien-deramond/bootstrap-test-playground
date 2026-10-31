@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-272: Menu items, list group actions and links have no focus ring of their own</title>
+    <!--
+      pg-272: Menu items, list group actions and links have no focus ring of their own
+      Menu items, list group actions and links on solid backgrounds draw no focus ring of their own: a focused menu item shows only its hover background, an active one nothing, and the others the browser's default outline.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-272
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <section>
+        <div data-playground-repro>
+          <div class="d-flex flex-wrap gap-4 align-items-start">
+            <div class="menu show position-static" id="menu-focus">
+              <a class="menu-item" href="#" data-ring="menu-item">Menu item</a>
+              <a class="menu-item active" href="#" aria-current="true" data-ring="menu-item-active">Active item</a>
+            </div>
+            <div class="list-group">
+              <a href="#" class="list-group-item list-group-item-action" data-ring="list-group-action">List group action</a>
+              <a href="#" class="list-group-item list-group-item-action active" aria-current="true" data-ring="list-group-action-active">Active action</a>
+            </div>
+            <div class="d-flex flex-column gap-3">
+              <div class="bg-primary fg-contrast-primary rounded-3 p-3"><a href="#" data-ring="link-primary">Link on primary</a></div>
+              <div class="bg-danger fg-contrast-danger rounded-3 p-3"><a href="#" data-ring="link-danger">Link on danger</a></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

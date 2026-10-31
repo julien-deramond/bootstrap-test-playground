@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-137: translate-middle with logical start and end in RTL</title>
+    <!--
+      pg-137: translate-middle with logical start and end in RTL
+      Position utilities: .translate-middle and .translate-middle-x use a physical translateX(-50%) while .start-* and .end-* are logical, so in RTL the element is pulled away from the edge instead of being centered on it.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-137
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <p class="mb-0">Measured here: <code id="measured">…</code></p>
+
+      <section>
+        <div data-playground-repro>
+          <div class="row g-5 py-4">
+            <div class="col-6" dir="ltr">
+              <p class="small fg-2">LTR</p>
+              <div class="position-relative border rounded mx-4" style="height: 5rem" data-box>
+                <span class="position-absolute top-0 start-100 translate-middle badge theme-danger" data-marker="start-100">1</span>
+                <span class="position-absolute bottom-0 start-0 translate-middle-x badge theme-primary" data-marker="start-0-x">2</span>
+                <span class="position-absolute bottom-0 end-0 translate-middle-x badge theme-success" data-marker="end-0-x">3</span>
+              </div>
+            </div>
+            <div class="col-6" dir="rtl">
+              <p class="small fg-2">RTL</p>
+              <div class="position-relative border rounded mx-4" style="height: 5rem" data-box>
+                <span class="position-absolute top-0 start-100 translate-middle badge theme-danger" data-marker="start-100">1</span>
+                <span class="position-absolute bottom-0 start-0 translate-middle-x badge theme-primary" data-marker="start-0-x">2</span>
+                <span class="position-absolute bottom-0 end-0 translate-middle-x badge theme-success" data-marker="end-0-x">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Shows the verdict of assert.js on the page.
+      import('./assert.js').then(async ({ assert }) => {
+        const { details } = await assert()
+        document.getElementById('measured').textContent = details
+      })
+    </script>
+  </body>
+</html>

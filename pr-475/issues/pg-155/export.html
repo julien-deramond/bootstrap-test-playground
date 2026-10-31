@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-155: Issue reproduction</title>
+    <!--
+      pg-155: Issue reproduction
+      After Escape closes the datepicker, show and hide events stop firing, and so do shown and hidden on the next open.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-155
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <section>
+        <div data-playground-repro>
+          <label for="datepicker1" class="form-label">Datepicker</label>
+          <input type="text" class="form-control w-12" id="datepicker1" data-bs-toggle="datepicker" autocomplete="off" placeholder="Choose date…">
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Logs every datepicker event of #datepicker1 in the list above.
+      const input = document.getElementById('datepicker1')
+      const log = document.getElementById('event-log')
+      for (const name of ['show', 'shown', 'hide', 'hidden']) {
+        input.addEventListener(`${name}.bs.datepicker`, () => {
+          const item = document.createElement('li')
+          item.textContent = `${name}.bs.datepicker`
+          log.append(item)
+        })
+      }
+    </script>
+  </body>
+</html>

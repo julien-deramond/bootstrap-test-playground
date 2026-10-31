@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-178: Issue reproduction</title>
+    <!--
+      pg-178: Issue reproduction
+      The chip input ignores the - -btn-input-* sizing tokens: with chips in it, it is 54px tall next to 38px controls, and keeps those 54px when the tokens change.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-178
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <section>
+        <div class="vstack gap-4">
+          <div data-case="default">
+            <div class="d-flex flex-wrap align-items-start gap-3">
+              <input type="text" class="form-control w-auto" value="Form control" aria-label="Form control, default">
+              <button type="button" class="btn-solid theme-primary">Button</button>
+              <div class="chip-input" data-bs-chips>
+                <span class="chip">JavaScript</span>
+                <span class="chip">TypeScript</span>
+                <input type="text" class="form-ghost" placeholder="Add more…" aria-label="Skills, default">
+              </div>
+            </div>
+          </div>
+
+          <div data-case="compact" style="--bs-btn-input-min-height: 1.875rem; --bs-btn-input-padding-y: .1875rem; --bs-btn-input-padding-x: .5rem; --bs-btn-input-font-size: .875rem">
+            <div class="d-flex flex-wrap align-items-start gap-3">
+              <input type="text" class="form-control w-auto" value="Form control" aria-label="Form control, compact">
+              <button type="button" class="btn-solid theme-primary">Button</button>
+              <div class="chip-input" data-bs-chips>
+                <span class="chip">JavaScript</span>
+                <span class="chip">TypeScript</span>
+                <input type="text" class="form-ghost" placeholder="Add more…" aria-label="Skills, compact">
+              </div>
+            </div>
+          </div>
+
+          <div data-case="spacious" style="--bs-btn-input-min-height: 3rem; --bs-btn-input-padding-y: .625rem; --bs-btn-input-padding-x: 1rem">
+            <div class="d-flex flex-wrap align-items-start gap-3">
+              <input type="text" class="form-control w-auto" value="Form control" aria-label="Form control, spacious">
+              <button type="button" class="btn-solid theme-primary">Button</button>
+              <div class="chip-input" data-bs-chips>
+                <span class="chip">JavaScript</span>
+                <span class="chip">TypeScript</span>
+                <input type="text" class="form-ghost" placeholder="Add more…" aria-label="Skills, spacious">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Reproduction-specific JavaScript. Bootstrap is available as `window.bootstrap`.
+    </script>
+  </body>
+</html>

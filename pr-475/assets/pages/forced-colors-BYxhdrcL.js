@@ -1,0 +1,1 @@
+import"../modulepreload-polyfill-P2Xu9kJm.js";/* empty css              *//* empty css                */import"../main-BoTDVRl5.js";var e=window.matchMedia(`(forced-colors: active)`),t=()=>{document.getElementById(`forcedColorsState`).textContent=e.matches?`active`:`off`};e.addEventListener(`change`,t),t();

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-254: Issue reproduction</title>
+    <!--
+      pg-254: Issue reproduction
+      The hover, active and checked states of solid, outline and subtle buttons darken the text color along with the background, so white text on a primary button drops to 3.32:1.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-254
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <section>
+        <div data-playground-repro>
+          <div class="d-flex flex-wrap align-items-center gap-2 mb-2" data-variant="solid">
+            <button type="button" class="btn-solid theme-primary" data-state="rest">Primary</button>
+            <button type="button" class="btn-solid theme-primary" data-state="hover">Primary</button>
+            <button type="button" class="btn-solid theme-primary" data-state="pressed">Primary</button>
+            <button type="button" class="btn-solid theme-primary active" data-state="active-class">Primary</button>
+            <label class="btn-check btn-solid theme-primary" data-state="checked"><input type="checkbox" checked>Primary</label>
+            <button type="button" class="btn-solid theme-secondary" data-state="rest">Secondary</button>
+            <button type="button" class="btn-solid theme-secondary" data-state="hover">Secondary</button>
+            <button type="button" class="btn-solid theme-secondary" data-state="pressed">Secondary</button>
+            <button type="button" class="btn-solid theme-secondary active" data-state="active-class">Secondary</button>
+            <label class="btn-check btn-solid theme-secondary" data-state="checked"><input type="checkbox" checked>Secondary</label>
+            <button type="button" class="btn-solid theme-accent" data-state="rest">Accent</button>
+            <button type="button" class="btn-solid theme-accent" data-state="hover">Accent</button>
+            <button type="button" class="btn-solid theme-accent" data-state="pressed">Accent</button>
+            <button type="button" class="btn-solid theme-accent active" data-state="active-class">Accent</button>
+            <label class="btn-check btn-solid theme-accent" data-state="checked"><input type="checkbox" checked>Accent</label>
+            <button type="button" class="btn-solid theme-success" data-state="rest">Success</button>
+            <button type="button" class="btn-solid theme-success" data-state="hover">Success</button>
+            <button type="button" class="btn-solid theme-success" data-state="pressed">Success</button>
+            <button type="button" class="btn-solid theme-success active" data-state="active-class">Success</button>
+            <label class="btn-check btn-solid theme-success" data-state="checked"><input type="checkbox" checked>Success</label>
+            <button type="button" class="btn-solid theme-danger" data-state="rest">Danger</button>
+            <button type="button" class="btn-solid theme-danger" data-state="hover">Danger</button>
+            <button type="button" class="btn-solid theme-danger" data-state="pressed">Danger</button>
+            <button type="button" class="btn-solid theme-danger active" data-state="active-class">Danger</button>
+            <label class="btn-check btn-solid theme-danger" data-state="checked"><input type="checkbox" checked>Danger</label>
+            <button type="button" class="btn-solid theme-warning" data-state="rest">Warning</button>
+            <button type="button" class="btn-solid theme-warning" data-state="hover">Warning</button>
+            <button type="button" class="btn-solid theme-warning" data-state="pressed">Warning</button>
+            <button type="button" class="btn-solid theme-warning active" data-state="active-class">Warning</button>
+            <label class="btn-check btn-solid theme-warning" data-state="checked"><input type="checkbox" checked>Warning</label>
+            <button type="button" class="btn-solid theme-info" data-state="rest">Info</button>
+            <button type="button" class="btn-solid theme-info" data-state="hover">Info</button>
+            <button type="button" class="btn-solid theme-info" data-state="pressed">Info</button>
+            <button type="button" class="btn-solid theme-info active" data-state="active-class">Info</button>
+            <label class="btn-check btn-solid theme-info" data-state="checked"><input type="checkbox" checked>Info</label>
+            <button type="button" class="btn-solid theme-inverse" data-state="rest">Inverse</button>
+            <button type="button" class="btn-solid theme-inverse" data-state="hover">Inverse</button>
+            <button type="button" class="btn-solid theme-inverse" data-state="pressed">Inverse</button>
+            <button type="button" class="btn-solid theme-inverse active" data-state="active-class">Inverse</button>
+            <label class="btn-check btn-solid theme-inverse" data-state="checked"><input type="checkbox" checked>Inverse</label>
+          </div>
+          <div class="d-flex flex-wrap align-items-center gap-2 mb-2" data-variant="outline">
+            <button type="button" class="btn-outline theme-primary" data-state="rest">Primary</button>
+            <button type="button" class="btn-outline theme-primary" data-state="hover">Primary</button>
+            <button type="button" class="btn-outline theme-primary" data-state="pressed">Primary</button>
+            <button type="button" class="btn-outline theme-primary active" data-state="active-class">Primary</button>
+            <label class="btn-check btn-outline theme-primary" data-state="checked"><input type="checkbox" checked>Primary</label>
+            <button type="button" class="btn-outline theme-secondary" data-state="rest">Secondary</button>
+            <button type="button" class="btn-outline theme-secondary" data-state="hover">Secondary</button>
+            <button type="button" class="btn-outline theme-secondary" data-state="pressed">Secondary</button>
+            <button type="button" class="btn-outline theme-secondary active" data-state="active-class">Secondary</button>
+            <label class="btn-check btn-outline theme-secondary" data-state="checked"><input type="checkbox" checked>Secondary</label>
+            <button type="button" class="btn-outline theme-accent" data-state="rest">Accent</button>
+            <button type="button" class="btn-outline theme-accent" data-state="hover">Accent</button>
+            <button type="button" class="btn-outline theme-accent" data-state="pressed">Accent</button>
+            <button type="button" class="btn-outline theme-accent active" data-state="active-class">Accent</button>
+            <label class="btn-check btn-outline theme-accent" data-state="checked"><input type="checkbox" checked>Accent</label>
+            <button type="button" class="btn-outline theme-success" data-state="rest">Success</button>
+            <button type="button" class="btn-outline theme-success" data-state="hover">Success</button>
+            <button type="button" class="btn-outline theme-success" data-state="pressed">Success</button>
+            <button type="button" class="btn-outline theme-success active" data-state="active-class">Success</button>
+            <label class="btn-check btn-outline theme-success" data-state="checked"><input type="checkbox" checked>Success</label>
+            <button type="button" class="btn-outline theme-danger" data-state="rest">Danger</button>
+            <button type="button" class="btn-outline theme-danger" data-state="hover">Danger</button>
+            <button type="button" class="btn-outline theme-danger" data-state="pressed">Danger</button>
+            <button type="button" class="btn-outline theme-danger active" data-state="active-class">Danger</button>
+            <label class="btn-check btn-outline theme-danger" data-state="checked"><input type="checkbox" checked>Danger</label>
+            <button type="button" class="btn-outline theme-warning" data-state="rest">Warning</button>
+            <button type="button" class="btn-outline theme-warning" data-state="hover">Warning</button>
+            <button type="button" class="btn-outline theme-warning" data-state="pressed">Warning</button>
+            <button type="button" class="btn-outline theme-warning active" data-state="active-class">Warning</button>
+            <label class="btn-check btn-outline theme-warning" data-state="checked"><input type="checkbox" checked>Warning</label>
+            <button type="button" class="btn-outline theme-info" data-state="rest">Info</button>
+            <button type="button" class="btn-outline theme-info" data-state="hover">Info</button>
+            <button type="button" class="btn-outline theme-info" data-state="pressed">Info</button>
+            <button type="button" class="btn-outline theme-info active" data-state="active-class">Info</button>
+            <label class="btn-check btn-outline theme-info" data-state="checked"><input type="checkbox" checked>Info</label>
+            <button type="button" class="btn-outline theme-inverse" data-state="rest">Inverse</button>
+            <button type="button" class="btn-outline theme-inverse" data-state="hover">Inverse</button>
+            <button type="button" class="btn-outline theme-inverse" data-state="pressed">Inverse</button>
+            <button type="button" class="btn-outline theme-inverse active" data-state="active-class">Inverse</button>
+            <label class="btn-check btn-outline theme-inverse" data-state="checked"><input type="checkbox" checked>Inverse</label>
+          </div>
+          <div class="d-flex flex-wrap align-items-center gap-2 mb-2" data-variant="subtle">
+            <button type="button" class="btn-subtle theme-primary" data-state="rest">Primary</button>
+            <button type="button" class="btn-subtle theme-primary" data-state="hover">Primary</button>
+            <button type="button" class="btn-subtle theme-primary" data-state="pressed">Primary</button>
+            <button type="button" class="btn-subtle theme-primary active" data-state="active-class">Primary</button>
+            <label class="btn-check btn-subtle theme-primary" data-state="checked"><input type="checkbox" checked>Primary</label>
+            <button type="button" class="btn-subtle theme-secondary" data-state="rest">Secondary</button>
+            <button type="button" class="btn-subtle theme-secondary" data-state="hover">Secondary</button>
+            <button type="button" class="btn-subtle theme-secondary" data-state="pressed">Secondary</button>
+            <button type="button" class="btn-subtle theme-secondary active" data-state="active-class">Secondary</button>
+            <label class="btn-check btn-subtle theme-secondary" data-state="checked"><input type="checkbox" checked>Secondary</label>
+            <button type="button" class="btn-subtle theme-accent" data-state="rest">Accent</button>
+            <button type="button" class="btn-subtle theme-accent" data-state="hover">Accent</button>
+            <button type="button" class="btn-subtle theme-accent" data-state="pressed">Accent</button>
+            <button type="button" class="btn-subtle theme-accent active" data-state="active-class">Accent</button>
+            <label class="btn-check btn-subtle theme-accent" data-state="checked"><input type="checkbox" checked>Accent</label>
+            <button type="button" class="btn-subtle theme-success" data-state="rest">Success</button>
+            <button type="button" class="btn-subtle theme-success" data-state="hover">Success</button>
+            <button type="button" class="btn-subtle theme-success" data-state="pressed">Success</button>
+            <button type="button" class="btn-subtle theme-success active" data-state="active-class">Success</button>
+            <label class="btn-check btn-subtle theme-success" data-state="checked"><input type="checkbox" checked>Success</label>
+            <button type="button" class="btn-subtle theme-danger" data-state="rest">Danger</button>
+            <button type="button" class="btn-subtle theme-danger" data-state="hover">Danger</button>
+            <button type="button" class="btn-subtle theme-danger" data-state="pressed">Danger</button>
+            <button type="button" class="btn-subtle theme-danger active" data-state="active-class">Danger</button>
+            <label class="btn-check btn-subtle theme-danger" data-state="checked"><input type="checkbox" checked>Danger</label>
+            <button type="button" class="btn-subtle theme-warning" data-state="rest">Warning</button>
+            <button type="button" class="btn-subtle theme-warning" data-state="hover">Warning</button>
+            <button type="button" class="btn-subtle theme-warning" data-state="pressed">Warning</button>
+            <button type="button" class="btn-subtle theme-warning active" data-state="active-class">Warning</button>
+            <label class="btn-check btn-subtle theme-warning" data-state="checked"><input type="checkbox" checked>Warning</label>
+            <button type="button" class="btn-subtle theme-info" data-state="rest">Info</button>
+            <button type="button" class="btn-subtle theme-info" data-state="hover">Info</button>
+            <button type="button" class="btn-subtle theme-info" data-state="pressed">Info</button>
+            <button type="button" class="btn-subtle theme-info active" data-state="active-class">Info</button>
+            <label class="btn-check btn-subtle theme-info" data-state="checked"><input type="checkbox" checked>Info</label>
+            <button type="button" class="btn-subtle theme-inverse" data-state="rest">Inverse</button>
+            <button type="button" class="btn-subtle theme-inverse" data-state="hover">Inverse</button>
+            <button type="button" class="btn-subtle theme-inverse" data-state="pressed">Inverse</button>
+            <button type="button" class="btn-subtle theme-inverse active" data-state="active-class">Inverse</button>
+            <label class="btn-check btn-subtle theme-inverse" data-state="checked"><input type="checkbox" checked>Inverse</label>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Reproduction-specific JavaScript. Bootstrap is available as `window.bootstrap`.
+    </script>
+  </body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-201: color-mode() mixin follows neither the system nor data-bs-theme</title>
+    <!--
+      pg-201: color-mode() mixin follows neither the system nor data-bs-theme
+      The color-mode() mixin can't follow v6 color modes: media-query ignores data-bs-theme, data ignores the system preference, nested modes and the element itself.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-201
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <!-- issues/pg-201/probe-media-query.scss, from the playground. -->
+    <style>
+      @media(prefers-color-scheme: dark){.pg-probe-media-query{outline:3px solid currentcolor}}
+    </style>
+    <!-- issues/pg-201/probe-data.scss, from the playground. -->
+    <style>
+      [data-bs-theme=dark] .pg-probe-data{outline:3px solid currentcolor}
+    </style>
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <section>
+        <table class="table" id="mixin-checks">
+          <thead>
+            <tr>
+              <th scope="col">Context</th>
+              <th scope="col"><code>media-query</code> (default)</th>
+              <th scope="col"><code>data</code></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-context="page">
+              <th scope="row">No <code>data-bs-theme</code></th>
+              <td><span class="pg-probe pg-probe-media-query">Probe</span></td>
+              <td><span class="pg-probe pg-probe-data">Probe</span></td>
+            </tr>
+            <tr data-context="dark">
+              <th scope="row"><code>data-bs-theme="dark"</code> subtree</th>
+              <td><div class="pg-context" data-bs-theme="dark"><span class="pg-probe pg-probe-media-query">Probe</span></div></td>
+              <td><div class="pg-context" data-bs-theme="dark"><span class="pg-probe pg-probe-data">Probe</span></div></td>
+            </tr>
+            <tr data-context="light">
+              <th scope="row"><code>data-bs-theme="light"</code> subtree</th>
+              <td><div class="pg-context" data-bs-theme="light"><span class="pg-probe pg-probe-media-query">Probe</span></div></td>
+              <td><div class="pg-context" data-bs-theme="light"><span class="pg-probe pg-probe-data">Probe</span></div></td>
+            </tr>
+            <tr data-context="nested">
+              <th scope="row"><code>light</code> nested in <code>dark</code></th>
+              <td><div class="pg-context" data-bs-theme="dark"><div class="pg-context" data-bs-theme="light"><span class="pg-probe pg-probe-media-query">Probe</span></div></div></td>
+              <td><div class="pg-context" data-bs-theme="dark"><div class="pg-context" data-bs-theme="light"><span class="pg-probe pg-probe-data">Probe</span></div></div></td>
+            </tr>
+            <tr data-context="self">
+              <th scope="row"><code>data-bs-theme="dark"</code> on the element itself</th>
+              <td><span class="pg-probe pg-probe-media-query" data-bs-theme="dark">Probe</span></td>
+              <td><span class="pg-probe pg-probe-data" data-bs-theme="dark">Probe</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <script type="module">
+      // Nothing to run: repro.spec.js reads the probes.
+    </script>
+  </body>
+</html>

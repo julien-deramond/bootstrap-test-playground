@@ -1,0 +1,1 @@
+import"../../modulepreload-polyfill-P2Xu9kJm.js";import"../../main-BoTDVRl5.js";for(let e of document.querySelectorAll(`[data-repro-open]`))e.addEventListener(`click`,()=>{e.nextElementSibling.showModal()});

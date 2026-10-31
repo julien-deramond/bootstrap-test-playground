@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-332: Utilities and gutters ignore a runtime --spacer-3 or --radius-5 override</title>
+    <!--
+      pg-332: Utilities and gutters ignore a runtime - -spacer-3 or - -radius-5 override
+      Overriding - -spacer-3 or - -radius-5 in tokens.css moves the components but not .p-3, .gap-3, .g-3 or .rounded, which write the $spacers and $radii values at compile time.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-332
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <!-- The reproduction's own CSS (tokens.css). -->
+    <style>
+      :root {
+        --bs-spacer-3: .75rem;
+        --bs-radius-5: .25rem;
+      }
+    </style>
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <section>
+        <div class="row g-4 mb-4">
+          <div class="md:col-6">
+            <h3 class="h6"><code>.p-3</code></h3>
+            <div class="d-flex gap-3 align-items-start">
+              <div id="case-p" class="p-3 border"><span class="d-block bg-body-secondary">Case</span></div>
+              <div id="control-p" class="border" style="padding: var(--bs-spacer-3)"><span class="d-block bg-body-secondary">Control</span></div>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <h3 class="h6"><code>.gap-3</code></h3>
+            <div class="d-flex flex-wrap gap-3">
+              <div id="case-gap" class="d-flex gap-3 border"><span class="bg-body-secondary">A</span><span class="bg-body-secondary">B</span></div>
+              <div id="control-gap" class="d-flex border" style="gap: var(--bs-spacer-3)"><span class="bg-body-secondary">A</span><span class="bg-body-secondary">B</span></div>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <h3 class="h6"><code>.row.g-3</code> and a control row</h3>
+            <div id="case-row" class="row g-3 border">
+              <div class="col-6"><div class="bg-body-secondary">Column</div></div>
+              <div class="col-6"><div class="bg-body-secondary">Column</div></div>
+            </div>
+            <div id="control-row" class="row border mt-3" style="--bs-gutter-x: var(--bs-spacer-3)">
+              <div class="col-6"><div class="bg-body-secondary">Control</div></div>
+              <div class="col-6"><div class="bg-body-secondary">Control</div></div>
+            </div>
+          </div>
+          <div class="md:col-6">
+            <h3 class="h6"><code>.rounded</code>, <code>.rounded-5</code> and <code>.rounded-top</code></h3>
+            <div class="d-flex flex-wrap gap-3">
+              <div id="case-rounded" class="rounded border p-3">.rounded</div>
+              <div id="case-rounded-5" class="rounded-5 border p-3">.rounded-5</div>
+              <div id="case-rounded-top" class="rounded-top border p-3">.rounded-top</div>
+              <div id="control-radius" class="border p-3" style="border-radius: var(--bs-radius-5)">control</div>
+            </div>
+          </div>
+        </div>
+        <table class="table mb-4">
+          <thead>
+            <tr><th scope="col">Case</th><th scope="col">Property</th><th scope="col">Computed</th><th scope="col">Control</th><th scope="col">Follows the token</th></tr>
+          </thead>
+          <tbody id="results"></tbody>
+        </table>
+        <p id="result" role="status" class="mb-4"></p>
+      </section>
+    </main>
+
+    <script type="module">
+      import { assert, cases } from './assert.js'
+
+      const code = text => Object.assign(document.createElement('code'), { textContent: text })
+      const tbody = document.getElementById('results')
+      for (const { name, property, actual, expected, ok } of cases()) {
+        const row = tbody.insertRow()
+        row.insertCell().append(code(name))
+        row.insertCell().append(code(property))
+        row.insertCell().append(code(actual))
+        row.insertCell().append(code(expected))
+        row.insertCell().textContent = ok ? 'yes' : 'no, default kept'
+      }
+
+      const { pass, details } = await assert()
+      document.getElementById('result').textContent = `${pass ? 'Fixed' : 'Bug'}: ${details}`
+    </script>
+  </body>
+</html>

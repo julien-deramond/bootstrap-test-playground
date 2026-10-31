@@ -1,0 +1,1 @@
+import"../../modulepreload-polyfill-P2Xu9kJm.js";import"../../main-BoTDVRl5.js";var e=window.matchMedia(`(forced-colors: active)`),t=()=>{document.getElementById(`measured`).textContent=e.matches?`active`:`off, turn them on (step 1)`};e.addEventListener(`change`,t),t();

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-136: avatar stack overlap in RTL</title>
+    <!--
+      pg-136: avatar stack overlap in RTL
+      Avatar: .avatar-stack overlaps its avatars with a physical margin-left, so in RTL one pair does not overlap and the first avatar overflows the start of the stack.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-136
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <p class="mb-0">Measured here: <code id="measured">…</code></p>
+
+      <section>
+        <div data-playground-repro>
+          <div class="row g-5 py-4">
+            <div class="col-6" dir="ltr">
+              <p class="small fg-2">LTR</p>
+              <div class="d-inline-block" style="outline: 1px dashed var(--bs-border-color, currentColor)" data-box>
+                <div class="avatar-stack">
+                  <span class="avatar">AB</span>
+                  <span class="avatar theme-primary">CD</span>
+                  <span class="avatar theme-success">EF</span>
+                  <span class="avatar theme-danger">GH</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-6" dir="rtl">
+              <p class="small fg-2">RTL</p>
+              <div class="d-inline-block" style="outline: 1px dashed var(--bs-border-color, currentColor)" data-box>
+                <div class="avatar-stack">
+                  <span class="avatar">AB</span>
+                  <span class="avatar theme-primary">CD</span>
+                  <span class="avatar theme-success">EF</span>
+                  <span class="avatar theme-danger">GH</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      // Shows the verdict of assert.js on the page.
+      import('./assert.js').then(async ({ assert }) => {
+        const { details } = await assert()
+        document.getElementById('measured').textContent = details
+      })
+    </script>
+  </body>
+</html>

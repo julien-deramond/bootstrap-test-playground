@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>#42621: Dialog content overflows on short viewports</title>
+    <!--
+      #42621: Dialog content overflows on short viewports
+      Dialog: when the viewport is shorter than its content, a dialog without .dialog-scrollable spills its content out of its box, and nothing scrolls to reach it.
+      Upstream: https://github.com/twbs/bootstrap/issues/42621
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/42621
+    -->
+    <meta http-equiv="Content-Security-Policy" content="img-src 'self' data:; media-src 'self'; font-src 'self' data:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <p class="mb-0">Measured here: <code id="measured">open a dialog</code></p>
+
+      <section>
+        <div class="hstack flex-wrap gap-2">
+          <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#longDialog">Long dialog</button>
+          <button type="button" class="btn-solid theme-secondary" data-bs-toggle="dialog" data-bs-target="#longDialogScrollable">Long dialog, <code>.dialog-scrollable</code></button>
+        </div>
+
+        <dialog class="dialog" id="longDialog" aria-labelledby="longDialogTitle">
+          <div class="dialog-header">
+            <h1 class="dialog-title" id="longDialogTitle">Long dialog</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="dialog" aria-label="Close"></button>
+          </div>
+          <div class="dialog-body">
+                <p>Paragraph 1 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 2 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 3 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 4 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 5 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 6 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 7 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 8 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 9 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 10 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 11 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 12 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 13 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 14 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 15 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 16 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 17 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 18 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 19 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 20 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+          </div>
+          <div class="dialog-footer">
+            <button type="button" class="btn-solid theme-secondary" data-bs-dismiss="dialog">Close</button>
+            <button type="button" class="btn-solid theme-primary">Save changes</button>
+          </div>
+        </dialog>
+
+        <dialog class="dialog dialog-scrollable" id="longDialogScrollable" aria-labelledby="longDialogScrollableTitle">
+          <div class="dialog-header">
+            <h1 class="dialog-title" id="longDialogScrollableTitle">Long dialog, scrollable</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="dialog" aria-label="Close"></button>
+          </div>
+          <div class="dialog-body">
+                <p>Paragraph 1 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 2 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 3 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 4 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 5 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 6 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 7 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 8 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 9 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 10 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 11 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 12 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 13 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 14 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 15 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 16 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 17 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 18 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 19 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+                <p>Paragraph 20 of 20. The dialog is taller than most viewports, so its body runs past its own bottom edge and the footer is out of reach.</p>
+          </div>
+          <div class="dialog-footer">
+            <button type="button" class="btn-solid theme-secondary" data-bs-dismiss="dialog">Close</button>
+            <button type="button" class="btn-solid theme-primary">Save changes</button>
+          </div>
+        </dialog>
+      </section>
+    </main>
+
+    <script type="module">
+      // Once a dialog is open: is its footer inside the dialog's box, and
+      // inside the viewport?
+      const measured = document.getElementById('measured')
+      for (const dialog of document.querySelectorAll('dialog.dialog')) {
+        dialog.addEventListener('shown.bs.dialog', () => {
+          const box = dialog.getBoundingClientRect()
+          const footer = dialog.querySelector('.dialog-footer').getBoundingClientRect()
+          const spills = Math.round(footer.bottom - box.bottom)
+          const hidden = Math.round(footer.bottom - window.innerHeight)
+          measured.textContent = `${dialog.querySelector('.dialog-title').textContent}: ` +
+            (spills > 0 ? `the footer ends ${spills}px below the dialog's box` : 'the footer is inside the dialog\'s box') + ', ' +
+            (hidden > 0 ? `${hidden}px below the viewport` : 'within the viewport')
+        })
+      }
+    </script>
+  </body>
+</html>

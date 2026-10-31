@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-183: Default palette pairings are under 4.5:1</title>
+    <!--
+      pg-183: Default palette pairings are under 4.5:1
+      White on the success, primary and danger solid fills, and the success, warning and info text colors on the light body background, are under the WCAG AA 4.5:1 ratio with the default palette.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-183
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <p class="mb-0">Measured here: <code id="measured">…</code></p>
+
+      <section>
+        <div data-playground-repro>
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                <th scope="col">Theme</th>
+                <th scope="col"><code>contrast</code> on <code>bg</code></th>
+                <th scope="col"><code>fg</code> on the body</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row"><code>primary</code></th>
+                <td><button type="button" class="btn-solid theme-primary">Solid</button></td>
+                <td><span class="fg-primary">Text</span></td>
+              </tr>
+              <tr>
+                <th scope="row"><code>accent</code></th>
+                <td><button type="button" class="btn-solid theme-accent">Solid</button></td>
+                <td><span class="fg-accent">Text</span></td>
+              </tr>
+              <tr>
+                <th scope="row"><code>success</code></th>
+                <td><button type="button" class="btn-solid theme-success">Solid</button></td>
+                <td><span class="fg-success">Text</span></td>
+              </tr>
+              <tr>
+                <th scope="row"><code>danger</code></th>
+                <td><button type="button" class="btn-solid theme-danger">Solid</button></td>
+                <td><span class="fg-danger">Text</span></td>
+              </tr>
+              <tr>
+                <th scope="row"><code>warning</code></th>
+                <td><button type="button" class="btn-solid theme-warning">Solid</button></td>
+                <td><span class="fg-warning">Text</span></td>
+              </tr>
+              <tr>
+                <th scope="row"><code>info</code></th>
+                <td><button type="button" class="btn-solid theme-info">Solid</button></td>
+                <td><span class="fg-info">Text</span></td>
+              </tr>
+              <tr>
+                <th scope="row"><code>inverse</code></th>
+                <td><button type="button" class="btn-solid theme-inverse">Solid</button></td>
+                <td><span class="fg-inverse">Text</span></td>
+              </tr>
+              <tr>
+                <th scope="row"><code>secondary</code></th>
+                <td><button type="button" class="btn-solid theme-secondary">Solid</button></td>
+                <td><span class="fg-secondary">Text</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      import { assert } from './assert.js'
+
+      assert().then(({ details }) => {
+        document.getElementById('measured').textContent = details
+      })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pg-328: Link toggles with role="button" ignore Space</title>
+    <!--
+      pg-328: Link toggles with role="button" ignore Space
+      Collapse, menu and drawer toggles written as links with role="button" do nothing on Space and let the page scroll, while a button toggle opens.
+      Bootstrap: main at 2f63a73 (https://github.com/twbs/bootstrap/commit/2f63a737635d9c8daea42bb5509f4fe81c0e6789)
+      Styles: Bootstrap's dist/ build from jsDelivr. JavaScript: dist/js/bootstrap.bundle.min.js from jsDelivr.
+      Exported from https://github.com/julien-deramond/bootstrap-test-playground/tree/main/issues/pg-328
+    -->
+    <!-- Bootstrap's default build, from the same commit. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/css/bootstrap.min.css">
+    <script type="module">
+      // Bootstrap's JavaScript, every component and its dependencies in one module.
+      import * as bootstrap from 'https://cdn.jsdelivr.net/gh/twbs/bootstrap@2f63a737635d9c8daea42bb5509f4fe81c0e6789/dist/js/bootstrap.bundle.min.js'
+      window.bootstrap = bootstrap
+    </script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <section>
+        <div data-playground-repro>
+          <p class="d-inline-flex gap-1">
+            <a id="collapseLink" class="btn-solid theme-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+              Link with href
+            </a>
+            <button id="collapseButton" class="btn-solid theme-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+              Button with data-bs-target
+            </button>
+          </p>
+          <div class="collapse" id="collapseExample">
+            <div class="card card-body">
+              Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+            </div>
+          </div>
+          <div class="d-flex flex-wrap gap-2">
+            <div>
+              <a id="menuLink" class="btn-solid theme-primary" href="#" role="button" data-bs-toggle="menu" aria-expanded="false">
+                Toggle menu
+              </a>
+              <div class="menu">
+                <a class="menu-item" href="#">Menu item 1</a>
+                <a class="menu-item" href="#">Menu item 2</a>
+                <a class="menu-item" href="#">Menu item 3</a>
+              </div>
+            </div>
+            <div>
+              <button id="menuButton" class="btn-solid theme-primary" type="button" data-bs-toggle="menu" aria-expanded="false">
+                Toggle menu
+              </button>
+              <div class="menu">
+                <a class="menu-item" href="#">Menu item 1</a>
+                <a class="menu-item" href="#">Menu item 2</a>
+                <a class="menu-item" href="#">Menu item 3</a>
+              </div>
+            </div>
+          </div>
+          <a id="drawerLink" class="btn-solid theme-primary" data-bs-toggle="drawer" href="#drawerExample" role="button" aria-controls="drawerExample">
+            Link with href
+          </a>
+          <button id="drawerButton" class="btn-solid theme-primary" type="button" data-bs-toggle="drawer" data-bs-target="#drawerExample" aria-controls="drawerExample">
+            Button with data-bs-target
+          </button>
+
+          <dialog class="drawer drawer-start" tabindex="-1" id="drawerExample" aria-labelledby="drawerExampleLabel">
+            <div class="drawer-header">
+              <h5 class="drawer-title" id="drawerExampleLabel">Drawer</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="drawer" aria-label="Close"></button>
+            </div>
+            <div class="drawer-body">
+              <div>
+                Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
+              </div>
+            </div>
+          </dialog>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

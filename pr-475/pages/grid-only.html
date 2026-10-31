@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Entry points: grid</title>
+    <meta name="description" content="Entry points: checks what bootstrap-grid.scss, the entry point behind bootstrap-grid.css, covers alone (containers, rows, columns, gutters, the CSS grid and the layout utilities) and what it leaves out, in the grid-only config.">
+    <meta name="playground-tags" content="layout, utilities">
+    <link rel="icon" href="/bootstrap-test-playground/pr-475/favicon.svg" type="image/svg+xml">
+    <script>
+// Applies the playground preferences (color mode, direction, primary hue,
+// styles config and Bootstrap source) before first paint. Every page's <head>
+// loads it first, as a classic script that vite.config.js inlines (see #240).
+// The toolbar in src/js/toolbar.js drives it.
+//
+// Saved preferences live in localStorage. URL parameters override them for the
+// current view only, without saving: ?theme=dark&dir=rtl&primary=teal&config=name
+//
+// `css` and `js` pick where Bootstrap comes from: `src`, compiled from its Sass
+// and TypeScript (the default), or `dist`, the files the package ships
+// (dist/css/bootstrap.css, js/dist/), built from the same source by
+// scripts/lib/dist.mjs. ?css=dist&js=dist tests what users get.
+//
+// A page marked `<html data-playground-fixed>`, like the home page, keeps
+// Bootstrap's defaults: none of the preferences apply to it, but it can still
+// read and save them for the example pages.
+//
+// View flags, for screenshots and embeds:
+// - `embed` hides the toolbar, as used by /compare.html
+// - `chrome=0` also hides the page's own playground UI, marked with
+//   `data-playground-chrome` (kitchen sink header, navigation, headings)
+// - `frame=0` removes the kitchen sink's `.bd-example` frame
+// - `section=<id>` shows one kitchen sink example only
+// - `freeze` makes the page render the same way every time: no animations,
+//   transitions or caret, carousels don't autoplay, a fixed date and a seeded
+//   Math.random
+(() => {
+  'use strict'
+
+  const STORAGE_KEY = 'bootstrap-playground'
+  const DEFAULTS = { colorMode: 'auto', dir: 'ltr', primary: 'default', config: 'working', css: 'src', js: 'src' }
+  const URL_PARAMS = { theme: 'colorMode', dir: 'dir', primary: 'primary', config: 'config', css: 'css', js: 'js' }
+
+  const params = new URLSearchParams(location.search)
+  const overrides = {}
+  for (const [param, key] of Object.entries(URL_PARAMS)) {
+    if (params.has(param)) {
+      overrides[key] = params.get(param)
+    }
+  }
+
+  // Sub-keys of a `$theme-colors` entry, mapped like Bootstrap's own `primary`.
+  const themeTokens = hue => ({
+    base: `var(--bs-${hue}-500)`,
+    fg: `light-dark(var(--bs-${hue}-600), var(--bs-${hue}-400))`,
+    'fg-emphasis': `light-dark(var(--bs-${hue}-800), var(--bs-${hue}-200))`,
+    bg: `var(--bs-${hue}-500)`,
+    'bg-subtle': `light-dark(var(--bs-${hue}-100), var(--bs-${hue}-900))`,
+    'bg-muted': `light-dark(var(--bs-${hue}-200), var(--bs-${hue}-800))`,
+    border: `light-dark(var(--bs-${hue}-300), var(--bs-${hue}-600))`,
+    'focus-ring': `light-dark(color-mix(in oklch, var(--bs-${hue}-500) 50%, var(--bs-bg-body)), color-mix(in oklch, var(--bs-${hue}-500) 75%, var(--bs-bg-body)))`,
+    contrast: 'var(--bs-white)'
+  })
+
+  const read = () => {
+    try {
+      return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(STORAGE_KEY)) }
+    } catch {
+      return { ...DEFAULTS }
+    }
+  }
+
+  const effective = () => ({ ...read(), ...overrides })
+
+  const fixed = document.documentElement.hasAttribute('data-playground-fixed')
+
+  // Swapping the stylesheets needs the list of configs and the dist stylesheet's
+  // URL, which only the module script (src/js/configs.js) has. It registers
+  // itself here, and gets the whole preferences (`config` and `css`).
+  let configHandler = null
+
+  const apply = prefs => {
+    if (fixed) {
+      return
+    }
+
+    const html = document.documentElement
+
+    if (prefs.colorMode === 'auto') {
+      html.removeAttribute('data-bs-theme')
+    } else {
+      html.setAttribute('data-bs-theme', prefs.colorMode)
+    }
+
+    html.setAttribute('dir', prefs.dir)
+
+    for (const key of Object.keys(themeTokens('blue'))) {
+      html.style.removeProperty(`--bs-primary-${key}`)
+    }
+
+    if (prefs.primary !== 'default') {
+      for (const [key, value] of Object.entries(themeTokens(prefs.primary))) {
+        html.style.setProperty(`--bs-primary-${key}`, value)
+      }
+    }
+
+    configHandler?.(prefs)
+  }
+
+  // Saving a key drops its URL override, so the toolbar always wins.
+  const save = changes => {
+    const prefs = { ...read(), ...changes }
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs))
+    } catch {}
+
+    const url = new URL(location.href)
+    for (const [param, key] of Object.entries(URL_PARAMS)) {
+      if (key in changes) {
+        delete overrides[key]
+        url.searchParams.delete(param)
+      }
+    }
+
+    history.replaceState(history.state, '', url)
+    apply(effective())
+    // The toolbar and the home page's configs follow saves made by the other.
+    window.dispatchEvent(new Event('playground-prefs'))
+    return effective()
+  }
+
+  const reset = () => save({ ...DEFAULTS })
+
+  const setConfigHandler = handler => {
+    configHandler = handler
+    handler(effective())
+  }
+
+  const addStyle = (id, css) => {
+    const style = document.createElement('style')
+    style.id = id
+    style.textContent = css
+    document.head.append(style)
+    return style
+  }
+
+  // Hide the page until a non-default config's stylesheets, or the dist
+  // stylesheet, are swapped in, so it doesn't flash with the working styles
+  // first. Failsafe after 3 seconds.
+  if (!fixed && (effective().config !== 'working' || effective().css === 'dist')) {
+    const style = addStyle('playground-config-pending', 'html { visibility: hidden !important; }')
+    setTimeout(() => style.remove(), 3000)
+  }
+
+  const chromeless = params.get('chrome') === '0'
+  const frozen = params.has('freeze') && !['0', 'false'].includes(params.get('freeze'))
+  const section = params.get('section')
+
+  // Unlayered, so these win over the pages' `@layer custom` rules.
+  const viewRules = []
+  if (chromeless) {
+    viewRules.push('[data-playground-chrome] { display: none !important; }')
+  }
+
+  if (params.get('frame') === '0') {
+    viewRules.push('.bd-example { --bd-example-padding: 0px; background-color: transparent; border: 0; border-radius: 0; }')
+  }
+
+  if (section) {
+    viewRules.push(`.bd-kitchen-sink-section:not([aria-labelledby="${CSS.escape(section)}"]) { display: none !important; }`)
+  }
+
+  if (frozen) {
+    viewRules.push(
+      'html { scroll-behavior: auto !important; }',
+      '*, ::before, ::after { animation: none !important; transition: none !important; caret-color: transparent !important; }'
+    )
+
+    // A fixed "today" (the datepicker's month, relative dates) that still
+    // ticks, so code measuring elapsed time keeps working. Noon UTC is the
+    // same calendar day in nearly every time zone.
+    const RealDate = Date
+    const start = RealDate.UTC(2026, 0, 15, 12)
+    const now = () => start + Math.floor(performance.now())
+    window.Date = new Proxy(RealDate, {
+      construct: (target, args, newTarget) => Reflect.construct(target, args.length > 0 ? args : [now()], newTarget),
+      apply: () => new RealDate(now()).toString(),
+      get: (target, key, receiver) => (key === 'now' ? now : Reflect.get(target, key, receiver))
+    })
+
+    // Seeded Math.random (mulberry32), for generated ids and demo data.
+    let seed = 0x2F6B_3A91
+    Math.random = () => {
+      seed = (seed + 0x6D2B_79F5) | 0
+      let value = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+      value = (value + Math.imul(value ^ (value >>> 7), 61 | value)) ^ value
+      return ((value ^ (value >>> 14)) >>> 0) / 4_294_967_296
+    }
+  }
+
+  if (viewRules.length > 0) {
+    addStyle('playground-view', viewRules.join('\n'))
+  }
+
+  window.playgroundPrefs = {
+    DEFAULTS,
+    URL_PARAMS,
+    embedded: params.has('embed') || chromeless,
+    fixed,
+    frozen,
+    read,
+    effective,
+    save,
+    reset,
+    apply,
+    setConfigHandler
+  }
+
+  apply(effective())
+})()
+</script>
+    <!-- Always the grid-only config: the toolbar's config switch doesn't
+         apply, since the checks need its build. -->
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/pages/grid-only-CjTTyIbw.js"></script>
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/modulepreload-polyfill-P2Xu9kJm.js">
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/_virtual_playground-pages-vKXQSeZa.js">
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/page-index-Bw8QXOEx.js">
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/last-update-BrzV7MdX.js">
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/preload-helper-C-V9XuXn.js">
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/main-BoTDVRl5.js">
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/entry-points-D7Gmz1Fa.js">
+    <link rel="stylesheet" crossorigin href="/bootstrap-test-playground/pr-475/assets/entry-points-j-AG68tc.css">
+    <link rel="stylesheet" crossorigin href="/bootstrap-test-playground/pr-475/assets/grid-only-BoTroQEN.css">
+  </head>
+  <body>
+    <main class="pg-page">
+      <header data-playground-chrome>
+        <p><a href="/bootstrap-test-playground/pr-475/">Playground</a> / Pages</p>
+        <h1>Entry points: grid</h1>
+        <p>
+          <a href="https://github.com/twbs/bootstrap/blob/main/scss/bootstrap-grid.scss"><code>scss/bootstrap-grid.scss</code></a> alone, the entry point behind <code>dist/css/bootstrap-grid.css</code>: containers, the grid and the layout utilities, with no root tokens and no reboot.
+          <a href="https://github.com/julien-deramond/bootstrap-test-playground/tree/main/configs/grid-only"><code>configs/grid-only/</code></a> sets <code>$grid-gutter-x: 2rem</code> on <code>config</code>, since the entry point doesn't forward it, and removes the padding utilities through <code>with ($utilities: …)</code>.
+          This page always uses that config, whatever the toolbar's <em>Styles</em> menu says.
+        </p>
+        <p>Upstream: <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/238">#238</a> (columns aren't <code>border-box</code> without reboot, so they wrap) and <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/236">#236</a> (<code>justify-self</code> left out), not reported yet</p>
+        <h2>Checks</h2>
+      </header>
+
+      <ol class="pg-checks">
+        <li data-entry-case="container" data-expect="A .container's padding is half the configured $grid-gutter-x (2rem)">
+          <div class="pg-marker"></div>
+          <div class="container" id="case-container">
+            <div class="pg-cell">.container</div>
+          </div>
+        </li>
+
+        <li data-entry-case="columns" data-expect="Two .col-6 each take half of the .row, with the configured gutter as padding" data-issue="238">
+          <div class="pg-marker"></div>
+          <div class="row" id="case-columns">
+            <div class="col-6"><div class="pg-cell">.col-6</div></div>
+            <div class="col-6"><div class="pg-cell">.col-6</div></div>
+          </div>
+        </li>
+
+        <li data-entry-case="responsive" data-expect=".col-12 .md:col-4 takes the full row, and a third from the md breakpoint" data-issue="238">
+          <div class="pg-marker"></div>
+          <div class="row" id="case-responsive">
+            <div class="col-12 md:col-4"><div class="pg-cell">.col-12 .md:col-4</div></div>
+            <div class="col-12 md:col-4"><div class="pg-cell">.col-12 .md:col-4</div></div>
+            <div class="col-12 md:col-4"><div class="pg-cell">.col-12 .md:col-4</div></div>
+          </div>
+        </li>
+
+        <li data-entry-case="row-cols" data-expect=".row-cols-3 gives each child a third of the row" data-issue="238">
+          <div class="pg-marker"></div>
+          <div class="row row-cols-3" id="case-row-cols">
+            <div><div class="pg-cell">child</div></div>
+            <div><div class="pg-cell">child</div></div>
+            <div><div class="pg-cell">child</div></div>
+          </div>
+        </li>
+
+        <li data-entry-case="offset" data-expect=".offset-4 pushes a .col-4 by a third of the row">
+          <div class="pg-marker"></div>
+          <div class="row" id="case-offset">
+            <div class="col-4 offset-4"><div class="pg-cell">.col-4 .offset-4</div></div>
+          </div>
+        </li>
+
+        <li data-entry-case="gutters" data-expect=".gx-0 removes the columns' horizontal padding">
+          <div class="pg-marker"></div>
+          <div class="row gx-0">
+            <div class="col-6" id="case-gutters"><div class="pg-cell">.gx-0 &gt; .col-6</div></div>
+            <div class="col-6"><div class="pg-cell">.gx-0 &gt; .col-6</div></div>
+          </div>
+        </li>
+
+        <li data-entry-case="css-grid" data-expect=".grid is a CSS grid, and three .g-col-4 share its width">
+          <div class="pg-marker"></div>
+          <div class="grid" id="case-css-grid">
+            <div class="g-col-4 pg-cell">.g-col-4</div>
+            <div class="g-col-4 pg-cell">.g-col-4</div>
+            <div class="g-col-4 pg-cell">.g-col-4</div>
+          </div>
+        </li>
+
+        <li data-entry-case="flex" data-expect=".d-flex .justify-content-between .align-items-center lays out a flex row">
+          <div class="pg-marker"></div>
+          <div class="d-flex justify-content-between align-items-center" id="case-flex">
+            <div class="pg-cell">first</div>
+            <div class="pg-cell">last</div>
+          </div>
+        </li>
+
+        <li data-entry-case="order" data-expect=".order-last moves an item to the end">
+          <div class="pg-marker"></div>
+          <div class="d-flex gap-3">
+            <div class="pg-cell order-last" id="case-order">.order-last, first in the markup</div>
+            <div class="pg-cell">second</div>
+          </div>
+        </li>
+
+        <li data-entry-case="margin" data-expect=".ms--1 applies a negative margin-inline-start, which v6 keeps in margin-start">
+          <div class="pg-marker"></div>
+          <div class="pg-cell ms--1" id="case-margin">.ms--1</div>
+        </li>
+
+        <li data-entry-case="padding-removed" data-expect="with ($utilities: …) removes the padding utilities: .p-3 has no rule">
+          <div class="pg-marker"></div>
+          <div class="pg-cell p-3" id="case-padding-removed">.p-3, no padding</div>
+        </li>
+
+        <li data-entry-case="breakpoints" data-expect="The entry point defines --bs-breakpoint-* on :root, which Bootstrap's JavaScript reads">
+          <div class="pg-marker"></div>
+        </li>
+
+        <li data-entry-case="justify-self" data-expect="The grid build includes .justify-self-* along with .justify-items-* and .align-self-*" data-issue="236">
+          <div class="pg-marker"></div>
+          <div class="grid">
+            <div class="g-col-4 justify-self-center pg-cell" id="case-justify-self">.g-col-4 .justify-self-center</div>
+          </div>
+        </li>
+
+        <li data-entry-case="no-root" data-expect="No root: the global tokens, such as --bs-body-font-size, aren't defined">
+          <div class="pg-marker"></div>
+        </li>
+
+        <li data-entry-case="no-reboot" data-expect="No reboot: the body keeps the browser's 8px margin">
+          <div class="pg-marker"></div>
+        </li>
+      </ol>
+    </main>
+
+  </body>
+</html>

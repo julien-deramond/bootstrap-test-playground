@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en" data-playground-fixed>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap playground</title>
+    <link rel="icon" href="/bootstrap-test-playground/pr-475/favicon.svg" type="image/svg+xml">
+    <script>
+// Applies the playground preferences (color mode, direction, primary hue,
+// styles config and Bootstrap source) before first paint. Every page's <head>
+// loads it first, as a classic script that vite.config.js inlines (see #240).
+// The toolbar in src/js/toolbar.js drives it.
+//
+// Saved preferences live in localStorage. URL parameters override them for the
+// current view only, without saving: ?theme=dark&dir=rtl&primary=teal&config=name
+//
+// `css` and `js` pick where Bootstrap comes from: `src`, compiled from its Sass
+// and TypeScript (the default), or `dist`, the files the package ships
+// (dist/css/bootstrap.css, js/dist/), built from the same source by
+// scripts/lib/dist.mjs. ?css=dist&js=dist tests what users get.
+//
+// A page marked `<html data-playground-fixed>`, like the home page, keeps
+// Bootstrap's defaults: none of the preferences apply to it, but it can still
+// read and save them for the example pages.
+//
+// View flags, for screenshots and embeds:
+// - `embed` hides the toolbar, as used by /compare.html
+// - `chrome=0` also hides the page's own playground UI, marked with
+//   `data-playground-chrome` (kitchen sink header, navigation, headings)
+// - `frame=0` removes the kitchen sink's `.bd-example` frame
+// - `section=<id>` shows one kitchen sink example only
+// - `freeze` makes the page render the same way every time: no animations,
+//   transitions or caret, carousels don't autoplay, a fixed date and a seeded
+//   Math.random
+(() => {
+  'use strict'
+
+  const STORAGE_KEY = 'bootstrap-playground'
+  const DEFAULTS = { colorMode: 'auto', dir: 'ltr', primary: 'default', config: 'working', css: 'src', js: 'src' }
+  const URL_PARAMS = { theme: 'colorMode', dir: 'dir', primary: 'primary', config: 'config', css: 'css', js: 'js' }
+
+  const params = new URLSearchParams(location.search)
+  const overrides = {}
+  for (const [param, key] of Object.entries(URL_PARAMS)) {
+    if (params.has(param)) {
+      overrides[key] = params.get(param)
+    }
+  }
+
+  // Sub-keys of a `$theme-colors` entry, mapped like Bootstrap's own `primary`.
+  const themeTokens = hue => ({
+    base: `var(--bs-${hue}-500)`,
+    fg: `light-dark(var(--bs-${hue}-600), var(--bs-${hue}-400))`,
+    'fg-emphasis': `light-dark(var(--bs-${hue}-800), var(--bs-${hue}-200))`,
+    bg: `var(--bs-${hue}-500)`,
+    'bg-subtle': `light-dark(var(--bs-${hue}-100), var(--bs-${hue}-900))`,
+    'bg-muted': `light-dark(var(--bs-${hue}-200), var(--bs-${hue}-800))`,
+    border: `light-dark(var(--bs-${hue}-300), var(--bs-${hue}-600))`,
+    'focus-ring': `light-dark(color-mix(in oklch, var(--bs-${hue}-500) 50%, var(--bs-bg-body)), color-mix(in oklch, var(--bs-${hue}-500) 75%, var(--bs-bg-body)))`,
+    contrast: 'var(--bs-white)'
+  })
+
+  const read = () => {
+    try {
+      return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(STORAGE_KEY)) }
+    } catch {
+      return { ...DEFAULTS }
+    }
+  }
+
+  const effective = () => ({ ...read(), ...overrides })
+
+  const fixed = document.documentElement.hasAttribute('data-playground-fixed')
+
+  // Swapping the stylesheets needs the list of configs and the dist stylesheet's
+  // URL, which only the module script (src/js/configs.js) has. It registers
+  // itself here, and gets the whole preferences (`config` and `css`).
+  let configHandler = null
+
+  const apply = prefs => {
+    if (fixed) {
+      return
+    }
+
+    const html = document.documentElement
+
+    if (prefs.colorMode === 'auto') {
+      html.removeAttribute('data-bs-theme')
+    } else {
+      html.setAttribute('data-bs-theme', prefs.colorMode)
+    }
+
+    html.setAttribute('dir', prefs.dir)
+
+    for (const key of Object.keys(themeTokens('blue'))) {
+      html.style.removeProperty(`--bs-primary-${key}`)
+    }
+
+    if (prefs.primary !== 'default') {
+      for (const [key, value] of Object.entries(themeTokens(prefs.primary))) {
+        html.style.setProperty(`--bs-primary-${key}`, value)
+      }
+    }
+
+    configHandler?.(prefs)
+  }
+
+  // Saving a key drops its URL override, so the toolbar always wins.
+  const save = changes => {
+    const prefs = { ...read(), ...changes }
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs))
+    } catch {}
+
+    const url = new URL(location.href)
+    for (const [param, key] of Object.entries(URL_PARAMS)) {
+      if (key in changes) {
+        delete overrides[key]
+        url.searchParams.delete(param)
+      }
+    }
+
+    history.replaceState(history.state, '', url)
+    apply(effective())
+    // The toolbar and the home page's configs follow saves made by the other.
+    window.dispatchEvent(new Event('playground-prefs'))
+    return effective()
+  }
+
+  const reset = () => save({ ...DEFAULTS })
+
+  const setConfigHandler = handler => {
+    configHandler = handler
+    handler(effective())
+  }
+
+  const addStyle = (id, css) => {
+    const style = document.createElement('style')
+    style.id = id
+    style.textContent = css
+    document.head.append(style)
+    return style
+  }
+
+  // Hide the page until a non-default config's stylesheets, or the dist
+  // stylesheet, are swapped in, so it doesn't flash with the working styles
+  // first. Failsafe after 3 seconds.
+  if (!fixed && (effective().config !== 'working' || effective().css === 'dist')) {
+    const style = addStyle('playground-config-pending', 'html { visibility: hidden !important; }')
+    setTimeout(() => style.remove(), 3000)
+  }
+
+  const chromeless = params.get('chrome') === '0'
+  const frozen = params.has('freeze') && !['0', 'false'].includes(params.get('freeze'))
+  const section = params.get('section')
+
+  // Unlayered, so these win over the pages' `@layer custom` rules.
+  const viewRules = []
+  if (chromeless) {
+    viewRules.push('[data-playground-chrome] { display: none !important; }')
+  }
+
+  if (params.get('frame') === '0') {
+    viewRules.push('.bd-example { --bd-example-padding: 0px; background-color: transparent; border: 0; border-radius: 0; }')
+  }
+
+  if (section) {
+    viewRules.push(`.bd-kitchen-sink-section:not([aria-labelledby="${CSS.escape(section)}"]) { display: none !important; }`)
+  }
+
+  if (frozen) {
+    viewRules.push(
+      'html { scroll-behavior: auto !important; }',
+      '*, ::before, ::after { animation: none !important; transition: none !important; caret-color: transparent !important; }'
+    )
+
+    // A fixed "today" (the datepicker's month, relative dates) that still
+    // ticks, so code measuring elapsed time keeps working. Noon UTC is the
+    // same calendar day in nearly every time zone.
+    const RealDate = Date
+    const start = RealDate.UTC(2026, 0, 15, 12)
+    const now = () => start + Math.floor(performance.now())
+    window.Date = new Proxy(RealDate, {
+      construct: (target, args, newTarget) => Reflect.construct(target, args.length > 0 ? args : [now()], newTarget),
+      apply: () => new RealDate(now()).toString(),
+      get: (target, key, receiver) => (key === 'now' ? now : Reflect.get(target, key, receiver))
+    })
+
+    // Seeded Math.random (mulberry32), for generated ids and demo data.
+    let seed = 0x2F6B_3A91
+    Math.random = () => {
+      seed = (seed + 0x6D2B_79F5) | 0
+      let value = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+      value = (value + Math.imul(value ^ (value >>> 7), 61 | value)) ^ value
+      return ((value ^ (value >>> 14)) >>> 0) / 4_294_967_296
+    }
+  }
+
+  if (viewRules.length > 0) {
+    addStyle('playground-view', viewRules.join('\n'))
+  }
+
+  window.playgroundPrefs = {
+    DEFAULTS,
+    URL_PARAMS,
+    embedded: params.has('embed') || chromeless,
+    fixed,
+    frozen,
+    read,
+    effective,
+    save,
+    reset,
+    apply,
+    setConfigHandler
+  }
+
+  apply(effective())
+})()
+</script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/main-btN0rSYR.js"></script>
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/modulepreload-polyfill-P2Xu9kJm.js">
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/_virtual_playground-pages-vKXQSeZa.js">
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/page-index-Bw8QXOEx.js">
+    <link rel="modulepreload" crossorigin href="/bootstrap-test-playground/pr-475/assets/last-update-BrzV7MdX.js">
+    <link rel="stylesheet" crossorigin href="/bootstrap-test-playground/pr-475/assets/main-BsEqp2YD.css">
+    <link rel="stylesheet" crossorigin href="/bootstrap-test-playground/pr-475/assets/index-CnXlIq3Y.css">
+  </head>
+  <body>
+    <!-- Icons: Lucide (ISC License), https://lucide.dev -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></symbol>
+      <symbol id="icon-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
+      <symbol id="icon-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></symbol>
+      <symbol id="icon-columns" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></symbol>
+      <symbol id="icon-matrix" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></symbol>
+      <symbol id="icon-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+      <symbol id="icon-corner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 10 5 5-5 5"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></symbol>
+      <symbol id="icon-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></symbol>
+      <symbol id="icon-palette" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
+      <symbol id="icon-git" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><line x1="3" x2="9" y1="12" y2="12"/><line x1="15" x2="21" y1="12" y2="12"/></symbol>
+      <symbol id="icon-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></symbol>
+      <symbol id="icon-pages" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="7" x="3" y="3" rx="1"/><rect width="9" height="7" x="3" y="14" rx="1"/><rect width="5" height="7" x="16" y="14" rx="1"/></symbol>
+      <symbol id="icon-screens" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M10 4v4"/><path d="M2 8h20"/><path d="M6 4v4"/></symbol>
+      <symbol id="icon-kitchen-sink" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="14" y="3" rx="1"/><path d="M10 21V8a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H3"/></symbol>
+      <symbol id="icon-issues" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 2 1.88 1.88"/><path d="M14.12 3.88 16 2"/><path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6"/><path d="M12 20v-9"/><path d="M6.53 9C4.6 8.8 3 7.1 3 5"/><path d="M6 13H2"/><path d="M3 21c0-2.1 1.7-3.9 3.8-4"/><path d="M20.97 5c0 2.1-1.6 3.8-3.5 4"/><path d="M22 13h-4"/><path d="M17.2 17c2.1.1 3.8 1.9 3.8 4"/></symbol>
+      <symbol id="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+      <symbol id="icon-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol>
+    </svg>
+
+    <div class="home">
+      <aside class="home-sidebar">
+        <a class="home-brand" href="/bootstrap-test-playground/pr-475/">
+          <img src="/bootstrap-test-playground/pr-475/bootstrap-logo.svg" alt="" width="30" height="24">
+          <span>Bootstrap <span class="home-brand-sub">playground</span></span>
+        </a>
+
+        <label class="form-control form-adorn home-search">
+          <span class="form-adorn-icon" aria-hidden="true">
+            <svg width="16" height="16"><use href="#icon-search"/></svg>
+          </span>
+          <input type="search" class="form-ghost" id="page-search" placeholder="Search…" aria-label="Search pages, examples, tags, classes and --tokens" autocomplete="off" spellcheck="false" aria-describedby="result-count" aria-controls="results">
+          <span class="form-adorn-text"><kbd>/</kbd></span>
+        </label>
+
+        <nav class="home-nav" id="group-filters" aria-label="Groups"></nav>
+
+        <div class="home-tags" id="status-filters" role="group" aria-labelledby="status-heading" hidden></div>
+
+        <div class="home-tags" id="tag-filters" role="group" aria-labelledby="tags-heading"></div>
+
+        <div class="home-sidebar-foot">
+          <p>The settings pill on every page switches the config, color mode, direction and more (<kbd>Alt Shift P</kbd>).</p>
+          <p><kbd id="palette-key">Ctrl K</kbd> on any page jumps to another one.</p>
+        </div>
+      </aside>
+
+      <main class="home-main">
+        <div class="home-bar">
+          <p class="home-source" id="bootstrap-source"><span class="home-source-dot" aria-hidden="true"></span> <a><code></code></a></p>
+          <nav class="home-links" aria-label="Tools">
+            <a href="/bootstrap-test-playground/pr-475/compare.html">
+              <svg width="16" height="16" aria-hidden="true"><use href="#icon-columns"/></svg>
+              Compare
+            </a>
+            <a href="/bootstrap-test-playground/pr-475/matrix.html">
+              <svg width="16" height="16" aria-hidden="true"><use href="#icon-matrix"/></svg>
+              Matrix
+            </a>
+            <a href="/bootstrap-test-playground/pr-475/sizes.html">
+              <svg width="16" height="16" aria-hidden="true"><use href="#icon-chart"/></svg>
+              Sizes
+            </a>
+            <a href="https://github.com/twbs/bootstrap/tree/main" rel="noopener">
+              <svg width="16" height="16" aria-hidden="true"><use href="#icon-git"/></svg>
+              main
+            </a>
+          </nav>
+          <details class="home-update" id="last-update">
+            <summary class="home-update-summary"></summary>
+            <div class="home-update-body"></div>
+          </details>
+        </div>
+
+        <div class="home-head">
+          <div class="home-head-text">
+            <h1 class="home-title" id="view-title">All pages</h1>
+            <p class="home-description" id="view-description"></p>
+          </div>
+          <div class="btn-group home-view" role="group" aria-label="Layout">
+            <button type="button" class="btn-outline theme-secondary btn-icon btn-sm" data-view="grid" aria-pressed="true" title="Grid">
+              <svg width="16" height="16" aria-hidden="true"><use href="#icon-grid"/></svg>
+              <span class="visually-hidden">Grid</span>
+            </button>
+            <button type="button" class="btn-outline theme-secondary btn-icon btn-sm" data-view="list" aria-pressed="false" title="List">
+              <svg width="16" height="16" aria-hidden="true"><use href="#icon-list"/></svg>
+              <span class="visually-hidden">List</span>
+            </button>
+          </div>
+        </div>
+
+        <p class="visually-hidden" id="result-count" aria-live="polite"></p>
+        <div id="results"></div>
+        <div id="configs" hidden></div>
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,1 @@
+import"../../modulepreload-polyfill-P2Xu9kJm.js";import"../../main-BoTDVRl5.js";for(let e of document.querySelectorAll(`[data-bs-toggle="tooltip"]`))window.bootstrap.Tooltip.getOrCreateInstance(e);for(let e of document.querySelectorAll(`[data-bs-toggle="popover"]`))window.bootstrap.Popover.getOrCreateInstance(e);

@@ -1,0 +1,1 @@
+import"../../modulepreload-polyfill-P2Xu9kJm.js";import"../../main-BoTDVRl5.js";var e=document.getElementById(`datepicker1`),t=document.getElementById(`event-log`);for(let n of[`show`,`shown`,`hide`,`hidden`])e.addEventListener(`${n}.bs.datepicker`,()=>{let e=document.createElement(`li`);e.textContent=`${n}.bs.datepicker`,t.append(e)});

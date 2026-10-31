@@ -1,0 +1,415 @@
+<!doctype html>
+<!-- Adapted from Bootstrap's "pricing" example (site/src/assets/examples/pricing/). -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Marketing: pricing</title>
+    <meta name="description" content="Pricing page with plan cards and a comparison table.">
+    <meta name="playground-tags" content="marketing, cards, table">
+    <meta name="playground-source" content="Bootstrap example “pricing”" data-url="https://github.com/twbs/bootstrap/tree/main/site/src/assets/examples/pricing" data-license="MIT">
+    <link rel="icon" href="/bootstrap-test-playground/pr-475/favicon.svg" type="image/svg+xml">
+    <script>
+// Applies the playground preferences (color mode, direction, primary hue,
+// styles config and Bootstrap source) before first paint. Every page's <head>
+// loads it first, as a classic script that vite.config.js inlines (see #240).
+// The toolbar in src/js/toolbar.js drives it.
+//
+// Saved preferences live in localStorage. URL parameters override them for the
+// current view only, without saving: ?theme=dark&dir=rtl&primary=teal&config=name
+//
+// `css` and `js` pick where Bootstrap comes from: `src`, compiled from its Sass
+// and TypeScript (the default), or `dist`, the files the package ships
+// (dist/css/bootstrap.css, js/dist/), built from the same source by
+// scripts/lib/dist.mjs. ?css=dist&js=dist tests what users get.
+//
+// A page marked `<html data-playground-fixed>`, like the home page, keeps
+// Bootstrap's defaults: none of the preferences apply to it, but it can still
+// read and save them for the example pages.
+//
+// View flags, for screenshots and embeds:
+// - `embed` hides the toolbar, as used by /compare.html
+// - `chrome=0` also hides the page's own playground UI, marked with
+//   `data-playground-chrome` (kitchen sink header, navigation, headings)
+// - `frame=0` removes the kitchen sink's `.bd-example` frame
+// - `section=<id>` shows one kitchen sink example only
+// - `freeze` makes the page render the same way every time: no animations,
+//   transitions or caret, carousels don't autoplay, a fixed date and a seeded
+//   Math.random
+(() => {
+  'use strict'
+
+  const STORAGE_KEY = 'bootstrap-playground'
+  const DEFAULTS = { colorMode: 'auto', dir: 'ltr', primary: 'default', config: 'working', css: 'src', js: 'src' }
+  const URL_PARAMS = { theme: 'colorMode', dir: 'dir', primary: 'primary', config: 'config', css: 'css', js: 'js' }
+
+  const params = new URLSearchParams(location.search)
+  const overrides = {}
+  for (const [param, key] of Object.entries(URL_PARAMS)) {
+    if (params.has(param)) {
+      overrides[key] = params.get(param)
+    }
+  }
+
+  // Sub-keys of a `$theme-colors` entry, mapped like Bootstrap's own `primary`.
+  const themeTokens = hue => ({
+    base: `var(--bs-${hue}-500)`,
+    fg: `light-dark(var(--bs-${hue}-600), var(--bs-${hue}-400))`,
+    'fg-emphasis': `light-dark(var(--bs-${hue}-800), var(--bs-${hue}-200))`,
+    bg: `var(--bs-${hue}-500)`,
+    'bg-subtle': `light-dark(var(--bs-${hue}-100), var(--bs-${hue}-900))`,
+    'bg-muted': `light-dark(var(--bs-${hue}-200), var(--bs-${hue}-800))`,
+    border: `light-dark(var(--bs-${hue}-300), var(--bs-${hue}-600))`,
+    'focus-ring': `light-dark(color-mix(in oklch, var(--bs-${hue}-500) 50%, var(--bs-bg-body)), color-mix(in oklch, var(--bs-${hue}-500) 75%, var(--bs-bg-body)))`,
+    contrast: 'var(--bs-white)'
+  })
+
+  const read = () => {
+    try {
+      return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(STORAGE_KEY)) }
+    } catch {
+      return { ...DEFAULTS }
+    }
+  }
+
+  const effective = () => ({ ...read(), ...overrides })
+
+  const fixed = document.documentElement.hasAttribute('data-playground-fixed')
+
+  // Swapping the stylesheets needs the list of configs and the dist stylesheet's
+  // URL, which only the module script (src/js/configs.js) has. It registers
+  // itself here, and gets the whole preferences (`config` and `css`).
+  let configHandler = null
+
+  const apply = prefs => {
+    if (fixed) {
+      return
+    }
+
+    const html = document.documentElement
+
+    if (prefs.colorMode === 'auto') {
+      html.removeAttribute('data-bs-theme')
+    } else {
+      html.setAttribute('data-bs-theme', prefs.colorMode)
+    }
+
+    html.setAttribute('dir', prefs.dir)
+
+    for (const key of Object.keys(themeTokens('blue'))) {
+      html.style.removeProperty(`--bs-primary-${key}`)
+    }
+
+    if (prefs.primary !== 'default') {
+      for (const [key, value] of Object.entries(themeTokens(prefs.primary))) {
+        html.style.setProperty(`--bs-primary-${key}`, value)
+      }
+    }
+
+    configHandler?.(prefs)
+  }
+
+  // Saving a key drops its URL override, so the toolbar always wins.
+  const save = changes => {
+    const prefs = { ...read(), ...changes }
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs))
+    } catch {}
+
+    const url = new URL(location.href)
+    for (const [param, key] of Object.entries(URL_PARAMS)) {
+      if (key in changes) {
+        delete overrides[key]
+        url.searchParams.delete(param)
+      }
+    }
+
+    history.replaceState(history.state, '', url)
+    apply(effective())
+    // The toolbar and the home page's configs follow saves made by the other.
+    window.dispatchEvent(new Event('playground-prefs'))
+    return effective()
+  }
+
+  const reset = () => save({ ...DEFAULTS })
+
+  const setConfigHandler = handler => {
+    configHandler = handler
+    handler(effective())
+  }
+
+  const addStyle = (id, css) => {
+    const style = document.createElement('style')
+    style.id = id
+    style.textContent = css
+    document.head.append(style)
+    return style
+  }
+
+  // Hide the page until a non-default config's stylesheets, or the dist
+  // stylesheet, are swapped in, so it doesn't flash with the working styles
+  // first. Failsafe after 3 seconds.
+  if (!fixed && (effective().config !== 'working' || effective().css === 'dist')) {
+    const style = addStyle('playground-config-pending', 'html { visibility: hidden !important; }')
+    setTimeout(() => style.remove(), 3000)
+  }
+
+  const chromeless = params.get('chrome') === '0'
+  const frozen = params.has('freeze') && !['0', 'false'].includes(params.get('freeze'))
+  const section = params.get('section')
+
+  // Unlayered, so these win over the pages' `@layer custom` rules.
+  const viewRules = []
+  if (chromeless) {
+    viewRules.push('[data-playground-chrome] { display: none !important; }')
+  }
+
+  if (params.get('frame') === '0') {
+    viewRules.push('.bd-example { --bd-example-padding: 0px; background-color: transparent; border: 0; border-radius: 0; }')
+  }
+
+  if (section) {
+    viewRules.push(`.bd-kitchen-sink-section:not([aria-labelledby="${CSS.escape(section)}"]) { display: none !important; }`)
+  }
+
+  if (frozen) {
+    viewRules.push(
+      'html { scroll-behavior: auto !important; }',
+      '*, ::before, ::after { animation: none !important; transition: none !important; caret-color: transparent !important; }'
+    )
+
+    // A fixed "today" (the datepicker's month, relative dates) that still
+    // ticks, so code measuring elapsed time keeps working. Noon UTC is the
+    // same calendar day in nearly every time zone.
+    const RealDate = Date
+    const start = RealDate.UTC(2026, 0, 15, 12)
+    const now = () => start + Math.floor(performance.now())
+    window.Date = new Proxy(RealDate, {
+      construct: (target, args, newTarget) => Reflect.construct(target, args.length > 0 ? args : [now()], newTarget),
+      apply: () => new RealDate(now()).toString(),
+      get: (target, key, receiver) => (key === 'now' ? now : Reflect.get(target, key, receiver))
+    })
+
+    // Seeded Math.random (mulberry32), for generated ids and demo data.
+    let seed = 0x2F6B_3A91
+    Math.random = () => {
+      seed = (seed + 0x6D2B_79F5) | 0
+      let value = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+      value = (value + Math.imul(value ^ (value >>> 7), 61 | value)) ^ value
+      return ((value ^ (value >>> 14)) >>> 0) / 4_294_967_296
+    }
+  }
+
+  if (viewRules.length > 0) {
+    addStyle('playground-view', viewRules.join('\n'))
+  }
+
+  window.playgroundPrefs = {
+    DEFAULTS,
+    URL_PARAMS,
+    embedded: params.has('embed') || chromeless,
+    fixed,
+    frozen,
+    read,
+    effective,
+    save,
+    reset,
+    apply,
+    setConfigHandler
+  }
+
+  apply(effective())
+})()
+</script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/modulepreload-polyfill-P2Xu9kJm.js"></script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/_virtual_playground-pages-vKXQSeZa.js"></script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/page-index-Bw8QXOEx.js"></script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/last-update-BrzV7MdX.js"></script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/preload-helper-C-V9XuXn.js"></script>
+    <script type="module" crossorigin src="/bootstrap-test-playground/pr-475/assets/main-BoTDVRl5.js"></script>
+    <link rel="stylesheet" crossorigin href="/bootstrap-test-playground/pr-475/assets/marketing-pricing-jO_-Ezwu.css">
+    <link rel="stylesheet" data-playground-styles="main" crossorigin href="/bootstrap-test-playground/pr-475/assets/index-CnXlIq3Y.css">
+    <link rel="stylesheet" data-playground-styles="tokens" crossorigin href="/bootstrap-test-playground/pr-475/assets/tokens-B4oSpHCU.css">
+  </head>
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <symbol id="check" viewBox="0 0 16 16">
+        <title>Check</title>
+        <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+      </symbol>
+    </svg>
+
+    <div class="container py-3">
+      <header>
+        <div class="d-flex flex-column md:flex-row align-items-center pb-3 mb-4 border-bottom">
+          <a href="/bootstrap-test-playground/pr-475/" class="d-flex align-items-center theme-inverse text-decoration-none">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="32" class="me-2" viewBox="0 0 118 94" role="img"><title>Bootstrap</title><path fill-rule="evenodd" clip-rule="evenodd" d="M24.509 0c-6.733 0-11.715 5.893-11.492 12.284.214 6.14-.064 14.092-2.066 20.577C8.943 39.365 5.547 43.485 0 44.014v5.972c5.547.529 8.943 4.649 10.951 11.153 2.002 6.485 2.28 14.437 2.066 20.577C12.794 88.106 17.776 94 24.51 94H93.5c6.733 0 11.714-5.893 11.491-12.284-.214-6.14.064-14.092 2.066-20.577 2.009-6.504 5.396-10.624 10.943-11.153v-5.972c-5.547-.529-8.934-4.649-10.943-11.153-2.002-6.484-2.28-14.437-2.066-20.577C105.214 5.894 100.233 0 93.5 0H24.508zM80 57.863C80 66.663 73.436 72 62.543 72H44a2 2 0 01-2-2V24a2 2 0 012-2h18.437c9.083 0 15.044 4.92 15.044 12.474 0 5.302-4.01 10.049-9.119 10.88v.277C75.317 46.394 80 51.21 80 57.863zM60.521 28.34H49.948v14.934h8.905c6.884 0 10.68-2.772 10.68-7.727 0-4.643-3.264-7.207-9.012-7.207zM49.948 49.2v16.458H60.91c7.167 0 10.964-2.876 10.964-8.281 0-5.406-3.903-8.178-11.425-8.178H49.948z" fill="currentColor"></path></svg>
+            <span class="fs-xl">Pricing example</span>
+          </a>
+
+          <nav class="d-inline-flex mt-2 md:mt-0 md:ms-auto">
+            <a class="me-3 py-2 theme-inverse text-decoration-none" href="#">Features</a>
+            <a class="me-3 py-2 theme-inverse text-decoration-none" href="#">Enterprise</a>
+            <a class="me-3 py-2 theme-inverse text-decoration-none" href="#">Support</a>
+            <a class="py-2 theme-inverse text-decoration-none" href="#">Pricing</a>
+          </nav>
+        </div>
+
+        <div class="pricing-header p-3 md:pb-4 mx-auto text-center">
+          <h1 class="fs-5xl fw-normal fg-emphasis-inverse">Pricing</h1>
+          <p class="fs-lg fg-2">Quickly build an effective pricing table for your potential customers with this Bootstrap example. It’s built with default Bootstrap components and utilities with little customization.</p>
+        </div>
+      </header>
+
+      <main>
+        <div class="row row-cols-1 md:row-cols-3 mb-3 text-center">
+          <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm">
+              <div class="card-header py-3">
+                <h2 class="h4 my-0 fw-normal">Free</h2>
+              </div>
+              <div class="card-body">
+                <h1 class="card-title pricing-card-title">$0<small class="fg-2 fw-light">/mo</small></h1>
+                <ul class="list-unstyled mt-3 mb-4 w-100">
+                  <li>10 users included</li>
+                  <li>2 GB of storage</li>
+                  <li>Email support</li>
+                  <li>Help center access</li>
+                </ul>
+                <button type="button" class="w-100 btn-outline theme-primary btn-lg">Sign up for free</button>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm">
+              <div class="card-header py-3">
+                <h2 class="h4 my-0 fw-normal">Pro</h2>
+              </div>
+              <div class="card-body">
+                <h1 class="card-title pricing-card-title">$15<small class="fg-2 fw-light">/mo</small></h1>
+                <ul class="list-unstyled mt-3 mb-4 w-100">
+                  <li>20 users included</li>
+                  <li>10 GB of storage</li>
+                  <li>Priority email support</li>
+                  <li>Help center access</li>
+                </ul>
+                <button type="button" class="w-100 btn-solid theme-primary btn-lg">Get started</button>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm border-primary">
+              <div class="card-header py-3 theme-primary border-primary">
+                <h2 class="h4 my-0 fw-normal">Enterprise</h2>
+              </div>
+              <div class="card-body">
+                <h1 class="card-title pricing-card-title">$29<small class="fg-2 fw-light">/mo</small></h1>
+                <ul class="list-unstyled mt-3 mb-4 w-100">
+                  <li>30 users included</li>
+                  <li>15 GB of storage</li>
+                  <li>Phone and email support</li>
+                  <li>Help center access</li>
+                </ul>
+                <button type="button" class="w-100 btn-solid theme-primary btn-lg">Contact us</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="fs-3xl fw-light text-center mb-4">Compare plans</h2>
+
+        <div class="table-responsive">
+          <table class="table text-center">
+            <thead>
+              <tr>
+                <th style="width: 34%;"><span class="visually-hidden">Feature</span></th>
+                <th style="width: 22%;">Free</th>
+                <th style="width: 22%;">Pro</th>
+                <th style="width: 22%;">Enterprise</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row" class="text-start">Public</th>
+                <td><svg class="bi" width="24" height="24" role="img" aria-label="Included"><use href="#check"/></svg></td>
+                <td><svg class="bi" width="24" height="24" role="img" aria-label="Included"><use href="#check"/></svg></td>
+                <td><svg class="bi" width="24" height="24" role="img" aria-label="Included"><use href="#check"/></svg></td>
+              </tr>
+              <tr>
+                <th scope="row" class="text-start">Private</th>
+                <td></td>
+                <td><svg class="bi" width="24" height="24" role="img" aria-label="Included"><use href="#check"/></svg></td>
+                <td><svg class="bi" width="24" height="24" role="img" aria-label="Included"><use href="#check"/></svg></td>
+              </tr>
+            </tbody>
+
+            <tbody>
+              <tr>
+                <th scope="row" class="text-start">Permissions</th>
+                <td><svg class="bi" width="24" height="24" role="img" aria-label="Included"><use href="#check"/></svg></td>
+                <td><svg class="bi" width="24" height="24" role="img" aria-label="Included"><use href="#check"/></svg></td>
+                <td><svg class="bi" width="24" height="24" role="img" aria-label="Included"><use href="#check"/></svg></td>
+              </tr>
+              <tr>
+                <th scope="row" class="text-start">Sharing</th>
+                <td></td>
+                <td><svg class="bi" width="24" height="24" role="img" aria-label="Included"><use href="#check"/></svg></td>
+                <td><svg class="bi" width="24" height="24" role="img" aria-label="Included"><use href="#check"/></svg></td>
+              </tr>
+              <tr>
+                <th scope="row" class="text-start">Unlimited members</th>
+                <td></td>
+                <td><svg class="bi" width="24" height="24" role="img" aria-label="Included"><use href="#check"/></svg></td>
+                <td><svg class="bi" width="24" height="24" role="img" aria-label="Included"><use href="#check"/></svg></td>
+              </tr>
+              <tr>
+                <th scope="row" class="text-start">Extra security</th>
+                <td></td>
+                <td></td>
+                <td><svg class="bi" width="24" height="24" role="img" aria-label="Included"><use href="#check"/></svg></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+
+      <footer class="pt-4 md:my-5 md:pt-5 border-top">
+        <div class="row">
+          <div class="col-12 md:col">
+            <img class="mb-2" src="/bootstrap-test-playground/pr-475/favicon.svg" alt="" width="24" height="19">
+            <small class="d-block mb-3 fg-2">&copy; 2017–2026</small>
+          </div>
+          <div class="col-6 md:col">
+            <h2 class="h5">Features</h2>
+            <ul class="list-unstyled">
+              <li class="mb-1"><a class="theme-secondary text-decoration-none" href="#">Cool stuff</a></li>
+              <li class="mb-1"><a class="theme-secondary text-decoration-none" href="#">Random feature</a></li>
+              <li class="mb-1"><a class="theme-secondary text-decoration-none" href="#">Team feature</a></li>
+              <li class="mb-1"><a class="theme-secondary text-decoration-none" href="#">Stuff for developers</a></li>
+              <li class="mb-1"><a class="theme-secondary text-decoration-none" href="#">Another one</a></li>
+              <li class="mb-1"><a class="theme-secondary text-decoration-none" href="#">Last time</a></li>
+            </ul>
+          </div>
+          <div class="col-6 md:col">
+            <h2 class="h5">Resources</h2>
+            <ul class="list-unstyled">
+              <li class="mb-1"><a class="theme-secondary text-decoration-none" href="#">Resource</a></li>
+              <li class="mb-1"><a class="theme-secondary text-decoration-none" href="#">Resource name</a></li>
+              <li class="mb-1"><a class="theme-secondary text-decoration-none" href="#">Another resource</a></li>
+              <li class="mb-1"><a class="theme-secondary text-decoration-none" href="#">Final resource</a></li>
+            </ul>
+          </div>
+          <div class="col-6 md:col">
+            <h2 class="h5">About</h2>
+            <ul class="list-unstyled">
+              <li class="mb-1"><a class="theme-secondary text-decoration-none" href="#">Team</a></li>
+              <li class="mb-1"><a class="theme-secondary text-decoration-none" href="#">Locations</a></li>
+              <li class="mb-1"><a class="theme-secondary text-decoration-none" href="#">Privacy</a></li>
+              <li class="mb-1"><a class="theme-secondary text-decoration-none" href="#">Terms</a></li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
