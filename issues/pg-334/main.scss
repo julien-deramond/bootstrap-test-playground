@@ -1,0 +1,24 @@
+// Bootstrap, compiled from its Sass source. This folder is a "config": the
+// same three files (main.scss, _custom.scss, tokens.css) make up every saved
+// config in configs/ and every issue reproduction in issues/.
+//
+// Out of the box nothing is configured: the output is Bootstrap's default CSS.
+// Customize at compile time by swapping the `@use` below for the `with (...)`
+// version. Only list what you change; Bootstrap merges it over its defaults.
+// See https://getbootstrap.com/docs/6.0/customize/sass/
+
+// Only $root-tokens is set, and only with keys that Bootstrap's own Sass loops
+// generate (scss/_root.scss, #334). --spacer is the control: it is written by
+// hand, so its override goes through today.
+@use "bootstrap/scss/bootstrap" with (
+  $root-tokens: (
+    --radius-5: .25rem,
+    --primary-bg: var(--teal-600),
+    --bg-body: #f8f9fa,
+    --font-size-md: 1.25rem,
+    --spacer: 1.5rem,
+  )
+);
+
+// Your own Sass, with access to Bootstrap's mixins and functions.
+@use "custom";
