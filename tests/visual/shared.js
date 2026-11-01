@@ -53,14 +53,14 @@ const PLACEHOLDER_IMAGE = `<svg xmlns="http://www.w3.org/2000/svg" width="256" h
 
 // Loads a page with `?chrome=0&freeze`, so only Bootstrap markup shows and it
 // renders the same way every time, and waits until it's ready to screenshot.
-export async function openPage(page, url, { theme, dir, config }) {
+export async function openPage(page, url, { theme, dir, config }, extra = {}) {
   await page.route(target => target.hostname !== 'localhost', route =>
     route.request().resourceType() === 'image' ?
       route.fulfill({ contentType: 'image/svg+xml', body: PLACEHOLDER_IMAGE }) :
       route.continue())
 
   const params = new URLSearchParams({
-    theme, dir, config, chrome: '0', freeze: ''
+    theme, dir, config, chrome: '0', freeze: '', ...extra
   })
   await page.goto(`${url}?${params}`)
   // A non-default config hides the page until its styles are swapped in.

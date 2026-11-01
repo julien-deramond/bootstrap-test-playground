@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Large table</title>
+    <meta
+      name="description"
+      content="A table of 1000 rows with a sticky header, every table variant to toggle, a responsive wrapper in three modes, row selection and a fixed navbar."
+    />
+    <meta name="playground-tags" content="table, sticky, performance, responsive" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main" />
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens" />
+    <link rel="stylesheet" href="/pages/table-large.css" />
+    <script type="module" src="/src/js/main.js"></script>
+    <script type="module" src="/pages/table-large.js"></script>
+  </head>
+  <body>
+    <header class="navbar fixed-top shadow tl-navbar">
+      <a class="navbar-brand px-3" href="#orders">Orders</a>
+      <span class="px-3 fg-2 small" id="tl-count" aria-live="polite"></span>
+    </header>
+
+    <main class="tl-main">
+      <div class="container-fluid py-4">
+        <section class="mb-4" data-playground-chrome aria-labelledby="tl-heading">
+          <p class="mb-2"><a href="/">Playground</a> / Pages</p>
+          <h1 id="tl-heading">Large table</h1>
+          <p class="fs-lg fg-2">
+            1000 rows from a seeded generator, so every load shows the same data. The header is sticky, the navbar is
+            fixed, and the wrapper decides which of the two scrolls.
+          </p>
+          <p class="fg-2">
+            The three wrappers differ in who scrolls. <em>None</em> leaves the page to scroll: the header sticks under
+            the navbar. <em>Responsive</em> is <code>.table-responsive</code>, which scrolls sideways when the table is
+            wider than the container, and then also becomes the box the header sticks to. <em>Fixed height</em> gives
+            that wrapper a height, so the header sticks inside it. The state is in the URL
+            (<code>?variants=striped,hover&amp;wrapper=box&amp;rows=200</code>).
+          </p>
+
+          <form
+            class="d-flex flex-wrap gap-4 align-items-start"
+            id="tl-options"
+            aria-label="Table options"
+            onsubmit="return false"
+          >
+            <fieldset class="d-flex flex-wrap gap-3 border-0 p-0 m-0">
+              <legend class="fs-sm fw-bold mb-2">Variants</legend>
+              <div class="form-field">
+                <input type="checkbox" class="check" id="tl-v-sm" name="variants" value="sm" /><label for="tl-v-sm"
+                  >Small</label
+                >
+              </div>
+              <div class="form-field">
+                <input type="checkbox" class="check" id="tl-v-striped" name="variants" value="striped" /><label
+                  for="tl-v-striped"
+                  >Striped</label
+                >
+              </div>
+              <div class="form-field">
+                <input
+                  type="checkbox"
+                  class="check"
+                  id="tl-v-striped-columns"
+                  name="variants"
+                  value="striped-columns"
+                /><label for="tl-v-striped-columns">Striped columns</label>
+              </div>
+              <div class="form-field">
+                <input type="checkbox" class="check" id="tl-v-hover" name="variants" value="hover" /><label
+                  for="tl-v-hover"
+                  >Hover</label
+                >
+              </div>
+              <div class="form-field">
+                <input type="checkbox" class="check" id="tl-v-bordered" name="variants" value="bordered" /><label
+                  for="tl-v-bordered"
+                  >Bordered</label
+                >
+              </div>
+              <div class="form-field">
+                <input type="checkbox" class="check" id="tl-v-borderless" name="variants" value="borderless" /><label
+                  for="tl-v-borderless"
+                  >Borderless</label
+                >
+              </div>
+              <div class="form-field">
+                <input
+                  type="checkbox"
+                  class="check"
+                  id="tl-v-group-divider"
+                  name="variants"
+                  value="group-divider"
+                /><label for="tl-v-group-divider">Group divider</label>
+              </div>
+              <div class="form-field">
+                <input type="checkbox" class="check" id="tl-v-card" name="variants" value="card" /><label
+                  for="tl-v-card"
+                  >Card</label
+                >
+              </div>
+              <div class="form-field">
+                <input type="checkbox" class="check" id="tl-v-stacked" name="variants" value="stacked" /><label
+                  for="tl-v-stacked"
+                  >Stacked</label
+                >
+              </div>
+            </fieldset>
+            <div class="form-field">
+              <label for="tl-wrapper" class="form-label">Wrapper</label>
+              <select class="form-control" id="tl-wrapper">
+                <option value="none">None</option>
+                <option value="responsive" selected>Responsive</option>
+                <option value="box">Responsive, fixed height</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <input type="checkbox" class="check" id="tl-sticky" checked />
+              <label for="tl-sticky">Sticky header</label>
+            </div>
+          </form>
+        </section>
+
+        <div id="orders" data-tl-table></div>
+      </div>
+    </main>
+  </body>
+</html>
