@@ -933,7 +933,8 @@ export default [
       '/kitchen-sink/components-alert.html',
       '/kitchen-sink/components-badge.html',
       '/kitchen-sink/components-button.html',
-      '/kitchen-sink/forms-chips.html'
+      '/kitchen-sink/forms-chips.html',
+      '/pages/shadow-dom.html'
     ],
     reason: 'shadcn config: shadcn/ui\'s own neutral and destructive colors, under 4.5:1 in these pairings'
   },
