@@ -200,7 +200,8 @@ function install({ properties, extraStops, pressesOnOne, hosts }) {
     } else if (rect.width > 0 && rect.height > 0 && getComputedStyle(element).pointerEvents !== 'none') {
       const x = (Math.max(rect.left, 0) + Math.min(rect.right, width)) / 2
       const y = (Math.max(rect.top, 0) + Math.min(rect.bottom, height)) / 2
-      const hit = document.elementFromPoint(x, y)
+      // In a shadow root, `document` only finds the host.
+      const hit = element.getRootNode().elementFromPoint?.(x, y) ?? document.elementFromPoint(x, y)
       const labels = [...(element.labels ?? [])]
       const related = hit && (hit === element || element.contains(hit) || hit.contains(element) || labels.some(label => label === hit || label.contains(hit) || hit.contains(label)))
       if (hit && !related) {
@@ -265,7 +266,12 @@ function install({ properties, extraStops, pressesOnOne, hosts }) {
     async step() {
       await new Promise(resolve => setTimeout(resolve, 0))
       current.presses++
-      const element = document.activeElement
+      // Focus inside a shadow root shows as its host on `document`.
+      let element = document.activeElement
+      while (element?.shadowRoot?.activeElement) {
+        element = element.shadowRoot.activeElement
+      }
+
       const last = current.stops.at(-1)
       if (last && last.element !== element) {
         settle(last)
@@ -345,7 +351,7 @@ function install({ properties, extraStops, pressesOnOne, hosts }) {
     focus(key, index) {
       const { element } = walks[key].stops[index - 1]
       element.focus({ focusVisible: true, preventScroll: true })
-      return document.activeElement === element
+      return element.getRootNode().activeElement === element
     }
   }
 

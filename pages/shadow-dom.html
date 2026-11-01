@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en" data-playground-busy>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shadow DOM</title>
+    <meta
+      name="description"
+      content="Shadow DOM: Bootstrap's compiled CSS adopted in two shadow roots (default and dark color mode on the host) with buttons, a menu, a tooltip, a dialog and a form, JavaScript components started with the data API and from code."
+    />
+    <meta name="playground-tags" content="components, forms, javascript" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main" />
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens" />
+    <style>
+      .pg-instances {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
+        gap: 1.5rem;
+      }
+
+      .pg-checks {
+        font-size: 0.875rem;
+      }
+
+      .pg-checks td,
+      .pg-checks th {
+        overflow-wrap: anywhere;
+      }
+
+      .pg-checks td:nth-child(2),
+      .pg-checks th:nth-child(2) {
+        white-space: nowrap;
+      }
+    </style>
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Pages</p>
+        <h1>Shadow DOM</h1>
+        <p class="fs-lg fg-2">
+          Bootstrap's compiled CSS adopted in the shadow roots of two custom elements, one with
+          <code>data-bs-theme="dark"</code>
+          on its host. Each shadow root holds buttons, a menu, a tooltip, a dialog and a form.
+        </p>
+        <p class="fg-2">
+          The tokens are declared on <code>:root, :host</code>, so they should reach a shadow root. Bootstrap's
+          JavaScript listens on <code>document</code>, so the data API may not see inside one: each root starts its
+          components both ways, with <code>data-bs-toggle</code> and with <code>new bootstrap.Menu()</code> and friends.
+          See <a href="https://github.com/julien-deramond/bootstrap-test-playground/issues/78">#78</a>.
+        </p>
+      </header>
+
+      <section class="mb-5" aria-labelledby="shadow-heading" data-shadow-section>
+        <h2 class="h4 mb-3" id="shadow-heading" data-playground-chrome>Shadow roots</h2>
+        <div class="pg-instances">
+          <pg-bootstrap-box data-instance="light"></pg-bootstrap-box>
+          <pg-bootstrap-box data-instance="dark" data-bs-theme="dark"></pg-bootstrap-box>
+        </div>
+      </section>
+
+      <section class="mb-5" aria-labelledby="checks-heading" data-shadow-section>
+        <h2 class="h4 mb-3" id="checks-heading" data-playground-chrome>What the roots do</h2>
+        <p class="fg-2" data-playground-chrome>
+          Measured in the page, each row once the roots are ready. A pass means the behavior a user expects works; a
+          fail is a candidate for an upstream issue.
+        </p>
+        <table class="table pg-checks" data-shadow-checks>
+          <thead>
+            <tr>
+              <th scope="col">Check</th>
+              <th scope="col">Result</th>
+              <th scope="col">Detail</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </main>
+
+    <template id="pg-box-template">
+      <div class="card">
+        <div class="card-body d-grid gap-4">
+          <h3 class="h5 m-0" data-title></h3>
+
+          <div class="d-flex flex-wrap gap-2" data-part="buttons">
+            <button type="button" class="btn-solid theme-secondary">Secondary solid</button>
+            <button type="button" class="btn-outline theme-secondary">Secondary</button>
+            <button type="button" class="btn-subtle theme-danger">Danger</button>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2" data-part="menus">
+            <div>
+              <button
+                type="button"
+                class="btn-solid theme-secondary"
+                data-bs-toggle="menu"
+                aria-expanded="false"
+                data-menu="data-api"
+              >
+                Menu (data API)
+              </button>
+              <div class="menu">
+                <a class="menu-item" href="#">Action</a>
+                <a class="menu-item" href="#">Another action</a>
+              </div>
+            </div>
+            <div>
+              <button type="button" class="btn-solid theme-secondary" aria-expanded="false" data-menu="code">
+                Menu (code)
+              </button>
+              <div class="menu">
+                <a class="menu-item" href="#">Action</a>
+                <a class="menu-item" href="#">Another action</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2" data-part="tooltips">
+            <button
+              type="button"
+              class="btn-outline theme-primary"
+              data-bs-title="Tooltip in the body"
+              data-tooltip="body"
+            >
+              Tooltip (default container)
+            </button>
+            <button
+              type="button"
+              class="btn-outline theme-primary"
+              data-bs-title="Tooltip in the shadow root"
+              data-tooltip="root"
+            >
+              Tooltip (container in the root)
+            </button>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2" data-part="dialogs">
+            <button
+              type="button"
+              class="btn-solid theme-secondary"
+              data-bs-toggle="dialog"
+              data-bs-target="#dialog"
+              data-dialog-trigger="data-api"
+            >
+              Dialog (data API)
+            </button>
+            <button type="button" class="btn-solid theme-secondary" data-dialog-trigger="code">Dialog (code)</button>
+            <button
+              type="button"
+              class="btn-solid theme-secondary"
+              commandfor="dialog"
+              command="show-modal"
+              data-dialog-trigger="command"
+            >
+              Dialog (command)
+            </button>
+            <dialog class="dialog" id="dialog">
+              <div class="dialog-header">
+                <h4 class="dialog-title">Dialog in a shadow root</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="dialog" aria-label="Close"></button>
+              </div>
+              <div class="dialog-body">
+                <p class="m-0">The text, the backdrop and the focus trap come from the native dialog.</p>
+              </div>
+              <div class="dialog-footer">
+                <button type="button" class="btn-solid theme-secondary" commandfor="dialog" command="close">
+                  Close
+                </button>
+              </div>
+            </dialog>
+          </div>
+
+          <form data-part="form" class="d-grid gap-3">
+            <div class="form-field">
+              <label class="form-label" for="name">Name</label>
+              <input type="text" class="form-control" id="name" placeholder="Ada Lovelace" />
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="kind">Kind</label>
+              <select class="form-control" id="kind">
+                <option>One</option>
+                <option>Two</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <input type="checkbox" class="check" id="agree" checked />
+              <label for="agree">Checked</label>
+            </div>
+            <div class="form-field">
+              <div class="switch">
+                <input type="checkbox" id="switch" role="switch" switch />
+              </div>
+              <label for="switch">Switch</label>
+            </div>
+          </form>
+        </div>
+      </div>
+    </template>
+
+    <script type="module" src="/pages/shadow-dom.js"></script>
+  </body>
+</html>
