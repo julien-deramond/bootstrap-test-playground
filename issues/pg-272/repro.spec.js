@@ -66,7 +66,7 @@ test('menu items, list group actions and links show a focus indicator that contr
   await repro.screenshot('block, unfocused', { clip: rect })
 
   const failing = measured.flatMap(({ covered, required, colors, contrast }, index) =>
-    covered >= required ? [] : [`${items[index].name} (${covered}/${required}px at 3:1; ${colors ?? 'no change'}, ${contrast}:1)`])
+    covered >= required ? [] : `${items[index].name} (${covered}/${required}px at 3:1; ${colors ?? 'no change'}, ${contrast}:1)`)
 
   repro.verdict(count > 0 && failing.length === 0,
     failing.length ? `no 3:1 indicator on: ${failing.join(', ')}` : `all ${count} focused components show a 3:1 indicator`)

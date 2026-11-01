@@ -90,14 +90,12 @@ const localRules = {
   'unicorn/numeric-separators-style': 'off',
   'unicorn/prefer-array-flat': 'off',
   'unicorn/prefer-at': 'error',
-  'unicorn/prefer-dom-node-dataset': 'off',
   'unicorn/prefer-global-this': 'off',
   'unicorn/prefer-module': 'off',
   'unicorn/prefer-query-selector': 'off',
   'unicorn/prefer-string-raw': 'off',
   'unicorn/prefer-string-replace-all': 'off',
   'unicorn/prefer-structured-clone': 'off',
-  'unicorn/prevent-abbreviations': 'off',
   // Rules new/changed in ESLint 10 / updated plugins — disable to preserve old behavior
   'xo/import-specifier-newline': 'off',
   '@eslint-community/eslint-comments/require-description': 'off',
@@ -137,7 +135,6 @@ const localRules = {
   'unicorn/no-return-array-push': 'off',
   'unicorn/no-this-outside-of-class': 'off',
   'unicorn/no-unnecessary-splice': 'off',
-  'unicorn/no-unused-array-method-return': 'off',
   'unicorn/no-unreadable-for-of-expression': 'off',
   'unicorn/no-subtraction-comparison': 'off',
   'unicorn/prefer-add-event-listener-options': 'off',
@@ -167,6 +164,15 @@ const localRules = {
   'unicorn/no-unsafe-string-replacement': 'off',
   'unicorn/require-array-sort-compare': 'off',
   'unicorn/require-css-escape': 'off',
+  'unicorn/no-unnecessary-parameters': 'off',
+  'unicorn/prefer-block-statement-over-iife': 'off',
+  'unicorn/prefer-combined-guards': 'off',
+  'unicorn/prefer-default-parameters': 'off',
+  'unicorn/prefer-iterator-helpers': 'off',
+  'unicorn/prefer-simple-condition-first': 'off',
+  'unicorn/prefer-then-catch': 'off',
+  'unicorn/prefer-toggle-attribute': 'off',
+  'unicorn/single-line-block-comment-style': 'off',
   // Playground scripts are one-off tools and test steps, not library code
   complexity: 'off',
   'max-depth': 'off',
@@ -206,7 +212,7 @@ const localRules = {
 // Base config: xo/browser + unicorn + import-x, as in twbs/bootstrap
 const xoBrowserConfigs = eslintConfigXo({ browser: true, space: false })
 const xoBrowserConfig = xoBrowserConfigs.find(config => config.name === 'xo/base') ?? xoBrowserConfigs[0]
-const unicornConfig = unicorn.configs['flat/recommended']
+const unicornConfig = unicorn.configs.recommended
 
 export default [
   {

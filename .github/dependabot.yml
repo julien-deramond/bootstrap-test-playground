@@ -14,6 +14,11 @@ updates:
     # Bootstrap moves with `npm run update-bootstrap` only.
     ignore:
       - dependency-name: bootstrap
+      # Waits on stylelint-config-twbs-bootstrap supporting stylelint 17 (its peer
+      # is ^16.11.0): https://github.com/twbs/stylelint-config-twbs-bootstrap/pull/328
+      - dependency-name: stylelint
+        update-types:
+          - "version-update:semver-major"
 
   - package-ecosystem: github-actions
     directory: "/"

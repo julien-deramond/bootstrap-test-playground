@@ -343,7 +343,7 @@ function renderResults() {
   results.hidden = state.group === CONFIGS
   configList.hidden = state.group !== CONFIGS
   if (state.group === CONFIGS) {
-    results.innerHTML = ''
+    results.replaceChildren()
     const count = matchingConfigs().length
     resultCount.textContent = `${plural(count, 'config')} found`
     return
@@ -430,7 +430,7 @@ function matchingConfigs() {
 
 function renderConfigs() {
   if (state.group !== CONFIGS) {
-    configList.innerHTML = ''
+    configList.replaceChildren()
     return
   }
 
