@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Print: invoice</title>
+    <meta
+      name="description"
+      content="Print: an invoice built with tables, badges, cards and utilities to look at with print emulation or print preview: the .print:opacity-* utilities, background and text colors on colored backgrounds, an explicit dark card, a table that spans pages, and a dialog and a menu left open."
+    />
+    <meta name="playground-tags" content="print, table, cards, utilities, layout" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script src="/playground-prefs.js"></script>
+    <!-- Always the utilities-custom config: it is the only one that generates
+         `.print:` utilities (the default build has no `print: true` utility), so the
+         toolbar's config switch doesn't apply. -->
+    <link rel="stylesheet" href="/configs/utilities-custom/main.scss" />
+    <link rel="stylesheet" href="/configs/utilities-custom/tokens.css" />
+    <style>
+      .pg-print-overlays {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        align-items: flex-start;
+      }
+
+      .pg-print-overlays .dialog {
+        position: static;
+        margin: 0;
+        max-inline-size: 22rem;
+      }
+
+      .pg-print-overlays .menu {
+        min-inline-size: 12rem;
+      }
+
+      .pg-print-on-primary {
+        color: #000;
+      }
+
+      .pg-print-sticky {
+        position: sticky;
+        inset-block-start: 0;
+        z-index: 1;
+      }
+    </style>
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="container py-5">
+      <header class="mb-5" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Pages</p>
+        <h1>Print</h1>
+        <p class="fs-lg fg-2">
+          An invoice to look at with print emulation (the visual suite's <code>print</code> captures) or the browser's
+          print preview.
+        </p>
+        <p class="fg-2">
+          Bootstrap v6's default build has no <code>@media print</code> rule. The only print support is the utility
+          API's <code>print: true</code> key, which no default utility sets, so this page loads the
+          <a href="https://github.com/julien-deramond/bootstrap-test-playground/tree/main/configs/utilities-custom"
+            ><code>utilities-custom</code></a
+          >
+          config, where <code>opacity</code> has <code>.print:opacity-*</code> classes. The toolbar's
+          <em>Styles</em> menu doesn't apply here.
+        </p>
+      </header>
+
+      <section class="mb-5" data-playground-chrome>
+        <h2 class="h5">What to look at</h2>
+        <ul>
+          <li>
+            The <strong>Download</strong> and <strong>Pay online</strong> buttons have <code>.print:opacity-0</code>.
+            They become transparent in print but keep their space, because the utility API only generates
+            <code>opacity</code> here, not <code>display</code>.
+          </li>
+          <li>
+            Badges, the colored card and the table stripes use backgrounds. Browsers drop backgrounds when printing
+            unless
+            <code>print-color-adjust: exact</code> is set, which Bootstrap never sets. Print emulation in a screenshot
+            doesn't drop them, so check the print preview's <em>Background graphics</em> option.
+          </li>
+          <li>
+            The dark card has an explicit <code>data-bs-theme="dark"</code>. Browsers print with light colors whatever
+            the OS color scheme is, but an explicit dark theme stays dark.
+          </li>
+          <li>
+            The table has enough lines to run over two pages. Look at where it splits, and whether the header repeats
+            and a row is cut in two.
+          </li>
+          <li>The sticky bar, the open dialog and the open menu show what overlays do at print time.</li>
+        </ul>
+      </section>
+
+      <article aria-labelledby="invoice-title">
+        <header class="d-flex flex-wrap justify-content-between align-items-start gap-4 mb-5">
+          <div class="d-flex align-items-center gap-3">
+            <img src="/favicon.svg" alt="" width="48" height="38" />
+            <div>
+              <p class="fw-bold fs-lg mb-0">Acme Printing Co.</p>
+              <p class="fg-2 mb-0">12 Press Lane, Lyon, France</p>
+            </div>
+          </div>
+          <div class="text-end">
+            <h2 class="h3 mb-1" id="invoice-title">Invoice #2026-0417</h2>
+            <p class="fg-2 mb-2">Issued 1 November 2026, due 15 November 2026</p>
+            <span class="badge theme-success">Paid</span>
+          </div>
+        </header>
+
+        <div class="row g-4 mb-5">
+          <section class="col-6" aria-labelledby="billing-title">
+            <h3 class="h6 fg-2 text-uppercase" id="billing-title">Billed to</h3>
+            <p class="mb-0">
+              Jane Doe<br />
+              Doe Studio<br />
+              8 Rue des Arts<br />
+              69002 Lyon, France
+            </p>
+          </section>
+          <section class="col-6" aria-labelledby="shipping-title">
+            <h3 class="h6 fg-2 text-uppercase" id="shipping-title">Shipped to</h3>
+            <p class="mb-0">
+              Doe Studio, warehouse<br />
+              Zone industrielle, bâtiment C<br />
+              69800 Saint-Priest, France
+            </p>
+          </section>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 mb-4" role="group" aria-label="Invoice actions">
+          <button type="button" class="btn-solid theme-primary print:opacity-0">Download</button>
+          <button type="button" class="btn-outline theme-secondary print:opacity-0">Pay online</button>
+        </div>
+
+        <div class="table-responsive mb-5">
+          <table class="table">
+            <caption class="visually-hidden">
+              Line items of invoice 2026-0417
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="text-end">Quantity</th>
+                <th scope="col" class="text-end">Unit price</th>
+                <th scope="col" class="text-end">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Business cards, matte</th>
+                <td><span class="badge badge-subtle theme-success">Shipped</span></td>
+                <td class="text-end">500</td>
+                <td class="text-end">€0.12</td>
+                <td class="text-end">€60.00</td>
+              </tr>
+              <tr>
+                <th scope="row">Flyers A5, glossy</th>
+                <td><span class="badge badge-subtle theme-success">Shipped</span></td>
+                <td class="text-end">1,000</td>
+                <td class="text-end">€0.08</td>
+                <td class="text-end">€80.00</td>
+              </tr>
+              <tr>
+                <th scope="row">Posters A2</th>
+                <td><span class="badge badge-subtle theme-warning">Back-ordered</span></td>
+                <td class="text-end">20</td>
+                <td class="text-end">€4.50</td>
+                <td class="text-end">€90.00</td>
+              </tr>
+              <tr>
+                <th scope="row">Roll-up banner</th>
+                <td><span class="badge badge-subtle theme-danger">Cancelled</span></td>
+                <td class="text-end">2</td>
+                <td class="text-end">€39.00</td>
+                <td class="text-end">€0.00</td>
+              </tr>
+              <tr>
+                <th scope="row">Stickers, die-cut</th>
+                <td><span class="badge badge-outline theme-info">Proof sent</span></td>
+                <td class="text-end">250</td>
+                <td class="text-end">€0.30</td>
+                <td class="text-end">€75.00</td>
+              </tr>
+              <tr>
+                <th scope="row">Letterheads</th>
+                <td><span class="badge badge-subtle theme-success">Shipped</span></td>
+                <td class="text-end">300</td>
+                <td class="text-end">€0.15</td>
+                <td class="text-end">€45.00</td>
+              </tr>
+              <tr>
+                <th scope="row">Envelopes DL</th>
+                <td><span class="badge badge-subtle theme-success">Shipped</span></td>
+                <td class="text-end">300</td>
+                <td class="text-end">€0.09</td>
+                <td class="text-end">€27.00</td>
+              </tr>
+              <tr>
+                <th scope="row">Brochures, tri-fold</th>
+                <td><span class="badge badge-subtle theme-warning">Back-ordered</span></td>
+                <td class="text-end">400</td>
+                <td class="text-end">€0.55</td>
+                <td class="text-end">€220.00</td>
+              </tr>
+              <tr>
+                <th scope="row">Menus A4, laminated</th>
+                <td><span class="badge badge-subtle theme-success">Shipped</span></td>
+                <td class="text-end">60</td>
+                <td class="text-end">€1.80</td>
+                <td class="text-end">€108.00</td>
+              </tr>
+              <tr>
+                <th scope="row">Table tents</th>
+                <td><span class="badge badge-subtle theme-success">Shipped</span></td>
+                <td class="text-end">80</td>
+                <td class="text-end">€0.70</td>
+                <td class="text-end">€56.00</td>
+              </tr>
+              <tr>
+                <th scope="row">Gift tags</th>
+                <td><span class="badge badge-outline theme-info">Proof sent</span></td>
+                <td class="text-end">500</td>
+                <td class="text-end">€0.06</td>
+                <td class="text-end">€30.00</td>
+              </tr>
+              <tr>
+                <th scope="row">Notebooks A6</th>
+                <td><span class="badge badge-subtle theme-success">Shipped</span></td>
+                <td class="text-end">100</td>
+                <td class="text-end">€2.40</td>
+                <td class="text-end">€240.00</td>
+              </tr>
+              <tr>
+                <th scope="row">Postcards</th>
+                <td><span class="badge badge-subtle theme-success">Shipped</span></td>
+                <td class="text-end">750</td>
+                <td class="text-end">€0.10</td>
+                <td class="text-end">€75.00</td>
+              </tr>
+              <tr>
+                <th scope="row">Folders with pocket</th>
+                <td><span class="badge badge-subtle theme-warning">Back-ordered</span></td>
+                <td class="text-end">150</td>
+                <td class="text-end">€0.95</td>
+                <td class="text-end">€142.50</td>
+              </tr>
+              <tr>
+                <th scope="row">Window decals</th>
+                <td><span class="badge badge-subtle theme-success">Shipped</span></td>
+                <td class="text-end">6</td>
+                <td class="text-end">€12.00</td>
+                <td class="text-end">€72.00</td>
+              </tr>
+              <tr>
+                <th scope="row">Name badges</th>
+                <td><span class="badge badge-subtle theme-success">Shipped</span></td>
+                <td class="text-end">120</td>
+                <td class="text-end">€0.80</td>
+                <td class="text-end">€96.00</td>
+              </tr>
+              <tr>
+                <th scope="row">Lanyards</th>
+                <td><span class="badge badge-subtle theme-success">Shipped</span></td>
+                <td class="text-end">120</td>
+                <td class="text-end">€0.65</td>
+                <td class="text-end">€78.00</td>
+              </tr>
+              <tr>
+                <th scope="row">Tote bags, screen-printed</th>
+                <td><span class="badge badge-outline theme-info">Proof sent</span></td>
+                <td class="text-end">200</td>
+                <td class="text-end">€3.10</td>
+                <td class="text-end">€620.00</td>
+              </tr>
+              <tr>
+                <th scope="row">Packaging tape, branded</th>
+                <td><span class="badge badge-subtle theme-success">Shipped</span></td>
+                <td class="text-end">24</td>
+                <td class="text-end">€4.20</td>
+                <td class="text-end">€100.80</td>
+              </tr>
+              <tr>
+                <th scope="row">Delivery</th>
+                <td><span class="badge badge-subtle theme-success">Shipped</span></td>
+                <td class="text-end">1</td>
+                <td class="text-end">€18.00</td>
+                <td class="text-end">€18.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="row g-4 mb-5">
+          <section class="col-md-6" aria-labelledby="totals-title">
+            <div class="card">
+              <div class="card-body">
+                <h3 class="card-title h5" id="totals-title">Totals</h3>
+                <dl class="row mb-0">
+                  <dt class="col-6 fw-normal">Subtotal</dt>
+                  <dd class="col-6 text-end">€2,233.30</dd>
+                  <dt class="col-6 fw-normal">VAT (20%)</dt>
+                  <dd class="col-6 text-end">€446.66</dd>
+                  <dt class="col-6">Total</dt>
+                  <dd class="col-6 text-end fw-bold mb-0">€2,679.96</dd>
+                </dl>
+              </div>
+            </div>
+          </section>
+
+          <section class="col-md-6" aria-labelledby="colors-title">
+            <h3 class="h5" id="colors-title">Colors in print</h3>
+            <div class="vstack gap-2">
+              <p class="bg-primary pg-print-on-primary p-3 mb-0">Text on a bg-primary background</p>
+              <p class="bg-2 fg-1 p-3 mb-0">Text on a bg-2 surface</p>
+              <p class="fg-primary mb-0">Colored text with <code>fg-primary</code>, no background</p>
+              <div class="card" data-bs-theme="dark">
+                <div class="card-body">
+                  <h4 class="card-title h6">Explicit dark card</h4>
+                  <p class="card-text mb-0">This card sets <code>data-bs-theme="dark"</code>.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="pg-print-sticky bg-body border-top border-bottom py-2 mb-5" role="note">
+          <span class="fw-bold">Sticky bar:</span> <code>position: sticky</code> at the top of the page.
+        </div>
+
+        <section class="mb-5" aria-labelledby="overlays-title">
+          <h3 class="h5" id="overlays-title">Overlays left open</h3>
+          <div class="pg-print-overlays">
+            <dialog class="dialog" open aria-labelledby="print-dialog-title">
+              <div class="dialog-header">
+                <h4 class="dialog-title h5" id="print-dialog-title">Pay this invoice</h4>
+              </div>
+              <div class="dialog-body">
+                <p class="mb-0">A non-modal dialog, open when the page prints.</p>
+              </div>
+              <div class="dialog-footer">
+                <button type="button" class="btn-solid theme-primary">Pay</button>
+              </div>
+            </dialog>
+            <div class="menu show position-static">
+              <a class="menu-item" href="#">Duplicate</a>
+              <a class="menu-item active" href="#" aria-current="true">Send by email</a>
+              <a class="menu-item" href="#">Archive</a>
+            </div>
+          </div>
+        </section>
+
+        <footer class="fg-2 border-top pt-3">
+          <p class="mb-0">Thank you for your business. Payment is due within 14 days. VAT FR 12 345 678 901.</p>
+        </footer>
+      </article>
+    </main>
+  </body>
+</html>
