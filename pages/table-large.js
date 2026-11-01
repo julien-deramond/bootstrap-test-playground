@@ -8,7 +8,7 @@
 // <html> gets data-table-large="ready" once the rows are in the document.
 // With ?chrome=0 the page is capped at one screen (see table-large.css).
 
-const VARIANTS = ['sm', 'striped', 'striped-columns', 'hover', 'bordered', 'borderless', 'group-divider', 'card', 'stacked']
+const VARIANTS = new Set(['sm', 'striped', 'striped-columns', 'hover', 'bordered', 'borderless', 'group-divider', 'card', 'stacked'])
 const WRAPPERS = ['none', 'responsive', 'box']
 const DEFAULT_ROWS = 1000
 
@@ -59,7 +59,7 @@ function rowHtml({ id, customer, status, amount, date }) {
 }
 
 const params = new URLSearchParams(location.search)
-const chosen = new Set((params.get('variants') ?? '').split(',').filter(variant => VARIANTS.includes(variant)))
+const chosen = new Set((params.get('variants') ?? '').split(',').filter(variant => VARIANTS.has(variant)))
 const rows = Math.max(1, Number.parseInt(params.get('rows'), 10) || DEFAULT_ROWS)
 const state = {
   wrapper: WRAPPERS.includes(params.get('wrapper')) ? params.get('wrapper') : 'responsive',
@@ -139,7 +139,11 @@ mount.addEventListener('change', ({ target }) => {
   } else if (target.closest('tbody')) {
     const row = target.closest('tr')
     row.classList.toggle('table-active', target.checked)
-    selected[target.checked ? 'add' : 'delete'](Number(row.dataset.row))
+    if (target.checked) {
+      selected.add(Number(row.dataset.row))
+    } else {
+      selected.delete(Number(row.dataset.row))
+    }
   }
 
   updateCount()
@@ -170,7 +174,11 @@ stickyInput.checked = state.sticky
 
 form.addEventListener('change', ({ target }) => {
   if (target.name === 'variants') {
-    chosen[target.checked ? 'add' : 'delete'](target.value)
+    if (target.checked) {
+      chosen.add(target.value)
+    } else {
+      chosen.delete(target.value)
+    }
   } else if (target === wrapperSelect) {
     state.wrapper = target.value
   } else if (target === stickyInput) {

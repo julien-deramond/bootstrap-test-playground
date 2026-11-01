@@ -7,7 +7,9 @@
 // VISUAL_THEMES, VISUAL_DIRS, VISUAL_CONFIGS and VISUAL_SCOPE as
 // visual.spec.js.
 import { expect, test } from '@playwright/test'
-import { VARIANTS, baseline, inScope, openPage } from './shared.js'
+import {
+  VARIANTS, baseline, inScope, openPage
+} from './shared.js'
 
 const URL = '/pages/table-large.html'
 

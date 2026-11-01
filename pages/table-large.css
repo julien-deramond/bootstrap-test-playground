@@ -5,6 +5,7 @@
 
 :root {
   --tl-navbar-height: 3.5rem;
+
   /* Where the sticky header stops: under the fixed navbar when the page
      scrolls, at the top of the wrapper when the wrapper scrolls. */
   --tl-sticky-top: var(--tl-navbar-height);
