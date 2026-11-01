@@ -202,6 +202,7 @@ export default [
       '/kitchen-sink/forms-overview.html',
       '/kitchen-sink/forms-validation.html',
       '/pages/checkout.html',
+      '/pages/coexistence.html',
       '/pages/focus.html',
       '/pages/forced-colors.html',
       '/pages/js-api.html',

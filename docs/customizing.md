@@ -15,6 +15,15 @@ In `tokens.css`, write tokens unprefixed like the Sass docs (`--border-radius`) 
 
 The same override doesn't always do the same in `main.scss` and in `tokens.css`: Sass derives scales and utilities from some variables at compile time. [Sass or tokens.css](../configs/README.md#sass-or-tokenscss) lists where the two differ.
 
+## Third-party CSS
+
+Most CSS you bring along isn't in a cascade layer: a legacy stylesheet, a component library, Tailwind's preflight. A rule outside every layer beats every layered rule, whatever the selectors' specificity, so an unlayered `.card { border: … }` wins over Bootstrap's `.card` and over a `.border-0` utility, and a preflight's `button { background-color: transparent }` wins over `.btn`. [`pages/coexistence.html`](../pages/coexistence.html) shows each case with a pass or fail marker.
+
+- **Wrap the third-party CSS in a layer** and declare that layer before Bootstrap's: Bootstrap's reboot, components and utilities then win. A layer's place in the order is where its name first appears, so put `@layer legacy;` (or `@layer legacy, colors, config, …;`) in a stylesheet or a `<style>` that loads before Bootstrap's CSS.
+- **Import a stylesheet into a layer** with `@import url("legacy.css") layer(legacy);`, after declaring the order the same way. The imported file needs no change.
+- **A layer declared after Bootstrap's wins**, because its position decides, not its name. Keep the third-party layers first and your own overrides in `@layer custom`, as above.
+- **Don't fix a loss with `!important`.** Across layers it reverses the order, which is hard to follow (see [Auditing layers](audits.md#auditing-cascade-layers)).
+
 ## Configs
 
 Once the working copy holds a good test case, save it as a **config**, a folder in [`configs/`](../configs/) with the same three files:
