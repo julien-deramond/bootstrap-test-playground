@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en" data-playground-busy>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Coexistence with third-party CSS</title>
+    <meta
+      name="description"
+      content="Coexistence: Bootstrap's cascade layers next to unlayered legacy CSS, a Tailwind-style preflight, and third-party CSS wrapped in a layer declared before Bootstrap's, with a pass or fail marker for which rule wins in each case."
+    />
+    <meta name="playground-tags" content="layers, cascade, customization, forms" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script src="/playground-prefs.js"></script>
+    <!-- Declares the order of the third-party layers before Bootstrap's own
+         statement (@layer colors, config, root, …): a layer's place is where
+         its name first appears. -->
+    <style>
+      @layer legacy-first, imported;
+    </style>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main" />
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens" />
+    <link rel="stylesheet" href="/pages/entry-points.css" />
+    <link rel="stylesheet" href="/pages/coexistence.css" />
+    <style>
+      .pg-coexist {
+        display: grid;
+        gap: 0.75rem;
+        justify-items: start;
+      }
+    </style>
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="pg-page">
+      <header data-playground-chrome>
+        <p><a href="/">Playground</a> / Pages</p>
+        <h1>Coexistence with third-party CSS</h1>
+        <p>
+          Bootstrap v6 puts its styles in cascade layers, and most other CSS isn't in one. A rule outside every layer
+          beats every layered rule, whatever the selectors' specificity, so a legacy stylesheet or Tailwind's preflight
+          loaded next to Bootstrap wins over its reboot, components and utilities. Wrapping the third-party CSS in a
+          layer that is declared before Bootstrap's puts it under Bootstrap instead.
+          <a
+            href="https://github.com/julien-deramond/bootstrap-test-playground/blob/main/docs/customizing.md#third-party-css"
+            >Third-party CSS</a
+          >
+          has the guidance.
+        </p>
+        <p>
+          Each case below has its own scoped stylesheet in
+          <a href="https://github.com/julien-deramond/bootstrap-test-playground/blob/main/pages/coexistence.css"
+            ><code>pages/coexistence.css</code></a
+          >. The scopes use <code>:where()</code>, which adds no specificity, so a rule's layer is the only thing that
+          decides. A case passes when the rule the cascade says should win wins; an unlayered rule winning is the
+          pitfall itself, not a Bootstrap bug.
+        </p>
+        <h2>Checks</h2>
+      </header>
+
+      <ol class="pg-checks">
+        <li
+          data-entry-case="legacy-unlayered-component"
+          data-expect="An unlayered .card rule beats Bootstrap’s .card, whatever its specificity: the card keeps the legacy border and radius"
+        >
+          <div class="pg-marker"></div>
+          <div class="pg-sample pg-coexist pg-legacy-unlayered">
+            <div class="card" id="case-lu-card"><div class="card-body">A card</div></div>
+            <div class="card border-0" id="case-lu-border-0">
+              <div class="card-body">A card with the border-0 utility</div>
+            </div>
+            <p>
+              <button type="button" class="btn btn-solid theme-primary" id="case-lu-button">A button</button>
+              <label for="case-lu-input" class="visually-hidden">Text</label>
+              <input type="text" class="form-control" id="case-lu-input" value="An input" />
+            </p>
+          </div>
+        </li>
+
+        <li
+          data-entry-case="legacy-unlayered-controls"
+          data-expect="Unlayered button and input rules beat .btn and .form-control: the button and the input keep the legacy background"
+        >
+          <div class="pg-marker"></div>
+          <div class="pg-sample pg-coexist pg-legacy-unlayered">
+            <div class="card" id="case-lc-card"><div class="card-body">A card</div></div>
+            <div class="card border-0" id="case-lc-border-0">
+              <div class="card-body">A card with the border-0 utility</div>
+            </div>
+            <p>
+              <button type="button" class="btn btn-solid theme-primary" id="case-lc-button">A button</button>
+              <label for="case-lc-input" class="visually-hidden">Text</label>
+              <input type="text" class="form-control" id="case-lc-input" value="An input" />
+            </p>
+          </div>
+        </li>
+
+        <li
+          data-entry-case="legacy-unlayered-utility"
+          data-expect="An unlayered .card rule beats the .border-0 utility: the card keeps its legacy border"
+        >
+          <div class="pg-marker"></div>
+          <div class="pg-sample pg-coexist pg-legacy-unlayered">
+            <div class="card" id="case-lw-card"><div class="card-body">A card</div></div>
+            <div class="card border-0" id="case-lw-border-0">
+              <div class="card-body">A card with the border-0 utility</div>
+            </div>
+            <p>
+              <button type="button" class="btn btn-solid theme-primary" id="case-lw-button">A button</button>
+              <label for="case-lw-input" class="visually-hidden">Text</label>
+              <input type="text" class="form-control" id="case-lw-input" value="An input" />
+            </p>
+          </div>
+        </li>
+
+        <li
+          data-entry-case="legacy-layer-first"
+          data-expect="The same rules in @layer legacy-first, declared before Bootstrap’s layers, lose to .card, .btn and .form-control"
+        >
+          <div class="pg-marker"></div>
+          <div class="pg-sample pg-coexist pg-legacy-first">
+            <div class="card" id="case-lf-card"><div class="card-body">A card</div></div>
+            <div class="card border-0" id="case-lf-border-0">
+              <div class="card-body">A card with the border-0 utility</div>
+            </div>
+            <p>
+              <button type="button" class="btn btn-solid theme-primary" id="case-lf-button">A button</button>
+              <label for="case-lf-input" class="visually-hidden">Text</label>
+              <input type="text" class="form-control" id="case-lf-input" value="An input" />
+            </p>
+          </div>
+        </li>
+
+        <li
+          data-entry-case="legacy-layer-utility"
+          data-expect="In that layer, the .border-0 utility removes the card’s border"
+        >
+          <div class="pg-marker"></div>
+          <div class="pg-sample pg-coexist pg-legacy-first">
+            <div class="card" id="case-lt-card"><div class="card-body">A card</div></div>
+            <div class="card border-0" id="case-lt-border-0">
+              <div class="card-body">A card with the border-0 utility</div>
+            </div>
+            <p>
+              <button type="button" class="btn btn-solid theme-primary" id="case-lt-button">A button</button>
+              <label for="case-lt-input" class="visually-hidden">Text</label>
+              <input type="text" class="form-control" id="case-lt-input" value="An input" />
+            </p>
+          </div>
+        </li>
+
+        <li
+          data-entry-case="preflight-unlayered"
+          data-expect="An unlayered Tailwind-style preflight overrides Bootstrap’s reboot and components: no card border, a transparent button, unstyled heading"
+        >
+          <div class="pg-marker"></div>
+          <div class="pg-sample pg-coexist pg-preflight-unlayered">
+            <div class="card" id="case-pu-card"><div class="card-body">A card</div></div>
+            <h3 id="case-pu-heading">A heading</h3>
+            <p><button type="button" class="btn btn-solid theme-primary" id="case-pu-button">A button</button></p>
+          </div>
+        </li>
+
+        <li
+          data-entry-case="preflight-layer-first"
+          data-expect="The same preflight in @layer legacy-first, declared before Bootstrap’s layers, loses to Bootstrap’s reboot and components"
+        >
+          <div class="pg-marker"></div>
+          <div class="pg-sample pg-coexist pg-preflight-first">
+            <div class="card" id="case-pf-card"><div class="card-body">A card</div></div>
+            <h3 id="case-pf-heading">A heading</h3>
+            <p><button type="button" class="btn btn-solid theme-primary" id="case-pf-button">A button</button></p>
+          </div>
+        </li>
+
+        <li
+          data-entry-case="preflight-import"
+          data-expect="The same preflight loaded with @import … layer(imported), declared before Bootstrap’s layers, loses to Bootstrap too"
+        >
+          <div class="pg-marker"></div>
+          <div class="pg-sample pg-coexist pg-preflight-imported">
+            <div class="card" id="case-pi-card"><div class="card-body">A card</div></div>
+            <h3 id="case-pi-heading">A heading</h3>
+            <p><button type="button" class="btn btn-solid theme-primary" id="case-pi-button">A button</button></p>
+          </div>
+        </li>
+
+        <li
+          data-entry-case="preflight-layer-last"
+          data-expect="The same preflight in a layer that comes after Bootstrap’s wins: the layer’s position decides, not its name"
+        >
+          <div class="pg-marker"></div>
+          <div class="pg-sample pg-coexist pg-preflight-last">
+            <div class="card" id="case-pl-card"><div class="card-body">A card</div></div>
+            <h3 id="case-pl-heading">A heading</h3>
+            <p><button type="button" class="btn btn-solid theme-primary" id="case-pl-button">A button</button></p>
+          </div>
+        </li>
+      </ol>
+    </main>
+
+    <script type="module">
+      import { element, runChecks, style } from '/pages/entry-points.js'
+
+      const px = (value) => Number.parseFloat(value)
+      const legacyBorder = (id) =>
+        style(`${id}-card`).borderTopWidth === '3px' && style(`${id}-card`).borderTopStyle === 'dashed'
+      const legacyControls = (id) =>
+        style(`${id}-button`).backgroundColor === 'rgb(111, 66, 193)' && style(`${id}-input`).borderTopWidth === '2px'
+      const bootstrapComponents = (id) =>
+        style(`${id}-card`).borderTopWidth !== '3px' &&
+        style(`${id}-button`).backgroundColor !== 'rgb(111, 66, 193)' &&
+        style(`${id}-input`).borderTopWidth !== '2px'
+
+      // The preflight zeroes the card border, makes the button transparent and
+      // resets the heading size. Bootstrap's reboot and components set them back.
+      const preflightWins = (id) =>
+        px(style(`${id}-card`).borderTopWidth) === 0 &&
+        style(`${id}-button`).backgroundColor === 'rgba(0, 0, 0, 0)' &&
+        style(`${id}-heading`).fontSize === getComputedStyle(element(`${id}-heading`).parentElement).fontSize
+      const bootstrapWins = (id) =>
+        px(style(`${id}-card`).borderTopWidth) > 0 &&
+        style(`${id}-button`).backgroundColor !== 'rgba(0, 0, 0, 0)' &&
+        style(`${id}-heading`).fontSize !== getComputedStyle(element(`${id}-heading`).parentElement).fontSize
+
+      runChecks({
+        'legacy-unlayered-component': () => legacyBorder('lu') && style('lu-card').borderTopLeftRadius === '0px',
+        'legacy-unlayered-controls': () => legacyControls('lc'),
+        'legacy-unlayered-utility': () => legacyBorder('lw') && style('lw-border-0').borderTopWidth === '3px',
+        'legacy-layer-first': () => bootstrapComponents('lf'),
+        'legacy-layer-utility': () =>
+          style('lt-border-0').borderTopWidth === '0px' && px(style('lt-card').borderTopWidth) > 0,
+        'preflight-unlayered': () => preflightWins('pu'),
+        'preflight-layer-first': () => bootstrapWins('pf'),
+        'preflight-import': () => bootstrapWins('pi'),
+        'preflight-layer-last': () => preflightWins('pl')
+      })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,121 @@
+/*
+ * The legacy and preflight stylesheets of pages/coexistence.html: what a team
+ * brings along when it adds Bootstrap to an existing project. Every selector is
+ * scoped to one case with `:where(.pg-…)`, which adds no specificity, so
+ * what decides each case is where the rule sits in the cascade layers and
+ * nothing else. The page's head declares the order of the layers.
+ */
+
+/* The preflight of pages/coexistence-imported.css, imported into a layer the page's head declares before Bootstrap's */
+@import url("/pages/coexistence-imported.css") layer(imported);
+
+/* Plain legacy CSS, in no layer: it beats every Bootstrap layer */
+:where(.pg-legacy-unlayered) .card {
+  color: #212529;
+  background-color: #fff3cd;
+  border: 3px dashed #664d03;
+  border-radius: 0;
+}
+
+:where(.pg-legacy-unlayered) button {
+  color: #fff;
+  background-color: #6f42c1;
+  border: 0;
+}
+
+:where(.pg-legacy-unlayered) input {
+  color: #212529;
+  background-color: #fff3cd;
+  border: 2px solid #664d03;
+  border-radius: 0;
+}
+
+/* The same legacy rules wrapped in a layer declared before Bootstrap's */
+@layer legacy-first {
+  :where(.pg-legacy-first) .card {
+    color: #212529;
+    background-color: #fff3cd;
+    border: 3px dashed #664d03;
+    border-radius: 0;
+  }
+
+  :where(.pg-legacy-first) button {
+    color: #fff;
+    background-color: #6f42c1;
+    border: 0;
+  }
+
+  :where(.pg-legacy-first) input {
+    color: #212529;
+    background-color: #fff3cd;
+    border: 2px solid #664d03;
+    border-radius: 0;
+  }
+}
+
+/* A Tailwind-style preflight, in no layer */
+:where(.pg-preflight-unlayered) *,
+:where(.pg-preflight-unlayered) ::before,
+:where(.pg-preflight-unlayered) ::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0 solid;
+}
+
+:where(.pg-preflight-unlayered) :is(h1, h2, h3, h4, h5, h6) {
+  font-size: inherit;
+  font-weight: inherit;
+}
+:where(.pg-preflight-unlayered) :is(button, input) {
+  font: inherit;
+  color: inherit;
+  background-color: transparent;
+  border-radius: 0;
+}
+
+/* The same preflight in a layer declared before Bootstrap's */
+@layer legacy-first {
+  :where(.pg-preflight-first) *,
+  :where(.pg-preflight-first) ::before,
+  :where(.pg-preflight-first) ::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    border: 0 solid;
+  }
+
+  :where(.pg-preflight-first) :is(h1, h2, h3, h4, h5, h6) {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  :where(.pg-preflight-first) :is(button, input) {
+    font: inherit;
+    color: inherit;
+    background-color: transparent;
+    border-radius: 0;
+  }
+}
+
+/* The same preflight in a layer the page's head doesn't declare, so it is ordered when it first appears here, after Bootstrap's layers */
+@layer legacy-last {
+  :where(.pg-preflight-last) *,
+  :where(.pg-preflight-last) ::before,
+  :where(.pg-preflight-last) ::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    border: 0 solid;
+  }
+
+  :where(.pg-preflight-last) :is(h1, h2, h3, h4, h5, h6) {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  :where(.pg-preflight-last) :is(button, input) {
+    font: inherit;
+    color: inherit;
+    background-color: transparent;
+    border-radius: 0;
+  }
+}
