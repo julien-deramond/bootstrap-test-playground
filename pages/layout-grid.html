@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Layout: grid</title>
+    <meta
+      name="description"
+      content="Layout grid: the flexbox grid with equal, auto and fixed columns, responsive columns, row-cols, offsets, order, g-*, gx-* and gy-* gutters, nested rows and columns that wrap, to judge custom breakpoints and grid-columns configs."
+    />
+    <meta name="playground-tags" content="layout" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main" />
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens" />
+    <link rel="stylesheet" href="/pages/layout.css" />
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="pg-layout">
+      <header class="mb-4" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Pages</p>
+        <h1>Layout: grid</h1>
+        <p class="fs-lg fg-2">
+          The flexbox grid: <code>.row</code> and its columns, with the responsive prefixes (<code>md:col-6</code>), the
+          gutters, offsets and order. Resize the window, or use the toolbar's <em>Show breakpoint</em>, to see each
+          example change at its breakpoint. The prefixes are the config's: with <code>breakpoints-custom</code>,
+          <code>md:</code> is gone and the examples that use it stay stacked. See also
+          <a href="/pages/layout-cssgrid.html">CSS grid</a> and <a href="/pages/layout-containers.html">containers</a>.
+        </p>
+      </header>
+
+      <section class="pg-example" aria-labelledby="equal-columns">
+        <h2 class="h4" id="equal-columns">Equal-width columns</h2>
+        <p class="fg-2">Columns with no width share the row equally.</p>
+        <div class="row">
+          <div class="col"><div class="pg-cell">.col</div></div>
+          <div class="col"><div class="pg-cell">.col</div></div>
+          <div class="col"><div class="pg-cell">.col</div></div>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="auto-columns">
+        <h2 class="h4" id="auto-columns">Auto and fixed columns</h2>
+        <p class="fg-2">
+          <code>.col-auto</code> takes its content’s width, <code>.col-6</code> half of the row, and
+          <code>.col</code> the rest.
+        </p>
+        <div class="row">
+          <div class="col-auto"><div class="pg-cell">.col-auto, as wide as this text</div></div>
+          <div class="col"><div class="pg-cell">.col</div></div>
+          <div class="col-6"><div class="pg-cell">.col-6</div></div>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="responsive-columns">
+        <h2 class="h4" id="responsive-columns">Responsive columns</h2>
+        <p class="fg-2">
+          Stacked below <code>md</code>, two per line from <code>md</code>, four per line from <code>xl</code>.
+        </p>
+        <div class="row">
+          <div class="col-12 md:col-6 xl:col-3"><div class="pg-cell">.col-12 .md:col-6 .xl:col-3</div></div>
+          <div class="col-12 md:col-6 xl:col-3"><div class="pg-cell">.col-12 .md:col-6 .xl:col-3</div></div>
+          <div class="col-12 md:col-6 xl:col-3"><div class="pg-cell">.col-12 .md:col-6 .xl:col-3</div></div>
+          <div class="col-12 md:col-6 xl:col-3"><div class="pg-cell">.col-12 .md:col-6 .xl:col-3</div></div>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="mixed-columns">
+        <h2 class="h4" id="mixed-columns">Unequal columns</h2>
+        <p class="fg-2">
+          Column widths that change at each breakpoint: <code>.col-12 .sm:col-4 .lg:col-8</code> beside
+          <code>.col-12 .sm:col-8 .lg:col-4</code>.
+        </p>
+        <div class="row">
+          <div class="col-12 sm:col-4 lg:col-8"><div class="pg-cell">.col-12 .sm:col-4 .lg:col-8</div></div>
+          <div class="col-12 sm:col-8 lg:col-4"><div class="pg-cell pg-cell-alt">.col-12 .sm:col-8 .lg:col-4</div></div>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="wrapping">
+        <h2 class="h4" id="wrapping">Columns that wrap</h2>
+        <p class="fg-2">Columns past twelve units move to a new line.</p>
+        <div class="row">
+          <div class="col-9"><div class="pg-cell">.col-9</div></div>
+          <div class="col-4"><div class="pg-cell">.col-4, wrapped</div></div>
+          <div class="col-6"><div class="pg-cell">.col-6</div></div>
+          <div class="col-3"><div class="pg-cell">.col-3, wrapped</div></div>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="row-cols">
+        <h2 class="h4" id="row-cols">Row columns</h2>
+        <p class="fg-2">
+          <code>.row-cols-*</code> sets how many columns share a line: two, then four from <code>md</code>;
+          <code>.row-cols-auto</code> sizes each to its content.
+        </p>
+        <div class="row row-cols-2 md:row-cols-4">
+          <div><div class="pg-cell">Column 1</div></div>
+          <div><div class="pg-cell">Column 2</div></div>
+          <div><div class="pg-cell">Column 3</div></div>
+          <div><div class="pg-cell">Column 4</div></div>
+          <div><div class="pg-cell">Column 5</div></div>
+          <div><div class="pg-cell">Column 6</div></div>
+          <div><div class="pg-cell">Column 7</div></div>
+          <div><div class="pg-cell">Column 8</div></div>
+        </div>
+        <div class="row row-cols-auto mt-3">
+          <div><div class="pg-cell">Column 1</div></div>
+          <div><div class="pg-cell">Column 2</div></div>
+          <div><div class="pg-cell">Column 3</div></div>
+          <div><div class="pg-cell">Column 4</div></div>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="offsets">
+        <h2 class="h4" id="offsets">Offsets</h2>
+        <p class="fg-2">
+          <code>.offset-*</code> pushes a column to the right (to the left in RTL) by that many columns;
+          <code>.md:offset-*</code> only from <code>md</code>.
+        </p>
+        <div class="row">
+          <div class="col-4"><div class="pg-cell">.col-4</div></div>
+          <div class="col-4 offset-4"><div class="pg-cell">.col-4 .offset-4</div></div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-3 md:offset-3"><div class="pg-cell">.col-3 .md:offset-3</div></div>
+          <div class="col-3 md:offset-3"><div class="pg-cell pg-cell-alt">.col-3 .md:offset-3</div></div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-auto me-auto"><div class="pg-cell">.col-auto .me-auto</div></div>
+          <div class="col-auto"><div class="pg-cell pg-cell-alt">.col-auto</div></div>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="order">
+        <h2 class="h4" id="order">Order</h2>
+        <p class="fg-2">
+          Visual order, not source order. The third column comes first with <code>.order-first</code>, the first moves
+          last from <code>md</code>.
+        </p>
+        <div class="row">
+          <div class="col order-last md:order-0">
+            <div class="pg-cell">1st in the source: .order-last .md:order-0</div>
+          </div>
+          <div class="col"><div class="pg-cell pg-cell-alt">2nd in the source</div></div>
+          <div class="col order-first"><div class="pg-cell">3rd in the source: .order-first</div></div>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="gutters">
+        <h2 class="h4" id="gutters">Gutters</h2>
+        <p class="fg-2">
+          <code>.g-*</code> sets both gutters, <code>.gx-*</code> the horizontal one and <code>.gy-*</code> the vertical
+          one. The dashed outline is the row’s box: its negative margins cancel the first and last column’s padding.
+        </p>
+        <p class="mb-1 mt-3"><code>.g-0</code></p>
+        <div class="row g-0 pg-outline">
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+        </div>
+        <p class="mb-1 mt-3"><code>.g-2</code></p>
+        <div class="row g-2 pg-outline">
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+        </div>
+        <p class="mb-1 mt-3"><code>.gx-5</code></p>
+        <div class="row gx-5 pg-outline">
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+        </div>
+        <p class="mb-1 mt-3"><code>.gy-4</code></p>
+        <div class="row gy-4 pg-outline">
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+        </div>
+        <p class="mb-1 mt-3"><code>.g-1 .md:g-4</code></p>
+        <div class="row g-1 md:g-4 pg-outline">
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+          <div class="col-6 md:col-3"><div class="pg-cell">Column</div></div>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="nested">
+        <h2 class="h4" id="nested">Nested rows</h2>
+        <p class="fg-2">A row inside a column, whose own columns count twelve units again.</p>
+        <div class="row">
+          <div class="col-12 md:col-8">
+            <div class="pg-cell">
+              .col-12 .md:col-8
+              <div class="row mt-2">
+                <div class="col-6"><div class="pg-cell pg-cell-alt">Nested .col-6</div></div>
+                <div class="col-6"><div class="pg-cell pg-cell-alt">Nested .col-6</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 md:col-4">
+            <div class="pg-cell">
+              .col-12 .md:col-4
+              <div class="row row-cols-1 sm:row-cols-2 md:row-cols-1 mt-2 g-2">
+                <div class="col"><div class="pg-cell pg-cell-alt">Nested, 1 or 2 per line</div></div>
+                <div class="col"><div class="pg-cell pg-cell-alt">Nested, 1 or 2 per line</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

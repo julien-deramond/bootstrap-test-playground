@@ -1,0 +1,67 @@
+/*
+ * The playground's own styles on the layout pages (layout-grid,
+ * layout-cssgrid and layout-containers): a visible box for each cell, so the
+ * column widths, gutters and offsets can be read, and a labelled frame for
+ * each example. Everything about the layout itself comes from Bootstrap.
+ */
+
+.pg-layout {
+  padding: 2.5rem 1.5rem;
+}
+
+.pg-example {
+  padding-block: 1rem;
+}
+
+.pg-example + .pg-example {
+  border-block-start: 1px solid var(--bs-border-color);
+}
+
+.pg-cell {
+  min-block-size: 2.75rem;
+  padding: .5rem .75rem;
+  color: var(--bs-body-color);
+  overflow-wrap: anywhere;
+  background-color: var(--bs-primary-bg-subtle);
+  border: 1px solid var(--bs-primary-border);
+  border-radius: .25rem;
+}
+
+.pg-cell-alt {
+  background-color: var(--bs-secondary-bg-subtle);
+  border-color: var(--bs-secondary-border);
+}
+
+/* For cells narrower than their padding, like twelve columns at 320px */
+.pg-cell-tight {
+  padding-inline: 0;
+  text-align: center;
+}
+
+/* The row's own box, to see where its negative margins end */
+.pg-outline {
+  outline: 1px dashed var(--bs-border-color);
+  outline-offset: 2px;
+}
+
+/* A frame around an example, never wider than the page */
+.pg-frame {
+  max-inline-size: 100%;
+  padding: .5rem;
+  border: 1px dashed var(--bs-border-color);
+}
+
+.pg-resizable {
+  min-inline-size: 12rem;
+  max-inline-size: 100%;
+  padding: .5rem;
+  overflow: auto;
+  resize: horizontal;
+  border: 1px dashed var(--bs-border-color);
+}
+
+.pg-width {
+  margin-block: .25rem 0;
+  font-size: .875rem;
+  font-variant-numeric: tabular-nums;
+}

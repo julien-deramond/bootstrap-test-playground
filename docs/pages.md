@@ -4,7 +4,7 @@
 
 ```text
 index.html               Home: every page, with search and filters
-pages/                   Starter screens (dashboard, checkout and sign-in forms, product and pricing marketing), utility API checks, focus rings, state matrix, forced colors, print, the JavaScript API, Bootstrap in shadow roots
+pages/                   Starter screens (dashboard, checkout and sign-in forms, product and pricing marketing), utility API checks, focus rings, state matrix, forced colors, print, the JavaScript API, Bootstrap in shadow roots, the layout pages (`layout-grid`, `layout-cssgrid`, `layout-containers`)
 screens/                 Real app screens ported from shadcn/ui (dashboard, tasks, authentication, playground, cards, login and signup blocks)
 kitchen-sink/            One page per component or form doc, with all of its docs examples (generated)
 compare.html             Any page in two to four panes, side by side or stacked
@@ -221,6 +221,7 @@ The settings panel is a modal dialog, a bottom sheet on small screens. It closes
 | Direction | LTR or RTL, through `dir` on `<html>` | <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> toggles | `?dir=rtl` |
 | CSS, JavaScript | *Source* compiles Bootstrap from `scss/` or `js/src/`, *Dist* loads `dist/css/bootstrap.css` or `js/dist/`, built from the same source, (see [Where Bootstrap comes from](bootstrap.md#source-or-dist)) | | `?css=dist`, `?js=dist` |
 | Primary | Remaps the `--bs-primary-*` tokens to another hue at runtime | | `?primary=teal` |
+| Show breakpoint | Shows a badge at the bottom start of the page with the active breakpoint's name and the viewport width. It reads the `--breakpoint-*` tokens at runtime, so it follows a config that renames, adds or removes breakpoints (`?config=breakpoints-custom` shows `tablet` and `3xl`, not `md` and `2xl`). It stays on from page to page for the browser session, and is hidden by `?chrome=0` and `?embed` (see [`src/js/breakpoint-indicator.js`](../src/js/breakpoint-indicator.js)) | <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> toggles | |
 | Show tab order | Numbers every tab stop of the page in the order <kbd>Tab</kbd> visits them, with positive `tabindex` in orange, for a manual review of focus order. It follows opening menus and dialogs, and stays on from page to page for the browser session (see [`src/js/tab-order.js`](../src/js/tab-order.js) for what counts as a stop) | <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>O</kbd> toggles | |
 | Config | Swaps the working copy for a saved config. Configs are grouped by category, with a filter, their description, a *tokens only* badge and their known gaps (see [`configs/README.md`](../configs/README.md#saved-configs)) | | `?config=<name>` |
 | Copy link | Copies the page's URL with the current choices as URL overrides | | |

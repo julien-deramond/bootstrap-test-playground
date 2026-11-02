@@ -11,6 +11,7 @@
 //   T  cycle color mode (auto, light, dark, then the config's own modes)
 //   D  toggle direction (LTR, RTL)
 //   O  show or hide the tab order (see tab-order.js)
+//   B  show or hide the breakpoint indicator (see breakpoint-indicator.js)
 // Ctrl+K (⌘K on macOS) opens the page switcher, see palette.js.
 // None of them fires while typing in a text field of the page, see shortcuts.js.
 //
@@ -21,6 +22,7 @@
 // good once the panel opens, a shortcut is used or it's dismissed, and never
 // shows under automation, so tests and screenshots don't see it.
 
+import { mountBreakpointIndicator } from './breakpoint-indicator.js'
 import { groupConfigs } from './configs.js'
 import { mountPalette, paletteShortcut } from './palette.js'
 import { siblings } from './page-index.js'
@@ -222,10 +224,12 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
   let togglePanel = () => {}
   let dismissHint = () => {}
   let renderTabOrder = () => {}
+  let renderBreakpoints = () => {}
 
   // The tab order overlay, on the page under test only: not in the embedded
   // copies of the compare and matrix pages, nor in screenshots.
   const tabOrder = prefs.embedded ? undefined : mountTabOrder({ onChange: on => renderTabOrder(on) })
+  const breakpoints = prefs.embedded ? undefined : mountBreakpointIndicator({ onChange: on => renderBreakpoints(on) })
 
   // Keyboard shortcuts work even when the toolbar is hidden or embedded, but
   // not while typing in the page (see shortcuts.js).
@@ -244,6 +248,8 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
       togglePanel()
     } else if (event.code === 'KeyO' && tabOrder) {
       tabOrder.toggle()
+    } else if (event.code === 'KeyB' && breakpoints) {
+      breakpoints.toggle()
     } else {
       return
     }
@@ -385,6 +391,7 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
       <section aria-labelledby="panel-inspect">
         <h3 id="panel-inspect">Inspect</h3>
         <button type="button" class="action tab-order" aria-pressed="false" aria-keyshortcuts="Alt+Shift+O" title="Number every tab stop in the order Tab visits them (Alt+Shift+O)">Show tab order <kbd>Alt+Shift+O</kbd></button>
+        <button type="button" class="action breakpoints" aria-pressed="false" aria-keyshortcuts="Alt+Shift+B" title="Show the active breakpoint and the viewport width (Alt+Shift+B)">Show breakpoint <kbd>Alt+Shift+B</kbd></button>
       </section>
       <section aria-labelledby="panel-config">
         <h3 id="panel-config">Config</h3>
@@ -412,6 +419,9 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
   const tabOrderButton = shadow.querySelector('.tab-order')
   renderTabOrder = on => tabOrderButton.setAttribute('aria-pressed', String(on))
   renderTabOrder(tabOrder.on)
+  const breakpointsButton = shadow.querySelector('.breakpoints')
+  renderBreakpoints = on => breakpointsButton.setAttribute('aria-pressed', String(on))
+  renderBreakpoints(breakpoints.on)
 
   // Where Bootstrap comes from, linked to its commit or branch on GitHub.
   // A local checkout's label follows its branch and dirty state in dev.
@@ -557,7 +567,9 @@ export function mountToolbar({ source, onSourceChange, configs, swappable }) {
       return
     }
 
-    if (button === summary) {
+    if (button === breakpointsButton) {
+      breakpoints.toggle()
+    } else if (button === summary) {
       openPanel()
     } else if (button.classList.contains('close')) {
       panel.close()
