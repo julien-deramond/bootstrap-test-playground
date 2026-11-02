@@ -57,6 +57,7 @@ export default [
       '/kitchen-sink/components-list-group.html',
       '/kitchen-sink/forms-chips.html',
       '/pages/focus.html',
+      '/pages/print.html',
       '/pages/states.html'
     ],
     issue: 183
@@ -114,6 +115,7 @@ export default [
       '/kitchen-sink/components-button.html',
       '/kitchen-sink/components-pagination.html',
       '/pages/focus.html',
+      '/pages/print.html',
       '/pages/states.html'
     ],
     issue: 183
@@ -141,6 +143,7 @@ export default [
       '/pages/focus.html',
       '/pages/icons.html',
       '/pages/js-api.html',
+      '/pages/print.html',
       '/pages/states.html'
     ],
     issue: 183
@@ -208,6 +211,7 @@ export default [
       '/pages/js-api.html',
       '/pages/marketing-pricing.html',
       '/pages/marketing-product.html',
+      '/pages/print.html',
       '/pages/sign-in.html',
       '/pages/states.html',
       '/pages/utilities-only.html',
@@ -257,6 +261,7 @@ export default [
       '/pages/custom-property-prefix.html',
       '/pages/focus.html',
       '/pages/js-api.html',
+      '/pages/print.html',
       '/pages/states.html',
       '/pages/utility-api.html'
     ],
@@ -1132,6 +1137,7 @@ export default [
     pages: [
       '/kitchen-sink/components-menu.html',
       '/pages/focus.html',
+      '/pages/print.html',
       '/pages/states.html'
     ],
     issue: 272
