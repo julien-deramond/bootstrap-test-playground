@@ -11,6 +11,7 @@ test('the breakpoint indicator follows the viewport and the config', async ({ pa
 
   await page.setViewportSize({ width: 800, height: 700 })
   await page.goto(URL)
+  await page.waitForFunction(() => document.getElementById('playground-toolbar'))
   await page.keyboard.press('Alt+Shift+B')
   await expect(badge).toHaveAttribute('data-breakpoint', 'md')
 
@@ -24,6 +25,7 @@ test('the breakpoint indicator follows the viewport and the config', async ({ pa
   await page.setViewportSize({ width: 2000, height: 700 })
   await expect(badge).toHaveAttribute('data-breakpoint', '3xl')
 
+  await page.waitForFunction(() => document.getElementById('playground-toolbar'))
   await page.keyboard.press('Alt+Shift+B')
   await expect(badge).toHaveCount(0)
 })
