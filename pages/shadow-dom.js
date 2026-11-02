@@ -235,6 +235,10 @@ new MutationObserver(mutations => {
 // which stops in hidden tabs.
 const start = () => {
   if (window.bootstrap && document.readyState === 'complete' && !document.getElementById('playground-config-pending')) {
+    // The config's links were swapped in before this script watched for them
+    // (or while they were still loading): read the styles again now that the
+    // page is no longer pending, so the roots never keep the default ones.
+    adoptAll()
     run(window.bootstrap)
   } else {
     setTimeout(start, 50)

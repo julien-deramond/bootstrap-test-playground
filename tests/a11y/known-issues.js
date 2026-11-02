@@ -717,6 +717,7 @@ export default [
       '/kitchen-sink/components-list-group.html',
       '/kitchen-sink/forms-chips.html',
       '/pages/focus.html',
+      '/pages/shadow-dom.html',
       '/pages/states.html'
     ],
     reason: 'hue-shift config: every hue rotated 180° with the theme maps\' fixed `contrast` keys, whose WCAG ratios move with the hue (see its README)'
