@@ -3,8 +3,8 @@
 // restored in `$range-tokens`), or no stylesheet rule reads it any more (the
 // `box-shadow()` call is removed from the track).
 const reads = (rules, name) => [...rules].some(rule =>
-  (rule.style ? rule.style.cssText.includes(`var(${name}`) : false) ||
-  (rule.cssRules ? reads(rule.cssRules, name) : false))
+  rule.style?.cssText.includes(`var(${name}`) ||
+  (rule.cssRules && reads(rule.cssRules, name)))
 
 export async function assert() {
   const range = getComputedStyle(document.querySelector('[data-playground-repro] .form-range-input'))
