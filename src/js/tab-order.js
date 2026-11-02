@@ -19,7 +19,7 @@
 
 const STORAGE_KEY = 'bootstrap-playground-tab-order'
 // The playground's own UI: the toolbar, the page switcher and the overlay.
-export const PLAYGROUND_HOSTS = ['playground-toolbar', 'playground-palette', 'playground-tab-order']
+export const PLAYGROUND_HOSTS = ['playground-toolbar', 'playground-palette', 'playground-tab-order', 'playground-breakpoints']
 
 const FOCUSABLE = [
   'a[href]',

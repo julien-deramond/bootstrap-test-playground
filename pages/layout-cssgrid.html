@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Layout: CSS grid</title>
+    <meta
+      name="description"
+      content="Layout CSS grid: .grid with g-col-* and g-start-* classes, --bs-columns, --bs-rows and --bs-gap overrides, responsive classes driven by the grid's own width (container queries), nested grids and a grid in a narrow wrapper."
+    />
+    <meta name="playground-tags" content="layout" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main" />
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens" />
+    <link rel="stylesheet" href="/pages/layout.css" />
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="pg-layout">
+      <header class="mb-4" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Pages</p>
+        <h1>Layout: CSS grid</h1>
+        <p class="fs-lg fg-2">
+          <code>.grid</code> with <code>g-col-*</code> and <code>g-start-*</code>. Each grid is a size container (<code
+            >container-type: inline-size</code
+          >), so its responsive classes, like <code>md:g-col-6</code>, follow the grid's own width and not the
+          viewport's. It needs <code>$enable-cssgrid</code>, which the <code>grid-flex-only</code> config turns off. See
+          also <a href="/pages/layout-grid.html">the flexbox grid</a> and
+          <a href="/pages/layout-containers.html">containers</a>.
+        </p>
+      </header>
+
+      <section class="pg-example" aria-labelledby="equal-cells">
+        <h2 class="h4" id="equal-cells">Twelve columns</h2>
+        <p class="fg-2">Cells with no <code>g-col-*</code> take one column each.</p>
+        <div class="grid" style="--bs-gap: 0.5rem">
+          <div><div class="pg-cell pg-cell-tight">1</div></div>
+          <div><div class="pg-cell pg-cell-tight">2</div></div>
+          <div><div class="pg-cell pg-cell-tight">3</div></div>
+          <div><div class="pg-cell pg-cell-tight">4</div></div>
+          <div><div class="pg-cell pg-cell-tight">5</div></div>
+          <div><div class="pg-cell pg-cell-tight">6</div></div>
+          <div><div class="pg-cell pg-cell-tight">7</div></div>
+          <div><div class="pg-cell pg-cell-tight">8</div></div>
+          <div><div class="pg-cell pg-cell-tight">9</div></div>
+          <div><div class="pg-cell pg-cell-tight">10</div></div>
+          <div><div class="pg-cell pg-cell-tight">11</div></div>
+          <div><div class="pg-cell pg-cell-tight">12</div></div>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="spans">
+        <h2 class="h4" id="spans">Spans</h2>
+        <p class="fg-2"><code>.g-col-*</code> spans that many columns.</p>
+        <div class="grid">
+          <div class="g-col-4"><div class="pg-cell">.g-col-4</div></div>
+          <div class="g-col-4"><div class="pg-cell">.g-col-4</div></div>
+          <div class="g-col-4"><div class="pg-cell pg-cell-alt">.g-col-4</div></div>
+        </div>
+        <div class="grid mt-3">
+          <div class="g-col-3"><div class="pg-cell">.g-col-3</div></div>
+          <div class="g-col-9"><div class="pg-cell pg-cell-alt">.g-col-9</div></div>
+        </div>
+        <div class="grid mt-3">
+          <div class="g-col-6"><div class="pg-cell">.g-col-6</div></div>
+          <div class="g-col-6"><div class="pg-cell pg-cell-alt">.g-col-6</div></div>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="start">
+        <h2 class="h4" id="start">Start</h2>
+        <p class="fg-2"><code>.g-start-*</code> sets the column a cell starts on.</p>
+        <div class="grid">
+          <div class="g-col-3 g-start-2"><div class="pg-cell">.g-col-3 .g-start-2</div></div>
+          <div class="g-col-4 g-start-7"><div class="pg-cell pg-cell-alt">.g-col-4 .g-start-7</div></div>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="responsive">
+        <h2 class="h4" id="responsive">Responsive spans</h2>
+        <p class="fg-2">
+          Full width up to a grid of <code>md</code>, half from <code>md</code>, a third from <code>xl</code>. The
+          breakpoints apply to the grid’s width.
+        </p>
+        <div class="grid">
+          <div class="g-col-12 md:g-col-6 xl:g-col-4"><div class="pg-cell">.g-col-12 .md:g-col-6 .xl:g-col-4</div></div>
+          <div class="g-col-12 md:g-col-6 xl:g-col-4"><div class="pg-cell">.g-col-12 .md:g-col-6 .xl:g-col-4</div></div>
+          <div class="g-col-12 md:g-col-6 xl:g-col-4"><div class="pg-cell">.g-col-12 .md:g-col-6 .xl:g-col-4</div></div>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="variables">
+        <h2 class="h4" id="variables">Columns, rows and gap</h2>
+        <p class="fg-2">
+          <code>--bs-columns</code>, <code>--bs-rows</code> and <code>--bs-gap</code> on the grid: four columns, two
+          rows and a large gap.
+        </p>
+        <div class="grid" style="--bs-columns: 4; --bs-rows: 2; --bs-gap: 2rem">
+          <div><div class="pg-cell">1</div></div>
+          <div><div class="pg-cell">2</div></div>
+          <div><div class="pg-cell">3</div></div>
+          <div><div class="pg-cell">4</div></div>
+          <div><div class="pg-cell">5</div></div>
+          <div><div class="pg-cell">6</div></div>
+          <div><div class="pg-cell">7</div></div>
+          <div><div class="pg-cell">8</div></div>
+          <div class="g-col-4">
+            <div class="pg-cell pg-cell-alt">.g-col-4 beyond the two rows, so the grid adds a third (implicit) row</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="nested">
+        <h2 class="h4" id="nested">Nested grids</h2>
+        <p class="fg-2">
+          A grid in a cell is a container of its own: its <code>md:g-col-6</code> follows the cell’s width.
+        </p>
+        <div class="grid">
+          <div class="g-col-12 md:g-col-8">
+            <div class="pg-cell">
+              .g-col-12 .md:g-col-8
+              <div class="grid mt-2" style="--bs-columns: 6">
+                <div class="g-col-6 md:g-col-3"><div class="pg-cell pg-cell-alt">Nested .g-col-6 .md:g-col-3</div></div>
+                <div class="g-col-6 md:g-col-3"><div class="pg-cell pg-cell-alt">Nested .g-col-6 .md:g-col-3</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="g-col-12 md:g-col-4"><div class="pg-cell">.g-col-12 .md:g-col-4</div></div>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="narrow-wrapper">
+        <h2 class="h4" id="narrow-wrapper">In a narrow wrapper</h2>
+        <p class="fg-2">A grid reacts to its container, not to the viewport.</p>
+        <p class="fg-2">
+          The same grid in a wrapper of 20rem, 40rem and 64rem. At any viewport, each shows the layout of its own width:
+          one, two or three columns.
+        </p>
+        <div class="pg-frame mb-3" style="max-inline-size: 20rem">
+          <p class="pg-width mt-0">20rem</p>
+          <div class="grid">
+            <div class="g-col-12 sm:g-col-6 lg:g-col-4">
+              <div class="pg-cell">.g-col-12 .sm:g-col-6 .lg:g-col-4</div>
+            </div>
+            <div class="g-col-12 sm:g-col-6 lg:g-col-4">
+              <div class="pg-cell pg-cell-alt">.g-col-12 .sm:g-col-6 .lg:g-col-4</div>
+            </div>
+            <div class="g-col-12 lg:g-col-4"><div class="pg-cell">.g-col-12 .lg:g-col-4</div></div>
+          </div>
+        </div>
+        <div class="pg-frame mb-3" style="max-inline-size: 40rem">
+          <p class="pg-width mt-0">40rem</p>
+          <div class="grid">
+            <div class="g-col-12 sm:g-col-6 lg:g-col-4">
+              <div class="pg-cell">.g-col-12 .sm:g-col-6 .lg:g-col-4</div>
+            </div>
+            <div class="g-col-12 sm:g-col-6 lg:g-col-4">
+              <div class="pg-cell pg-cell-alt">.g-col-12 .sm:g-col-6 .lg:g-col-4</div>
+            </div>
+            <div class="g-col-12 lg:g-col-4"><div class="pg-cell">.g-col-12 .lg:g-col-4</div></div>
+          </div>
+        </div>
+        <div class="pg-frame mb-3" style="max-inline-size: 64rem">
+          <p class="pg-width mt-0">64rem</p>
+          <div class="grid">
+            <div class="g-col-12 sm:g-col-6 lg:g-col-4">
+              <div class="pg-cell">.g-col-12 .sm:g-col-6 .lg:g-col-4</div>
+            </div>
+            <div class="g-col-12 sm:g-col-6 lg:g-col-4">
+              <div class="pg-cell pg-cell-alt">.g-col-12 .sm:g-col-6 .lg:g-col-4</div>
+            </div>
+            <div class="g-col-12 lg:g-col-4"><div class="pg-cell">.g-col-12 .lg:g-col-4</div></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

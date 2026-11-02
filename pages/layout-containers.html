@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en" data-playground-busy>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Layout: containers</title>
+    <meta
+      name="description"
+      content="Layout containers: .container, .container-fluid and the responsive containers (sm:container to 2xl:container) with their measured width, and container queries on a CSS grid and a flexbox row in resizable wrappers, where the flexbox row is expected to ignore the container."
+    />
+    <meta name="playground-tags" content="layout" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script src="/playground-prefs.js"></script>
+    <link rel="stylesheet" href="/src/styles/main.scss" data-playground-styles="main" />
+    <link rel="stylesheet" href="/src/styles/tokens.css" data-playground-styles="tokens" />
+    <link rel="stylesheet" href="/pages/layout.css" />
+    <script type="module" src="/src/js/main.js"></script>
+  </head>
+  <body>
+    <main class="pg-layout">
+      <header class="mb-4" data-playground-chrome>
+        <p class="mb-2"><a href="/">Playground</a> / Pages</p>
+        <h1>Layout: containers</h1>
+        <p class="fs-lg fg-2">
+          <code>.container</code> grows its maximum width at each breakpoint, <code>.container-fluid</code> never stops,
+          and a responsive container (<code>md:container</code>) is fluid until its breakpoint. Each example prints its
+          measured width. The second half puts a CSS grid and a flexbox <code>.row</code> in wrappers you can resize:
+          the grid follows the wrapper, the row follows the viewport until
+          <a href="https://github.com/twbs/bootstrap/pull/42784">twbs/bootstrap#42784</a> lands. The prefixes are the
+          config's: with <code>breakpoints-custom</code>, <code>md:container</code> doesn't exist. See also
+          <a href="/pages/layout-grid.html">the flexbox grid</a> and <a href="/pages/layout-cssgrid.html">CSS grid</a>.
+        </p>
+      </header>
+
+      <section class="pg-example" aria-labelledby="container">
+        <h2 class="h4" id="container">.container</h2>
+        <p class="fg-2">Centered, with a maximum width that steps up at each breakpoint.</p>
+        <div class="container" data-container>
+          <div class="pg-cell">.container</div>
+          <p class="pg-width mb-0">Width: <output data-width>…</output></p>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="container-fluid">
+        <h2 class="h4" id="container-fluid">.container-fluid</h2>
+        <p class="fg-2">Full width at every size.</p>
+        <div class="container-fluid" data-container>
+          <div class="pg-cell">.container-fluid</div>
+          <p class="pg-width mb-0">Width: <output data-width>…</output></p>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="container-sm">
+        <h2 class="h4" id="container-sm">.sm:container</h2>
+        <p class="fg-2">Full width below <code>sm</code>, then capped at the <code>sm</code> maximum width.</p>
+        <div class="sm:container" data-container>
+          <div class="pg-cell">.sm:container</div>
+          <p class="pg-width mb-0">Width: <output data-width>…</output></p>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="container-md">
+        <h2 class="h4" id="container-md">.md:container</h2>
+        <p class="fg-2">Full width below <code>md</code>, then capped at the <code>md</code> maximum width.</p>
+        <div class="md:container" data-container>
+          <div class="pg-cell">.md:container</div>
+          <p class="pg-width mb-0">Width: <output data-width>…</output></p>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="container-lg">
+        <h2 class="h4" id="container-lg">.lg:container</h2>
+        <p class="fg-2">Full width below <code>lg</code>, then capped at the <code>lg</code> maximum width.</p>
+        <div class="lg:container" data-container>
+          <div class="pg-cell">.lg:container</div>
+          <p class="pg-width mb-0">Width: <output data-width>…</output></p>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="container-xl">
+        <h2 class="h4" id="container-xl">.xl:container</h2>
+        <p class="fg-2">Full width below <code>xl</code>, then capped at the <code>xl</code> maximum width.</p>
+        <div class="xl:container" data-container>
+          <div class="pg-cell">.xl:container</div>
+          <p class="pg-width mb-0">Width: <output data-width>…</output></p>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="container-2xl">
+        <h2 class="h4" id="container-2xl">.2xl:container</h2>
+        <p class="fg-2">Full width below <code>2xl</code>, then capped at the <code>2xl</code> maximum width.</p>
+        <div class="2xl:container" data-container>
+          <div class="pg-cell">.2xl:container</div>
+          <p class="pg-width mb-0">Width: <output data-width>…</output></p>
+        </div>
+      </section>
+
+      <section class="pg-example" aria-labelledby="container-queries">
+        <h2 class="h4" id="container-queries">Container queries</h2>
+        <p class="fg-2">
+          The same classes in a CSS grid and in a flexbox row, in wrappers of fixed widths (the last wrapper is also
+          resizable: drag its corner). The grid’s <code>md:g-col-6</code> and <code>xl:g-col-3</code> follow the
+          wrapper. The row’s <code>md:col-6</code> and <code>xl:col-3</code> are media queries: they follow the
+          viewport, so the row only matches the grid when the wrapper is as wide as the viewport.
+        </p>
+
+        <div class="mb-4">
+          <p class="pg-width mt-0 mb-1">20rem, measured: <output data-width-of="#wrapper-0">…</output></p>
+          <div class="pg-frame" id="wrapper-0" style="inline-size: 20rem">
+            <p class="mb-1"><strong>CSS grid</strong> (follows the wrapper)</p>
+            <div class="grid">
+              <div class="g-col-12 md:g-col-6 xl:g-col-3">
+                <div class="pg-cell">.g-col-12 .md:g-col-6 .xl:g-col-3</div>
+              </div>
+              <div class="g-col-12 md:g-col-6 xl:g-col-3">
+                <div class="pg-cell">.g-col-12 .md:g-col-6 .xl:g-col-3</div>
+              </div>
+              <div class="g-col-12 md:g-col-6 xl:g-col-3">
+                <div class="pg-cell">.g-col-12 .md:g-col-6 .xl:g-col-3</div>
+              </div>
+              <div class="g-col-12 md:g-col-6 xl:g-col-3">
+                <div class="pg-cell">.g-col-12 .md:g-col-6 .xl:g-col-3</div>
+              </div>
+            </div>
+            <p class="mb-1 mt-3"><strong>Flexbox row</strong> (follows the viewport, expected for now)</p>
+            <div class="row">
+              <div class="col-12 md:col-6 xl:col-3">
+                <div class="pg-cell pg-cell-alt">.col-12 .md:col-6 .xl:col-3</div>
+              </div>
+              <div class="col-12 md:col-6 xl:col-3">
+                <div class="pg-cell pg-cell-alt">.col-12 .md:col-6 .xl:col-3</div>
+              </div>
+              <div class="col-12 md:col-6 xl:col-3">
+                <div class="pg-cell pg-cell-alt">.col-12 .md:col-6 .xl:col-3</div>
+              </div>
+              <div class="col-12 md:col-6 xl:col-3">
+                <div class="pg-cell pg-cell-alt">.col-12 .md:col-6 .xl:col-3</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <p class="pg-width mt-0 mb-1">48rem, measured: <output data-width-of="#wrapper-1">…</output></p>
+          <div class="pg-frame" id="wrapper-1" style="inline-size: 48rem">
+            <p class="mb-1"><strong>CSS grid</strong> (follows the wrapper)</p>
+            <div class="grid">
+              <div class="g-col-12 md:g-col-6 xl:g-col-3">
+                <div class="pg-cell">.g-col-12 .md:g-col-6 .xl:g-col-3</div>
+              </div>
+              <div class="g-col-12 md:g-col-6 xl:g-col-3">
+                <div class="pg-cell">.g-col-12 .md:g-col-6 .xl:g-col-3</div>
+              </div>
+              <div class="g-col-12 md:g-col-6 xl:g-col-3">
+                <div class="pg-cell">.g-col-12 .md:g-col-6 .xl:g-col-3</div>
+              </div>
+              <div class="g-col-12 md:g-col-6 xl:g-col-3">
+                <div class="pg-cell">.g-col-12 .md:g-col-6 .xl:g-col-3</div>
+              </div>
+            </div>
+            <p class="mb-1 mt-3"><strong>Flexbox row</strong> (follows the viewport, expected for now)</p>
+            <div class="row">
+              <div class="col-12 md:col-6 xl:col-3">
+                <div class="pg-cell pg-cell-alt">.col-12 .md:col-6 .xl:col-3</div>
+              </div>
+              <div class="col-12 md:col-6 xl:col-3">
+                <div class="pg-cell pg-cell-alt">.col-12 .md:col-6 .xl:col-3</div>
+              </div>
+              <div class="col-12 md:col-6 xl:col-3">
+                <div class="pg-cell pg-cell-alt">.col-12 .md:col-6 .xl:col-3</div>
+              </div>
+              <div class="col-12 md:col-6 xl:col-3">
+                <div class="pg-cell pg-cell-alt">.col-12 .md:col-6 .xl:col-3</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <p class="pg-width mt-0 mb-1">Resizable, measured: <output data-width-of="#wrapper-2">…</output></p>
+          <div class="pg-resizable" id="wrapper-2">
+            <p class="mb-1"><strong>CSS grid</strong> (follows the wrapper)</p>
+            <div class="grid">
+              <div class="g-col-12 md:g-col-6 xl:g-col-3">
+                <div class="pg-cell">.g-col-12 .md:g-col-6 .xl:g-col-3</div>
+              </div>
+              <div class="g-col-12 md:g-col-6 xl:g-col-3">
+                <div class="pg-cell">.g-col-12 .md:g-col-6 .xl:g-col-3</div>
+              </div>
+              <div class="g-col-12 md:g-col-6 xl:g-col-3">
+                <div class="pg-cell">.g-col-12 .md:g-col-6 .xl:g-col-3</div>
+              </div>
+              <div class="g-col-12 md:g-col-6 xl:g-col-3">
+                <div class="pg-cell">.g-col-12 .md:g-col-6 .xl:g-col-3</div>
+              </div>
+            </div>
+            <p class="mb-1 mt-3"><strong>Flexbox row</strong> (follows the viewport, expected for now)</p>
+            <div class="row">
+              <div class="col-12 md:col-6 xl:col-3">
+                <div class="pg-cell pg-cell-alt">.col-12 .md:col-6 .xl:col-3</div>
+              </div>
+              <div class="col-12 md:col-6 xl:col-3">
+                <div class="pg-cell pg-cell-alt">.col-12 .md:col-6 .xl:col-3</div>
+              </div>
+              <div class="col-12 md:col-6 xl:col-3">
+                <div class="pg-cell pg-cell-alt">.col-12 .md:col-6 .xl:col-3</div>
+              </div>
+              <div class="col-12 md:col-6 xl:col-3">
+                <div class="pg-cell pg-cell-alt">.col-12 .md:col-6 .xl:col-3</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/pages/layout-containers.js"></script>
+  </body>
+</html>
