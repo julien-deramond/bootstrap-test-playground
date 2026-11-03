@@ -12,7 +12,9 @@
 // some configs (or `dist`), and `engines` to some engines (chromium, firefox,
 // webkit): an engine-only failure is usually a browser difference that
 // Bootstrap doesn't handle. `js-api …` scenarios are the tests of
-// pages/js-api.html, named like the tests.
+// pages/js-api.html, named like the tests, and `states …` scenarios the
+// state pairs of pages/states.html (states.spec.js), named after the table
+// and the indeterminate column.
 export default [
   { scenario: 'datepicker', issue: 155 },
   { scenario: 'combobox', issue: 156 },
@@ -54,5 +56,10 @@ export default [
   { scenario: 'js-api datepicker', issue: 324 },
   { scenario: 'js-api precedence popover', issue: 322 },
   { scenario: 'js-api precedence tooltip', issue: 322 },
-  { scenario: 'js-api precedence scrollspy', issue: 323 }
+  { scenario: 'js-api precedence scrollspy', issue: 323 },
+  { scenario: 'states check :disabled indeterminate', issue: 436 },
+  { scenario: 'states check .is-invalid indeterminate', issue: 436 },
+  { scenario: 'states check .is-valid indeterminate', issue: 436 },
+  { scenario: 'states form-field-card indeterminate', issue: 436 },
+  { scenario: 'states form-field-card checked indeterminate', engines: ['chromium'], issue: 436 }
 ]

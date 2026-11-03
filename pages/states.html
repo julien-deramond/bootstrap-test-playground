@@ -24,6 +24,12 @@
         font-size: 0.75rem;
         font-weight: 400;
         text-align: start;
+      }
+
+      /* A column heading only wraps between its words, and only when the
+         table would be wider than the page, like the check table. */
+      .pg-states tbody th,
+      .pg-states thead th > span {
         white-space: nowrap;
       }
 
@@ -40,7 +46,8 @@
         width: 12rem;
       }
 
-      .pg-states .card {
+      .pg-states .card,
+      .pg-states .form-field-card {
         width: 10rem;
       }
     </style>
@@ -116,6 +123,9 @@
       <section class="mb-5" data-states="card" aria-labelledby="card">
         <h2 class="h5" id="card">Cards with a stretched link</h2>
       </section>
+      <section class="mb-5" data-states="form-field-card" aria-labelledby="form-field-card">
+        <h2 class="h5" id="form-field-card">Form field cards</h2>
+      </section>
     </main>
 
     <!-- A classic script, so the tables are filled while the page parses,
@@ -157,33 +167,44 @@
       ]
 
       // A check or radio's columns. Indeterminate checks are set up by
-      // src/js/examples.js, from their id.
-      const checkColumns = (type, classes) => [
-        ['unchecked', `<input type="${type}" class="${classes}{theme}" aria-label="Unchecked">`],
-        ['checked', `<input type="${type}" class="${classes}{theme}" checked aria-label="Checked">`],
-        ...(type === 'checkbox'
-          ? [
-              [
-                'indeterminate',
-                `<input type="checkbox" class="${classes}{theme}" id="stateIndeterminate{id}" aria-label="Indeterminate">`
+      // src/js/examples.js, from their id. Each checked state of a checkbox
+      // has an indeterminate twin, which tests/smoke/states.spec.js expects to
+      // look the same.
+      const checkColumns = (type, classes) => {
+        const indeterminate = (heading, state, attributes, label) =>
+          type === 'checkbox'
+            ? [
+                [
+                  heading,
+                  `<input type="checkbox" class="${classes}{theme}${state}" id="stateIndeterminate{id}"${attributes} aria-label="${label}">`
+                ]
               ]
-            ]
-          : []),
-        [':disabled', `<input type="${type}" class="${classes}{theme}" disabled aria-label="Disabled">`],
-        [
-          ':disabled checked',
-          `<input type="${type}" class="${classes}{theme}" checked disabled aria-label="Disabled checked">`
-        ],
-        ['.is-invalid', `<input type="${type}" class="${classes}{theme} is-invalid" aria-label="Invalid">`],
-        [
-          '.is-invalid checked',
-          `<input type="${type}" class="${classes}{theme} is-invalid" checked aria-label="Invalid checked">`
-        ],
-        [
-          '.is-valid checked',
-          `<input type="${type}" class="${classes}{theme} is-valid" checked aria-label="Valid checked">`
+            : []
+
+        return [
+          ['unchecked', `<input type="${type}" class="${classes}{theme}" aria-label="Unchecked">`],
+          ['checked', `<input type="${type}" class="${classes}{theme}" checked aria-label="Checked">`],
+          ...indeterminate('indeterminate', '', '', 'Indeterminate'),
+          ...indeterminate('checked indeterminate', '', ' checked', 'Checked indeterminate'),
+          [':disabled', `<input type="${type}" class="${classes}{theme}" disabled aria-label="Disabled">`],
+          [
+            ':disabled checked',
+            `<input type="${type}" class="${classes}{theme}" checked disabled aria-label="Disabled checked">`
+          ],
+          ...indeterminate(':disabled indeterminate', '', ' disabled', 'Disabled indeterminate'),
+          ['.is-invalid', `<input type="${type}" class="${classes}{theme} is-invalid" aria-label="Invalid">`],
+          [
+            '.is-invalid checked',
+            `<input type="${type}" class="${classes}{theme} is-invalid" checked aria-label="Invalid checked">`
+          ],
+          ...indeterminate('.is-invalid indeterminate', ' is-invalid', '', 'Invalid indeterminate'),
+          [
+            '.is-valid checked',
+            `<input type="${type}" class="${classes}{theme} is-valid" checked aria-label="Valid checked">`
+          ],
+          ...indeterminate('.is-valid indeterminate', ' is-valid', '', 'Valid indeterminate')
         ]
-      ]
+      }
 
       const switchCell = (attributes) =>
         `<div class="switch{theme}"><input type="checkbox" role="switch" switch ${attributes}></div>`
@@ -419,6 +440,25 @@
               ]
             }
           ]
+        },
+        // tests/smoke/states.spec.js expects an indeterminate checkbox to
+        // highlight its card like a checked one.
+        'form-field-card': {
+          columns: ['unchecked', 'checked', 'indeterminate', 'checked indeterminate'],
+          rows: [
+            {
+              name: 'checkbox',
+              cells: [
+                ['stateCard{id}', ''],
+                ['stateCard{id}', ' checked'],
+                ['stateCardIndeterminate{id}', ''],
+                ['stateCardIndeterminate{id}', ' checked']
+              ].map(
+                ([id, attributes]) =>
+                  `<div class="form-field form-field-card"><input type="checkbox" class="check" id="${id}"${attributes}><div class="form-field-content"><label for="${id}">Plan</label></div></div>`
+              )
+            }
+          ]
         }
       }
 
@@ -450,6 +490,15 @@
           label.className = 'visually-hidden'
           label.textContent = text
           element.append(label)
+        } else if (scope === 'col') {
+          // One span per word, so `.is-invalid` doesn't break at its hyphen.
+          element.append(
+            ...text.split(' ').flatMap((word, index) => {
+              const span = document.createElement('span')
+              span.textContent = word
+              return index ? [' ', span] : [span]
+            })
+          )
         } else {
           element.textContent = text
         }
