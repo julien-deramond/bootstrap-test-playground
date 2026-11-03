@@ -1,25 +1,41 @@
 {
-  "date": "2026-11-01T12:14:57.550Z",
-  "from": "2f63a737635d9c8daea42bb5509f4fe81c0e6789",
-  "to": "e93ba5e5267ac2f74d5d35f1c11bb476957de94b",
+  "date": "2026-11-03T13:03:31.279Z",
+  "from": "e93ba5e5267ac2f74d5d35f1c11bb476957de94b",
+  "to": "7e914e3fd0d51f6a71ad6fd0a6b79590190d8136",
   "commits": [
     {
-      "sha": "f0dcf4b5e8b755912d6d8528b16f286e5cfea267",
-      "subject": "Docs: let the sidebar links wrap (#43248)"
+      "sha": "e0bbab74ad1f97f29baddeed9bb0381cb34348ea",
+      "subject": "Docs: set `color-scheme` in the custom color mode example (#43272)"
     },
     {
-      "sha": "a4d4afa8d8a449cc94ab88cf916da279955ccca6",
-      "subject": "OTP input: don't edit readonly or disabled fields, and handle Delete like Backspace (#43252)"
+      "sha": "25e322a54e610d0843b8ab887f8cfbabb0489c2b",
+      "subject": "Checkbox: style indeterminate checkboxes like checked ones in every state (#43273)"
     },
     {
-      "sha": "c2ab624f40c4dcfdbcae9747dce265834ffb4f5d",
-      "subject": "OTP input: don't fire input or complete events when Delete or Backspace has nothing to remove (#43255)"
+      "sha": "2871f2a55ccf18af64045b8fc37529391b285900",
+      "subject": "Docs: wrap the form text example in a form field, which provides the spacing (#43274)"
     },
     {
-      "sha": "e93ba5e5267ac2f74d5d35f1c11bb476957de94b",
-      "subject": "Docs: point the SRI Hash Generator link to srihash.org (#43258)"
+      "sha": "7e914e3fd0d51f6a71ad6fd0a6b79590190d8136",
+      "subject": "Chore(deps): Bump GitHub Actions dependencies with 4 updates (#43277)"
     }
   ],
   "rendering": true,
-  "examples": []
+  "examples": [
+    {
+      "url": "/kitchen-sink/forms-checkbox.html",
+      "id": "disabled",
+      "page": "Checkbox",
+      "example": "Disabled",
+      "markup": "changed",
+      "pixels": 330
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "form-text",
+      "page": "Form controls",
+      "example": "Form text",
+      "markup": "changed"
+    }
+  ]
 }
