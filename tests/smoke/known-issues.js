@@ -56,10 +56,5 @@ export default [
   { scenario: 'js-api datepicker', issue: 324 },
   { scenario: 'js-api precedence popover', issue: 322 },
   { scenario: 'js-api precedence tooltip', issue: 322 },
-  { scenario: 'js-api precedence scrollspy', issue: 323 },
-  { scenario: 'states check :disabled indeterminate', issue: 436 },
-  { scenario: 'states check .is-invalid indeterminate', issue: 436 },
-  { scenario: 'states check .is-valid indeterminate', issue: 436 },
-  { scenario: 'states form-field-card indeterminate', issue: 436 },
-  { scenario: 'states form-field-card checked indeterminate', engines: ['chromium'], issue: 436 }
+  { scenario: 'js-api precedence scrollspy', issue: 323 }
 ]
