@@ -6,22 +6,4 @@
 // in CLAUDE.md). The crawl runs in each engine (`console`, `console-firefox`,
 // `console-webkit`); `engines` limits an entry to some of them (chromium,
 // firefox, webkit).
-export default [
-  {
-    issue: 2,
-    message: /more than one instance per element\. Bound instance: bs\.combobox/,
-    pages: [
-      '/screens/cards.html',
-      '/screens/dashboard.html',
-      '/screens/playground.html',
-      '/kitchen-sink/forms-combobox.html',
-      '/kitchen-sink/forms-field.html',
-      '/issues/pg-2/',
-      '/issues/pg-156/',
-      '/issues/pg-6/',
-      '/issues/pg-209/',
-      '/issues/pg-261/',
-      '/pages/js-api.html'
-    ]
-  }
-]
+export default []

@@ -403,7 +403,10 @@
 
       <div class="bd-kitchen-sink-section" role="group" aria-labelledby="optional-sizes">
         <h2 class="h5" id="optional-sizes" data-playground-chrome>Optional sizes</h2>
-        <div class="bd-example dialog dialog-xl">
+        <div class="bd-example dialog dialog-2xl">
+          <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#exampleDialog2xl">
+            Extra extra large dialog
+          </button>
           <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#exampleDialogXl">
             Extra large dialog
           </button>
@@ -416,6 +419,16 @@
           <button type="button" class="btn-solid theme-primary" data-bs-toggle="dialog" data-bs-target="#exampleDialogSm">
             Small dialog
           </button>
+
+          <dialog class="dialog dialog-2xl" id="exampleDialog2xl">
+            <div class="dialog-header">
+              <h1 class="dialog-title">Extra extra large dialog</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="dialog" aria-label="Close"></button>
+            </div>
+            <div class="dialog-body">
+              <p>This is an extra extra large dialog using the <code>.dialog-2xl</code> class.</p>
+            </div>
+          </dialog>
 
           <dialog class="dialog dialog-xl" id="exampleDialogXl">
             <div class="dialog-header">

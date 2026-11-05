@@ -142,7 +142,7 @@ The table has one line per reproduction, with its tracking issue and label, read
 
 - **PASS**: the fix landed. Check the page by hand, then follow step 3 of [Upstream issue tracking](../CLAUDE.md#upstream-issue-tracking): the command prints its `gh` commands, the `git rm` of the reproduction and its visual baselines, and the allowlists that still reference the issue.
 - **FAIL**: still broken, the expected state. With a closed tracking issue, the bug is back or was never fixed.
-- **SKIP**: the assertion can't tell here. `issues/42546/` needs classic scrollbars, which headless Chromium has on Linux, not on macOS.
+- **SKIP**: the assertion can't tell here, for example when it needs classic scrollbars, which headless Chromium has on Linux, not on macOS.
 - **NONE**: no `assert.js` and no `repro.spec.js`.
 
 The exit code is 1 when a reproduction passes, errors, or fails with a closed tracking issue. The nightly canary runs it, so a fix that lands upstream shows up in its report the next morning as a stale entry, and the status sweep gets the same answer from the tracker a few days later.

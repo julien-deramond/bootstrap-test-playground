@@ -1,41 +1,3058 @@
 {
-  "date": "2026-11-03T13:03:31.279Z",
-  "from": "e93ba5e5267ac2f74d5d35f1c11bb476957de94b",
-  "to": "7e914e3fd0d51f6a71ad6fd0a6b79590190d8136",
+  "date": "2026-11-05T13:36:27.028Z",
+  "from": "7e914e3fd0d51f6a71ad6fd0a6b79590190d8136",
+  "to": "9062790fdb2379593a2973416dc5a3bfb203e4e3",
   "commits": [
     {
-      "sha": "e0bbab74ad1f97f29baddeed9bb0381cb34348ea",
-      "subject": "Docs: set `color-scheme` in the custom color mode example (#43272)"
+      "sha": "3b7f32318876bbd3c9cc14d3f891d744f39cd538",
+      "subject": "Bump the dependencies with 10 updates (#43276)"
     },
     {
-      "sha": "25e322a54e610d0843b8ab887f8cfbabb0489c2b",
-      "subject": "Checkbox: style indeterminate checkboxes like checked ones in every state (#43273)"
+      "sha": "0117328ac49e96b123f8a431ff49eb6657568686",
+      "subject": "Raise the v6 browser support floor (#43177)"
     },
     {
-      "sha": "2871f2a55ccf18af64045b8fc37529391b285900",
-      "subject": "Docs: wrap the form text example in a form field, which provides the spacing (#43274)"
+      "sha": "5bd7493591cc68bd3ac9b7d90aa5b7e95daa98d8",
+      "subject": "Replace the global scrollbar gutter with JS compensation (#43283)"
     },
     {
-      "sha": "7e914e3fd0d51f6a71ad6fd0a6b79590190d8136",
-      "subject": "Chore(deps): Bump GitHub Actions dependencies with 4 updates (#43277)"
+      "sha": "07d5527cae4faf50b1738afaa7f9c1563c6333f1",
+      "subject": "Clarify mobile and desktop drawer sheet behavior (#43290)"
+    },
+    {
+      "sha": "76c8d9912d263ff3854efb80d0a3b5be49aad818",
+      "subject": "Add `.dialog-2xl` size to dialogs (#43292)"
+    },
+    {
+      "sha": "caf54cb51070232d23c0b88a1ffa8b66130e6908",
+      "subject": "Restore the close button dark variant (#43032)"
+    },
+    {
+      "sha": "6a0aa24734c099955d580db9a936dcf64ae45117",
+      "subject": "Switch: apply --switch-checked-indicator-bg to the checked thumb (#43148)"
+    },
+    {
+      "sha": "3fc7f7d3e2ea74c54689ca8f98550658c5855539",
+      "subject": "Allow keyed components to share an element (#42992)"
+    },
+    {
+      "sha": "5b58bdc3e77061d4e97413d25df8ec8ca0cfed98",
+      "subject": "Preserve literal tooltip and popover attributes (#43113)"
+    },
+    {
+      "sha": "4f3beccda790851547d31e3923fb9a27886dcf71",
+      "subject": "Keep a self-targeted dialog open (#43086)"
+    },
+    {
+      "sha": "a8984ebdeeb643d6e67ed7509e8a2c4584d928db",
+      "subject": "Reserve the nav overflow toggle only when needed (#43217)"
+    },
+    {
+      "sha": "f44544700bb40582c2cfea3edfd976a95eaded25",
+      "subject": "docs: outline changes under consideration for v7 (#43304)"
+    },
+    {
+      "sha": "1df006e2717437bc960407933fb0a5c54f9fea4c",
+      "subject": "docs: cover alpha 2 migration changes (#43301)"
+    },
+    {
+      "sha": "9062790fdb2379593a2973416dc5a3bfb203e4e3",
+      "subject": "Keep unpadded accordion contents inside rounded corners (#43187)"
     }
   ],
   "rendering": true,
   "examples": [
     {
+      "url": "/kitchen-sink/components-accordion.html",
+      "id": "example",
+      "page": "Accordion",
+      "example": "Example",
+      "pixels": 6459
+    },
+    {
+      "url": "/kitchen-sink/components-accordion.html",
+      "id": "variants",
+      "page": "Accordion",
+      "example": "Variants",
+      "pixels": 6237
+    },
+    {
+      "url": "/kitchen-sink/components-accordion.html",
+      "id": "small",
+      "page": "Accordion",
+      "example": "Small",
+      "pixels": 3607
+    },
+    {
+      "url": "/kitchen-sink/components-accordion.html",
+      "id": "flush",
+      "page": "Accordion",
+      "example": "Flush",
+      "pixels": 971
+    },
+    {
+      "url": "/kitchen-sink/components-accordion.html",
+      "id": "gap",
+      "page": "Accordion",
+      "example": "Gap",
+      "pixels": 4443
+    },
+    {
+      "url": "/kitchen-sink/components-accordion.html",
+      "id": "always-open",
+      "page": "Accordion",
+      "example": "Always open",
+      "pixels": 4779
+    },
+    {
+      "url": "/kitchen-sink/components-accordion.html",
+      "id": "expand-collapse-all",
+      "page": "Accordion",
+      "example": "Expand & Collapse all",
+      "pixels": 2743
+    },
+    {
+      "url": "/kitchen-sink/components-accordion.html",
+      "id": "nested",
+      "page": "Accordion",
+      "example": "Nested",
+      "pixels": 4790
+    },
+    {
+      "url": "/kitchen-sink/components-alert.html",
+      "id": "default-alert",
+      "page": "Alert",
+      "example": "Default alert",
+      "pixels": 609
+    },
+    {
+      "url": "/kitchen-sink/components-alert.html",
+      "id": "variants",
+      "page": "Alert",
+      "example": "Variants",
+      "pixels": 2932
+    },
+    {
+      "url": "/kitchen-sink/components-alert.html",
+      "id": "live-example",
+      "page": "Alert",
+      "example": "Live example",
+      "pixels": 115
+    },
+    {
+      "url": "/kitchen-sink/components-alert.html",
+      "id": "link-color",
+      "page": "Alert",
+      "example": "Link color",
+      "pixels": 5779
+    },
+    {
+      "url": "/kitchen-sink/components-alert.html",
+      "id": "with-icons",
+      "page": "Alert",
+      "example": "With icons",
+      "pixels": 237
+    },
+    {
+      "url": "/kitchen-sink/components-alert.html",
+      "id": "dismiss",
+      "page": "Alert",
+      "example": "Dismiss",
+      "pixels": 439
+    },
+    {
+      "url": "/kitchen-sink/components-alert.html",
+      "id": "additional-content",
+      "page": "Alert",
+      "example": "Additional content",
+      "pixels": 4171
+    },
+    {
+      "url": "/kitchen-sink/components-alert.html",
+      "id": "additional-content-2",
+      "page": "Alert",
+      "example": "Additional content",
+      "pixels": 1404
+    },
+    {
+      "url": "/kitchen-sink/components-avatar.html",
+      "id": "image",
+      "page": "Avatar",
+      "example": "Image",
+      "pixels": 101
+    },
+    {
+      "url": "/kitchen-sink/components-avatar.html",
+      "id": "image-2",
+      "page": "Avatar",
+      "example": "Image",
+      "pixels": 131
+    },
+    {
+      "url": "/kitchen-sink/components-avatar.html",
+      "id": "initials",
+      "page": "Avatar",
+      "example": "Initials",
+      "pixels": 372
+    },
+    {
+      "url": "/kitchen-sink/components-avatar.html",
+      "id": "initials-2",
+      "page": "Avatar",
+      "example": "Initials",
+      "pixels": 305
+    },
+    {
+      "url": "/kitchen-sink/components-avatar.html",
+      "id": "sizes",
+      "page": "Avatar",
+      "example": "Sizes",
+      "pixels": 440
+    },
+    {
+      "url": "/kitchen-sink/components-avatar.html",
+      "id": "sizes-2",
+      "page": "Avatar",
+      "example": "Sizes",
+      "pixels": 128
+    },
+    {
+      "url": "/kitchen-sink/components-avatar.html",
+      "id": "status-indicator",
+      "page": "Avatar",
+      "example": "Status indicator",
+      "pixels": 390
+    },
+    {
+      "url": "/kitchen-sink/components-avatar.html",
+      "id": "status-with-sizes",
+      "page": "Avatar",
+      "example": "Status with sizes",
+      "pixels": 434
+    },
+    {
+      "url": "/kitchen-sink/components-avatar.html",
+      "id": "avatar-stack",
+      "page": "Avatar",
+      "example": "Avatar stack",
+      "pixels": 398
+    },
+    {
+      "url": "/kitchen-sink/components-avatar.html",
+      "id": "stack-with-sizes",
+      "page": "Avatar",
+      "example": "Stack with sizes",
+      "pixels": 1048
+    },
+    {
+      "url": "/kitchen-sink/components-avatar.html",
+      "id": "stack-with-count",
+      "page": "Avatar",
+      "example": "Stack with count",
+      "pixels": 271
+    },
+    {
+      "url": "/kitchen-sink/components-avatar.html",
+      "id": "stack-with-count-2",
+      "page": "Avatar",
+      "example": "Stack with count",
+      "pixels": 392
+    },
+    {
+      "url": "/kitchen-sink/components-badge.html",
+      "id": "examples",
+      "page": "Badges",
+      "example": "Examples",
+      "pixels": 97
+    },
+    {
+      "url": "/kitchen-sink/components-badge.html",
+      "id": "headings",
+      "page": "Badges",
+      "example": "Headings",
+      "pixels": 4679
+    },
+    {
+      "url": "/kitchen-sink/components-badge.html",
+      "id": "buttons",
+      "page": "Badges",
+      "example": "Buttons",
+      "pixels": 139
+    },
+    {
+      "url": "/kitchen-sink/components-badge.html",
+      "id": "positioned",
+      "page": "Badges",
+      "example": "Positioned",
+      "pixels": 80
+    },
+    {
+      "url": "/kitchen-sink/components-badge.html",
+      "id": "positioned-2",
+      "page": "Badges",
+      "example": "Positioned",
+      "pixels": 65
+    },
+    {
+      "url": "/kitchen-sink/components-badge.html",
+      "id": "variants",
+      "page": "Badges",
+      "example": "Variants",
+      "pixels": 569
+    },
+    {
+      "url": "/kitchen-sink/components-badge.html",
+      "id": "variants-2",
+      "page": "Badges",
+      "example": "Variants",
+      "pixels": 381
+    },
+    {
+      "url": "/kitchen-sink/components-badge.html",
+      "id": "variants-3",
+      "page": "Badges",
+      "example": "Variants",
+      "pixels": 598
+    },
+    {
+      "url": "/kitchen-sink/components-breadcrumb.html",
+      "id": "example",
+      "page": "Breadcrumb",
+      "example": "Example",
+      "pixels": 664
+    },
+    {
+      "url": "/kitchen-sink/components-breadcrumb.html",
+      "id": "default-divider",
+      "page": "Breadcrumb",
+      "example": "Default divider",
+      "pixels": 276
+    },
+    {
+      "url": "/kitchen-sink/components-breadcrumb.html",
+      "id": "svg-dividers",
+      "page": "Breadcrumb",
+      "example": "SVG dividers",
+      "pixels": 276
+    },
+    {
+      "url": "/kitchen-sink/components-breadcrumb.html",
+      "id": "text-dividers",
+      "page": "Breadcrumb",
+      "example": "Text dividers",
+      "pixels": 287
+    },
+    {
+      "url": "/kitchen-sink/components-breadcrumb.html",
+      "id": "custom-dividers",
+      "page": "Breadcrumb",
+      "example": "Custom dividers",
+      "pixels": 325
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "examples",
+      "page": "Button group",
+      "example": "Examples",
+      "pixels": 189
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "with-links",
+      "page": "Button group",
+      "example": "With links",
+      "pixels": 177
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "dividers",
+      "page": "Button group",
+      "example": "Dividers",
+      "pixels": 377
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "dividers-2",
+      "page": "Button group",
+      "example": "Dividers",
+      "pixels": 399
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "theme-variants",
+      "page": "Button group",
+      "example": "Theme variants",
+      "pixels": 178
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "theme-variants-2",
+      "page": "Button group",
+      "example": "Theme variants",
+      "pixels": 346
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "style-variants",
+      "page": "Button group",
+      "example": "Style variants",
+      "pixels": 189
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "style-variants-2",
+      "page": "Button group",
+      "example": "Style variants",
+      "pixels": 289
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "style-variants-3",
+      "page": "Button group",
+      "example": "Style variants",
+      "pixels": 208
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "checkbox",
+      "page": "Button group",
+      "example": "Checkbox",
+      "pixels": 275
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "radio",
+      "page": "Button group",
+      "example": "Radio",
+      "pixels": 259
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "button-toolbar",
+      "page": "Button group",
+      "example": "Button toolbar",
+      "pixels": 90
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "button-toolbar-2",
+      "page": "Button group",
+      "example": "Button toolbar",
+      "pixels": 795
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "sizing",
+      "page": "Button group",
+      "example": "Sizing",
+      "pixels": 982
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "nesting",
+      "page": "Button group",
+      "example": "Nesting",
+      "pixels": 87
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "vertical-variation",
+      "page": "Button group",
+      "example": "Vertical variation",
+      "pixels": 260
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "vertical-variation-2",
+      "page": "Button group",
+      "example": "Vertical variation",
+      "pixels": 314
+    },
+    {
+      "url": "/kitchen-sink/components-button-group.html",
+      "id": "vertical-variation-3",
+      "page": "Button group",
+      "example": "Vertical variation",
+      "pixels": 370
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "base-class",
+      "page": "Button",
+      "example": "Base class",
+      "pixels": 182
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "variants",
+      "page": "Button",
+      "example": "Variants",
+      "pixels": 3168
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "link-buttons",
+      "page": "Button",
+      "example": "Link buttons",
+      "pixels": 63
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "link-buttons-2",
+      "page": "Button",
+      "example": "Link buttons",
+      "pixels": 898
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "styled-buttons",
+      "page": "Button",
+      "example": "Styled buttons",
+      "pixels": 802
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "button-tags",
+      "page": "Button",
+      "example": "Button tags",
+      "pixels": 312
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "sizes",
+      "page": "Button",
+      "example": "Sizes",
+      "pixels": 406
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "sizes-2",
+      "page": "Button",
+      "example": "Sizes",
+      "pixels": 391
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "sizes-3",
+      "page": "Button",
+      "example": "Sizes",
+      "pixels": 358
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "sizes-4",
+      "page": "Button",
+      "example": "Sizes",
+      "pixels": 64
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "disabled-state",
+      "page": "Button",
+      "example": "Disabled state",
+      "pixels": 159
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "disabled-state-2",
+      "page": "Button",
+      "example": "Disabled state",
+      "pixels": 105
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "disabled-state-3",
+      "page": "Button",
+      "example": "Disabled state",
+      "pixels": 105
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "block-buttons",
+      "page": "Button",
+      "example": "Block buttons",
+      "pixels": 126
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "block-buttons-2",
+      "page": "Button",
+      "example": "Block buttons",
+      "pixels": 136
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "block-buttons-3",
+      "page": "Button",
+      "example": "Block buttons",
+      "pixels": 126
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "block-buttons-4",
+      "page": "Button",
+      "example": "Block buttons",
+      "pixels": 148
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "checkboxes",
+      "page": "Button",
+      "example": "Checkboxes",
+      "pixels": 160
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "radios",
+      "page": "Button",
+      "example": "Radios",
+      "pixels": 232
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "toggle-states",
+      "page": "Button",
+      "example": "Toggle states",
+      "pixels": 334
+    },
+    {
+      "url": "/kitchen-sink/components-button.html",
+      "id": "toggle-states-2",
+      "page": "Button",
+      "example": "Toggle states",
+      "pixels": 315
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "example",
+      "page": "Cards",
+      "example": "Example",
+      "pixels": 2719
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "body",
+      "page": "Cards",
+      "example": "Body",
+      "pixels": 857
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "body-2",
+      "page": "Cards",
+      "example": "Body",
+      "pixels": 857
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "titles-text-and-links",
+      "page": "Cards",
+      "example": "Titles, text, and links",
+      "pixels": 3263
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "images",
+      "page": "Cards",
+      "example": "Images",
+      "pixels": 2623
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "images-2",
+      "page": "Cards",
+      "example": "Images",
+      "pixels": 4626
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "list-groups",
+      "page": "Cards",
+      "example": "List groups",
+      "pixels": 771
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "list-groups-2",
+      "page": "Cards",
+      "example": "List groups",
+      "pixels": 985
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "list-groups-3",
+      "page": "Cards",
+      "example": "List groups",
+      "pixels": 988
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "kitchen-sink",
+      "page": "Cards",
+      "example": "Kitchen sink",
+      "pixels": 3603
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "header-and-footer",
+      "page": "Cards",
+      "example": "Header and footer",
+      "pixels": 2785
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "header-and-footer-2",
+      "page": "Cards",
+      "example": "Header and footer",
+      "pixels": 2785
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "header-and-footer-3",
+      "page": "Cards",
+      "example": "Header and footer",
+      "pixels": 2264
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "header-and-footer-4",
+      "page": "Cards",
+      "example": "Header and footer",
+      "pixels": 2861
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "grid",
+      "page": "Cards",
+      "example": "Grid",
+      "pixels": 4268
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "utilities",
+      "page": "Cards",
+      "example": "Utilities",
+      "pixels": 4192
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "custom-css",
+      "page": "Cards",
+      "example": "Custom CSS",
+      "pixels": 685
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "navigation",
+      "page": "Cards",
+      "example": "Navigation",
+      "pixels": 838
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "navigation-2",
+      "page": "Cards",
+      "example": "Navigation",
+      "pixels": 839
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "image-caps",
+      "page": "Cards",
+      "example": "Image caps",
+      "pixels": 2190
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "image-overlays",
+      "page": "Cards",
+      "example": "Image overlays",
+      "pixels": 1015
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "card-row",
+      "page": "Cards",
+      "example": "Card row",
+      "pixels": 1032
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "card-row-2",
+      "page": "Cards",
+      "example": "Card row",
+      "pixels": 1067
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "theme-variants",
+      "page": "Cards",
+      "example": "Theme variants",
+      "pixels": 1396
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "theme-variants-2",
+      "page": "Cards",
+      "example": "Theme variants",
+      "pixels": 1282
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "translucent-cards",
+      "page": "Cards",
+      "example": "Translucent cards",
+      "pixels": 484
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "translucent-cards-2",
+      "page": "Cards",
+      "example": "Translucent cards",
+      "pixels": 572
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "card-groups",
+      "page": "Cards",
+      "example": "Card groups",
+      "pixels": 3170
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "grid-cards",
+      "page": "Cards",
+      "example": "Grid cards",
+      "pixels": 3856
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "grid-cards-2",
+      "page": "Cards",
+      "example": "Grid cards",
+      "pixels": 3746
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "grid-cards-3",
+      "page": "Cards",
+      "example": "Grid cards",
+      "pixels": 2956
+    },
+    {
+      "url": "/kitchen-sink/components-card.html",
+      "id": "grid-cards-4",
+      "page": "Cards",
+      "example": "Grid cards",
+      "pixels": 3074
+    },
+    {
+      "url": "/kitchen-sink/components-carousel.html",
+      "id": "top-controls",
+      "page": "Carousel",
+      "example": "Top controls",
+      "pixels": 309
+    },
+    {
+      "url": "/kitchen-sink/components-carousel.html",
+      "id": "custom-content",
+      "page": "Carousel",
+      "example": "Custom content",
+      "pixels": 1871
+    },
+    {
+      "url": "/kitchen-sink/components-carousel.html",
+      "id": "multiple-items",
+      "page": "Carousel",
+      "example": "Multiple items",
+      "pixels": 516
+    },
+    {
+      "url": "/kitchen-sink/components-carousel.html",
+      "id": "peeking",
+      "page": "Carousel",
+      "example": "Peeking",
+      "pixels": 510
+    },
+    {
+      "url": "/kitchen-sink/components-carousel.html",
+      "id": "variable-width",
+      "page": "Carousel",
+      "example": "Variable width",
+      "pixels": 358
+    },
+    {
+      "url": "/kitchen-sink/components-carousel.html",
+      "id": "loop-default",
+      "page": "Carousel",
+      "example": "Loop (default)",
+      "pixels": 122
+    },
+    {
+      "url": "/kitchen-sink/components-carousel.html",
+      "id": "wrap",
+      "page": "Carousel",
+      "example": "Wrap",
+      "pixels": 345
+    },
+    {
+      "url": "/kitchen-sink/components-carousel.html",
+      "id": "stop",
+      "page": "Carousel",
+      "example": "Stop",
+      "pixels": 383
+    },
+    {
+      "url": "/kitchen-sink/components-close-button.html",
+      "id": "dark-variant",
+      "page": "Close button",
+      "example": "Dark variant",
+      "markup": "changed",
+      "pixels": 428
+    },
+    {
+      "url": "/kitchen-sink/components-collapse.html",
+      "id": "example",
+      "page": "Collapse",
+      "example": "Example",
+      "pixels": 380
+    },
+    {
+      "url": "/kitchen-sink/components-collapse.html",
+      "id": "horizontal",
+      "page": "Collapse",
+      "example": "Horizontal",
+      "pixels": 213
+    },
+    {
+      "url": "/kitchen-sink/components-collapse.html",
+      "id": "multiple-toggles-and-targets",
+      "page": "Collapse",
+      "example": "Multiple toggles and targets",
+      "pixels": 618
+    },
+    {
+      "url": "/kitchen-sink/components-dialog.html",
+      "id": "example",
+      "page": "Dialog",
+      "example": "Example",
+      "pixels": 127
+    },
+    {
+      "url": "/kitchen-sink/components-dialog.html",
+      "id": "without-javascript",
+      "page": "Dialog",
+      "example": "Without JavaScript",
+      "pixels": 127
+    },
+    {
+      "url": "/kitchen-sink/components-dialog.html",
+      "id": "dark-dialog",
+      "page": "Dialog",
+      "example": "Dark dialog",
+      "pixels": 158
+    },
+    {
+      "url": "/kitchen-sink/components-dialog.html",
+      "id": "static-backdrop",
+      "page": "Dialog",
+      "example": "Static backdrop",
+      "pixels": 258
+    },
+    {
+      "url": "/kitchen-sink/components-dialog.html",
+      "id": "overlays",
+      "page": "Dialog",
+      "example": "Overlays",
+      "pixels": 127
+    },
+    {
+      "url": "/kitchen-sink/components-dialog.html",
+      "id": "instant",
+      "page": "Dialog",
+      "example": "Instant",
+      "pixels": 157
+    },
+    {
+      "url": "/kitchen-sink/components-dialog.html",
+      "id": "slide-down",
+      "page": "Dialog",
+      "example": "Slide down",
+      "pixels": 166
+    },
+    {
+      "url": "/kitchen-sink/components-dialog.html",
+      "id": "slide-up",
+      "page": "Dialog",
+      "example": "Slide up",
+      "pixels": 142
+    },
+    {
+      "url": "/kitchen-sink/components-dialog.html",
+      "id": "scrollable",
+      "page": "Dialog",
+      "example": "Scrollable",
+      "pixels": 272
+    },
+    {
+      "url": "/kitchen-sink/components-dialog.html",
+      "id": "swapping-dialogs",
+      "page": "Dialog",
+      "example": "Swapping dialogs",
+      "pixels": 144
+    },
+    {
+      "url": "/kitchen-sink/components-dialog.html",
+      "id": "non-modal-dialogs",
+      "page": "Dialog",
+      "example": "Non-modal dialogs",
+      "pixels": 250
+    },
+    {
+      "url": "/kitchen-sink/components-dialog.html",
+      "id": "optional-sizes",
+      "page": "Dialog",
+      "example": "Optional sizes",
+      "markup": "changed",
+      "pixels": 43549
+    },
+    {
+      "url": "/kitchen-sink/components-dialog.html",
+      "id": "fullscreen-dialog",
+      "page": "Dialog",
+      "example": "Fullscreen dialog",
+      "pixels": 163
+    },
+    {
+      "url": "/kitchen-sink/components-dialog.html",
+      "id": "fullscreen-dialog-2",
+      "page": "Dialog",
+      "example": "Fullscreen dialog",
+      "pixels": 178
+    },
+    {
+      "url": "/kitchen-sink/components-drawer.html",
+      "id": "drawer-components",
+      "page": "Drawer",
+      "example": "Drawer components",
+      "pixels": 2771
+    },
+    {
+      "url": "/kitchen-sink/components-drawer.html",
+      "id": "live-demo",
+      "page": "Drawer",
+      "example": "Live demo",
+      "pixels": 345
+    },
+    {
+      "url": "/kitchen-sink/components-drawer.html",
+      "id": "without-javascript",
+      "page": "Drawer",
+      "example": "Without JavaScript",
+      "pixels": 97
+    },
+    {
+      "url": "/kitchen-sink/components-drawer.html",
+      "id": "body-scrolling",
+      "page": "Drawer",
+      "example": "Body scrolling",
+      "pixels": 190
+    },
+    {
+      "url": "/kitchen-sink/components-drawer.html",
+      "id": "body-scrolling-backdrop",
+      "page": "Drawer",
+      "example": "Body scrolling & backdrop",
+      "pixels": 314
+    },
+    {
+      "url": "/kitchen-sink/components-drawer.html",
+      "id": "static-backdrop",
+      "page": "Drawer",
+      "example": "Static backdrop",
+      "pixels": 182
+    },
+    {
+      "url": "/kitchen-sink/components-drawer.html",
+      "id": "instant-drawer",
+      "page": "Drawer",
+      "example": "Instant drawer",
+      "pixels": 196
+    },
+    {
+      "url": "/kitchen-sink/components-drawer.html",
+      "id": "dark-drawer",
+      "page": "Drawer",
+      "example": "Dark drawer",
+      "pixels": 822
+    },
+    {
+      "url": "/kitchen-sink/components-drawer.html",
+      "id": "translucent-drawer",
+      "page": "Drawer",
+      "example": "Translucent drawer",
+      "pixels": 239
+    },
+    {
+      "url": "/kitchen-sink/components-drawer.html",
+      "id": "sheet",
+      "page": "Drawer",
+      "example": "Sheet",
+      "markup": "changed",
+      "pixels": 171
+    },
+    {
+      "url": "/kitchen-sink/components-drawer.html",
+      "id": "responsive",
+      "page": "Drawer",
+      "example": "Responsive",
+      "pixels": 1098
+    },
+    {
+      "url": "/kitchen-sink/components-drawer.html",
+      "id": "placement",
+      "page": "Drawer",
+      "example": "Placement",
+      "pixels": 158
+    },
+    {
+      "url": "/kitchen-sink/components-drawer.html",
+      "id": "placement-2",
+      "page": "Drawer",
+      "example": "Placement",
+      "pixels": 187
+    },
+    {
+      "url": "/kitchen-sink/components-drawer.html",
+      "id": "placement-3",
+      "page": "Drawer",
+      "example": "Placement",
+      "pixels": 202
+    },
+    {
+      "url": "/kitchen-sink/components-drawer.html",
+      "id": "placement-4",
+      "page": "Drawer",
+      "example": "Placement",
+      "pixels": 227
+    },
+    {
+      "url": "/kitchen-sink/components-drawer.html",
+      "id": "footer",
+      "page": "Drawer",
+      "example": "Footer",
+      "pixels": 2306
+    },
+    {
+      "url": "/kitchen-sink/components-list-group.html",
+      "id": "basic-example",
+      "page": "List group",
+      "example": "Basic example",
+      "pixels": 1458
+    },
+    {
+      "url": "/kitchen-sink/components-list-group.html",
+      "id": "active-items",
+      "page": "List group",
+      "example": "Active items",
+      "pixels": 1408
+    },
+    {
+      "url": "/kitchen-sink/components-list-group.html",
+      "id": "links-and-buttons",
+      "page": "List group",
+      "example": "Links and buttons",
+      "pixels": 1582
+    },
+    {
+      "url": "/kitchen-sink/components-list-group.html",
+      "id": "links-and-buttons-2",
+      "page": "List group",
+      "example": "Links and buttons",
+      "pixels": 1658
+    },
+    {
+      "url": "/kitchen-sink/components-list-group.html",
+      "id": "flush",
+      "page": "List group",
+      "example": "Flush",
+      "pixels": 1458
+    },
+    {
+      "url": "/kitchen-sink/components-list-group.html",
+      "id": "numbered",
+      "page": "List group",
+      "example": "Numbered",
+      "pixels": 773
+    },
+    {
+      "url": "/kitchen-sink/components-list-group.html",
+      "id": "numbered-2",
+      "page": "List group",
+      "example": "Numbered",
+      "pixels": 2594
+    },
+    {
+      "url": "/kitchen-sink/components-list-group.html",
+      "id": "horizontal",
+      "page": "List group",
+      "example": "Horizontal",
+      "pixels": 4658
+    },
+    {
+      "url": "/kitchen-sink/components-list-group.html",
+      "id": "variants",
+      "page": "List group",
+      "example": "Variants",
+      "pixels": 3764
+    },
+    {
+      "url": "/kitchen-sink/components-list-group.html",
+      "id": "for-links-and-buttons",
+      "page": "List group",
+      "example": "For links and buttons",
+      "pixels": 3570
+    },
+    {
+      "url": "/kitchen-sink/components-list-group.html",
+      "id": "with-badges",
+      "page": "List group",
+      "example": "With badges",
+      "pixels": 1065
+    },
+    {
+      "url": "/kitchen-sink/components-list-group.html",
+      "id": "custom-content",
+      "page": "List group",
+      "example": "Custom content",
+      "pixels": 4385
+    },
+    {
+      "url": "/kitchen-sink/components-list-group.html",
+      "id": "checkboxes-and-radios",
+      "page": "List group",
+      "example": "Checkboxes and radios",
+      "pixels": 1180
+    },
+    {
+      "url": "/kitchen-sink/components-list-group.html",
+      "id": "checkboxes-and-radios-2",
+      "page": "List group",
+      "example": "Checkboxes and radios",
+      "pixels": 917
+    },
+    {
+      "url": "/kitchen-sink/components-list-group.html",
+      "id": "checkboxes-and-radios-3",
+      "page": "List group",
+      "example": "Checkboxes and radios",
+      "pixels": 1180
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "overview",
+      "page": "Menu",
+      "example": "Overview",
+      "pixels": 151
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "examples",
+      "page": "Menu",
+      "example": "Examples",
+      "pixels": 265
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "dark-menus",
+      "page": "Menu",
+      "example": "Dark menus",
+      "pixels": 216
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "dark-menus-2",
+      "page": "Menu",
+      "example": "Dark menus",
+      "pixels": 278
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "translucent-menus",
+      "page": "Menu",
+      "example": "Translucent menus",
+      "pixels": 330
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "responsive",
+      "page": "Menu",
+      "example": "Responsive",
+      "pixels": 1482
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "menu-items",
+      "page": "Menu",
+      "example": "Menu items",
+      "pixels": 806
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "menu-items-2",
+      "page": "Menu",
+      "example": "Menu items",
+      "pixels": 1030
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "active",
+      "page": "Menu",
+      "example": "Active",
+      "pixels": 616
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "disabled",
+      "page": "Menu",
+      "example": "Disabled",
+      "pixels": 765
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "variants",
+      "page": "Menu",
+      "example": "Variants",
+      "pixels": 1439
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "icons",
+      "page": "Menu",
+      "example": "Icons",
+      "pixels": 201
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "descriptions",
+      "page": "Menu",
+      "example": "Descriptions",
+      "pixels": 1068
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "selected",
+      "page": "Menu",
+      "example": "Selected",
+      "pixels": 484
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "headers",
+      "page": "Menu",
+      "example": "Headers",
+      "pixels": 665
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "dividers",
+      "page": "Menu",
+      "example": "Dividers",
+      "pixels": 1124
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "text",
+      "page": "Menu",
+      "example": "Text",
+      "pixels": 1235
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "forms",
+      "page": "Menu",
+      "example": "Forms",
+      "pixels": 1846
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "scrollable-menus",
+      "page": "Menu",
+      "example": "Scrollable menus",
+      "pixels": 565
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "submenus",
+      "page": "Menu",
+      "example": "Submenus",
+      "pixels": 256
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "nested",
+      "page": "Menu",
+      "example": "Nested",
+      "pixels": 415
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "menu-options",
+      "page": "Menu",
+      "example": "Menu options",
+      "pixels": 294
+    },
+    {
+      "url": "/kitchen-sink/components-menu.html",
+      "id": "auto-close-behavior",
+      "page": "Menu",
+      "example": "Auto close behavior",
+      "pixels": 1394
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "base-nav",
+      "page": "Nav",
+      "example": "Base nav",
+      "pixels": 412
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "base-nav-2",
+      "page": "Nav",
+      "example": "Base nav",
+      "pixels": 412
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "base-nav-3",
+      "page": "Nav",
+      "example": "Base nav",
+      "pixels": 414
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "tabs",
+      "page": "Nav",
+      "example": "Tabs",
+      "pixels": 429
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "pills",
+      "page": "Nav",
+      "example": "Pills",
+      "pixels": 318
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "pills-2",
+      "page": "Nav",
+      "example": "Pills",
+      "pixels": 322
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "underline",
+      "page": "Nav",
+      "example": "Underline",
+      "pixels": 421
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "horizontal",
+      "page": "Nav",
+      "example": "Horizontal",
+      "pixels": 392
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "horizontal-2",
+      "page": "Nav",
+      "example": "Horizontal",
+      "pixels": 429
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "vertical",
+      "page": "Nav",
+      "example": "Vertical",
+      "pixels": 421
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "vertical-2",
+      "page": "Nav",
+      "example": "Vertical",
+      "pixels": 425
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "fill-and-justify",
+      "page": "Nav",
+      "example": "Fill and justify",
+      "pixels": 626
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "fill-and-justify-2",
+      "page": "Nav",
+      "example": "Fill and justify",
+      "pixels": 626
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "fill-and-justify-3",
+      "page": "Nav",
+      "example": "Fill and justify",
+      "pixels": 665
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "fill-and-justify-4",
+      "page": "Nav",
+      "example": "Fill and justify",
+      "pixels": 665
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "working-with-flex-utilities",
+      "page": "Nav",
+      "example": "Working with flex utilities",
+      "pixels": 465
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "tabs-with-menus",
+      "page": "Nav",
+      "example": "Tabs with menus",
+      "pixels": 427
+    },
+    {
+      "url": "/kitchen-sink/components-nav.html",
+      "id": "pills-with-menus",
+      "page": "Nav",
+      "example": "Pills with menus",
+      "pixels": 332
+    },
+    {
+      "url": "/kitchen-sink/components-navbar.html",
+      "id": "brand",
+      "page": "Navbar",
+      "example": "Brand",
+      "pixels": 114
+    },
+    {
+      "url": "/kitchen-sink/components-navbar.html",
+      "id": "brand-3",
+      "page": "Navbar",
+      "example": "Brand",
+      "pixels": 66
+    },
+    {
+      "url": "/kitchen-sink/components-navbar.html",
+      "id": "forms",
+      "page": "Navbar",
+      "example": "Forms",
+      "pixels": 73
+    },
+    {
+      "url": "/kitchen-sink/components-navbar.html",
+      "id": "forms-2",
+      "page": "Navbar",
+      "example": "Forms",
+      "pixels": 103
+    },
+    {
+      "url": "/kitchen-sink/components-navbar.html",
+      "id": "forms-3",
+      "page": "Navbar",
+      "example": "Forms",
+      "pixels": 38
+    },
+    {
+      "url": "/kitchen-sink/components-navbar.html",
+      "id": "forms-4",
+      "page": "Navbar",
+      "example": "Forms",
+      "pixels": 156
+    },
+    {
+      "url": "/kitchen-sink/components-navbar.html",
+      "id": "text",
+      "page": "Navbar",
+      "example": "Text",
+      "pixels": 150
+    },
+    {
+      "url": "/kitchen-sink/components-navbar.html",
+      "id": "containers",
+      "page": "Navbar",
+      "example": "Containers",
+      "pixels": 57
+    },
+    {
+      "url": "/kitchen-sink/components-navbar.html",
+      "id": "containers-2",
+      "page": "Navbar",
+      "example": "Containers",
+      "pixels": 57
+    },
+    {
+      "url": "/kitchen-sink/components-pagination.html",
+      "id": "overview",
+      "page": "Pagination",
+      "example": "Overview",
+      "pixels": 135
+    },
+    {
+      "url": "/kitchen-sink/components-pagination.html",
+      "id": "working-with-icons",
+      "page": "Pagination",
+      "example": "Working with icons",
+      "pixels": 54
+    },
+    {
+      "url": "/kitchen-sink/components-pagination.html",
+      "id": "active",
+      "page": "Pagination",
+      "example": "Active",
+      "pixels": 131
+    },
+    {
+      "url": "/kitchen-sink/components-pagination.html",
+      "id": "disabled",
+      "page": "Pagination",
+      "example": "Disabled",
+      "pixels": 151
+    },
+    {
+      "url": "/kitchen-sink/components-pagination.html",
+      "id": "variants",
+      "page": "Pagination",
+      "example": "Variants",
+      "pixels": 1786
+    },
+    {
+      "url": "/kitchen-sink/components-pagination.html",
+      "id": "sizing",
+      "page": "Pagination",
+      "example": "Sizing",
+      "pixels": 83
+    },
+    {
+      "url": "/kitchen-sink/components-pagination.html",
+      "id": "alignment",
+      "page": "Pagination",
+      "example": "Alignment",
+      "pixels": 147
+    },
+    {
+      "url": "/kitchen-sink/components-pagination.html",
+      "id": "alignment-2",
+      "page": "Pagination",
+      "example": "Alignment",
+      "pixels": 138
+    },
+    {
+      "url": "/kitchen-sink/components-placeholder.html",
+      "id": "example",
+      "page": "Placeholder",
+      "example": "Example",
+      "pixels": 2667
+    },
+    {
+      "url": "/kitchen-sink/components-popover.html",
+      "id": "overview",
+      "page": "Popover",
+      "example": "Overview",
+      "pixels": 142
+    },
+    {
+      "url": "/kitchen-sink/components-popover.html",
+      "id": "live-demo",
+      "page": "Popover",
+      "example": "Live demo",
+      "pixels": 142
+    },
+    {
+      "url": "/kitchen-sink/components-popover.html",
+      "id": "placement",
+      "page": "Popover",
+      "example": "Placement",
+      "pixels": 1304
+    },
+    {
+      "url": "/kitchen-sink/components-popover.html",
+      "id": "responsive-placement",
+      "page": "Popover",
+      "example": "Responsive placement",
+      "pixels": 828
+    },
+    {
+      "url": "/kitchen-sink/components-popover.html",
+      "id": "custom-popovers",
+      "page": "Popover",
+      "example": "Custom popovers",
+      "pixels": 297
+    },
+    {
+      "url": "/kitchen-sink/components-popover.html",
+      "id": "dismiss-on-next-click",
+      "page": "Popover",
+      "example": "Dismiss on next click",
+      "pixels": 453
+    },
+    {
+      "url": "/kitchen-sink/components-popover.html",
+      "id": "disabled-elements",
+      "page": "Popover",
+      "example": "Disabled elements",
+      "pixels": 27
+    },
+    {
+      "url": "/kitchen-sink/components-progress.html",
+      "id": "labels",
+      "page": "Progress",
+      "example": "Labels",
+      "pixels": 18
+    },
+    {
+      "url": "/kitchen-sink/components-progress.html",
+      "id": "backgrounds-2",
+      "page": "Progress",
+      "example": "Backgrounds",
+      "pixels": 157
+    },
+    {
+      "url": "/kitchen-sink/components-scrollspy.html",
+      "id": "navbar",
+      "page": "Scrollspy",
+      "example": "Navbar",
+      "pixels": 10288
+    },
+    {
+      "url": "/kitchen-sink/components-scrollspy.html",
+      "id": "nested-nav",
+      "page": "Scrollspy",
+      "example": "Nested nav",
+      "pixels": 24312
+    },
+    {
+      "url": "/kitchen-sink/components-scrollspy.html",
+      "id": "list-group",
+      "page": "Scrollspy",
+      "example": "List group",
+      "pixels": 13095
+    },
+    {
+      "url": "/kitchen-sink/components-scrollspy.html",
+      "id": "simple-anchors",
+      "page": "Scrollspy",
+      "example": "Simple anchors",
+      "pixels": 13095
+    },
+    {
+      "url": "/kitchen-sink/components-spinner.html",
+      "id": "border-spinner",
+      "page": "Spinners",
+      "example": "Border spinner",
+      "pixels": 90
+    },
+    {
+      "url": "/kitchen-sink/components-stepper.html",
+      "id": "basic",
+      "page": "Stepper",
+      "example": "Basic",
+      "pixels": 1393
+    },
+    {
+      "url": "/kitchen-sink/components-stepper.html",
+      "id": "gap",
+      "page": "Stepper",
+      "example": "Gap",
+      "pixels": 1393
+    },
+    {
+      "url": "/kitchen-sink/components-stepper.html",
+      "id": "variants",
+      "page": "Stepper",
+      "example": "Variants",
+      "pixels": 1350
+    },
+    {
+      "url": "/kitchen-sink/components-stepper.html",
+      "id": "overflow",
+      "page": "Stepper",
+      "example": "Overflow",
+      "pixels": 3088
+    },
+    {
+      "url": "/kitchen-sink/components-stepper.html",
+      "id": "complex",
+      "page": "Stepper",
+      "example": "Complex",
+      "pixels": 1639
+    },
+    {
+      "url": "/kitchen-sink/components-stepper.html",
+      "id": "complex-2",
+      "page": "Stepper",
+      "example": "Complex",
+      "pixels": 1768
+    },
+    {
+      "url": "/kitchen-sink/components-stepper.html",
+      "id": "alignment",
+      "page": "Stepper",
+      "example": "Alignment",
+      "pixels": 1431
+    },
+    {
+      "url": "/kitchen-sink/components-stepper.html",
+      "id": "alignment-2",
+      "page": "Stepper",
+      "example": "Alignment",
+      "pixels": 1339
+    },
+    {
+      "url": "/kitchen-sink/components-stepper.html",
+      "id": "alignment-3",
+      "page": "Stepper",
+      "example": "Alignment",
+      "pixels": 1369
+    },
+    {
+      "url": "/kitchen-sink/components-stepper.html",
+      "id": "alignment-4",
+      "page": "Stepper",
+      "example": "Alignment",
+      "pixels": 1397
+    },
+    {
+      "url": "/kitchen-sink/components-stepper.html",
+      "id": "with-anchors",
+      "page": "Stepper",
+      "example": "With anchors",
+      "pixels": 690
+    },
+    {
+      "url": "/kitchen-sink/components-tab.html",
+      "id": "nav-tab",
+      "page": "Tab",
+      "example": "Nav tab",
+      "pixels": 2011
+    },
+    {
+      "url": "/kitchen-sink/components-tab.html",
+      "id": "with-buttons",
+      "page": "Tab",
+      "example": "With buttons",
+      "pixels": 2011
+    },
+    {
+      "url": "/kitchen-sink/components-tab.html",
+      "id": "pills",
+      "page": "Tab",
+      "example": "Pills",
+      "pixels": 1860
+    },
+    {
+      "url": "/kitchen-sink/components-tab.html",
+      "id": "pills-2",
+      "page": "Tab",
+      "example": "Pills",
+      "pixels": 2167
+    },
+    {
+      "url": "/kitchen-sink/components-tab.html",
+      "id": "list-groups",
+      "page": "Tab",
+      "example": "List groups",
+      "pixels": 2067
+    },
+    {
+      "url": "/kitchen-sink/components-toasts.html",
+      "id": "live-example",
+      "page": "Toasts",
+      "example": "Live example",
+      "pixels": 104
+    },
+    {
+      "url": "/kitchen-sink/components-toasts.html",
+      "id": "placement",
+      "page": "Toasts",
+      "example": "Placement",
+      "pixels": 829
+    },
+    {
+      "url": "/kitchen-sink/components-toggler.html",
+      "id": "toggle-class",
+      "page": "Toggler",
+      "example": "Toggle class",
+      "pixels": 667
+    },
+    {
+      "url": "/kitchen-sink/components-toggler.html",
+      "id": "remove-existing",
+      "page": "Toggler",
+      "example": "Remove existing",
+      "pixels": 906
+    },
+    {
+      "url": "/kitchen-sink/components-toggler.html",
+      "id": "target-element",
+      "page": "Toggler",
+      "example": "Target element",
+      "pixels": 738
+    },
+    {
+      "url": "/kitchen-sink/components-toggler.html",
+      "id": "multiple-elements",
+      "page": "Toggler",
+      "example": "Multiple elements",
+      "pixels": 1991
+    },
+    {
+      "url": "/kitchen-sink/components-toggler.html",
+      "id": "toggle-attribute",
+      "page": "Toggler",
+      "example": "Toggle attribute",
+      "pixels": 871
+    },
+    {
+      "url": "/kitchen-sink/components-tooltip.html",
+      "id": "overview",
+      "page": "Tooltips",
+      "example": "Overview",
+      "pixels": 141
+    },
+    {
+      "url": "/kitchen-sink/components-tooltip.html",
+      "id": "tooltips-on-links",
+      "page": "Tooltips",
+      "example": "Tooltips on links",
+      "pixels": 4855
+    },
+    {
+      "url": "/kitchen-sink/components-tooltip.html",
+      "id": "custom-tooltips",
+      "page": "Tooltips",
+      "example": "Custom tooltips",
+      "pixels": 295
+    },
+    {
+      "url": "/kitchen-sink/components-tooltip.html",
+      "id": "placement",
+      "page": "Tooltips",
+      "example": "Placement",
+      "pixels": 1406
+    },
+    {
+      "url": "/kitchen-sink/components-tooltip.html",
+      "id": "responsive-placement",
+      "page": "Tooltips",
+      "example": "Responsive placement",
+      "pixels": 828
+    },
+    {
+      "url": "/kitchen-sink/components-tooltip.html",
+      "id": "custom-html",
+      "page": "Tooltips",
+      "example": "Custom HTML",
+      "pixels": 457
+    },
+    {
+      "url": "/kitchen-sink/components-tooltip.html",
+      "id": "interactive-tooltips",
+      "page": "Tooltips",
+      "example": "Interactive tooltips",
+      "pixels": 231
+    },
+    {
+      "url": "/kitchen-sink/components-tooltip.html",
+      "id": "disabled-elements",
+      "page": "Tooltips",
+      "example": "Disabled elements",
+      "pixels": 27
+    },
+    {
+      "url": "/kitchen-sink/forms-checkbox.html",
+      "id": "with-form-field",
+      "page": "Checkbox",
+      "example": "With form field",
+      "pixels": 550
+    },
+    {
+      "url": "/kitchen-sink/forms-checkbox.html",
+      "id": "description",
+      "page": "Checkbox",
+      "example": "Description",
+      "pixels": 1197
+    },
+    {
+      "url": "/kitchen-sink/forms-checkbox.html",
+      "id": "theme-colors",
+      "page": "Checkbox",
+      "example": "Theme colors",
+      "pixels": 4996
+    },
+    {
       "url": "/kitchen-sink/forms-checkbox.html",
       "id": "disabled",
       "page": "Checkbox",
       "example": "Disabled",
-      "markup": "changed",
-      "pixels": 330
+      "pixels": 813
+    },
+    {
+      "url": "/kitchen-sink/forms-checkbox.html",
+      "id": "sizes",
+      "page": "Checkbox",
+      "example": "Sizes",
+      "pixels": 1173
+    },
+    {
+      "url": "/kitchen-sink/forms-chips.html",
+      "id": "chips",
+      "page": "Chips",
+      "example": "Chips",
+      "pixels": 762
+    },
+    {
+      "url": "/kitchen-sink/forms-chips.html",
+      "id": "themed-chips",
+      "page": "Chips",
+      "example": "Themed chips",
+      "pixels": 657
+    },
+    {
+      "url": "/kitchen-sink/forms-chips.html",
+      "id": "active-state",
+      "page": "Chips",
+      "example": "Active state",
+      "pixels": 270
+    },
+    {
+      "url": "/kitchen-sink/forms-chips.html",
+      "id": "chip-input",
+      "page": "Chips",
+      "example": "Chip input",
+      "pixels": 658
+    },
+    {
+      "url": "/kitchen-sink/forms-chips.html",
+      "id": "theme-variants",
+      "page": "Chips",
+      "example": "Theme variants",
+      "pixels": 444
+    },
+    {
+      "url": "/kitchen-sink/forms-chips.html",
+      "id": "theme-variants-2",
+      "page": "Chips",
+      "example": "Theme variants",
+      "pixels": 222
+    },
+    {
+      "url": "/kitchen-sink/forms-chips.html",
+      "id": "empty-state",
+      "page": "Chips",
+      "example": "Empty state",
+      "pixels": 258
+    },
+    {
+      "url": "/kitchen-sink/forms-chips.html",
+      "id": "with-label",
+      "page": "Chips",
+      "example": "With label",
+      "pixels": 874
+    },
+    {
+      "url": "/kitchen-sink/forms-chips.html",
+      "id": "disabled",
+      "page": "Chips",
+      "example": "Disabled",
+      "pixels": 78
+    },
+    {
+      "url": "/kitchen-sink/forms-combobox.html",
+      "id": "example",
+      "page": "Combobox",
+      "example": "Example",
+      "pixels": 178
+    },
+    {
+      "url": "/kitchen-sink/forms-combobox.html",
+      "id": "placeholders",
+      "page": "Combobox",
+      "example": "Placeholders",
+      "pixels": 193
+    },
+    {
+      "url": "/kitchen-sink/forms-combobox.html",
+      "id": "pre-selected-value",
+      "page": "Combobox",
+      "example": "Pre-selected value",
+      "pixels": 186
+    },
+    {
+      "url": "/kitchen-sink/forms-combobox.html",
+      "id": "with-form-field",
+      "page": "Combobox",
+      "example": "With form field",
+      "pixels": 440
+    },
+    {
+      "url": "/kitchen-sink/forms-combobox.html",
+      "id": "icons",
+      "page": "Combobox",
+      "example": "Icons",
+      "pixels": 210
+    },
+    {
+      "url": "/kitchen-sink/forms-combobox.html",
+      "id": "descriptions",
+      "page": "Combobox",
+      "example": "Descriptions",
+      "pixels": 108
+    },
+    {
+      "url": "/kitchen-sink/forms-combobox.html",
+      "id": "checked-icon",
+      "page": "Combobox",
+      "example": "Checked icon",
+      "pixels": 98
+    },
+    {
+      "url": "/kitchen-sink/forms-combobox.html",
+      "id": "all-together",
+      "page": "Combobox",
+      "example": "All together",
+      "pixels": 135
+    },
+    {
+      "url": "/kitchen-sink/forms-combobox.html",
+      "id": "search-menu-items",
+      "page": "Combobox",
+      "example": "Search menu items",
+      "pixels": 162
+    },
+    {
+      "url": "/kitchen-sink/forms-combobox.html",
+      "id": "groups",
+      "page": "Combobox",
+      "example": "Groups",
+      "pixels": 203
+    },
+    {
+      "url": "/kitchen-sink/forms-combobox.html",
+      "id": "multiple-select",
+      "page": "Combobox",
+      "example": "Multiple select",
+      "pixels": 129
+    },
+    {
+      "url": "/kitchen-sink/forms-combobox.html",
+      "id": "sizing",
+      "page": "Combobox",
+      "example": "Sizing",
+      "pixels": 476
+    },
+    {
+      "url": "/kitchen-sink/forms-combobox.html",
+      "id": "disabled",
+      "page": "Combobox",
+      "example": "Disabled",
+      "pixels": 185
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "overview",
+      "page": "Datepicker",
+      "example": "Overview",
+      "pixels": 378
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "with-form-field",
+      "page": "Datepicker",
+      "example": "With form field",
+      "pixels": 1123
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "with-icon",
+      "page": "Datepicker",
+      "example": "With icon",
+      "pixels": 365
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "with-icon-2",
+      "page": "Datepicker",
+      "example": "With icon",
+      "pixels": 365
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "min-max-dates",
+      "page": "Datepicker",
+      "example": "Min & Max dates",
+      "pixels": 678
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "multiple-dates",
+      "page": "Datepicker",
+      "example": "Multiple dates",
+      "pixels": 746
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "multiple-months",
+      "page": "Datepicker",
+      "example": "Multiple months",
+      "pixels": 697
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "date-range",
+      "page": "Datepicker",
+      "example": "Date range",
+      "pixels": 849
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "multi-month-date-range",
+      "page": "Datepicker",
+      "example": "Multi-month date range",
+      "pixels": 785
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "first-day-of-week",
+      "page": "Datepicker",
+      "example": "First day of week",
+      "pixels": 656
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "placement",
+      "page": "Datepicker",
+      "example": "Placement",
+      "pixels": 1450
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "button-trigger",
+      "page": "Datepicker",
+      "example": "Button trigger",
+      "pixels": 105
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "button-trigger-2",
+      "page": "Datepicker",
+      "example": "Button trigger",
+      "pixels": 101
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "inline-mode",
+      "page": "Datepicker",
+      "example": "Inline mode",
+      "pixels": 1442
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "inline-mode-2",
+      "page": "Datepicker",
+      "example": "Inline mode",
+      "pixels": 1442
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "inline-mode-3",
+      "page": "Datepicker",
+      "example": "Inline mode",
+      "pixels": 2841
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "inline-mode-4",
+      "page": "Datepicker",
+      "example": "Inline mode",
+      "pixels": 1526
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "inherited-from-parent",
+      "page": "Datepicker",
+      "example": "Inherited from parent",
+      "pixels": 615
+    },
+    {
+      "url": "/kitchen-sink/forms-datepicker.html",
+      "id": "datepicker-only-theme",
+      "page": "Datepicker",
+      "example": "Datepicker-only theme",
+      "pixels": 915
+    },
+    {
+      "url": "/kitchen-sink/forms-field.html",
+      "id": "example",
+      "page": "Field",
+      "example": "Example",
+      "pixels": 1223
+    },
+    {
+      "url": "/kitchen-sink/forms-field.html",
+      "id": "select",
+      "page": "Field",
+      "example": "Select",
+      "pixels": 448
+    },
+    {
+      "url": "/kitchen-sink/forms-field.html",
+      "id": "textarea",
+      "page": "Field",
+      "example": "Textarea",
+      "pixels": 689
+    },
+    {
+      "url": "/kitchen-sink/forms-field.html",
+      "id": "checkbox",
+      "page": "Field",
+      "example": "Checkbox",
+      "pixels": 369
+    },
+    {
+      "url": "/kitchen-sink/forms-field.html",
+      "id": "radio",
+      "page": "Field",
+      "example": "Radio",
+      "pixels": 543
+    },
+    {
+      "url": "/kitchen-sink/forms-field.html",
+      "id": "grouped",
+      "page": "Field",
+      "example": "Grouped",
+      "pixels": 1393
+    },
+    {
+      "url": "/kitchen-sink/forms-field.html",
+      "id": "group-cards",
+      "page": "Field",
+      "example": "Group cards",
+      "pixels": 1258
+    },
+    {
+      "url": "/kitchen-sink/forms-field.html",
+      "id": "switch",
+      "page": "Field",
+      "example": "Switch",
+      "pixels": 562
+    },
+    {
+      "url": "/kitchen-sink/forms-field.html",
+      "id": "combobox",
+      "page": "Field",
+      "example": "Combobox",
+      "pixels": 965
+    },
+    {
+      "url": "/kitchen-sink/forms-field.html",
+      "id": "overhead-label",
+      "page": "Field",
+      "example": "Overhead label",
+      "pixels": 1405
+    },
+    {
+      "url": "/kitchen-sink/forms-field.html",
+      "id": "descriptions",
+      "page": "Field",
+      "example": "Descriptions",
+      "pixels": 2825
+    },
+    {
+      "url": "/kitchen-sink/forms-field.html",
+      "id": "client-side",
+      "page": "Field",
+      "example": "Client-side",
+      "pixels": 1176
+    },
+    {
+      "url": "/kitchen-sink/forms-field.html",
+      "id": "server-side",
+      "page": "Field",
+      "example": "Server-side",
+      "pixels": 3488
+    },
+    {
+      "url": "/kitchen-sink/forms-floating-labels.html",
+      "id": "example",
+      "page": "Floating labels",
+      "example": "Example",
+      "pixels": 600
+    },
+    {
+      "url": "/kitchen-sink/forms-floating-labels.html",
+      "id": "example-2",
+      "page": "Floating labels",
+      "example": "Example",
+      "pixels": 436
+    },
+    {
+      "url": "/kitchen-sink/forms-floating-labels.html",
+      "id": "example-3",
+      "page": "Floating labels",
+      "example": "Example",
+      "pixels": 436
+    },
+    {
+      "url": "/kitchen-sink/forms-floating-labels.html",
+      "id": "textareas",
+      "page": "Floating labels",
+      "example": "Textareas",
+      "pixels": 273
+    },
+    {
+      "url": "/kitchen-sink/forms-floating-labels.html",
+      "id": "textareas-2",
+      "page": "Floating labels",
+      "example": "Textareas",
+      "pixels": 273
+    },
+    {
+      "url": "/kitchen-sink/forms-floating-labels.html",
+      "id": "selects",
+      "page": "Floating labels",
+      "example": "Selects",
+      "pixels": 562
+    },
+    {
+      "url": "/kitchen-sink/forms-floating-labels.html",
+      "id": "date-and-time",
+      "page": "Floating labels",
+      "example": "Date and time",
+      "pixels": 230
+    },
+    {
+      "url": "/kitchen-sink/forms-floating-labels.html",
+      "id": "disabled",
+      "page": "Floating labels",
+      "example": "Disabled",
+      "pixels": 1512
+    },
+    {
+      "url": "/kitchen-sink/forms-floating-labels.html",
+      "id": "readonly-plaintext",
+      "page": "Floating labels",
+      "example": "Readonly plaintext",
+      "pixels": 518
+    },
+    {
+      "url": "/kitchen-sink/forms-floating-labels.html",
+      "id": "input-groups",
+      "page": "Floating labels",
+      "example": "Input groups",
+      "pixels": 286
+    },
+    {
+      "url": "/kitchen-sink/forms-floating-labels.html",
+      "id": "input-groups-2",
+      "page": "Floating labels",
+      "example": "Input groups",
+      "pixels": 588
+    },
+    {
+      "url": "/kitchen-sink/forms-floating-labels.html",
+      "id": "always-floating",
+      "page": "Floating labels",
+      "example": "Always floating",
+      "pixels": 270
+    },
+    {
+      "url": "/kitchen-sink/forms-floating-labels.html",
+      "id": "layout",
+      "page": "Floating labels",
+      "example": "Layout",
+      "pixels": 1083
+    },
+    {
+      "url": "/kitchen-sink/forms-form-adorn.html",
+      "id": "example",
+      "page": "Form adorn",
+      "example": "Example",
+      "pixels": 78
+    },
+    {
+      "url": "/kitchen-sink/forms-form-adorn.html",
+      "id": "example-2",
+      "page": "Form adorn",
+      "example": "Example",
+      "pixels": 223
+    },
+    {
+      "url": "/kitchen-sink/forms-form-adorn.html",
+      "id": "with-labels",
+      "page": "Form adorn",
+      "example": "With labels",
+      "pixels": 825
+    },
+    {
+      "url": "/kitchen-sink/forms-form-adorn.html",
+      "id": "with-form-field",
+      "page": "Form adorn",
+      "example": "With form field",
+      "pixels": 657
+    },
+    {
+      "url": "/kitchen-sink/forms-form-adorn.html",
+      "id": "text-adornments",
+      "page": "Form adorn",
+      "example": "Text adornments",
+      "pixels": 946
+    },
+    {
+      "url": "/kitchen-sink/forms-form-adorn.html",
+      "id": "sizing",
+      "page": "Form adorn",
+      "example": "Sizing",
+      "pixels": 666
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "example",
+      "page": "Form controls",
+      "example": "Example",
+      "pixels": 631
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "with-form-field",
+      "page": "Form controls",
+      "example": "With form field",
+      "pixels": 1223
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "textarea",
+      "page": "Form controls",
+      "example": "Textarea",
+      "pixels": 682
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "select",
+      "page": "Form controls",
+      "example": "Select",
+      "pixels": 626
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "select-2",
+      "page": "Form controls",
+      "example": "Select",
+      "pixels": 1130
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "select-3",
+      "page": "Form controls",
+      "example": "Select",
+      "pixels": 842
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "sizes",
+      "page": "Form controls",
+      "example": "Sizes",
+      "pixels": 1715
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "sizes-2",
+      "page": "Form controls",
+      "example": "Sizes",
+      "pixels": 1494
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "sizes-3",
+      "page": "Form controls",
+      "example": "Sizes",
+      "pixels": 2496
     },
     {
       "url": "/kitchen-sink/forms-form-control.html",
       "id": "form-text",
       "page": "Form controls",
       "example": "Form text",
-      "markup": "changed"
+      "pixels": 2085
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "form-text-2",
+      "page": "Form controls",
+      "example": "Form text",
+      "pixels": 628
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "disabled",
+      "page": "Form controls",
+      "example": "Disabled",
+      "pixels": 1427
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "readonly",
+      "page": "Form controls",
+      "example": "Readonly",
+      "pixels": 557
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "readonly-plain-text",
+      "page": "Form controls",
+      "example": "Readonly plain text",
+      "pixels": 940
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "readonly-plain-text-2",
+      "page": "Form controls",
+      "example": "Readonly plain text",
+      "pixels": 789
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "date-time",
+      "page": "Form controls",
+      "example": "Date & Time",
+      "pixels": 2497
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "color",
+      "page": "Form controls",
+      "example": "Color",
+      "pixels": 311
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "color-2",
+      "page": "Form controls",
+      "example": "Color",
+      "pixels": 958
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "datalists",
+      "page": "Form controls",
+      "example": "Datalists",
+      "pixels": 562
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "datalists-2",
+      "page": "Form controls",
+      "example": "Datalists",
+      "pixels": 818
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "file",
+      "page": "Form controls",
+      "example": "File",
+      "pixels": 6348
+    },
+    {
+      "url": "/kitchen-sink/forms-form-control.html",
+      "id": "ghost",
+      "page": "Form controls",
+      "example": "Ghost",
+      "pixels": 275
+    },
+    {
+      "url": "/kitchen-sink/forms-input-group.html",
+      "id": "example",
+      "page": "Input group",
+      "example": "Example",
+      "pixels": 779
+    },
+    {
+      "url": "/kitchen-sink/forms-input-group.html",
+      "id": "with-form-field",
+      "page": "Input group",
+      "example": "With form field",
+      "pixels": 1480
+    },
+    {
+      "url": "/kitchen-sink/forms-input-group.html",
+      "id": "buttons",
+      "page": "Input group",
+      "example": "Buttons",
+      "pixels": 124
+    },
+    {
+      "url": "/kitchen-sink/forms-input-group.html",
+      "id": "textarea",
+      "page": "Input group",
+      "example": "Textarea",
+      "pixels": 246
+    },
+    {
+      "url": "/kitchen-sink/forms-input-group.html",
+      "id": "select",
+      "page": "Input group",
+      "example": "Select",
+      "pixels": 1276
+    },
+    {
+      "url": "/kitchen-sink/forms-input-group.html",
+      "id": "file-input",
+      "page": "Input group",
+      "example": "File input",
+      "pixels": 3112
+    },
+    {
+      "url": "/kitchen-sink/forms-input-group.html",
+      "id": "multiple-inputs",
+      "page": "Input group",
+      "example": "Multiple inputs",
+      "pixels": 616
+    },
+    {
+      "url": "/kitchen-sink/forms-input-group.html",
+      "id": "multiple-addons",
+      "page": "Input group",
+      "example": "Multiple addons",
+      "pixels": 309
+    },
+    {
+      "url": "/kitchen-sink/forms-input-group.html",
+      "id": "button-addons",
+      "page": "Input group",
+      "example": "Button addons",
+      "pixels": 1322
+    },
+    {
+      "url": "/kitchen-sink/forms-input-group.html",
+      "id": "buttons-with-menus",
+      "page": "Input group",
+      "example": "Buttons with menus",
+      "pixels": 438
+    },
+    {
+      "url": "/kitchen-sink/forms-input-group.html",
+      "id": "segmented-buttons",
+      "page": "Input group",
+      "example": "Segmented buttons",
+      "pixels": 160
+    },
+    {
+      "url": "/kitchen-sink/forms-input-group.html",
+      "id": "border-radius",
+      "page": "Input group",
+      "example": "Border radius",
+      "pixels": 172
+    },
+    {
+      "url": "/kitchen-sink/forms-input-group.html",
+      "id": "sizing",
+      "page": "Input group",
+      "example": "Sizing",
+      "pixels": 428
+    },
+    {
+      "url": "/kitchen-sink/forms-layout.html",
+      "id": "utilities",
+      "page": "Layout",
+      "example": "Utilities",
+      "pixels": 1537
+    },
+    {
+      "url": "/kitchen-sink/forms-layout.html",
+      "id": "form-grid",
+      "page": "Layout",
+      "example": "Form grid",
+      "pixels": 314
+    },
+    {
+      "url": "/kitchen-sink/forms-layout.html",
+      "id": "gutters",
+      "page": "Layout",
+      "example": "Gutters",
+      "pixels": 314
+    },
+    {
+      "url": "/kitchen-sink/forms-layout.html",
+      "id": "gutters-2",
+      "page": "Layout",
+      "example": "Gutters",
+      "pixels": 2173
+    },
+    {
+      "url": "/kitchen-sink/forms-layout.html",
+      "id": "horizontal-form",
+      "page": "Layout",
+      "example": "Horizontal form",
+      "pixels": 2071
+    },
+    {
+      "url": "/kitchen-sink/forms-layout.html",
+      "id": "horizontal-form-label-sizing",
+      "page": "Layout",
+      "example": "Horizontal form label sizing",
+      "pixels": 1206
+    },
+    {
+      "url": "/kitchen-sink/forms-layout.html",
+      "id": "column-sizing",
+      "page": "Layout",
+      "example": "Column sizing",
+      "pixels": 140
+    },
+    {
+      "url": "/kitchen-sink/forms-layout.html",
+      "id": "auto-sizing",
+      "page": "Layout",
+      "example": "Auto-sizing",
+      "pixels": 881
+    },
+    {
+      "url": "/kitchen-sink/forms-layout.html",
+      "id": "auto-sizing-2",
+      "page": "Layout",
+      "example": "Auto-sizing",
+      "pixels": 910
+    },
+    {
+      "url": "/kitchen-sink/forms-layout.html",
+      "id": "inline-forms",
+      "page": "Layout",
+      "example": "Inline forms",
+      "pixels": 781
+    },
+    {
+      "url": "/kitchen-sink/forms-otp-input.html",
+      "id": "validation",
+      "page": "OTP input",
+      "example": "Validation",
+      "pixels": 226
+    },
+    {
+      "url": "/kitchen-sink/forms-otp-input.html",
+      "id": "with-form-label",
+      "page": "OTP input",
+      "example": "With form label",
+      "pixels": 986
+    },
+    {
+      "url": "/kitchen-sink/forms-overview.html",
+      "id": "overview",
+      "page": "Forms",
+      "example": "Overview",
+      "pixels": 1607
+    },
+    {
+      "url": "/kitchen-sink/forms-overview.html",
+      "id": "disabled-forms",
+      "page": "Forms",
+      "example": "Disabled forms",
+      "pixels": 2596
+    },
+    {
+      "url": "/kitchen-sink/forms-password-strength.html",
+      "id": "segmented",
+      "page": "Password strength",
+      "example": "Segmented",
+      "pixels": 403
+    },
+    {
+      "url": "/kitchen-sink/forms-password-strength.html",
+      "id": "with-text-feedback",
+      "page": "Password strength",
+      "example": "With text feedback",
+      "pixels": 403
+    },
+    {
+      "url": "/kitchen-sink/forms-password-strength.html",
+      "id": "progress-bar",
+      "page": "Password strength",
+      "example": "Progress bar",
+      "pixels": 403
+    },
+    {
+      "url": "/kitchen-sink/forms-password-strength.html",
+      "id": "static-segmented",
+      "page": "Password strength",
+      "example": "Static segmented",
+      "pixels": 236
+    },
+    {
+      "url": "/kitchen-sink/forms-password-strength.html",
+      "id": "static-progress-bar",
+      "page": "Password strength",
+      "example": "Static progress bar",
+      "pixels": 236
+    },
+    {
+      "url": "/kitchen-sink/forms-radio.html",
+      "id": "with-form-field",
+      "page": "Radio",
+      "example": "With form field",
+      "pixels": 997
+    },
+    {
+      "url": "/kitchen-sink/forms-radio.html",
+      "id": "description",
+      "page": "Radio",
+      "example": "Description",
+      "pixels": 1118
+    },
+    {
+      "url": "/kitchen-sink/forms-radio.html",
+      "id": "theme-colors",
+      "page": "Radio",
+      "example": "Theme colors",
+      "pixels": 4376
+    },
+    {
+      "url": "/kitchen-sink/forms-radio.html",
+      "id": "disabled",
+      "page": "Radio",
+      "example": "Disabled",
+      "pixels": 705
+    },
+    {
+      "url": "/kitchen-sink/forms-radio.html",
+      "id": "sizes",
+      "page": "Radio",
+      "example": "Sizes",
+      "pixels": 943
+    },
+    {
+      "url": "/kitchen-sink/forms-range.html",
+      "id": "overview",
+      "page": "Range",
+      "example": "Overview",
+      "pixels": 360
+    },
+    {
+      "url": "/kitchen-sink/forms-range.html",
+      "id": "disabled",
+      "page": "Range",
+      "example": "Disabled",
+      "pixels": 411
+    },
+    {
+      "url": "/kitchen-sink/forms-range.html",
+      "id": "min-and-max",
+      "page": "Range",
+      "example": "Min and max",
+      "pixels": 360
+    },
+    {
+      "url": "/kitchen-sink/forms-range.html",
+      "id": "steps",
+      "page": "Range",
+      "example": "Steps",
+      "pixels": 360
+    },
+    {
+      "url": "/kitchen-sink/forms-range.html",
+      "id": "value-bubble",
+      "page": "Range",
+      "example": "Value bubble",
+      "pixels": 351
+    },
+    {
+      "url": "/kitchen-sink/forms-range.html",
+      "id": "tick-marks",
+      "page": "Range",
+      "example": "Tick marks",
+      "pixels": 568
+    },
+    {
+      "url": "/kitchen-sink/forms-range.html",
+      "id": "with-form-field",
+      "page": "Range",
+      "example": "With form field",
+      "pixels": 554
+    },
+    {
+      "url": "/kitchen-sink/forms-switch.html",
+      "id": "with-form-field",
+      "page": "Switch",
+      "example": "With form field",
+      "pixels": 382
+    },
+    {
+      "url": "/kitchen-sink/forms-switch.html",
+      "id": "theme-colors",
+      "page": "Switch",
+      "example": "Theme colors",
+      "pixels": 4675
+    },
+    {
+      "url": "/kitchen-sink/forms-switch.html",
+      "id": "disabled",
+      "page": "Switch",
+      "example": "Disabled",
+      "pixels": 594
+    },
+    {
+      "url": "/kitchen-sink/forms-switch.html",
+      "id": "sizes",
+      "page": "Switch",
+      "example": "Sizes",
+      "pixels": 1083
+    },
+    {
+      "url": "/kitchen-sink/forms-switch.html",
+      "id": "custom-width",
+      "page": "Switch",
+      "example": "Custom width",
+      "pixels": 556
+    },
+    {
+      "url": "/kitchen-sink/forms-validation.html",
+      "id": "custom-styles",
+      "page": "Validation",
+      "example": "Custom styles",
+      "pixels": 4158
+    },
+    {
+      "url": "/kitchen-sink/forms-validation.html",
+      "id": "browser-defaults",
+      "page": "Validation",
+      "example": "Browser defaults",
+      "pixels": 4158
+    },
+    {
+      "url": "/kitchen-sink/forms-validation.html",
+      "id": "server-side",
+      "page": "Validation",
+      "example": "Server-side",
+      "pixels": 5354
+    },
+    {
+      "url": "/kitchen-sink/forms-validation.html",
+      "id": "supported-elements",
+      "page": "Validation",
+      "example": "Supported elements",
+      "pixels": 10995
+    },
+    {
+      "url": "/kitchen-sink/forms-validation.html",
+      "id": "tooltips",
+      "page": "Validation",
+      "example": "Tooltips",
+      "pixels": 4158
     }
   ]
 }
