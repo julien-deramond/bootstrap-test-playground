@@ -10,7 +10,6 @@ export default [
 
   { kind: 'unlayered', selector: /^\.drawer, /, issue: 148 },
   { kind: 'unlayered', selector: /^\.(fade|collapse)\b/, issue: 149 },
-  { kind: 'unlayered', selector: /^:root, :host$/, reason: '`scrollbar-gutter: stable` sits next to the global tokens; override it unlayered, like them' },
 
   // Source files split across layers
 
