@@ -129,7 +129,7 @@ function issueExports(env, bootstrap) {
       const { base } = server.config
       server.middlewares.use(async (request, response, next) => {
         const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname)
-        const [, name, fileName] = pathname.startsWith(base) ? pathname.slice(base.length).match(/^issues\/([a-z0-9][a-z0-9-]*)\/([\w.-]+)$/) ?? [] : []
+        const [, name, fileName] = pathname.startsWith(base) ? /^issues\/([a-z0-9][a-z0-9-]*)\/([\w.-]+)$/.exec(pathname.slice(base.length)) ?? [] : []
         const kind = files.find(([, file]) => file === fileName)?.[0]
         if (!kind || !listReproductions().includes(name)) {
           next()

@@ -84,7 +84,7 @@ function dialogs(page, kind) {
     // Opens the trigger's target with `key`, and returns it with focus in.
     // `focusMovesIn` checks that the component moved it there; otherwise
     // focus is moved in, so the steps that don't test it test the rest.
-    async open(trigger, key = 'Enter', { focusMovesIn = false } = {}) {
+    async open(trigger, { key = 'Enter', focusMovesIn = false } = {}) {
       const target = page.locator(await trigger.getAttribute('data-bs-target') ?? await trigger.getAttribute('href'))
       await trigger.focus()
       await clearEvents(page)
@@ -357,12 +357,12 @@ const WALKTHROUGHS = {
 
     await step('Enter opens the dialog and moves focus into it', async () => {
       await close()
-      await open(trigger, 'Enter', { focusMovesIn: true })
+      await open(trigger, { focusMovesIn: true })
     })
 
     await step('Space opens the dialog and moves focus into it', async () => {
       await close()
-      await open(trigger, ' ', { focusMovesIn: true })
+      await open(trigger, { key: ' ', focusMovesIn: true })
     })
 
     await step('Tab and Shift+Tab stay in the dialog', async () => {
@@ -423,7 +423,7 @@ const WALKTHROUGHS = {
     const nonModalTrigger = first(page, '[data-bs-toggle="dialog"][data-bs-modal="false"]')
     await step('Enter opens a non-modal dialog and moves focus into it', async () => {
       await close()
-      await open(nonModalTrigger, 'Enter', { focusMovesIn: true })
+      await open(nonModalTrigger, { focusMovesIn: true })
     })
 
     await step('Escape closes a non-modal dialog and focuses the trigger', async () => {
@@ -454,7 +454,7 @@ const WALKTHROUGHS = {
 
     await step('Enter opens the drawer and moves focus into it', async () => {
       await close()
-      await open(trigger, 'Enter', { focusMovesIn: true })
+      await open(trigger, { focusMovesIn: true })
     })
 
     await step('Tab and Shift+Tab stay in the drawer', async () => {
@@ -474,7 +474,7 @@ const WALKTHROUGHS = {
     const link = first(page, 'a[role="button"][data-bs-toggle="drawer"]')
     await step('Space opens a drawer from a link with role="button"', async () => {
       await close()
-      await open(link, ' ')
+      await open(link, { key: ' ' })
     })
 
     // Body scrolling without a backdrop: non-modal, focus moves in but isn't
@@ -483,7 +483,7 @@ const WALKTHROUGHS = {
     const scrollTrigger = first(page, `[data-bs-toggle="drawer"][data-bs-target="#${await scrolling.getAttribute('id')}"]`)
     await step('Enter opens a non-modal drawer and moves focus into it', async () => {
       await close()
-      await open(scrollTrigger, 'Enter', { focusMovesIn: true })
+      await open(scrollTrigger, { focusMovesIn: true })
     })
 
     await step('Escape closes a non-modal drawer and focuses the trigger', async () => {

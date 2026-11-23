@@ -43,7 +43,7 @@ const prefs = page => page.evaluate(() => window.playgroundPrefs.effective())
 
 // What a shortcut must not change.
 const snapshot = async page => ({
-  ...await prefs(page),
+  ...(await prefs(page)),
   panel: await panel(page).evaluate(dialog => dialog.open),
   palette: await palette(page).evaluate(dialog => dialog.open),
   tabOrder: await page.locator('#playground-tab-order').count()

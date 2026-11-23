@@ -107,7 +107,7 @@ async function walk(page) {
 
       const path = []
       for (let node = element; node && node !== document.body; node = node.parentElement) {
-        path.push([...node.parentElement?.children ?? []].indexOf(node))
+        path.push([...(node.parentElement?.children ?? [])].indexOf(node))
       }
 
       return path.join('/')

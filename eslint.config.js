@@ -112,6 +112,8 @@ const localRules = {
   'require-unicode-regexp': 'off',
   '@stylistic/indent-binary-ops': 'off',
   '@stylistic/curly-newline': 'off',
+  // Conflicts with @stylistic/object-curly-spacing 'always' above
+  '@stylistic/list-style': 'off',
   '@stylistic/function-paren-newline': 'off',
   'unicorn/better-dom-traversing': 'off',
   'unicorn/class-reference-in-static-methods': 'off',

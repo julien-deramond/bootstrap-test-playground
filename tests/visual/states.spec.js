@@ -80,7 +80,7 @@ function markPseudoState([selector, state]) {
   const inherited = { hover: ['hover'], focus: ['focus-within'], active: ['hover', 'active'] }[state]
   const section = document.querySelector(selector)
   const forced = new Map()
-  const add = (element, classes) => forced.set(element, new Set([...forced.get(element) ?? [], ...classes]))
+  const add = (element, classes) => forced.set(element, new Set([...(forced.get(element) ?? []), ...classes]))
 
   for (const element of section.querySelectorAll(INTERACTIVE)) {
     if (element.matches(':disabled') || !element.checkVisibility()) {
