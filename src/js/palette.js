@@ -107,7 +107,7 @@ export function mountPalette() {
 
   const render = () => {
     const query = input.value.trim()
-    let html = ''
+    let html
     if (query) {
       items = search(query).slice(0, MAX_RESULTS)
       html = items.map(option).join('')

@@ -53,7 +53,7 @@ test('Space toggles link toggles with role="button" without scrolling', async ({
   for (const component of components) {
     const control = await pressSpace(block.locator(component.button), component)
     expect(control.opened, `the <button> ${component.name} toggle opens on Space`).toBe(true)
-    results.push({ name: component.name, ...await pressSpace(block.locator(component.link), component) })
+    results.push({ name: component.name, ...(await pressSpace(block.locator(component.link), component)) })
   }
 
   const summary = results.map(({ name, opened, scrolled }) => `${name} ${opened ? 'opens' : 'stays closed'}, page ${scrolled ? 'scrolls' : 'stays put'}`).join('; ')

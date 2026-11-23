@@ -20,7 +20,7 @@ const ready = () => new Promise(resolve => {
 // caret color, so the luminance is read from there.
 const caretColor = style => {
   const image = decodeURIComponent(style.backgroundImage)
-  const stroke = image.match(/stroke='([^']+)'/)?.[1]
+  const stroke = /stroke='([^']+)'/.exec(image)?.[1]
   if (stroke) {
     const hex = stroke.replace('#', '')
     return { source: `stroke ${stroke}`, rgb: [0, 2, 4].map(i => Number.parseInt(hex.slice(i, i + 2), 16)) }
